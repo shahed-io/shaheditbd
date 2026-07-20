@@ -425,49 +425,78 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
             )}
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             {outOfStock ? (
               <button
                 onClick={e => { e.stopPropagation(); waPreOrder(); }}
-                className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[12px] font-bold text-white transition-all hover:scale-[1.02]"
+                className="group/cta relative w-full overflow-hidden rounded-2xl p-[1.5px] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
                 style={{
-                  background: 'linear-gradient(135deg, hsl(0,80%,55%), hsl(15,90%,55%))',
-                  boxShadow: '0 4px 16px hsla(0,80%,55%,0.35)',
+                  background: 'linear-gradient(135deg, hsl(0,80%,60%), hsl(15,90%,60%))',
+                  boxShadow: '0 8px 24px -6px hsla(0,80%,55%,0.45), 0 2px 6px hsla(0,80%,55%,0.15)',
                 }}>
-                <Clock size={12} /> Pre-order
+                <span className="relative flex items-center justify-center gap-1.5 py-2.5 rounded-[calc(1rem-1.5px)] text-[12px] font-bold text-white"
+                  style={{ background: 'linear-gradient(135deg, hsl(0,80%,55%), hsl(15,90%,55%))' }}>
+                  <span className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-60"
+                    style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.25), transparent 45%)' }} />
+                  <span className="pointer-events-none absolute inset-0 rounded-[inherit] -translate-x-full group-hover/cta:translate-x-full transition-transform duration-700 ease-out"
+                    style={{ background: 'linear-gradient(110deg, transparent 35%, rgba(255,255,255,0.35) 50%, transparent 65%)' }} />
+                  <Clock size={12} className="relative" /> <span className="relative tracking-wide">Pre-order</span>
+                </span>
               </button>
             ) : (
               <button
                 onClick={e => { e.stopPropagation(); setShowModal(true); }}
-                className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[12px] font-bold text-white transition-all hover:scale-[1.02]"
+                className="group/cta relative w-full overflow-hidden rounded-2xl p-[1.5px] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
                 style={{
-                  background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
-                  boxShadow: '0 4px 16px hsla(271,91%,65%,0.35)',
+                  background: 'linear-gradient(135deg, hsl(271,91%,70%), hsl(185,90%,55%))',
+                  boxShadow: '0 10px 28px -8px hsla(271,91%,65%,0.55), 0 2px 8px hsla(185,90%,52%,0.2)',
                 }}>
-                <CreditCard size={12} /> Buy Now
+                <span className="relative flex items-center justify-center gap-1.5 py-2.5 rounded-[calc(1rem-1.5px)] text-[12px] font-bold text-white"
+                  style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))' }}>
+                  <span className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-70"
+                    style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.28), transparent 45%)' }} />
+                  <span className="pointer-events-none absolute inset-0 rounded-[inherit] -translate-x-full group-hover/cta:translate-x-full transition-transform duration-700 ease-out"
+                    style={{ background: 'linear-gradient(110deg, transparent 35%, rgba(255,255,255,0.4) 50%, transparent 65%)' }} />
+                  <CreditCard size={12} className="relative" /> <span className="relative tracking-wide">Buy Now</span>
+                </span>
               </button>
             )}
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={e => { e.stopPropagation(); waMsg(); }}
-                className="flex items-center justify-center gap-1 py-2 rounded-xl text-[11px] font-semibold transition-all hover:scale-[1.02]"
+                className="group/wa relative flex items-center justify-center gap-1.5 py-2.5 rounded-2xl text-[11px] font-semibold transition-all duration-300 hover:scale-[1.02] backdrop-blur-xl overflow-hidden"
                 style={{
-                  background: 'hsla(158,80%,48%,0.1)',
-                  border: '1px solid hsla(158,80%,48%,0.25)',
+                  background: 'linear-gradient(135deg, hsla(158,80%,48%,0.12), hsla(158,80%,48%,0.04))',
+                  border: '1px solid hsla(158,80%,48%,0.3)',
                   color: 'hsl(158,80%,58%)',
+                  boxShadow: '0 4px 14px -4px hsla(158,80%,48%,0.2), inset 0 1px 0 hsla(0,0%,100%,0.1)',
                 }}>
-                <MessageCircle size={11} /> WhatsApp
+                <span className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 group-hover/wa:opacity-100 transition-opacity duration-300"
+                  style={{ background: 'radial-gradient(circle at 50% 0%, hsla(158,80%,48%,0.25), transparent 70%)' }} />
+                <MessageCircle size={11} className="relative" /> <span className="relative">WhatsApp</span>
               </button>
               <button
                 disabled={outOfStock}
                 onClick={e => { e.stopPropagation(); if (outOfStock) return; addToCart({ id: product.id, name: product.name, category: product.category, price: product.price, originalPrice: product.originalPrice, image: product.image }); }}
-                className="flex items-center justify-center gap-1 py-2 rounded-xl text-[11px] font-semibold transition-all hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                className="group/cart relative flex items-center justify-center gap-1.5 py-2.5 rounded-2xl text-[11px] font-semibold transition-all duration-300 hover:scale-[1.02] backdrop-blur-xl overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 style={inCart
-                  ? { background: 'hsla(271,91%,65%,0.15)', border: '1px solid hsla(271,91%,65%,0.4)', color: 'hsl(271,91%,75%)' }
-                  : { background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', color: 'hsl(var(--muted-foreground))' }
+                  ? {
+                      background: 'linear-gradient(135deg, hsla(271,91%,65%,0.18), hsla(185,90%,52%,0.08))',
+                      border: '1px solid hsla(271,91%,65%,0.45)',
+                      color: 'hsl(271,91%,78%)',
+                      boxShadow: '0 4px 14px -4px hsla(271,91%,65%,0.3), inset 0 1px 0 hsla(0,0%,100%,0.12)',
+                    }
+                  : {
+                      background: 'linear-gradient(135deg, hsla(0,0%,100%,0.06), hsla(0,0%,100%,0.02))',
+                      border: '1px solid hsla(271,91%,65%,0.18)',
+                      color: 'hsl(var(--muted-foreground))',
+                      boxShadow: '0 4px 14px -4px hsla(215,28%,4%,0.15), inset 0 1px 0 hsla(0,0%,100%,0.08)',
+                    }
                 }>
-                <ShoppingCart size={11} />
-                {outOfStock ? 'Out' : (inCart ? '✓ Added' : 'Cart')}
+                <span className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 group-hover/cart:opacity-100 transition-opacity duration-300"
+                  style={{ background: 'radial-gradient(circle at 50% 0%, hsla(185,90%,52%,0.22), transparent 70%)' }} />
+                <ShoppingCart size={11} className="relative" />
+                <span className="relative">{outOfStock ? 'Out' : (inCart ? '✓ Added' : 'Cart')}</span>
               </button>
             </div>
           </div>
