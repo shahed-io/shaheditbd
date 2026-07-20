@@ -292,6 +292,7 @@ const Checkout = () => {
       setOrderNumber(ord);
       setPaymentMethod('bkash_online');
       setOrderPlaced(true);
+      try { localStorage.removeItem(CHECKOUT_DRAFT_KEY); } catch {}
       setInstantDelivered(null);
       toast.success('✅ bKash পেমেন্ট সফল!');
       // Check if licenses were auto-assigned (License Manager had stock)
