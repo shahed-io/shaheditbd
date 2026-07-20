@@ -1546,7 +1546,7 @@ const AdminLicenses = () => {
 
           {/* Desktop table */}
           <div className="hidden md:block overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm min-w-[1100px]">
               <thead>
                 <tr className="border-b border-border">
                   <th className="w-10 px-3 py-3">
@@ -1554,14 +1554,15 @@ const AdminLicenses = () => {
                       onChange={toggleSelectAll}
                       className="h-4 w-4 rounded border-border accent-primary cursor-pointer" />
                   </th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Type</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Key / Credentials</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">প্রোডাক্ট</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Status</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">কাস্টমার / অর্ডার</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">ডেলিভারি নম্বর</th>
-                  <th className="text-right px-4 py-3 text-xs font-semibold text-muted-foreground">Action</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground whitespace-nowrap">Type</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground whitespace-nowrap">Key / Credentials</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground whitespace-nowrap">প্রোডাক্ট</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground whitespace-nowrap">Status</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground whitespace-nowrap">কাস্টমার / অর্ডার</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground whitespace-nowrap">ডেলিভারি নম্বর</th>
+                  <th className="text-right px-4 py-3 text-xs font-semibold text-muted-foreground whitespace-nowrap">Action</th>
                 </tr>
+
               </thead>
               <tbody>
                 {filtered.map(lic => {
@@ -1604,19 +1605,21 @@ const AdminLicenses = () => {
                           </div>
                         )}
                       </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="text-xs text-foreground font-medium">{lic.product_name}</span>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <div className="flex items-center gap-1.5 flex-nowrap">
+                          <span className="text-xs text-foreground font-medium whitespace-nowrap">{lic.product_name}</span>
                           {lic.variant && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-600 whitespace-nowrap">{lic.variant}</span>}
                         </div>
                       </td>
-                      <td className="px-4 py-3">
-                        <span className="flex items-center gap-1.5 text-xs font-semibold"
+
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <span className="inline-flex items-center gap-1.5 text-xs font-semibold whitespace-nowrap"
                           style={{ color: st.color }}>
                           <StIcon size={11} />
                           {st.label}
                         </span>
                       </td>
+
                       <td className="px-4 py-3">
                       {lic.customer_name ? (
                           <div>
@@ -1637,8 +1640,9 @@ const AdminLicenses = () => {
                           <span className="text-xs text-muted-foreground">—</span>
                         )}
                       </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center justify-end gap-2">
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <div className="flex items-center justify-end gap-2 flex-nowrap">
+
                           {/* Edit */}
                           <button onClick={() => openEditModal(lic)}
                             title="এডিট করুন"
