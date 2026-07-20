@@ -1,5 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors'
+import { requireServiceRole } from '../_shared/admin-auth.ts'
 
 const SITE = Deno.env.get('PUBLIC_SITE_URL') || 'https://shahedstore.com.bd'
 
