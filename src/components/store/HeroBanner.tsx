@@ -151,7 +151,7 @@ const HeroBanner = () => {
           {/* ══════════════════════════════════
                LEFT — Bold editorial content
           ══════════════════════════════════ */}
-          <div className="flex-1 lg:pr-16 space-y-7 text-center lg:text-left"
+          <div className="flex-1 lg:pr-12 space-y-4 text-center lg:text-left"
             style={{
               opacity: dir === 'in' ? 1 : 0,
               transform: dir === 'in' ? 'none' : 'translateX(-18px)',
