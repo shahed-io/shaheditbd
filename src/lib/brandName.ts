@@ -47,13 +47,15 @@ export const normalizeBrandNameText = (value: string): string => {
   // 3. If "Shahed Store" appears inside a Bengali context, convert to Bengali form
   //    (handles case markers like "Shahed Store-এর" / "Shahed Storeে" too)
   out = out.replace(
-    /Shahed\s*Store(?:\s*-\s*|\s*)?(এর|কে|তে|এ|ের|য়|ে)?/g,
-    (match, suffix, offset, full) => {
+    /Shahed\s*Store(\s*-\s*|\s+)?(এর|কে|তে|এ|ের|য়|ে)?/g,
+    (match, separator, suffix, offset, full) => {
       if (isBengaliContext(full, offset, match.length)) {
-        return BN_NAME + (suffix || '');
+        // If there's a suffix like 'এর', we usually don't want a space before it in Bengali
+        const finalSeparator = suffix ? '' : (separator || ' ');
+        return BN_NAME + finalSeparator + (suffix || '');
       }
-      // English context — keep English, drop any stray Bengali suffix
-      return EN_NAME;
+      // English context — keep English
+      return EN_NAME + (separator || ' ') + (suffix || '');
     }
   );
 
@@ -63,7 +65,13 @@ export const normalizeBrandNameText = (value: string): string => {
     .replace(/Shahed Store\s*Bangladesh/gi, `${EN_NAME} Bangladesh`)
     .replace(/Shahed Store\s*BD/gi, `${EN_NAME} BD`);
 
-  // 5. Cleanup double spaces / spaces before Bengali punctuation
+  // 5. Ensure Bengali brand name has a space before non-suffix Bengali characters
+  out = out.replace(
+    /শাহেদ\s*স্টোর(?!\s|[\-এরকেতেএেরয়ে])([\u0980-\u09FF])/g,
+    `${BN_NAME} $1`
+  );
+
+  // 6. Cleanup double spaces / spaces before Bengali punctuation
   return out
     .replace(/\s+([।.,!?…])/g, '$1')
     .replace(/ {2,}/g, ' ');
