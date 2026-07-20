@@ -1611,13 +1611,14 @@ const AdminLicenses = () => {
                           {lic.variant && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-600 whitespace-nowrap">{lic.variant}</span>}
                         </div>
                       </td>
-                      <td className="px-4 py-3">
-                        <span className="flex items-center gap-1.5 text-xs font-semibold"
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <span className="inline-flex items-center gap-1.5 text-xs font-semibold whitespace-nowrap"
                           style={{ color: st.color }}>
                           <StIcon size={11} />
                           {st.label}
                         </span>
                       </td>
+
                       <td className="px-4 py-3">
                       {lic.customer_name ? (
                           <div>
