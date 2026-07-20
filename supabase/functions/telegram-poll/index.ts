@@ -352,10 +352,60 @@ async function handleCheckKey(botToken: string, chatId: string | number, rawInpu
     [{ text: t(lang, 'btn_menu'), callback_data: 'start' }],
   ]);
 
-  if (waitingMsgId) {
-    await editMsg(botToken, chatId, waitingMsgId, out, kb, 'Markdown');
-  } else {
-    await sendMsg(botToken, chatId, out, kb, undefined, 'Markdown');
+  // Strip Markdown special chars from dynamic values that could break Telegram parsing.
+  // We keep our own formatting (backticks/asterisks) but scrub PidMS-provided text.
+  const sanitize = (s: string | null | undefined) =>
+    (s ?? '').replace(/[_*`\[\]()~>#+=|{}!\\]/g, '').replace(/\s+/g, ' ').trim();
+  const rebuild = (useMarkdown: boolean) => {
+    let o = useMarkdown
+      ? (lang === 'bn' ? '🔑 *লাইসেন্স কী চেক ফলাফল*\n\n' : '🔑 *License Key Check Result*\n\n')
+      : (lang === 'bn' ? '🔑 লাইসেন্স কী চেক ফলাফল\n\n' : '🔑 License Key Check Result\n\n');
+    results.forEach((r, i) => {
+      const emoji = r.status === 'live' ? '✅' : r.status === 'dead' ? '❌' : '⚠️';
+      const statusText = r.status === 'live'
+        ? (lang === 'bn' ? 'বৈধ (LIVE)' : 'VALID (LIVE)')
+        : r.status === 'dead' ? (lang === 'bn' ? 'অবৈধ (DEAD)' : 'INVALID (DEAD)')
+        : (lang === 'bn' ? 'অজানা' : 'UNKNOWN');
+      o += useMarkdown ? `${emoji} *${i + 1}. ${statusText}*\n` : `${emoji} ${i + 1}. ${statusText}\n`;
+      o += useMarkdown ? `\`${sanitize(r.key)}\`\n` : `${sanitize(r.key)}\n`;
+      if (r.product) o += `📦 ${sanitize(r.product)}\n`;
+      if (r.edition) o += `🏷️ ${sanitize(r.edition)}\n`;
+      o += `💬 ${sanitize(r.meaning)}\n`;
+      if (r.errorCode) o += `🔢 ${sanitize(r.errorCode)}\n`;
+      o += '\n';
+    });
+    o += lang === 'bn'
+      ? `━━━━━━━━━━━━━\n📊 সারাংশ: ✅ ${live} বৈধ • ❌ ${dead} অবৈধ • ⚠️ ${unk} অজানা`
+      : `━━━━━━━━━━━━━\n📊 Summary: ✅ ${live} live • ❌ ${dead} dead • ⚠️ ${unk} unknown`;
+    return o;
+  };
+
+  const trySend = async (useMarkdown: boolean) => {
+    const text = rebuild(useMarkdown);
+    if (waitingMsgId) {
+      const r = await editMsg(botToken, chatId, waitingMsgId, text, kb, useMarkdown ? 'Markdown' : undefined);
+      if (r?.ok === false) console.error('[checkkey] editMsg failed', useMarkdown ? '(md)' : '(plain)', r?.description);
+      return r;
+    }
+    const r = await sendMsg(botToken, chatId, text, kb, undefined, useMarkdown ? 'Markdown' : undefined);
+    if (r?.ok === false) console.error('[checkkey] sendMsg failed', useMarkdown ? '(md)' : '(plain)', r?.description);
+    return r;
+  };
+
+  try {
+    const r = await trySend(true);
+    if (r?.ok === false) {
+      // Markdown parse rejected → retry as plain text so the user always sees a result.
+      const r2 = await trySend(false);
+      if (r2?.ok === false && waitingMsgId) {
+        // Edit failed too → send a fresh plain-text message so the "Checking…" placeholder
+        // is not left hanging.
+        await sendMsg(botToken, chatId, rebuild(false), kb);
+      }
+    }
+  } catch (e) {
+    console.error('[checkkey] final send exception', String(e));
+    await sendMsg(botToken, chatId, rebuild(false), kb).catch(() => {});
   }
 }
 
