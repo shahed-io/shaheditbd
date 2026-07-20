@@ -32,6 +32,8 @@ async function smCall(path: string, params: Record<string, string>, lovableKey: 
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  const authFail = await requireAdmin(req);
+  if (authFail) return authFail;
 
   const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
   const SEMRUSH_API_KEY = Deno.env.get('SEMRUSH_API_KEY');
