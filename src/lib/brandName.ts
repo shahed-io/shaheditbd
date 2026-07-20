@@ -71,7 +71,13 @@ export const normalizeBrandNameText = (value: string): string => {
     `${BN_NAME} $1`
   );
 
-  // 6. Cleanup double spaces / spaces before Bengali punctuation
+  // 6. Generic: ensure a space between Latin letters/digits and Bengali script
+  //    (fixes cases like "Storeথেকে", "VPNএর দাম", "2499৳" style joins)
+  out = out
+    .replace(/([A-Za-z0-9])([\u0985-\u09B9\u09BE-\u09CC\u09D7\u09DC-\u09DF])/g, '$1 $2')
+    .replace(/([\u0985-\u09B9\u09BE-\u09CC\u09D7\u09DC-\u09DF])([A-Za-z0-9])/g, '$1 $2');
+
+  // 7. Cleanup double spaces / spaces before Bengali punctuation
   return out
     .replace(/\s+([।.,!?…])/g, '$1')
     .replace(/ {2,}/g, ' ');
