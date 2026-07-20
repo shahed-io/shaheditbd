@@ -550,7 +550,8 @@ const ProductDetail = () => {
                   title={`${productDisplayName} - ৳${displayPrice.toLocaleString()} | Shahed Store Bangladesh`}
                   onLoad={() => setImgLoaded(true)}
                   onError={e => { (e.target as HTMLImageElement).src = PLACEHOLDER; }}
-                  className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
+                  onClick={() => setZoomOpen(true)}
+                  className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 cursor-zoom-in"
                   style={{ opacity: imgLoaded ? 1 : 0 }}
                 />
 
