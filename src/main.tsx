@@ -104,6 +104,29 @@ class RootErrorBoundary extends React.Component<
   }
 }
 
+// ══════════════════════════════════════════════════════════════
+// Scroll performance: toggle html.is-scrolling during scroll so
+// heavy backdrop-filter/blur effects can be temporarily neutralized
+// (see index.css). Prevents laggy scrolling on desktop.
+// ══════════════════════════════════════════════════════════════
+if (typeof window !== 'undefined') {
+  let scrollTimer: number | undefined;
+  let ticking = false;
+  const root = document.documentElement;
+  const onScroll = () => {
+    if (!ticking) {
+      root.classList.add('is-scrolling');
+      ticking = true;
+    }
+    if (scrollTimer) window.clearTimeout(scrollTimer);
+    scrollTimer = window.setTimeout(() => {
+      root.classList.remove('is-scrolling');
+      ticking = false;
+    }, 140);
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+}
+
 createRoot(document.getElementById("root")!).render(
   <RootErrorBoundary>
     <ScraperShield>
@@ -111,3 +134,4 @@ createRoot(document.getElementById("root")!).render(
     </ScraperShield>
   </RootErrorBoundary>
 );
+

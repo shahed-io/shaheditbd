@@ -2918,3 +2918,31 @@ html[data-theme="midnight-purple"] .product-card-new:hover {
 }
 
 
+/* ══════════════════════════════════════════════════════════════
+   SCROLL PERFORMANCE OPTIMIZATION (desktop lag fix)
+   While the user is actively scrolling, heavy backdrop-filter and
+   large blur() effects are the #1 cause of jank. We temporarily
+   disable them (main.tsx toggles html.is-scrolling) so scroll
+   stays smooth, then they snap back the moment scroll settles.
+   ══════════════════════════════════════════════════════════════ */
+html.is-scrolling *,
+html.is-scrolling *::before,
+html.is-scrolling *::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+/* Neutralize expensive blur() filters on decorative glow layers
+   during scroll — targets only pointer-events:none decorations,
+   never real content. */
+html.is-scrolling [aria-hidden="true"] {
+  filter: none !important;
+}
+
+/* Promote large offscreen sections so the browser can skip
+   painting them until they're near the viewport. */
+main > section,
+main > div > section {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 800px;
+}
+
