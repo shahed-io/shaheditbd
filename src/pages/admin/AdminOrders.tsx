@@ -547,15 +547,22 @@ const OrderDetailModal = ({
 
           {/* Tabs */}
           <div className="flex border-b border-border flex-shrink-0">
-            {(['details', 'timeline'] as const).map(t => (
-              <button
-                key={t}
-                onClick={() => setActiveTab(t)}
-                className={`flex-1 py-2.5 text-xs font-semibold transition-colors ${activeTab === t ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'}`}
-              >
-                {t === 'details' ? '📋 বিবরণ' : '📅 ইতিহাস'}
-              </button>
-            ))}
+            {(['details', 'payment', 'timeline'] as const).map(t => {
+              const label = t === 'details' ? '📋 বিবরণ' : t === 'payment' ? '💳 পেমেন্ট' : '📅 ইতিহাস';
+              const count = t === 'payment' ? (bkashTxns.length + proofs.length) : 0;
+              return (
+                <button
+                  key={t}
+                  onClick={() => setActiveTab(t)}
+                  className={`flex-1 py-2.5 text-xs font-semibold transition-colors inline-flex items-center justify-center gap-1.5 whitespace-nowrap ${activeTab === t ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'}`}
+                >
+                  <span>{label}</span>
+                  {t === 'payment' && count > 0 && (
+                    <span className="min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold bg-primary/15 text-primary inline-flex items-center justify-center">{count}</span>
+                  )}
+                </button>
+              );
+            })}
           </div>
 
           <div className="overflow-y-auto flex-1 p-5 space-y-4">
