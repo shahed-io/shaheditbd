@@ -425,72 +425,49 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
             )}
           </div>
 
-          <div className="flex flex-col gap-2.5">
-            {/* Primary: Buy Now / Pre-order — visionOS floating glass with gradient */}
+          <div className="space-y-2">
             {outOfStock ? (
               <button
                 onClick={e => { e.stopPropagation(); waPreOrder(); }}
-                className="relative group/btn overflow-hidden h-11 rounded-[20px] flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.02] active:scale-[0.97]"
-                style={{ boxShadow: '0 8px 24px -6px hsla(0,80%,55%,0.45), 0 2px 6px hsla(0,0%,0%,0.15)' }}
-              >
-                <span className="absolute inset-0" style={{ background: 'linear-gradient(135deg, hsl(0,85%,60%), hsl(15,90%,58%))', opacity: 0.92 }} />
-                <span className="absolute inset-0 backdrop-blur-xl" style={{ background: 'rgba(255,255,255,0.08)' }} />
-                <span className="absolute inset-x-0 top-0 h-1/2 rounded-t-[20px] pointer-events-none" style={{ background: 'linear-gradient(to bottom, rgba(255,255,255,0.28), transparent)' }} />
-                <span className="absolute inset-0 rounded-[20px] pointer-events-none" style={{ border: '1px solid rgba(255,255,255,0.32)' }} />
-                <span className="relative flex items-center gap-1.5 text-white text-[12.5px] font-semibold tracking-tight">
-                  <Clock size={13} /> Pre-order
-                </span>
+                className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[12px] font-bold text-white transition-all hover:scale-[1.02]"
+                style={{
+                  background: 'linear-gradient(135deg, hsl(0,80%,55%), hsl(15,90%,55%))',
+                  boxShadow: '0 4px 16px hsla(0,80%,55%,0.35)',
+                }}>
+                <Clock size={12} /> Pre-order
               </button>
             ) : (
               <button
                 onClick={e => { e.stopPropagation(); setShowModal(true); }}
-                className="relative group/btn overflow-hidden h-11 rounded-[20px] flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.02] active:scale-[0.97]"
-                style={{ boxShadow: '0 8px 24px -6px hsla(271,91%,55%,0.45), 0 2px 6px hsla(0,0%,0%,0.15)' }}
-              >
-                <span className="absolute inset-0 transition-opacity duration-300 opacity-90 group-hover/btn:opacity-100" style={{ background: 'linear-gradient(135deg, hsl(271,91%,62%), hsl(185,90%,52%))' }} />
-                <span className="absolute inset-0 backdrop-blur-xl" style={{ background: 'rgba(255,255,255,0.08)' }} />
-                <span className="absolute inset-x-0 top-0 h-1/2 rounded-t-[20px] pointer-events-none" style={{ background: 'linear-gradient(to bottom, rgba(255,255,255,0.28), transparent)' }} />
-                <span className="absolute inset-0 rounded-[20px] pointer-events-none" style={{ border: '1px solid rgba(255,255,255,0.32)' }} />
-                <span className="relative flex items-center gap-1.5 text-white text-[12.5px] font-semibold tracking-tight">
-                  <CreditCard size={13} /> Buy Now
-                </span>
+                className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[12px] font-bold text-white transition-all hover:scale-[1.02]"
+                style={{
+                  background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
+                  boxShadow: '0 4px 16px hsla(271,91%,65%,0.35)',
+                }}>
+                <CreditCard size={12} /> Buy Now
               </button>
             )}
-
-            {/* Secondary: transparent frosted glass */}
-            <div className="grid grid-cols-2 gap-2.5">
+            <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={e => { e.stopPropagation(); waMsg(); }}
-                className="relative overflow-hidden h-10 rounded-[20px] flex items-center justify-center gap-1.5 transition-all duration-300 hover:scale-[1.02] active:scale-[0.96]"
+                className="flex items-center justify-center gap-1 py-2 rounded-xl text-[11px] font-semibold transition-all hover:scale-[1.02]"
                 style={{
-                  background: 'hsla(0,0%,100%,0.06)',
-                  backdropFilter: 'blur(14px)',
-                  WebkitBackdropFilter: 'blur(14px)',
-                  border: '1px solid hsla(0,0%,100%,0.12)',
-                  boxShadow: 'inset 0 1px 0 hsla(0,0%,100%,0.08), 0 4px 12px hsla(0,0%,0%,0.2)',
-                }}
-              >
-                <span className="absolute inset-x-0 top-0 h-1/2 rounded-t-[20px] pointer-events-none" style={{ background: 'linear-gradient(to bottom, hsla(0,0%,100%,0.06), transparent)' }} />
-                <MessageCircle size={12} className="relative" style={{ color: 'hsl(158,80%,62%)' }} />
-                <span className="relative text-[11.5px] font-medium text-foreground/90">WhatsApp</span>
+                  background: 'hsla(158,80%,48%,0.1)',
+                  border: '1px solid hsla(158,80%,48%,0.25)',
+                  color: 'hsl(158,80%,58%)',
+                }}>
+                <MessageCircle size={11} /> WhatsApp
               </button>
               <button
                 disabled={outOfStock}
                 onClick={e => { e.stopPropagation(); if (outOfStock) return; addToCart({ id: product.id, name: product.name, category: product.category, price: product.price, originalPrice: product.originalPrice, image: product.image }); }}
-                className="relative overflow-hidden h-10 rounded-[20px] flex items-center justify-center gap-1.5 transition-all duration-300 hover:scale-[1.02] active:scale-[0.96] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-                style={{
-                  background: inCart ? 'hsla(271,91%,65%,0.14)' : 'hsla(0,0%,100%,0.06)',
-                  backdropFilter: 'blur(14px)',
-                  WebkitBackdropFilter: 'blur(14px)',
-                  border: `1px solid ${inCart ? 'hsla(271,91%,75%,0.35)' : 'hsla(0,0%,100%,0.12)'}`,
-                  boxShadow: 'inset 0 1px 0 hsla(0,0%,100%,0.08), 0 4px 12px hsla(0,0%,0%,0.2)',
-                }}
-              >
-                <span className="absolute inset-x-0 top-0 h-1/2 rounded-t-[20px] pointer-events-none" style={{ background: 'linear-gradient(to bottom, hsla(0,0%,100%,0.06), transparent)' }} />
-                <ShoppingCart size={12} className="relative" style={{ color: inCart ? 'hsl(271,91%,80%)' : undefined }} />
-                <span className="relative text-[11.5px] font-medium" style={{ color: inCart ? 'hsl(271,91%,85%)' : undefined }}>
-                  {outOfStock ? 'Out' : (inCart ? '✓ Added' : 'Cart')}
-                </span>
+                className="flex items-center justify-center gap-1 py-2 rounded-xl text-[11px] font-semibold transition-all hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                style={inCart
+                  ? { background: 'hsla(271,91%,65%,0.15)', border: '1px solid hsla(271,91%,65%,0.4)', color: 'hsl(271,91%,75%)' }
+                  : { background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', color: 'hsl(var(--muted-foreground))' }
+                }>
+                <ShoppingCart size={11} />
+                {outOfStock ? 'Out' : (inCart ? '✓ Added' : 'Cart')}
               </button>
             </div>
           </div>
