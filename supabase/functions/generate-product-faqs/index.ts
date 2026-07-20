@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { callAIWithFallback } from "../_shared/ai-fallback.ts";
 import { normalizeBrandNameText } from "../_shared/brand-name.ts";
+import { requireAdmin } from "../_shared/admin-auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
