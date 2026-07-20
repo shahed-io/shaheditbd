@@ -132,7 +132,7 @@ const HeroBanner = () => {
       </div>
 
       {/* ── Glass card frame around hero content ── */}
-      <div className="relative mx-auto w-full max-w-[1800px] rounded-[28px] lg:rounded-[40px]"
+      <div className="relative mx-auto w-full max-w-[1800px] rounded-[28px] lg:rounded-[40px] overflow-hidden"
         style={{
           background: 'rgba(255,255,255,0.42)',
           backdropFilter: 'blur(32px)',
@@ -140,9 +140,10 @@ const HeroBanner = () => {
           border: '1px solid rgba(255,255,255,0.6)',
           boxShadow: '0 32px 64px -16px hsla(258,78%,55%,0.12), inset 0 1px 0 rgba(255,255,255,0.9)',
         }}>
-        {/* Soft inner accent */}
-        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, hsla(258,78%,60%,0.10), transparent 70%)' }} />
+        {/* Soft inner accent (kept inside so it doesn't break the top curve) */}
+        <div className="absolute top-0 right-0 w-96 h-96 rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, hsla(258,78%,60%,0.10), transparent 70%)', transform: 'translate(30%,-30%)' }} />
+
 
         <div className="relative container-fluid">
         <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-0 pt-3 pb-5 md:pt-4 md:pb-6 lg:pt-5 lg:pb-6">
@@ -150,7 +151,7 @@ const HeroBanner = () => {
           {/* ══════════════════════════════════
                LEFT — Bold editorial content
           ══════════════════════════════════ */}
-          <div className="flex-1 lg:pr-16 space-y-7 text-center lg:text-left"
+          <div className="flex-1 lg:pr-12 space-y-4 text-center lg:text-left"
             style={{
               opacity: dir === 'in' ? 1 : 0,
               transform: dir === 'in' ? 'none' : 'translateX(-18px)',
@@ -159,15 +160,15 @@ const HeroBanner = () => {
 
             {/* Category tag */}
             <div className="inline-flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 text-[10.5px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-full text-white"
+              <span className="inline-flex items-center gap-1.5 text-[9.5px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-full text-white"
                 style={{
                   background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(215,82%,52%))',
                   boxShadow: '0 4px 16px hsla(258,78%,55%,0.35)',
                 }}>
-                <span className="text-[13px]">{slide.tagIcon || '✦'}</span>
+                <span className="text-[11px]">{slide.tagIcon || '✦'}</span>
                 {slide.tag}
               </span>
-              <span className="text-[10px] font-bold tracking-widest uppercase px-3 py-2 rounded-full"
+              <span className="text-[9px] font-bold tracking-widest uppercase px-2.5 py-1.5 rounded-full"
                 style={{
                   background: 'hsla(258,78%,55%,0.07)',
                   border: '1px solid hsla(258,78%,55%,0.18)',
@@ -177,14 +178,15 @@ const HeroBanner = () => {
               </span>
             </div>
 
+
             {/* Headline */}
             <div>
-              <h1 className="font-sora font-black leading-[1.0] tracking-tight"
-                style={{ fontSize: 'clamp(3rem, 8vw, 5.5rem)', color: 'hsl(226,35%,12%)' }}>
+              <h1 className="font-sora font-black leading-[1.05] tracking-tight"
+                style={{ fontSize: 'clamp(1.9rem, 5vw, 3.4rem)', color: 'hsl(226,35%,12%)' }}>
                 <span className="block">{slide.title}</span>
                 <span className="block"
                 style={{
-                  fontSize: 'clamp(3rem, 8vw, 5.5rem)',
+                  fontSize: 'clamp(1.9rem, 5vw, 3.4rem)',
                   background: 'linear-gradient(135deg, hsl(258,78%,52%) 0%, hsl(215,82%,52%) 50%, hsl(200,90%,46%) 100%)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
@@ -193,23 +195,23 @@ const HeroBanner = () => {
                 {slide.titleAccent}
                 </span>
               </h1>
-              <p className="text-base lg:text-lg font-semibold mt-3"
+              <p className="text-[13px] lg:text-[14px] font-semibold mt-2"
                 style={{ color: 'hsl(226,22%,44%)' }}>
                 {slide.subtitle}
               </p>
             </div>
 
             {/* Description */}
-            <p className="text-[14px] leading-relaxed max-w-[420px] mx-auto lg:mx-0"
+            <p className="text-[12.5px] leading-relaxed max-w-[420px] mx-auto lg:mx-0"
               style={{ color: 'hsl(226,18%,52%)' }}>
               {slide.desc}
             </p>
 
             {/* Feature pills */}
-            <div className="flex flex-wrap gap-2 justify-center lg:justify-start">
+            <div className="flex flex-wrap gap-1.5 justify-center lg:justify-start">
               {slide.features.map(f => (
                 <span key={f}
-                  className="inline-flex items-center gap-1.5 text-[12px] font-semibold px-3.5 py-2 rounded-full"
+                  className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1.5 rounded-full"
                   style={{
                     background: 'rgba(255,255,255,0.85)',
                     backdropFilter: 'blur(12px)',
@@ -217,26 +219,26 @@ const HeroBanner = () => {
                     color: 'hsl(258,78%,50%)',
                     boxShadow: '0 2px 8px hsla(258,78%,55%,0.08)',
                   }}>
-                  <CheckCircle2 size={11} style={{ color: 'hsl(200,90%,46%)' }} />
+                  <CheckCircle2 size={10} style={{ color: 'hsl(200,90%,46%)' }} />
                   {f}
                 </span>
               ))}
             </div>
 
             {/* Price + CTA */}
-            <div className="space-y-4">
+            <div className="space-y-3">
               {/* Price row */}
               <div className="flex items-center gap-3 justify-center lg:justify-start">
                 <div>
-                  <div className="text-sm line-through font-medium" style={{ color: 'hsl(226,15%,58%)' }}>
+                  <div className="text-xs line-through font-medium" style={{ color: 'hsl(226,15%,58%)' }}>
                     {slide.original}
                   </div>
                   <div className="font-sora font-black"
-                    style={{ fontSize: 'clamp(2.2rem, 4vw, 3rem)', color: 'hsl(226,35%,12%)', lineHeight: 1 }}>
+                    style={{ fontSize: 'clamp(1.6rem, 3vw, 2.25rem)', color: 'hsl(226,35%,12%)', lineHeight: 1 }}>
                     {slide.price}
                   </div>
                 </div>
-                <span className="self-end mb-1 inline-flex items-center text-[11.5px] font-black text-white px-3.5 py-2 rounded-full"
+                <span className="self-end mb-1 inline-flex items-center text-[10.5px] font-black text-white px-3 py-1.5 rounded-full"
                   style={{
                     background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,48%))',
                     boxShadow: '0 4px 14px hsla(258,78%,55%,0.40)',
@@ -245,32 +247,34 @@ const HeroBanner = () => {
                 </span>
               </div>
 
+
               {/* CTAs */}
-              <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
+              <div className="flex flex-wrap gap-2.5 justify-center lg:justify-start">
                 <a href={slide.productSlug ? `/product/${slide.productSlug}` : '/shop'}
-                  className="btn-vision-primary inline-flex items-center gap-2 px-7 py-3.5 text-[14px]">
-                  <ShoppingBag size={15} /> Buy Now <ArrowRight size={13} />
+                  className="btn-vision-primary inline-flex items-center gap-2 px-5 py-2.5 text-[12.5px]">
+                  <ShoppingBag size={13} /> Buy Now <ArrowRight size={12} />
                 </a>
                 <a href="/shop"
-                  className="btn-vision-glass inline-flex items-center gap-2 px-6 py-3.5 text-[14px]"
+                  className="btn-vision-glass inline-flex items-center gap-2 px-4 py-2.5 text-[12.5px]"
                   style={{ color: 'hsl(258,78%,45%)' }}>
-                  <TrendingUp size={14} /> View All Deals
+                  <TrendingUp size={12} /> View All Deals
                 </a>
 
               </div>
             </div>
 
             {/* Trust row */}
-            <div className="flex flex-wrap gap-4 justify-center lg:justify-start pt-1">
+            <div className="flex flex-wrap gap-3 justify-center lg:justify-start pt-0.5">
               {DEFAULT_TRUST.map(t => (
                 <span key={t.text}
-                  className="flex items-center gap-1.5 text-[11.5px] font-semibold"
+                  className="flex items-center gap-1.5 text-[10.5px] font-semibold"
                   style={{ color: 'hsl(226,20%,50%)' }}>
                   <span style={{ color: 'hsl(258,78%,55%)' }}>{t.icon}</span>
                   {t.text}
                 </span>
               ))}
             </div>
+
           </div>
 
           {/* ══════════════════════════════════
