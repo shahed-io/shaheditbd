@@ -26,6 +26,7 @@ type Slide = {
   accentTo: string;
   emoji: string;
   logoImg: string;
+  heroImage: string;
   features: SlideFeature[];
   enabled: boolean;
   productSlug: string;
@@ -64,11 +65,11 @@ const DEFAULT_TRUST: TrustItem[] = [
 
 const EMPTY_SLIDE = (): Slide => ({
   id: crypto.randomUUID(),
-  tag: 'New Deal', tagIcon: '🔥', title: 'Product', titleAccent: 'Name',
-  subtitle: 'Short subtitle here', desc: 'Describe the product briefly.',
+  tag: 'Featured', tagIcon: '✨', title: 'Product', titleAccent: 'Name',
+  subtitle: 'One line that speaks.', desc: 'Describe the product briefly.',
   price: '৳999', original: '৳2,999', off: '67%', badge: 'HOT DEAL',
-  accentFrom: 'hsl(243,75%,55%)', accentTo: 'hsl(263,70%,52%)',
-  emoji: '🛍️', logoImg: '', features: ['Feature 1', 'Feature 2', 'Feature 3'],
+  accentFrom: 'hsl(258,90%,68%)', accentTo: 'hsl(210,95%,60%)',
+  emoji: '🛍️', logoImg: '', heroImage: '', features: ['Feature 1', 'Feature 2', 'Feature 3'],
   enabled: true, productSlug: '',
 });
 
