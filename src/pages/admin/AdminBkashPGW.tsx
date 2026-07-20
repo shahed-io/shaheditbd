@@ -105,7 +105,7 @@ export default function AdminBkashPGW() {
       };
       const { error } = await supabase
         .from('site_settings')
-        .upsert({ key: BKASH_CONTENT_KEY, value: JSON.stringify(cleaned), category: 'public' }, { onConflict: 'key' });
+        .upsert({ key: BKASH_CONTENT_KEY, value: JSON.stringify(cleaned), category: 'store' }, { onConflict: 'key' });
       if (error) throw error;
     },
     onSuccess: () => {
