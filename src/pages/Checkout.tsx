@@ -136,6 +136,7 @@ const Checkout = () => {
   const [refCreditInput, setRefCreditInput] = useState('');
   const [refCreditError, setRefCreditError] = useState('');
   const pendingSubmitRef = useRef(false);
+  const submittingRef = useRef(false); // blocks abandoned-checkout upsert during/after submission
 
   // Persistent session token for abandoned-checkout tracking
   const sessionTokenRef = useRef<string>('');
@@ -324,6 +325,7 @@ const Checkout = () => {
   useEffect(() => {
     const hasContact = !!(form.email || form.phone || form.name);
     if (!hasContact || items.length === 0) return;
+    if (submittingRef.current) return; // don't overwrite while placing order
     clearTimeout(abandonedTimer.current);
     abandonedTimer.current = setTimeout(async () => {
       try {
@@ -448,6 +450,10 @@ const Checkout = () => {
     }
 
     setLoading(true);
+    // Freeze the abandoned-checkout tracker so the debounced upsert cannot
+    // re-create/overwrite the row while the order is being placed.
+    submittingRef.current = true;
+    clearTimeout(abandonedTimer.current);
     try {
       const orderNum = 'ORD-' + Array.from(crypto.getRandomValues(new Uint8Array(5))).map(b => b.toString(36)).join('').toUpperCase().slice(0, 8);
 
@@ -599,6 +605,15 @@ const Checkout = () => {
       // ── bKash Online (PGW) — redirect to bKash hosted checkout ──
       if (paymentMethod === 'bkash_online') {
         try {
+          // Mark abandoned checkout as converted BEFORE redirect, otherwise
+          // the row stays in "Abandoned Checkouts" even after a real order.
+          try {
+            await supabase.rpc('mark_abandoned_checkout_converted', {
+              p_session_token: sessionTokenRef.current,
+              p_order_id: order.id,
+            });
+          } catch { /* silent */ }
+
           const { data: bkData, error: bkErr } = await supabase.functions.invoke('bkash-create-payment', {
             body: {
               orderId: order.id,
@@ -611,8 +626,15 @@ const Checkout = () => {
             console.error('[Checkout] bkash-create error:', bkErr, bkData);
             setSubmitError('bKash পেমেন্ট শুরু করা যায়নি। আবার চেষ্টা করুন।');
             setLoading(false);
+            submittingRef.current = false;
             return;
           }
+          // Rotate session token so next checkout starts a fresh abandoned row
+          try {
+            const newTok = 'cs_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 10);
+            localStorage.setItem('checkout_session_token', newTok);
+            sessionTokenRef.current = newTok;
+          } catch {}
           // Redirect user to bKash hosted page
           window.location.href = bkData.bkashURL;
           return;
@@ -620,6 +642,7 @@ const Checkout = () => {
           console.error('[Checkout] bkash invoke failed:', e);
           setSubmitError('bKash পেমেন্ট গেটওয়ে কানেক্ট হয়নি। আবার চেষ্টা করুন।');
           setLoading(false);
+          submittingRef.current = false;
           return;
         }
       }
@@ -769,6 +792,8 @@ const Checkout = () => {
       }
     } finally {
       setLoading(false);
+      // Re-enable abandoned tracker only if order didn't succeed
+      if (!orderPlaced) submittingRef.current = false;
     }
   };
 
