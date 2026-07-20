@@ -925,9 +925,17 @@ body.admin-page button,
 body.admin-page [role="tab"],
 body.admin-page label,
 body.admin-page nav a,
-body.admin-page .admin-nav-item {
-  word-break: keep-all;
-  overflow-wrap: normal;
+body.admin-page .admin-nav-item,
+body.admin-page [class*="badge"],
+body.admin-page [class*="Badge"],
+body.admin-page [class*="rounded-full"],
+body.admin-page [role="status"],
+body.admin-page [role="button"],
+body.admin-page select,
+body.admin-page option {
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  overflow-wrap: normal !important;
   hyphens: none;
 }
 
@@ -939,9 +947,27 @@ body.admin-page a[href^="http"] {
   overflow-wrap: anywhere;
 }
 
-/* Tables: keep headers on one line, allow cells to wrap cleanly */
-body.admin-page th { white-space: nowrap; }
-body.admin-page td { word-break: break-word; overflow-wrap: anywhere; }
+/* Tables: keep every label/value on one line; table containers scroll horizontally. */
+body.admin-page table {
+  table-layout: auto;
+  width: max-content;
+  min-width: 100%;
+}
+body.admin-page th,
+body.admin-page td,
+body.admin-page th *,
+body.admin-page td * {
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  overflow-wrap: normal !important;
+  hyphens: none !important;
+}
+body.admin-page td code,
+body.admin-page td .font-mono {
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  overflow-wrap: normal !important;
+}
 
 /* Page header title scales fluidly */
 body.admin-page .admin-page-header h1,
@@ -1899,6 +1925,9 @@ body.admin-page table {
   border-collapse: separate;
   border-spacing: 0;
   font-size: 0.8125rem;
+  table-layout: auto;
+  width: max-content;
+  min-width: 100%;
 }
 body.admin-page table thead {
   background: hsl(var(--ad-surface-2)) !important;
@@ -1917,6 +1946,9 @@ body.admin-page table tbody td {
   padding: 0.75rem 0.875rem;
   border-bottom: 1px solid hsl(var(--ad-border));
   color: hsl(var(--ad-text));
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  overflow-wrap: normal !important;
 }
 body.admin-page table tbody tr:hover {
   background: hsl(var(--ad-surface-2));
@@ -2497,19 +2529,75 @@ body.admin-page main > .admin-page-header + div > div.flex:first-child:has(> div
   50% { opacity: 1; transform: scale(1.08); }
 }
 
-/* Admin panel mobile table fix — ensure tables scroll horizontally
-   instead of squishing columns into letter-per-line stacks */
+/* Admin panel no-wrap system — text must stay on one line on mobile/tablet/desktop.
+   Wide content scrolls horizontally instead of dropping to a second line. */
+body.admin-page .overflow-x-auto,
+body.admin-page [class*="overflow-x-auto"] {
+  -webkit-overflow-scrolling: touch;
+}
+
+body.admin-page .overflow-x-auto > table,
+body.admin-page [class*="overflow-x-auto"] > table {
+  table-layout: auto !important;
+  width: max-content !important;
+  min-width: 100% !important;
+}
+
+body.admin-page table th,
+body.admin-page table td,
+body.admin-page table th *,
+body.admin-page table td *,
+body.admin-page button,
+body.admin-page button *,
+body.admin-page [role="button"],
+body.admin-page [role="button"] *,
+body.admin-page [role="tab"],
+body.admin-page [role="tab"] *,
+body.admin-page .admin-nav-item,
+body.admin-page .admin-nav-item *,
+body.admin-page .badge,
+body.admin-page .badge *,
+body.admin-page [class*="rounded-full"],
+body.admin-page [class*="rounded-full"] * {
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  overflow-wrap: normal !important;
+  hyphens: none !important;
+}
+
+body.admin-page .break-all,
+body.admin-page .break-words,
+body.admin-page [class*="break-all"],
+body.admin-page [class*="break-words"] {
+  word-break: keep-all !important;
+  overflow-wrap: normal !important;
+  white-space: nowrap !important;
+}
+
+body.admin-page .flex-wrap:has(.badge),
+body.admin-page .flex-wrap:has([class*="rounded-full"]),
+body.admin-page .flex-wrap:has(button) {
+  flex-wrap: nowrap !important;
+  overflow-x: auto;
+}
+
 @media (max-width: 767px) {
-  .admin-root .overflow-x-auto > table {
-    min-width: max-content;
-    width: max-content;
+  body.admin-page {
+    font-size: clamp(11px, 0.68rem + 0.22vw, 13px);
   }
-  .admin-root .overflow-x-auto > table th,
-  .admin-root .overflow-x-auto > table td {
-    white-space: nowrap;
+
+  body.admin-page table {
+    font-size: 0.75rem;
   }
-  .admin-root .overflow-x-auto {
-    -webkit-overflow-scrolling: touch;
+
+  body.admin-page button,
+  body.admin-page [role="button"],
+  body.admin-page [role="tab"],
+  body.admin-page table th,
+  body.admin-page table td,
+  body.admin-page .badge,
+  body.admin-page [class*="rounded-full"] {
+    font-size: clamp(0.625rem, 0.58rem + 0.2vw, 0.75rem);
   }
 }
 
