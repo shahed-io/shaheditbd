@@ -275,47 +275,97 @@ const HeroBanner = () => {
           </div>
 
           {/* ══════════════════════════════════
-               MIDDLE — Minimal light bridge
+               MIDDLE — Premium light bridge
           ══════════════════════════════════ */}
           <div className="hidden lg:flex relative items-center justify-center flex-shrink-0"
-            style={{ width: '110px', minHeight: '520px' }}
+            style={{ width: '120px', minHeight: '520px' }}
             aria-hidden="true">
 
-            {/* Soft vertical light beam */}
-            <div className="absolute top-[12%] bottom-[12%] left-1/2 -translate-x-1/2 w-px pointer-events-none"
-              style={{
-                background: 'linear-gradient(to bottom, transparent 0%, hsla(258,78%,60%,0.28) 25%, hsla(200,90%,55%,0.28) 75%, transparent 100%)',
-              }} />
-
-            {/* Ambient soft glow */}
+            {/* Ambient soft aurora glow */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
               style={{
-                width: '180px', height: '360px',
-                background: 'radial-gradient(ellipse at center, hsla(258,78%,62%,0.10) 0%, transparent 70%)',
-                filter: 'blur(20px)',
+                width: '220px', height: '420px',
+                background: 'radial-gradient(ellipse at center, hsla(258,78%,62%,0.14) 0%, hsla(200,90%,55%,0.08) 45%, transparent 72%)',
+                filter: 'blur(24px)',
               }} />
 
-            {/* Three subtle floating logo chips along the beam */}
+            {/* Twin vertical light beams — gives depth like a channel of light */}
+            <div className="absolute top-[8%] bottom-[8%] left-1/2 pointer-events-none"
+              style={{
+                width: '1px',
+                transform: 'translateX(-3px)',
+                background: 'linear-gradient(to bottom, transparent 0%, hsla(258,78%,60%,0.32) 22%, hsla(200,90%,55%,0.32) 78%, transparent 100%)',
+              }} />
+            <div className="absolute top-[8%] bottom-[8%] left-1/2 pointer-events-none"
+              style={{
+                width: '1px',
+                transform: 'translateX(2px)',
+                background: 'linear-gradient(to bottom, transparent 0%, hsla(200,90%,55%,0.22) 22%, hsla(258,78%,60%,0.22) 78%, transparent 100%)',
+              }} />
+
+            {/* Delicate diamond caps at top & bottom of beam */}
+            {[{ top: '6%' }, { bottom: '6%' }].map((pos, i) => (
+              <div key={i} className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
+                style={{
+                  ...pos,
+                  width: '6px', height: '6px',
+                  transform: 'translateX(-50%) rotate(45deg)',
+                  background: 'linear-gradient(135deg, hsl(258,78%,62%), hsl(200,90%,55%))',
+                  boxShadow: '0 0 12px hsla(258,78%,60%,0.6)',
+                }} />
+            ))}
+
+            {/* Three premium floating logo chips along the beam */}
             {[
-              { img: winLogo, alt: 'Windows', top: '18%', ring: 'hsl(215,82%,52%)', delay: '0s' },
+              { img: winLogo, alt: 'Windows', top: '17%', ring: 'hsl(215,82%,52%)', delay: '0s' },
               { img: ms365Logo, alt: 'Office 365', top: '46%', ring: 'hsl(15,90%,55%)', delay: '1.6s' },
-              { img: idmLogo, alt: 'IDM', top: '74%', ring: 'hsl(258,78%,55%)', delay: '3.2s' },
+              { img: idmLogo, alt: 'IDM', top: '75%', ring: 'hsl(258,78%,55%)', delay: '3.2s' },
             ].map((chip, i) => (
               <div key={i} className="absolute left-1/2 -translate-x-1/2 anim-float"
                 style={{ top: chip.top, animationDelay: chip.delay }}>
-                <div className="flex items-center justify-center rounded-2xl"
+
+                {/* Outer glow halo */}
+                <div className="absolute inset-0 rounded-[20px] pointer-events-none"
                   style={{
-                    width: '48px', height: '48px',
-                    background: 'rgba(255,255,255,0.9)',
-                    backdropFilter: 'blur(14px)',
-                    border: `1px solid ${chip.ring}26`,
-                    boxShadow: `0 6px 18px ${chip.ring}22, inset 0 1px 0 rgba(255,255,255,1)`,
+                    background: `radial-gradient(circle at center, ${chip.ring}33 0%, transparent 70%)`,
+                    filter: 'blur(10px)',
+                    transform: 'scale(1.6)',
+                  }} />
+
+                {/* Gradient ring wrapper */}
+                <div className="relative rounded-[20px] p-[1.5px]"
+                  style={{
+                    background: `linear-gradient(145deg, ${chip.ring}66, rgba(255,255,255,0.9) 45%, ${chip.ring}33)`,
+                    boxShadow: `0 10px 28px ${chip.ring}2e, 0 2px 6px hsla(226,35%,12%,0.08)`,
                   }}>
-                  <img src={chip.img} alt={chip.alt} className="w-7 h-7 object-contain" loading="lazy" decoding="async" />
+                  <div className="relative flex items-center justify-center rounded-[18px] overflow-hidden"
+                    style={{
+                      width: '54px', height: '54px',
+                      background: 'linear-gradient(155deg, rgba(255,255,255,0.98) 0%, rgba(248,246,255,0.94) 100%)',
+                      backdropFilter: 'blur(18px)',
+                    }}>
+                    {/* Specular highlight */}
+                    <div className="absolute inset-0 pointer-events-none"
+                      style={{ background: 'radial-gradient(ellipse at 25% 15%, rgba(255,255,255,0.95) 0%, transparent 55%)' }} />
+                    {/* Shimmer top line */}
+                    <div className="absolute top-0 left-2 right-2 h-[1px]"
+                      style={{ background: `linear-gradient(90deg, transparent, ${chip.ring}aa, transparent)` }} />
+                    <img src={chip.img} alt={chip.alt}
+                      className="relative w-8 h-8 object-contain"
+                      loading="lazy" decoding="async" />
+                  </div>
                 </div>
+
+                {/* Tiny orbit dot */}
+                <div className="absolute -right-1.5 -top-1 w-1.5 h-1.5 rounded-full"
+                  style={{
+                    background: chip.ring,
+                    boxShadow: `0 0 8px ${chip.ring}cc`,
+                  }} />
               </div>
             ))}
           </div>
+
 
 
           {/* ══════════════════════════════════
