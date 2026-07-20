@@ -249,31 +249,32 @@ const HeroBanner = () => {
 
 
               {/* CTAs */}
-              <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
+              <div className="flex flex-wrap gap-2.5 justify-center lg:justify-start">
                 <a href={slide.productSlug ? `/product/${slide.productSlug}` : '/shop'}
-                  className="btn-vision-primary inline-flex items-center gap-2 px-7 py-3.5 text-[14px]">
-                  <ShoppingBag size={15} /> Buy Now <ArrowRight size={13} />
+                  className="btn-vision-primary inline-flex items-center gap-2 px-5 py-2.5 text-[12.5px]">
+                  <ShoppingBag size={13} /> Buy Now <ArrowRight size={12} />
                 </a>
                 <a href="/shop"
-                  className="btn-vision-glass inline-flex items-center gap-2 px-6 py-3.5 text-[14px]"
+                  className="btn-vision-glass inline-flex items-center gap-2 px-4 py-2.5 text-[12.5px]"
                   style={{ color: 'hsl(258,78%,45%)' }}>
-                  <TrendingUp size={14} /> View All Deals
+                  <TrendingUp size={12} /> View All Deals
                 </a>
 
               </div>
             </div>
 
             {/* Trust row */}
-            <div className="flex flex-wrap gap-4 justify-center lg:justify-start pt-1">
+            <div className="flex flex-wrap gap-3 justify-center lg:justify-start pt-0.5">
               {DEFAULT_TRUST.map(t => (
                 <span key={t.text}
-                  className="flex items-center gap-1.5 text-[11.5px] font-semibold"
+                  className="flex items-center gap-1.5 text-[10.5px] font-semibold"
                   style={{ color: 'hsl(226,20%,50%)' }}>
                   <span style={{ color: 'hsl(258,78%,55%)' }}>{t.icon}</span>
                   {t.text}
                 </span>
               ))}
             </div>
+
           </div>
 
           {/* ══════════════════════════════════
