@@ -126,19 +126,53 @@ const AdminDashboard = () => {
     const maxSales = sortedProducts[0]?.total_sales || 1;
     setBestSellers(sortedProducts.map(p => ({ ...p, pct: Math.round(((p.total_sales || 0) / maxSales) * 100) })));
 
-    // --- Payment Method Breakdown ---
+    // --- Payment Method Breakdown (normalized) ---
     const pmCounts: Record<string, number> = {};
-    const PM_LABELS: Record<string, string> = { bkash: 'BKash', nagad: 'Nagad', rocket: 'Rocket', upay: 'Upay', bkash_merchant: 'BKash Merchant' };
-    const PM_COLORS = ['hsl(var(--primary))', '#e91e8a', '#8b5cf6', '#f59e0b', '#06b6d4', '#10b981'];
+    const normalizePM = (raw: string): string => {
+      const k = (raw || 'other').toLowerCase().trim();
+      if (k === 'bkash' || k === 'bkash_personal') return 'bkash_personal';
+      if (k === 'bkash_online' || k === 'bkash-online') return 'bkash_online';
+      if (k === 'bkash_merchant' || k === 'bkashmerchant') return 'bkash_merchant';
+      if (k === 'nagad') return 'nagad';
+      if (k === 'rocket') return 'rocket';
+      if (k === 'upay') return 'upay';
+      if (k === 'bank' || k === 'bank_transfer' || k === 'banktransfer') return 'bank_transfer';
+      if (k === 'wallet') return 'wallet';
+      if (k === 'card' || k === 'card_payment') return 'card';
+      return k;
+    };
+    const PM_META: Record<string, { label: string; color: string; gradient: string }> = {
+      bkash_personal:  { label: 'bKash Personal',  color: '#e2136e', gradient: 'linear-gradient(90deg, #e2136e, #ff5ba0)' },
+      bkash_online:    { label: 'bKash Online',    color: '#d61667', gradient: 'linear-gradient(90deg, #d61667, #f472b6)' },
+      bkash_merchant:  { label: 'bKash Merchant',  color: '#b81259', gradient: 'linear-gradient(90deg, #b81259, #ec4899)' },
+      nagad:           { label: 'Nagad',           color: '#f37021', gradient: 'linear-gradient(90deg, #f37021, #fbbf24)' },
+      rocket:          { label: 'Rocket',          color: '#8b3f98', gradient: 'linear-gradient(90deg, #8b3f98, #c084fc)' },
+      upay:            { label: 'Upay',            color: '#0ea5e9', gradient: 'linear-gradient(90deg, #0ea5e9, #67e8f9)' },
+      bank_transfer:   { label: 'Bank Transfer',   color: '#0f766e', gradient: 'linear-gradient(90deg, #0f766e, #5eead4)' },
+      wallet:          { label: 'Wallet',          color: '#7c3aed', gradient: 'linear-gradient(90deg, #7c3aed, #a78bfa)' },
+      card:            { label: 'Card Payment',    color: '#1e40af', gradient: 'linear-gradient(90deg, #1e40af, #60a5fa)' },
+      other:           { label: 'Other',           color: '#64748b', gradient: 'linear-gradient(90deg, #64748b, #cbd5e1)' },
+    };
     orders.filter(o => o.status !== 'cancelled').forEach(o => {
-      const pm = o.payment_method || 'other';
+      const pm = normalizePM(o.payment_method);
       pmCounts[pm] = (pmCounts[pm] || 0) + 1;
     });
-    setPaymentBreakdown(Object.entries(pmCounts).map(([key, count], i) => ({
-      name: PM_LABELS[key] || key,
-      value: count,
-      color: PM_COLORS[i % PM_COLORS.length],
-    })));
+    const totalPm = Object.values(pmCounts).reduce((a, b) => a + b, 0) || 1;
+    setPaymentBreakdown(
+      Object.entries(pmCounts)
+        .sort((a, b) => b[1] - a[1])
+        .map(([key, count]) => {
+          const meta = PM_META[key] || { label: key.replace(/_/g, ' '), color: '#64748b', gradient: 'linear-gradient(90deg, #64748b, #cbd5e1)' };
+          return {
+            key,
+            name: meta.label,
+            value: count,
+            color: meta.color,
+            gradient: meta.gradient,
+            pct: Math.round((count / totalPm) * 100),
+          };
+        })
+    );
 
     // --- Recent Customers ---
     const uniqueCustomers = new Map<string, any>();
