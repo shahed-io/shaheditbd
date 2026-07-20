@@ -325,6 +325,7 @@ const Checkout = () => {
   useEffect(() => {
     const hasContact = !!(form.email || form.phone || form.name);
     if (!hasContact || items.length === 0) return;
+    if (submittingRef.current) return; // don't overwrite while placing order
     clearTimeout(abandonedTimer.current);
     abandonedTimer.current = setTimeout(async () => {
       try {
