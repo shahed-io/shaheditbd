@@ -26,6 +26,7 @@ const checkoutSchema = z.object({
 });
 
 type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 'bank_transfer' | 'wallet' | 'bkash_online';
+type AccountInviteState = 'idle' | 'sending' | 'sent' | 'error';
 
 const Checkout = () => {
   const {
@@ -147,7 +148,7 @@ const Checkout = () => {
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
   const [placedOrderId, setPlacedOrderId] = useState<string | null>(null);
-  const [accountInviteState, setAccountInviteState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [accountInviteState, setAccountInviteState] = useState<AccountInviteState>('idle');
   const [accountInviteMsg, setAccountInviteMsg] = useState('');
   const [instantDelivered, setInstantDelivered] = useState<boolean | null>(null); // null = checking, true = licenses assigned, false = pending
   const [loading, setLoading] = useState(false);
@@ -200,6 +201,40 @@ const Checkout = () => {
         localStorage.setItem('post_login_redirect', currentPath);
       }
     } catch { /* ignore storage errors */ }
+  };
+
+  const createOrLinkGuestAccount = async (orderId: string, silent = false) => {
+    if (user || !form.email || !orderId) return false;
+    setAccountInviteState('sending');
+    setAccountInviteMsg('');
+    try {
+      const { data, error } = await supabase.functions.invoke('guest-invite', {
+        body: {
+          email: form.email,
+          name: form.name,
+          phone: form.phone,
+          order_id: orderId,
+        },
+      });
+      if (error) throw error;
+      if ((data as any)?.error) {
+        throw new Error(typeof (data as any).error === 'string' ? (data as any).error : 'Account setup failed');
+      }
+      setAccountInviteState('sent');
+      setAccountInviteMsg((data as any)?.is_new
+        ? 'Password সেট করার লিংক ইমেইলে পাঠানো হয়েছে।'
+        : 'এই ইমেইলের পুরোনো অ্যাকাউন্টে অর্ডার যুক্ত হয়েছে এবং password reset লিংক পাঠানো হয়েছে।'
+      );
+      if (!silent) toast.success('✅ অ্যাকাউন্ট/অর্ডার sync সম্পন্ন হয়েছে — ইমেইল চেক করুন');
+      return true;
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error('[Checkout] guest account auto-link failed:', err);
+      setAccountInviteState('error');
+      setAccountInviteMsg(`অর্ডার তৈরি হয়েছে, কিন্তু account auto-sync ইমেইল পাঠাতে সমস্যা হয়েছে: ${msg}`);
+      if (!silent) toast.error('অর্ডার হয়েছে, তবে account sync ইমেইল পাঠাতে সমস্যা হয়েছে');
+      return false;
+    }
   };
 
   // If user logs out while wallet is selected, switch to bkash
@@ -687,6 +722,12 @@ const Checkout = () => {
         if (proofError) console.error('[Checkout] payment_proof insert error:', proofError);
       }
 
+      // Guest customer: automatically create/link the account right after the order is saved.
+      // No extra button click is required; the email gets a set/reset password link.
+      if (!user) {
+        await createOrLinkGuestAccount(order.id, true);
+      }
+
       // ── bKash Online (PGW) — redirect to bKash hosted checkout ──
       if (paymentMethod === 'bkash_online') {
         try {
@@ -951,12 +992,14 @@ const Checkout = () => {
             <div className="glass-card p-5 rounded-2xl border border-primary/30 text-left space-y-3">
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center shrink-0">
-                  <User size={18} className="text-primary" />
+                  {accountInviteState === 'sending' ? <Loader2 size={18} className="text-primary animate-spin" /> : <User size={18} className="text-primary" />}
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-bold text-foreground">একটি অ্যাকাউন্ট তৈরি করুন</p>
+                  <p className="text-sm font-bold text-foreground">
+                    {accountInviteState === 'sending' ? 'অ্যাকাউন্ট তৈরি ও অর্ডার sync হচ্ছে…' : 'অ্যাকাউন্ট auto-sync'}
+                  </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    <span className="font-mono text-foreground">{form.email}</span> ইমেইলে password সেট করার লিংক পাঠানো হবে। অ্যাকাউন্ট তৈরি হওয়ার পর এই অর্ডার সহ আপনার সব অর্ডার নিজে থেকেই dashboard-এ চলে আসবে।
+                    <span className="font-mono text-foreground">{form.email}</span> ইমেইলে password set/reset লিংক নিজে থেকেই পাঠানো হচ্ছে। লগইন করলেই এই অর্ডার dashboard-এ দেখা যাবে।
                   </p>
                 </div>
               </div>
@@ -966,34 +1009,13 @@ const Checkout = () => {
               <div className="flex gap-2">
                 <button
                   disabled={accountInviteState === 'sending'}
-                  onClick={async () => {
-                    setAccountInviteState('sending');
-                    setAccountInviteMsg('');
-                    try {
-                      const { data, error } = await supabase.functions.invoke('guest-invite', {
-                        body: {
-                          email: form.email,
-                          name: form.name,
-                          phone: form.phone,
-                          order_id: placedOrderId || undefined,
-                        },
-                      });
-                      if (error) throw error;
-                      if ((data as any)?.error) throw new Error(typeof (data as any).error === 'string' ? (data as any).error : 'Invite failed');
-                      setAccountInviteState('sent');
-                      toast.success('✅ Password সেট করার লিংক আপনার ইমেইলে পাঠানো হয়েছে');
-                    } catch (err) {
-                      const msg = err instanceof Error ? err.message : String(err);
-                      setAccountInviteState('error');
-                      setAccountInviteMsg(msg);
-                    }
-                  }}
+                  onClick={() => placedOrderId && createOrLinkGuestAccount(placedOrderId)}
                   className="btn-glow px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 disabled:opacity-60"
                 >
                   {accountInviteState === 'sending' ? (
                     <><Loader2 size={14} className="animate-spin" /> পাঠানো হচ্ছে…</>
                   ) : (
-                    <><User size={14} /> ইমেইলে invite পাঠান</>
+                    <><User size={14} /> আবার sync/send করুন</>
                   )}
                 </button>
                 <button
@@ -1007,9 +1029,9 @@ const Checkout = () => {
           )}
           {!user && accountInviteState === 'sent' && (
             <div className="glass-card p-4 rounded-2xl border border-green-500/30 text-left">
-              <p className="text-sm font-bold text-green-600 flex items-center gap-2">✅ ইমেইল পাঠানো হয়েছে</p>
+              <p className="text-sm font-bold text-green-600 flex items-center gap-2">✅ অ্যাকাউন্ট ও অর্ডার sync হয়েছে</p>
               <p className="text-xs text-muted-foreground mt-1">
-                <span className="font-mono text-foreground">{form.email}</span> চেক করুন। লিংকে ক্লিক করে password সেট করলেই এই অর্ডার আপনার dashboard-এ চলে আসবে।
+                <span className="font-mono text-foreground">{form.email}</span> চেক করুন। লিংকে ক্লিক করে password set/reset করলেই এই অর্ডার আপনার dashboard-এ দেখা যাবে। {accountInviteMsg}
               </p>
             </div>
           )}

@@ -42,6 +42,7 @@ Deno.serve(async (req) => {
 
     let userId: string | null = null;
     let isNew = false;
+let passwordEmailSent = false;
 
     const { data: invited, error: invErr } = await admin.auth.admin.inviteUserByEmail(email, {
       redirectTo,
@@ -66,9 +67,18 @@ Deno.serve(async (req) => {
         if (!list?.users || list.users.length < 200) break;
       }
       if (!userId) return json({ error: 'User exists but could not be located' }, 500);
+
+      // Existing customer: send a normal password reset link so they can set/recover access.
+      // This keeps guest checkout useful even when the email already has an account.
+      const { error: resetErr } = await admin.auth.resetPasswordForEmail(emailLc, { redirectTo });
+      if (resetErr) {
+        return json({ error: resetErr.message || 'Password reset email failed' }, 500);
+      }
+      passwordEmailSent = true;
     } else if (invited?.user) {
       userId = invited.user.id;
       isNew = true;
+      passwordEmailSent = true;
     }
     if (!userId) return json({ error: 'No user id' }, 500);
 
@@ -97,7 +107,7 @@ Deno.serve(async (req) => {
       linkedCount = Number(data || 0);
     } catch { /* non-fatal */ }
 
-    return json({ success: true, is_new: isNew, user_id: userId, linked_orders: linkedCount });
+    return json({ success: true, is_new: isNew, user_id: userId, linked_orders: linkedCount, password_email_sent: passwordEmailSent });
   } catch (e) {
     return json({ error: e instanceof Error ? e.message : String(e) }, 500);
   }
