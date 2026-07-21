@@ -515,21 +515,21 @@ const Checkout = () => {
     if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online' && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
     if (items.length === 0) { setSubmitError('Cart empty'); return; }
 
-    if (!user) {
-      persistCheckoutState(true);
-      setSubmitError('লগইন করুন — লগইনের পর আপনার অর্ডার নিজে থেকেই সাবমিট হবে');
-      setShowAuthModal(true);
-      return;
-    }
-
-    // Wallet: check balance
+    // Wallet: requires login + sufficient balance
     if (paymentMethod === 'wallet') {
-      if (!user) { setSubmitError('Wallet পেমেন্টের জন্য লগইন করতে হবে'); return; }
+      if (!user) {
+        persistCheckoutState(true);
+        setSubmitError('Wallet পেমেন্টের জন্য লগইন করতে হবে');
+        setShowAuthModal(true);
+        return;
+      }
       if (walletBalance < payableTotal) {
         setSubmitError(`ওয়ালেট ব্যালেন্স অপর্যাপ্ত। বর্তমান ব্যালেন্স: ৳${walletBalance}`);
         return;
       }
     }
+    // All other payment methods: guest checkout allowed — order is created with user_id=null
+    // and can be claimed later via email invite or auto-linked on login by matching email/phone.
 
     setLoading(true);
     // Freeze the abandoned-checkout tracker so the debounced upsert cannot
