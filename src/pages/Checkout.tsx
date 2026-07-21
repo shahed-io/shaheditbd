@@ -146,6 +146,9 @@ const Checkout = () => {
   const [couponLoading, setCouponLoading] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
+  const [placedOrderId, setPlacedOrderId] = useState<string | null>(null);
+  const [accountInviteState, setAccountInviteState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [accountInviteMsg, setAccountInviteMsg] = useState('');
   const [instantDelivered, setInstantDelivered] = useState<boolean | null>(null); // null = checking, true = licenses assigned, false = pending
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState('');
@@ -515,21 +518,21 @@ const Checkout = () => {
     if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online' && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
     if (items.length === 0) { setSubmitError('Cart empty'); return; }
 
-    if (!user) {
-      persistCheckoutState(true);
-      setSubmitError('লগইন করুন — লগইনের পর আপনার অর্ডার নিজে থেকেই সাবমিট হবে');
-      setShowAuthModal(true);
-      return;
-    }
-
-    // Wallet: check balance
+    // Wallet: requires login + sufficient balance
     if (paymentMethod === 'wallet') {
-      if (!user) { setSubmitError('Wallet পেমেন্টের জন্য লগইন করতে হবে'); return; }
+      if (!user) {
+        persistCheckoutState(true);
+        setSubmitError('Wallet পেমেন্টের জন্য লগইন করতে হবে');
+        setShowAuthModal(true);
+        return;
+      }
       if (walletBalance < payableTotal) {
         setSubmitError(`ওয়ালেট ব্যালেন্স অপর্যাপ্ত। বর্তমান ব্যালেন্স: ৳${walletBalance}`);
         return;
       }
     }
+    // All other payment methods: guest checkout allowed — order is created with user_id=null
+    // and can be claimed later via email invite or auto-linked on login by matching email/phone.
 
     setLoading(true);
     // Freeze the abandoned-checkout tracker so the debounced upsert cannot
@@ -840,6 +843,7 @@ const Checkout = () => {
 
       finishCart();
       setOrderNumber(orderNum);
+      setPlacedOrderId(order.id);
       if (paymentMethod === 'wallet') setInstantDelivered(walletInstantDelivered);
       setOrderPlaced(true);
       try {
@@ -943,7 +947,73 @@ const Checkout = () => {
               </>
             );
           })()}
-          <div className="flex gap-3 justify-center">
+          {!user && form.email && accountInviteState !== 'sent' && (
+            <div className="glass-card p-5 rounded-2xl border border-primary/30 text-left space-y-3">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center shrink-0">
+                  <User size={18} className="text-primary" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-bold text-foreground">একটি অ্যাকাউন্ট তৈরি করুন</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    <span className="font-mono text-foreground">{form.email}</span> ইমেইলে password সেট করার লিংক পাঠানো হবে। অ্যাকাউন্ট তৈরি হওয়ার পর এই অর্ডার সহ আপনার সব অর্ডার নিজে থেকেই dashboard-এ চলে আসবে।
+                  </p>
+                </div>
+              </div>
+              {accountInviteState === 'error' && (
+                <p className="text-xs text-destructive">{accountInviteMsg}</p>
+              )}
+              <div className="flex gap-2">
+                <button
+                  disabled={accountInviteState === 'sending'}
+                  onClick={async () => {
+                    setAccountInviteState('sending');
+                    setAccountInviteMsg('');
+                    try {
+                      const { data, error } = await supabase.functions.invoke('guest-invite', {
+                        body: {
+                          email: form.email,
+                          name: form.name,
+                          phone: form.phone,
+                          order_id: placedOrderId || undefined,
+                        },
+                      });
+                      if (error) throw error;
+                      if ((data as any)?.error) throw new Error(typeof (data as any).error === 'string' ? (data as any).error : 'Invite failed');
+                      setAccountInviteState('sent');
+                      toast.success('✅ Password সেট করার লিংক আপনার ইমেইলে পাঠানো হয়েছে');
+                    } catch (err) {
+                      const msg = err instanceof Error ? err.message : String(err);
+                      setAccountInviteState('error');
+                      setAccountInviteMsg(msg);
+                    }
+                  }}
+                  className="btn-glow px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 disabled:opacity-60"
+                >
+                  {accountInviteState === 'sending' ? (
+                    <><Loader2 size={14} className="animate-spin" /> পাঠানো হচ্ছে…</>
+                  ) : (
+                    <><User size={14} /> ইমেইলে invite পাঠান</>
+                  )}
+                </button>
+                <button
+                  onClick={() => setShowAuthModal(true)}
+                  className="px-4 py-2.5 rounded-xl text-sm font-semibold border border-border text-foreground hover:bg-primary/5"
+                >
+                  <LogIn size={14} className="inline mr-1.5" /> আগেই account আছে? লগইন
+                </button>
+              </div>
+            </div>
+          )}
+          {!user && accountInviteState === 'sent' && (
+            <div className="glass-card p-4 rounded-2xl border border-green-500/30 text-left">
+              <p className="text-sm font-bold text-green-600 flex items-center gap-2">✅ ইমেইল পাঠানো হয়েছে</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                <span className="font-mono text-foreground">{form.email}</span> চেক করুন। লিংকে ক্লিক করে password সেট করলেই এই অর্ডার আপনার dashboard-এ চলে আসবে।
+              </p>
+            </div>
+          )}
+          <div className="flex gap-3 justify-center flex-wrap">
             <button onClick={() => navigate('/')} className="px-6 py-3 rounded-xl font-semibold text-sm border border-border text-muted-foreground hover:text-foreground transition-colors">
               হোমে ফিরে যাও
             </button>
@@ -953,6 +1023,7 @@ const Checkout = () => {
               </button>
             )}
           </div>
+          <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} redirectAfterLogin={false} />
         </div>
       </div>
     );
@@ -963,17 +1034,17 @@ const Checkout = () => {
       <SEOHead title="Checkout" description="Complete your secure checkout at Shahed Store." noIndex />
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} redirectAfterLogin={false} oauthRedirectTo={typeof window !== 'undefined' ? window.location.href : undefined} />
 
-      {/* Login Required Banner for guests */}
+      {/* Optional login banner — guest checkout is fully supported */}
       {!user && (
         <div className="max-w-4xl mx-auto px-4 pt-4">
-          <div className="flex items-center gap-3 p-4 rounded-2xl bg-primary/10 border border-primary/30">
-            <LogIn size={20} className="text-primary shrink-0" />
+          <div className="flex items-center gap-3 p-4 rounded-2xl bg-primary/5 border border-primary/20">
+            <User size={20} className="text-primary shrink-0" />
             <div className="flex-1">
-              <p className="text-sm font-semibold text-foreground">অর্ডার করতে লগইন আবশ্যক</p>
-              <p className="text-xs text-muted-foreground mt-0.5">আপনার অ্যাকাউন্টে লগইন করুন অথবা নতুন অ্যাকাউন্ট তৈরি করুন।</p>
+              <p className="text-sm font-semibold text-foreground">Guest হিসেবে অর্ডার করছেন</p>
+              <p className="text-xs text-muted-foreground mt-0.5">লগইন ছাড়াই অর্ডার করতে পারবেন। অর্ডারের পর ইমেইলে account setup লিংক পাবেন — অথবা এখনই লগইন করলে আপনার আগের অর্ডারগুলো সাথে সাথে dashboard-এ চলে আসবে।</p>
             </div>
-            <button onClick={() => setShowAuthModal(true)} className="btn-glow px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap flex items-center gap-1.5">
-              <LogIn size={14} /> লগইন করুন
+            <button onClick={() => setShowAuthModal(true)} className="px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap flex items-center gap-1.5 border border-primary/40 text-primary hover:bg-primary/10">
+              <LogIn size={14} /> লগইন
             </button>
           </div>
         </div>
