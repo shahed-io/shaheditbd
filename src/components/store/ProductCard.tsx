@@ -6,7 +6,6 @@ import { useWishlist } from '@/hooks/useWishlist';
 import QuickOrderModal from './QuickOrderModal';
 import { useNavigate } from 'react-router-dom';
 import { prefetchRoute } from '@/hooks/usePrefetchRoute';
-import { optimizeImage, optimizeImageSrcSet } from '@/lib/imageOptimize';
 
 interface ProductCardProps {
   product: Product;
@@ -118,11 +117,8 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
               {/* Image */}
               <div className="w-48 flex-shrink-0 relative overflow-hidden">
                 <img
-                  src={optimizeImage(product.image, 600, 75)}
-                  srcSet={optimizeImageSrcSet(product.image, 600, 75)}
+                  src={product.image}
                   alt={product.name}
-                  loading="lazy"
-                  decoding="async"
                   className="w-full h-full object-cover"
                   style={{ minHeight: '280px' }}
                   onError={e => { (e.target as HTMLImageElement).src = 'https://placehold.co/300x300/13131f/a855f7?text=Product'; }}
@@ -319,25 +315,15 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
           {!imageLoaded && <div className="absolute inset-0 shimmer" />}
 
           <img
-            src={optimizeImage(product.image, 400, 70)}
-            srcSet={optimizeImageSrcSet(product.image, 400, 70)}
-            sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 20vw"
+            src={product.image}
             alt={`${product.name} - Buy at ৳${product.price.toLocaleString()} in Bangladesh`}
             title={`${product.name} - Shahed Store Bangladesh`}
-            width={400}
-            height={400}
             loading={priority ? 'eager' : 'lazy'}
             decoding="async"
             fetchPriority={priority ? 'high' : 'low'}
             onLoad={() => setImageLoaded(true)}
             onError={e => {
-              const img = e.target as HTMLImageElement;
-              // If the transformed URL fails, fall back to the original object URL
-              if (product.image && img.src !== product.image) {
-                img.src = product.image;
-                return;
-              }
-              img.src = 'https://placehold.co/300x300/f5f3ff/7c3aed?text=Product';
+              (e.target as HTMLImageElement).src = 'https://placehold.co/300x300/f5f3ff/7c3aed?text=Product';
               setImageLoaded(true);
             }}
             className="w-full h-full object-cover"
