@@ -6,6 +6,7 @@ import { useWishlist } from '@/hooks/useWishlist';
 import QuickOrderModal from './QuickOrderModal';
 import { useNavigate } from 'react-router-dom';
 import { prefetchRoute } from '@/hooks/usePrefetchRoute';
+import { optimizeImage, optimizeImageSrcSet } from '@/lib/imageOptimize';
 
 interface ProductCardProps {
   product: Product;
