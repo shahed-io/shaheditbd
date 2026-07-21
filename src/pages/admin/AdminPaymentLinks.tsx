@@ -328,7 +328,7 @@ export default function AdminPaymentLinks() {
                   <Select value={editor.product_id || 'custom'} onValueChange={v => {
                     if (v === 'custom') return setEditor({ ...editor, product_id: null });
                     const p = products.find(x => x.id === v);
-                    if (p) setEditor({ ...editor, product_id: p.id, product_name: p.name, product_image: p.image, amount: p.price });
+                    if (p) setEditor({ ...editor, product_id: p.id, product_name: p.name, product_image: (p as any).image_url, amount: p.price });
                   }}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
