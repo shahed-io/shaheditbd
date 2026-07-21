@@ -843,6 +843,7 @@ const Checkout = () => {
 
       finishCart();
       setOrderNumber(orderNum);
+      setPlacedOrderId(order.id);
       if (paymentMethod === 'wallet') setInstantDelivered(walletInstantDelivered);
       setOrderPlaced(true);
       try {
