@@ -357,6 +357,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     setOrderNotes('');
     setTermsAccepted(false);
     localStorage.removeItem('cart_coupon');
+    // Order placed successfully — drop the abandoned-cart backup so the finished
+    // cart doesn't get "restored" on the next visit.
+    try { localStorage.removeItem(CART_BACKUP_KEY); } catch {}
     if (userId) {
       supabase.from('user_cart_items').delete().eq('user_id', userId).then(() => {});
     }
