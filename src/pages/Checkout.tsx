@@ -22,8 +22,33 @@ import { getPaymentLogo } from '@/lib/paymentLogos';
 const checkoutSchema = z.object({
   name: z.string().trim().min(2, 'নাম কমপক্ষে ২ অক্ষরের হতে হবে').max(100),
   email: z.string().trim().email('সঠিক ইমেইল দিন').max(255),
-  phone: z.string().trim().regex(/^(\+880|0)[0-9]{10}$/, 'সঠিক বাংলাদেশি নম্বর দিন (01XXXXXXXXX)').max(20),
+  phone: z.string().trim().regex(/^(\+\d{6,15}|0\d{10})$/, 'সঠিক ফোন নম্বর দিন (উদা: 01XXXXXXXXX অথবা +8801XXXXXXXXX)').max(20),
 });
+
+// International dial codes (Bangladesh first as default)
+const COUNTRY_CODES: Array<{ code: string; dial: string; flag: string; name: string }> = [
+  { code: 'BD', dial: '+880', flag: '🇧🇩', name: 'Bangladesh' },
+  { code: 'IN', dial: '+91',  flag: '🇮🇳', name: 'India' },
+  { code: 'PK', dial: '+92',  flag: '🇵🇰', name: 'Pakistan' },
+  { code: 'US', dial: '+1',   flag: '🇺🇸', name: 'United States' },
+  { code: 'GB', dial: '+44',  flag: '🇬🇧', name: 'United Kingdom' },
+  { code: 'AE', dial: '+971', flag: '🇦🇪', name: 'UAE' },
+  { code: 'SA', dial: '+966', flag: '🇸🇦', name: 'Saudi Arabia' },
+  { code: 'MY', dial: '+60',  flag: '🇲🇾', name: 'Malaysia' },
+  { code: 'SG', dial: '+65',  flag: '🇸🇬', name: 'Singapore' },
+  { code: 'AU', dial: '+61',  flag: '🇦🇺', name: 'Australia' },
+  { code: 'CA', dial: '+1',   flag: '🇨🇦', name: 'Canada' },
+  { code: 'DE', dial: '+49',  flag: '🇩🇪', name: 'Germany' },
+  { code: 'FR', dial: '+33',  flag: '🇫🇷', name: 'France' },
+  { code: 'IT', dial: '+39',  flag: '🇮🇹', name: 'Italy' },
+  { code: 'JP', dial: '+81',  flag: '🇯🇵', name: 'Japan' },
+  { code: 'CN', dial: '+86',  flag: '🇨🇳', name: 'China' },
+  { code: 'TR', dial: '+90',  flag: '🇹🇷', name: 'Turkey' },
+  { code: 'QA', dial: '+974', flag: '🇶🇦', name: 'Qatar' },
+  { code: 'KW', dial: '+965', flag: '🇰🇼', name: 'Kuwait' },
+  { code: 'OM', dial: '+968', flag: '🇴🇲', name: 'Oman' },
+  { code: 'BH', dial: '+973', flag: '🇧🇭', name: 'Bahrain' },
+];
 
 type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 'bank_transfer' | 'wallet' | 'bkash_online';
 
