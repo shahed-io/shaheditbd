@@ -947,7 +947,73 @@ const Checkout = () => {
               </>
             );
           })()}
-          <div className="flex gap-3 justify-center">
+          {!user && form.email && accountInviteState !== 'sent' && (
+            <div className="glass-card p-5 rounded-2xl border border-primary/30 text-left space-y-3">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center shrink-0">
+                  <User size={18} className="text-primary" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-bold text-foreground">একটি অ্যাকাউন্ট তৈরি করুন</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    <span className="font-mono text-foreground">{form.email}</span> ইমেইলে password সেট করার লিংক পাঠানো হবে। অ্যাকাউন্ট তৈরি হওয়ার পর এই অর্ডার সহ আপনার সব অর্ডার নিজে থেকেই dashboard-এ চলে আসবে।
+                  </p>
+                </div>
+              </div>
+              {accountInviteState === 'error' && (
+                <p className="text-xs text-destructive">{accountInviteMsg}</p>
+              )}
+              <div className="flex gap-2">
+                <button
+                  disabled={accountInviteState === 'sending'}
+                  onClick={async () => {
+                    setAccountInviteState('sending');
+                    setAccountInviteMsg('');
+                    try {
+                      const { data, error } = await supabase.functions.invoke('guest-invite', {
+                        body: {
+                          email: form.email,
+                          name: form.name,
+                          phone: form.phone,
+                          order_id: placedOrderId || undefined,
+                        },
+                      });
+                      if (error) throw error;
+                      if ((data as any)?.error) throw new Error(typeof (data as any).error === 'string' ? (data as any).error : 'Invite failed');
+                      setAccountInviteState('sent');
+                      toast.success('✅ Password সেট করার লিংক আপনার ইমেইলে পাঠানো হয়েছে');
+                    } catch (err) {
+                      const msg = err instanceof Error ? err.message : String(err);
+                      setAccountInviteState('error');
+                      setAccountInviteMsg(msg);
+                    }
+                  }}
+                  className="btn-glow px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 disabled:opacity-60"
+                >
+                  {accountInviteState === 'sending' ? (
+                    <><Loader2 size={14} className="animate-spin" /> পাঠানো হচ্ছে…</>
+                  ) : (
+                    <><User size={14} /> ইমেইলে invite পাঠান</>
+                  )}
+                </button>
+                <button
+                  onClick={() => setShowAuthModal(true)}
+                  className="px-4 py-2.5 rounded-xl text-sm font-semibold border border-border text-foreground hover:bg-primary/5"
+                >
+                  <LogIn size={14} className="inline mr-1.5" /> আগেই account আছে? লগইন
+                </button>
+              </div>
+            </div>
+          )}
+          {!user && accountInviteState === 'sent' && (
+            <div className="glass-card p-4 rounded-2xl border border-green-500/30 text-left">
+              <p className="text-sm font-bold text-green-600 flex items-center gap-2">✅ ইমেইল পাঠানো হয়েছে</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                <span className="font-mono text-foreground">{form.email}</span> চেক করুন। লিংকে ক্লিক করে password সেট করলেই এই অর্ডার আপনার dashboard-এ চলে আসবে।
+              </p>
+            </div>
+          )}
+          <div className="flex gap-3 justify-center flex-wrap">
             <button onClick={() => navigate('/')} className="px-6 py-3 rounded-xl font-semibold text-sm border border-border text-muted-foreground hover:text-foreground transition-colors">
               হোমে ফিরে যাও
             </button>
@@ -957,6 +1023,7 @@ const Checkout = () => {
               </button>
             )}
           </div>
+          <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} redirectAfterLogin={false} />
         </div>
       </div>
     );
