@@ -128,6 +128,21 @@ const Checkout = () => {
     } catch {}
   }, [form.name, form.email, form.phone]);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  // Selected country dial code (visual + prefix helper). Phone value in form.phone is source of truth.
+  const [dialCode, setDialCode] = useState<string>(() => {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(CHECKOUT_DRAFT_KEY) || '{}');
+      return typeof parsed.dialCode === 'string' ? parsed.dialCode : '+880';
+    } catch { return '+880'; }
+  });
+  const [dialOpen, setDialOpen] = useState(false);
+  useEffect(() => {
+    try {
+      const existing = JSON.parse(localStorage.getItem(CHECKOUT_DRAFT_KEY) || '{}');
+      localStorage.setItem(CHECKOUT_DRAFT_KEY, JSON.stringify({ ...existing, dialCode }));
+    } catch {}
+  }, [dialCode]);
+  const selectedCountry = COUNTRY_CODES.find(c => c.dial === dialCode) || COUNTRY_CODES[0];
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(() => {
     try {
       const parsed = JSON.parse(localStorage.getItem(CHECKOUT_DRAFT_KEY) || '{}');
