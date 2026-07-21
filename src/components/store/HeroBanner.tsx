@@ -278,65 +278,119 @@ const HeroBanner = () => {
                MIDDLE — Premium light bridge
           ══════════════════════════════════ */}
           <div className="hidden lg:flex relative items-center justify-center flex-shrink-0 overflow-visible"
-            style={{ width: '140px', minHeight: '520px' }}
+            style={{ width: '260px', minHeight: '520px' }}
             aria-hidden="true">
 
-            {/* Ambient dual aurora glows */}
-            <div className="absolute top-[22%] left-1/2 -translate-x-[70%] pointer-events-none rounded-full"
+            {/* Iridescent ambient orbs */}
+            <div className="absolute -top-6 -right-4 pointer-events-none rounded-full"
               style={{
-                width: '260px', height: '260px',
-                background: 'radial-gradient(circle, hsla(215,90%,60%,0.14) 0%, transparent 65%)',
-                filter: 'blur(48px)',
+                width: '340px', height: '340px',
+                background: 'radial-gradient(circle, hsla(258,78%,70%,0.28) 0%, hsla(300,80%,72%,0.22) 40%, transparent 70%)',
+                filter: 'blur(60px)',
               }} />
-            <div className="absolute bottom-[18%] left-1/2 -translate-x-[30%] pointer-events-none rounded-full"
+            <div className="absolute -bottom-4 -left-8 pointer-events-none rounded-full"
               style={{
-                width: '260px', height: '260px',
-                background: 'radial-gradient(circle, hsla(268,80%,62%,0.14) 0%, transparent 65%)',
-                filter: 'blur(48px)',
+                width: '280px', height: '280px',
+                background: 'radial-gradient(circle, hsla(200,90%,72%,0.28) 0%, hsla(170,85%,68%,0.18) 45%, transparent 72%)',
+                filter: 'blur(70px)',
               }} />
 
-            {/* Centered rotating Bangladesh map */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none flex items-center justify-center"
-              style={{ width: '220px', height: '220px' }}>
-              {/* Soft halo behind map */}
-              <div className="absolute inset-0 rounded-full"
-                style={{
-                  background: 'radial-gradient(circle, hsla(258,78%,62%,0.18) 0%, hsla(215,90%,60%,0.10) 45%, transparent 72%)',
-                  filter: 'blur(14px)',
+            {/* Top-right small glassy card — high-reflectivity crystal border */}
+            <div className="absolute top-4 right-2 anim-float-slow"
+              style={{
+                width: '128px', height: '128px',
+                borderRadius: '22px',
+                background: 'linear-gradient(145deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.18) 100%)',
+                backdropFilter: 'blur(22px)',
+                WebkitBackdropFilter: 'blur(22px)',
+                border: '1.5px solid rgba(255,255,255,0.9)',
+                boxShadow: '0 20px 40px -12px hsla(258,60%,50%,0.28), inset 0 1.5px 0 rgba(255,255,255,1), inset -1px -1px 0 rgba(255,255,255,0.5), 0 0 0 1px hsla(258,80%,70%,0.4)',
+                transform: 'rotate(10deg)',
+              }}>
+              <div className="w-full h-full flex flex-col items-center justify-center p-4 gap-2">
+                <div style={{
+                  width: '44px', height: '44px', borderRadius: '12px',
+                  background: 'linear-gradient(135deg, hsl(258,78%,58%), hsl(285,75%,60%))',
+                  boxShadow: '0 8px 18px hsla(258,78%,55%,0.45), inset 0 1px 0 rgba(255,255,255,0.5)',
                 }} />
-              {/* Rotating ring accent */}
-              <div className="absolute inset-0 rounded-full"
+                <div style={{ height: '6px', width: '56px', borderRadius: '3px', background: 'hsla(258,30%,60%,0.28)' }} />
+                <div style={{ height: '6px', width: '36px', borderRadius: '3px', background: 'hsla(258,30%,60%,0.18)' }} />
+              </div>
+            </div>
+
+            {/* Central large glassy shape with shield icon */}
+            <div className="relative anim-float"
+              style={{
+                width: '210px', height: '210px',
+                borderRadius: '54px',
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.60) 0%, rgba(255,255,255,0.20) 100%)',
+                backdropFilter: 'blur(28px)',
+                WebkitBackdropFilter: 'blur(28px)',
+                border: '1.5px solid rgba(255,255,255,0.95)',
+                boxShadow: '0 30px 60px -18px hsla(258,60%,50%,0.35), inset 0 2px 0 rgba(255,255,255,1), inset -1.5px -1.5px 0 rgba(255,255,255,0.5), 0 0 0 1.5px hsla(258,80%,68%,0.45)',
+              }}>
+              {/* Inner iridescent glow */}
+              <div className="absolute inset-0 rounded-[54px] pointer-events-none"
                 style={{
-                  border: '1px dashed rgba(255,255,255,0.35)',
-                  animation: 'bd-spin 22s linear infinite',
+                  background: 'radial-gradient(circle at 30% 25%, hsla(200,90%,70%,0.35), transparent 55%), radial-gradient(circle at 75% 80%, hsla(285,80%,72%,0.30), transparent 55%)',
                 }} />
-              {/* Bangladesh map — rotates continuously */}
-              <svg viewBox="0 0 512 512" width="180" height="180"
-                style={{ animation: 'bd-spin 26s linear infinite', filter: 'drop-shadow(0 8px 24px hsla(258,70%,55%,0.35))' }}>
-                <defs>
-                  <linearGradient id="bd-fill" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="hsl(215,90%,60%)" />
-                    <stop offset="55%" stopColor="hsl(258,78%,62%)" />
-                    <stop offset="100%" stopColor="hsl(180,80%,55%)" />
-                  </linearGradient>
-                </defs>
-                {/* Simplified Bangladesh silhouette */}
-                <path
-                  d="M226 40 L250 38 L272 46 L286 62 L302 72 L318 68 L332 78 L340 96 L336 116 L322 128 L332 144 L352 150 L370 164 L378 184 L372 202 L356 210 L362 228 L378 240 L384 260 L372 276 L354 282 L360 300 L378 314 L382 336 L370 352 L352 358 L340 350 L326 356 L318 374 L326 392 L318 410 L300 418 L282 412 L266 420 L248 432 L228 438 L210 430 L196 414 L184 396 L172 380 L156 372 L140 360 L134 342 L142 324 L156 314 L150 296 L138 282 L142 262 L156 250 L150 232 L138 218 L144 198 L158 188 L152 170 L142 154 L150 136 L164 126 L162 108 L152 92 L162 74 L180 66 L198 58 L212 48 Z"
-                  fill="url(#bd-fill)"
-                  stroke="rgba(255,255,255,0.6)"
-                  strokeWidth="2"
-                />
-              </svg>
+              {/* Circle center */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="relative flex items-center justify-center"
+                  style={{
+                    width: '132px', height: '132px', borderRadius: '50%',
+                    background: 'linear-gradient(145deg, rgba(255,255,255,0.75), rgba(255,255,255,0.30))',
+                    border: '1.5px solid rgba(255,255,255,0.95)',
+                    boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.9), 0 8px 20px hsla(258,60%,55%,0.20)',
+                  }}>
+                  <div className="absolute inset-0 rounded-full pointer-events-none"
+                    style={{
+                      background: 'radial-gradient(circle at 35% 30%, hsla(200,90%,65%,0.35), transparent 60%)',
+                      filter: 'blur(6px)',
+                    }} />
+                  <Shield size={54} strokeWidth={1.6}
+                    style={{ color: 'hsl(258,78%,52%)', filter: 'drop-shadow(0 4px 8px hsla(258,78%,55%,0.35))' }} />
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom-left ৳ glass bubble */}
+            <div className="absolute bottom-4 left-0 anim-float-delay"
+              style={{
+                width: '92px', height: '92px', borderRadius: '50%',
+                background: 'linear-gradient(145deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.25) 100%)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                border: '1.5px solid rgba(255,255,255,0.95)',
+                boxShadow: '0 16px 32px -10px hsla(258,60%,50%,0.30), inset 0 1.5px 0 rgba(255,255,255,1), 0 0 0 1px hsla(285,80%,70%,0.4)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+              <span style={{
+                fontSize: '30px', fontWeight: 900,
+                background: 'linear-gradient(135deg, hsl(258,78%,52%), hsl(200,90%,50%))',
+                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+              }}>৳</span>
             </div>
 
             <style>{`
-              @keyframes bd-spin {
-                from { transform: rotate(0deg); }
-                to { transform: rotate(360deg); }
+              @keyframes hb-float {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-10px); }
               }
+              @keyframes hb-float-slow {
+                0%, 100% { transform: translateY(0) rotate(10deg); }
+                50% { transform: translateY(-8px) rotate(10deg); }
+              }
+              @keyframes hb-float-delay {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-12px); }
+              }
+              .anim-float { animation: hb-float 5s ease-in-out infinite; }
+              .anim-float-slow { animation: hb-float-slow 6s ease-in-out infinite; }
+              .anim-float-delay { animation: hb-float-delay 5.5s ease-in-out infinite 0.6s; }
             `}</style>
           </div>
+
 
 
 
