@@ -53,7 +53,7 @@ export default function AdminPaymentLinks() {
     const [l, s, p] = await Promise.all([
       supabase.from('payment_links').select('*').order('created_at', { ascending: false }),
       supabase.from('payment_link_submissions').select('*').order('created_at', { ascending: false }).limit(200),
-      supabase.from('products').select('id, name, price, image').eq('status', 'active').order('name').limit(500),
+      supabase.from('products').select('id, name, price, image_url').eq('status', 'active').order('name').limit(500),
     ]);
     setLinks(l.data || []);
     setSubs(s.data || []);
