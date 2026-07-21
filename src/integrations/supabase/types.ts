@@ -4409,10 +4409,6 @@ export type Database = {
       _dec: { Args: { p_cipher: string }; Returns: string }
       _enc: { Args: { p_plain: string }; Returns: string }
       _enc_key: { Args: never; Returns: string }
-      _link_guest_orders_for: {
-        Args: { p_email: string; p_phone: string; p_user_id: string }
-        Returns: number
-      }
       admin_adjust_cid_balance: {
         Args: { p_delta: number; p_note?: string; p_user_id: string }
         Returns: Json
@@ -4623,7 +4619,6 @@ export type Database = {
         Args: { p_user_id?: string; p_username: string }
         Returns: boolean
       }
-      link_my_guest_orders: { Args: never; Returns: number }
       mark_abandoned_checkout_converted: {
         Args: { p_order_id: string; p_session_token: string }
         Returns: boolean

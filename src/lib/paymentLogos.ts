@@ -12,23 +12,16 @@ export const PAYMENT_ASSET_LOGOS: Record<string, string> = {
   bkash_merchant: bkashMerchantLogo,
 };
 
+const SHARED_BKASH_METHODS = new Set(['bkash', 'bkash_merchant', 'bkash_online']);
+
 export const getPaymentLogo = (
   methodId: string,
   configuredLogo?: string | null,
   sharedBkashLogo?: string | null,
 ) => {
-  // Each payment method uses its OWN admin-configured logo independently.
-  // Manual methods (bkash, bkash_merchant, nagad, rocket, upay) are never
-  // overridden by other methods' logos.
+  const sharedLogo = (sharedBkashLogo || '').trim();
+  if (sharedLogo && SHARED_BKASH_METHODS.has(methodId)) return sharedLogo;
+
   const customLogo = (configuredLogo || '').trim();
-  if (customLogo) return customLogo;
-
-  // Only bkash_online (PGW) may fall back to the shared bKash checkout logo
-  // when the admin has not uploaded a dedicated logo for it.
-  if (methodId === 'bkash_online') {
-    const sharedLogo = (sharedBkashLogo || '').trim();
-    if (sharedLogo) return sharedLogo;
-  }
-
-  return PAYMENT_ASSET_LOGOS[methodId] || '';
+  return customLogo || PAYMENT_ASSET_LOGOS[methodId] || '';
 };
