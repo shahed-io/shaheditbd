@@ -146,6 +146,9 @@ const Checkout = () => {
   const [couponLoading, setCouponLoading] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
+  const [placedOrderId, setPlacedOrderId] = useState<string | null>(null);
+  const [accountInviteState, setAccountInviteState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [accountInviteMsg, setAccountInviteMsg] = useState('');
   const [instantDelivered, setInstantDelivered] = useState<boolean | null>(null); // null = checking, true = licenses assigned, false = pending
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState('');
