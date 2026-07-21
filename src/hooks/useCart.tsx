@@ -108,12 +108,41 @@ const CartContext = createContext<CartContextType | null>(null);
 
 const EMPTY_COUPON: CouponState = { code: '', discount: 0, type: 'percentage', isApplied: false };
 
+const CART_KEY = 'cart';
+const CART_BACKUP_KEY = 'cart_backup'; // { items, savedAt } — recovers cart if primary storage is wiped mid-checkout
+const CART_BACKUP_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+
+const readBackup = (): CartItem[] => {
+  try {
+    const raw = localStorage.getItem(CART_BACKUP_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!parsed || !Array.isArray(parsed.items)) return [];
+    if (parsed.savedAt && Date.now() - new Date(parsed.savedAt).getTime() > CART_BACKUP_TTL_MS) return [];
+    return sanitizeItems(parsed.items);
+  } catch { return []; }
+};
+
+const writeBackup = (items: CartItem[]) => {
+  try {
+    if (!items.length) return; // never overwrite backup with empty (that's the whole point)
+    localStorage.setItem(CART_BACKUP_KEY, JSON.stringify({ items, savedAt: new Date().toISOString() }));
+  } catch { /* ignore */ }
+};
+
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
   const userId = user?.id;
 
   const [items, setItems] = useState<CartItem[]>(() => {
-    try { return sanitizeItems(JSON.parse(localStorage.getItem('cart') || '[]')); } catch { return []; }
+    try {
+      const primary = sanitizeItems(JSON.parse(localStorage.getItem(CART_KEY) || '[]'));
+      if (primary.length > 0) return primary;
+      // Primary cart is empty — recover from backup so abandoned-checkout carts survive
+      // browser hiccups, storage clears, or accidental navigation.
+      const backup = readBackup();
+      return backup;
+    } catch { return []; }
   });
   const [wishlist, setWishlist] = useState<CartItem[]>(() => {
     try { return sanitizeItems(JSON.parse(localStorage.getItem('wishlist') || '[]')); } catch { return []; }
@@ -128,19 +157,23 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [serviceFee] = useState(DEFAULT_SERVICE_FEE);
   const [selectedKeys, setSelectedKeys] = useState<string[]>(() => {
     try {
-      const stored = sanitizeItems(JSON.parse(localStorage.getItem('cart') || '[]'));
-      // Default: all items selected
-      return stored.map(i => `${i.id}__${i.variant || ''}`);
+      const stored = sanitizeItems(JSON.parse(localStorage.getItem(CART_KEY) || '[]'));
+      const base = stored.length > 0 ? stored : readBackup();
+      return base.map(i => `${i.id}__${i.variant || ''}`);
     } catch { return []; }
   });
 
   // Track which user we've synced for, to avoid duplicate syncs
   const syncedUserRef = useRef<string | null>(null);
 
-  // Persist locally
-  useEffect(() => { localStorage.setItem('cart', JSON.stringify(items)); }, [items]);
+  // Persist locally + keep a rolling backup so an abandoned checkout can be resumed later.
+  useEffect(() => {
+    localStorage.setItem(CART_KEY, JSON.stringify(items));
+    writeBackup(items);
+  }, [items]);
   useEffect(() => { localStorage.setItem('wishlist', JSON.stringify(wishlist)); }, [wishlist]);
   useEffect(() => { localStorage.setItem('cart_coupon', JSON.stringify(coupon)); }, [coupon]);
+
 
   // === DB sync helpers ===
   const dbUpsertItem = useCallback(async (uid: string, item: CartItem) => {
@@ -324,6 +357,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     setOrderNotes('');
     setTermsAccepted(false);
     localStorage.removeItem('cart_coupon');
+    // Order placed successfully — drop the abandoned-cart backup so the finished
+    // cart doesn't get "restored" on the next visit.
+    try { localStorage.removeItem(CART_BACKUP_KEY); } catch {}
     if (userId) {
       supabase.from('user_cart_items').delete().eq('user_id', userId).then(() => {});
     }
