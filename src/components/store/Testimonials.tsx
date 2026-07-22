@@ -195,9 +195,9 @@ const Testimonials = () => {
     return () => obs.disconnect();
   }, []);
 
-  // Load reviews from DB; if empty, seed the hardcoded ones
+  // Load reviews from DB; if empty, seed the hardcoded ones (v2 key = real FB reviews)
   useEffect(() => {
-    supabase.from('site_settings').select('value').eq('key', 'testimonials_data').maybeSingle().then(async ({ data }) => {
+    supabase.from('site_settings').select('value').eq('key', 'testimonials_data_v2').maybeSingle().then(async ({ data }) => {
       if (data?.value) {
         try {
           const parsed: Review[] = JSON.parse(data.value);
@@ -208,9 +208,9 @@ const Testimonials = () => {
           }
         } catch {}
       }
-      // No data in DB → seed hardcoded reviews
+      // No data in DB → seed real FB reviews
       await supabase.from('site_settings').upsert(
-        { key: 'testimonials_data', value: JSON.stringify(HARDCODED_REVIEWS), category: 'seo' },
+        { key: 'testimonials_data_v2', value: JSON.stringify(HARDCODED_REVIEWS), category: 'seo' },
         { onConflict: 'key' }
       );
       setReviews(HARDCODED_REVIEWS);
