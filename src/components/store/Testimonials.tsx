@@ -145,8 +145,8 @@ const ReviewCard = ({ review, index }: { review: Review; index: number }) => {
         <div className="h-px rounded-full"
           style={{ background: `linear-gradient(90deg, ${from.replace('hsl(','hsla(').replace(')',',0.40)')}, transparent)` }} />
 
-        <p className="text-[12.5px] leading-relaxed line-clamp-4" style={{ color: 'hsl(226,20%,38%)' }}>
-          {review.review}
+        <p className="text-[15px] leading-[1.55] line-clamp-5 italic" style={{ color: 'hsl(226,22%,28%)', fontFamily: "'Instrument Serif', Georgia, serif", fontWeight: 400, letterSpacing: '0.005em' }}>
+          "{review.review}"
         </p>
 
         <div className="h-px rounded-full"
