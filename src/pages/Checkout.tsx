@@ -22,33 +22,8 @@ import { getPaymentLogo } from '@/lib/paymentLogos';
 const checkoutSchema = z.object({
   name: z.string().trim().min(2, 'নাম কমপক্ষে ২ অক্ষরের হতে হবে').max(100),
   email: z.string().trim().email('সঠিক ইমেইল দিন').max(255),
-  phone: z.string().trim().regex(/^(\+\d{6,15}|0\d{10})$/, 'সঠিক ফোন নম্বর দিন (উদা: 01XXXXXXXXX অথবা +8801XXXXXXXXX)').max(20),
+  phone: z.string().trim().regex(/^(\+880|0)[0-9]{10}$/, 'সঠিক বাংলাদেশি নম্বর দিন (01XXXXXXXXX)').max(20),
 });
-
-// International dial codes (Bangladesh first as default)
-const COUNTRY_CODES: Array<{ code: string; dial: string; flag: string; name: string }> = [
-  { code: 'BD', dial: '+880', flag: '🇧🇩', name: 'Bangladesh' },
-  { code: 'IN', dial: '+91',  flag: '🇮🇳', name: 'India' },
-  { code: 'PK', dial: '+92',  flag: '🇵🇰', name: 'Pakistan' },
-  { code: 'US', dial: '+1',   flag: '🇺🇸', name: 'United States' },
-  { code: 'GB', dial: '+44',  flag: '🇬🇧', name: 'United Kingdom' },
-  { code: 'AE', dial: '+971', flag: '🇦🇪', name: 'UAE' },
-  { code: 'SA', dial: '+966', flag: '🇸🇦', name: 'Saudi Arabia' },
-  { code: 'MY', dial: '+60',  flag: '🇲🇾', name: 'Malaysia' },
-  { code: 'SG', dial: '+65',  flag: '🇸🇬', name: 'Singapore' },
-  { code: 'AU', dial: '+61',  flag: '🇦🇺', name: 'Australia' },
-  { code: 'CA', dial: '+1',   flag: '🇨🇦', name: 'Canada' },
-  { code: 'DE', dial: '+49',  flag: '🇩🇪', name: 'Germany' },
-  { code: 'FR', dial: '+33',  flag: '🇫🇷', name: 'France' },
-  { code: 'IT', dial: '+39',  flag: '🇮🇹', name: 'Italy' },
-  { code: 'JP', dial: '+81',  flag: '🇯🇵', name: 'Japan' },
-  { code: 'CN', dial: '+86',  flag: '🇨🇳', name: 'China' },
-  { code: 'TR', dial: '+90',  flag: '🇹🇷', name: 'Turkey' },
-  { code: 'QA', dial: '+974', flag: '🇶🇦', name: 'Qatar' },
-  { code: 'KW', dial: '+965', flag: '🇰🇼', name: 'Kuwait' },
-  { code: 'OM', dial: '+968', flag: '🇴🇲', name: 'Oman' },
-  { code: 'BH', dial: '+973', flag: '🇧🇭', name: 'Bahrain' },
-];
 
 type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 'bank_transfer' | 'wallet' | 'bkash_online';
 
@@ -128,21 +103,6 @@ const Checkout = () => {
     } catch {}
   }, [form.name, form.email, form.phone]);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  // Selected country dial code (visual + prefix helper). Phone value in form.phone is source of truth.
-  const [dialCode, setDialCode] = useState<string>(() => {
-    try {
-      const parsed = JSON.parse(localStorage.getItem(CHECKOUT_DRAFT_KEY) || '{}');
-      return typeof parsed.dialCode === 'string' ? parsed.dialCode : '+880';
-    } catch { return '+880'; }
-  });
-  const [dialOpen, setDialOpen] = useState(false);
-  useEffect(() => {
-    try {
-      const existing = JSON.parse(localStorage.getItem(CHECKOUT_DRAFT_KEY) || '{}');
-      localStorage.setItem(CHECKOUT_DRAFT_KEY, JSON.stringify({ ...existing, dialCode }));
-    } catch {}
-  }, [dialCode]);
-  const selectedCountry = COUNTRY_CODES.find(c => c.dial === dialCode) || COUNTRY_CODES[0];
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(() => {
     try {
       const parsed = JSON.parse(localStorage.getItem(CHECKOUT_DRAFT_KEY) || '{}');
@@ -999,529 +959,490 @@ const Checkout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900" style={{ colorScheme: 'light' }}>
+    <div className="min-h-screen bg-background">
       <SEOHead title="Checkout" description="Complete your secure checkout at Shahed Store." noIndex />
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} redirectAfterLogin={false} oauthRedirectTo={typeof window !== 'undefined' ? window.location.href : undefined} />
 
-      {/* Minimal top nav */}
-      <div className="max-w-6xl mx-auto px-4 md:px-8 pt-6 flex items-center justify-between">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-medium">
-          <ArrowLeft size={16} /> ফিরে যান
-        </button>
-        <div className="flex items-center gap-2 text-xs">
-          {user ? (
-            <span className="flex items-center gap-1.5 text-indigo-700 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-full font-medium">
-              <User size={11} /> {user.email?.split('@')[0]}
-            </span>
-          ) : (
-            <button onClick={() => setShowAuthModal(true)} className="flex items-center gap-1.5 text-slate-500 hover:text-indigo-600 transition-colors font-medium">
-              <LogIn size={13} /> লগইন করুন
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Login banner for guests */}
+      {/* Login Required Banner for guests */}
       {!user && (
-        <div className="max-w-6xl mx-auto px-4 md:px-8 pt-4">
-          <div className="flex items-center gap-3 p-4 rounded-2xl bg-white border border-indigo-100 shadow-sm">
-            <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0">
-              <LogIn size={18} />
+        <div className="max-w-4xl mx-auto px-4 pt-4">
+          <div className="flex items-center gap-3 p-4 rounded-2xl bg-primary/10 border border-primary/30">
+            <LogIn size={20} className="text-primary shrink-0" />
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-foreground">অর্ডার করতে লগইন আবশ্যক</p>
+              <p className="text-xs text-muted-foreground mt-0.5">আপনার অ্যাকাউন্টে লগইন করুন অথবা নতুন অ্যাকাউন্ট তৈরি করুন।</p>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-slate-900">অর্ডার সম্পন্ন করতে লগইন আবশ্যক</p>
-              <p className="text-xs text-slate-500 mt-0.5">আপনার অ্যাকাউন্টে লগইন করুন অথবা নতুন অ্যাকাউন্ট তৈরি করুন।</p>
-            </div>
-            <button onClick={() => setShowAuthModal(true)} className="px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap flex items-center gap-1.5 bg-indigo-600 text-white hover:bg-indigo-700 transition-colors shadow-sm">
-              <LogIn size={14} /> লগইন
+            <button onClick={() => setShowAuthModal(true)} className="btn-glow px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap flex items-center gap-1.5">
+              <LogIn size={14} /> লগইন করুন
             </button>
           </div>
         </div>
       )}
-
-      {/* Main editorial card */}
-      <div className="max-w-6xl mx-auto p-4 md:p-8">
-        <div className="w-full bg-white rounded-3xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] border border-slate-100 overflow-hidden flex flex-col lg:flex-row">
-
-          {/* ===== LEFT: FORM ===== */}
-          <form id="checkout-form" onSubmit={handleSubmit} className="flex-1 p-6 md:p-10 lg:p-12 lg:border-r border-slate-100">
-            <header className="mb-8 md:mb-10">
-              <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight mb-1">অর্ডার সম্পন্ন করুন</h1>
-              <p className="text-slate-500 text-sm">অনুগ্রহ করে আপনার সঠিক তথ্য প্রদান করুন</p>
-            </header>
-
-            <div className="space-y-10">
-              {/* 1. Customer Info */}
-              <section>
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-sm">১</div>
-                  <h2 className="text-lg md:text-xl font-semibold text-slate-800">ব্যক্তিগত তথ্য</h2>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-600 ml-1 block">আপনার নাম</label>
-                    <input
-                      type="text"
-                      value={form.name}
-                      onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))}
-                      placeholder="উদা: আরিফ আহমেদ"
-                      className={`w-full px-4 py-3.5 rounded-xl border ${errors.name ? 'border-rose-400' : 'border-slate-200'} focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all bg-slate-50/30 text-slate-900 placeholder:text-slate-400`}
-                    />
-                    {errors.name && <p className="text-rose-500 text-xs mt-1">{errors.name}</p>}
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-600 ml-1 block">মোবাইল নম্বর</label>
-                    <div className="flex relative">
-                      <button
-                        type="button"
-                        onClick={() => setDialOpen(o => !o)}
-                        className="flex items-center gap-2 px-3 border border-r-0 border-slate-200 rounded-l-xl bg-slate-50 text-sm text-slate-700 hover:bg-slate-100 transition-colors shrink-0"
-                      >
-                        <span className="text-lg leading-none">{selectedCountry.flag}</span>
-                        <span className="font-medium">{selectedCountry.dial}</span>
-                        <ChevronDown size={14} className="text-slate-400" />
-                      </button>
-                      <input
-                        type="tel"
-                        value={form.phone}
-                        onChange={e => setForm(prev => ({ ...prev, phone: e.target.value }))}
-                        placeholder={selectedCountry.code === 'BD' ? '01XXXXXXXXX' : 'ফোন নম্বর'}
-                        className={`flex-1 min-w-0 px-4 py-3.5 rounded-r-xl border ${errors.phone ? 'border-rose-400' : 'border-slate-200'} focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all bg-slate-50/30 text-slate-900 placeholder:text-slate-400`}
-                      />
-                      {dialOpen && (
-                        <>
-                          <div className="fixed inset-0 z-40" onClick={() => setDialOpen(false)} />
-                          <div className="absolute top-full left-0 mt-2 w-72 max-h-72 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-xl z-50 py-1">
-                            {COUNTRY_CODES.map(c => (
-                              <button
-                                key={c.code}
-                                type="button"
-                                onClick={() => {
-                                  setDialCode(c.dial);
-                                  setDialOpen(false);
-                                  // If phone currently starts with a + prefix, strip it so user can retype
-                                  if (form.phone.startsWith('+')) setForm(prev => ({ ...prev, phone: '' }));
-                                }}
-                                className={`w-full flex items-center gap-3 px-3 py-2 text-sm hover:bg-slate-50 transition-colors ${c.dial === dialCode ? 'bg-indigo-50/50 text-indigo-700' : 'text-slate-700'}`}
-                              >
-                                <span className="text-lg leading-none">{c.flag}</span>
-                                <span className="flex-1 text-left">{c.name}</span>
-                                <span className="text-slate-500 font-mono text-xs">{c.dial}</span>
-                              </button>
-                            ))}
-                          </div>
-                        </>
-                      )}
-                    </div>
-                    {errors.phone && <p className="text-rose-500 text-xs mt-1">{errors.phone}</p>}
-                  </div>
-
-                  <div className="md:col-span-2 space-y-2">
-                    <label className="text-sm font-medium text-slate-600 ml-1 block">ইমেইল ঠিকানা</label>
-                    <input
-                      type="email"
-                      value={form.email}
-                      onChange={e => setForm(prev => ({ ...prev, email: e.target.value }))}
-                      placeholder="example@mail.com"
-                      className={`w-full px-4 py-3.5 rounded-xl border ${errors.email ? 'border-rose-400' : 'border-slate-200'} focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all bg-slate-50/30 text-slate-900 placeholder:text-slate-400`}
-                    />
-                    {errors.email && <p className="text-rose-500 text-xs mt-1">{errors.email}</p>}
-                  </div>
-                </div>
-              </section>
-
-              {/* 2. Payment Method */}
-              <section>
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-sm">২</div>
-                  <h2 className="text-lg md:text-xl font-semibold text-slate-800">পেমেন্ট পদ্ধতি</h2>
-                </div>
-
-                <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3 mb-6">
-                  {availablePaymentMethods.map(pm => {
-                    const active = paymentMethod === pm.id;
-                    return (
-                      <button
-                        key={pm.id}
-                        type="button"
-                        onClick={() => setPaymentMethod(pm.id)}
-                        className={`p-3 rounded-2xl border-2 flex flex-col items-center gap-2 transition-all ${
-                          active
-                            ? 'border-indigo-600 bg-indigo-50/60 shadow-sm'
-                            : 'border-slate-200 bg-white hover:border-indigo-300'
-                        }`}
-                      >
-                        {pm.logo ? (
-                          <img src={pm.logo} alt={pm.label} className="h-9 w-auto object-contain" />
-                        ) : (
-                          <div className={`w-9 h-9 rounded-lg flex items-center justify-center bg-gradient-to-br ${pm.color} text-white shadow-sm`}>
-                            <Wallet size={16} />
-                          </div>
-                        )}
-                        <span className={`text-[10px] font-bold uppercase tracking-wider ${active ? 'text-indigo-900' : 'text-slate-500'}`}>
-                          {pm.label}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* Wallet balance */}
-                {paymentMethod === 'wallet' && (
-                  <div className={`rounded-2xl p-5 space-y-2 border ${walletBalance >= finalTotal ? 'bg-emerald-50 border-emerald-200' : 'bg-rose-50 border-rose-200'}`}>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-sm font-medium text-slate-700">
-                        <Wallet size={16} className="text-indigo-600" />
-                        <span>ওয়ালেট ব্যালেন্স</span>
-                      </div>
-                      <span className={`font-bold text-lg ${walletBalance >= finalTotal ? 'text-emerald-600' : 'text-rose-600'}`}>
-                        ৳{walletBalance.toLocaleString()}
-                      </span>
-                    </div>
-                    {walletBalance >= finalTotal ? (
-                      <p className="text-xs text-emerald-700">✅ পর্যাপ্ত ব্যালেন্স আছে। কোনো Transaction ID দরকার নেই।</p>
-                    ) : (
-                      <p className="text-xs text-rose-700">❌ ব্যালেন্স কম। আরও ৳{(finalTotal - walletBalance).toLocaleString()} দরকার।</p>
-                    )}
-                    {!user && <p className="text-xs text-rose-700">⚠️ Wallet পেমেন্টের জন্য লগইন করতে হবে</p>}
-                  </div>
-                )}
-
-                {/* bKash Online (PGW) */}
-                {paymentMethod === 'bkash_online' && (
-                  <div className="rounded-2xl p-5 space-y-2 border bg-pink-50 border-pink-200">
-                    <div className="flex items-center gap-2 text-sm font-bold text-slate-800">
-                      <img src={bkashLogoSrc} alt="bKash" className="h-6 w-auto" />
-                      <span>{bkashContent.title}</span>
-                    </div>
-                    <p className="text-xs text-slate-600 leading-relaxed whitespace-pre-line">
-                      {bkashContent.description}
-                    </p>
-                    {bkashContent.bullets.length > 0 && (
-                      <ul className="text-[11px] text-slate-600 space-y-1 pl-4 list-disc">
-                        {bkashContent.bullets.map((b, i) => <li key={i}>{b}</li>)}
-                      </ul>
-                    )}
-                    <p className="text-xs text-pink-700 font-semibold">
-                      {bkashContent.amount_prefix} ৳{payableTotal.toLocaleString()}
-                    </p>
-                  </div>
-                )}
-
-                {/* Manual payment instructions */}
-                {paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online' && (
-                  <div className="space-y-5">
-                    <div className="bg-indigo-50/30 border border-indigo-100 rounded-2xl p-5 md:p-6 space-y-4">
-                      <PaymentInstructions
-                        paymentMethodId={paymentMethod as PMId}
-                        amount={finalTotal}
-                        amountLabel="মোট পরিমাণ"
-                      />
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <label className="text-xs font-bold text-indigo-900 uppercase tracking-wider">
-                            {paymentMethod === 'bank_transfer' ? 'Bank Reference / TRN' : 'Transaction ID (TrxID) *'}
-                          </label>
-                          <input
-                            type="text"
-                            value={transactionId}
-                            onChange={e => setTransactionId(e.target.value)}
-                            placeholder={paymentMethod === 'bank_transfer' ? 'যেমন: TRN123456789' : 'যেমন: 8F3K2P9X'}
-                            maxLength={50}
-                            className="w-full px-4 py-3 rounded-xl border border-indigo-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none bg-white font-mono text-sm text-slate-900 placeholder:text-slate-400"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-xs font-bold text-indigo-900 uppercase tracking-wider flex items-center gap-1.5">
-                            <ImageIcon size={12} /> স্ক্রিনশট <span className="font-normal normal-case tracking-normal text-slate-500">(optional)</span>
-                          </label>
-                          {!screenshotPreview ? (
-                            <label htmlFor="payment-screenshot-input" className="relative flex items-center gap-2 px-4 py-3 rounded-xl border border-dashed border-indigo-300 bg-white text-indigo-500 text-sm cursor-pointer hover:bg-indigo-50/50 transition-colors">
-                              <Upload size={16} />
-                              <span className="truncate">ফাইল সিলেক্ট করুন</span>
-                              <input
-                                id="payment-screenshot-input"
-                                ref={screenshotInputRef}
-                                type="file"
-                                accept="image/*"
-                                onChange={handleScreenshotChange}
-                                className="hidden"
-                              />
-                            </label>
-                          ) : (
-                            <div className="relative rounded-xl overflow-hidden border border-indigo-200 bg-white">
-                              <img src={screenshotPreview} alt="Payment screenshot preview" className="w-full max-h-40 object-contain" />
-                              <button
-                                type="button"
-                                onClick={removeScreenshot}
-                                className="absolute top-2 right-2 bg-black/60 hover:bg-black/80 text-white rounded-full p-1.5 transition-colors"
-                                aria-label="Remove screenshot"
-                              >
-                                <X size={12} />
-                              </button>
-                              <div className="px-3 py-1.5 text-[11px] text-slate-500 flex items-center justify-between bg-slate-50">
-                                <span className="truncate">{paymentScreenshot?.name}</span>
-                                <span className="flex-shrink-0 ml-2">
-                                  {paymentScreenshot && (paymentScreenshot.size / 1024).toFixed(0)} KB
-                                </span>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </section>
-
-              {/* 3. Order Notes */}
-              <section>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-sm">৩</div>
-                  <h2 className="text-lg md:text-xl font-semibold text-slate-800">অর্ডার নোট <span className="text-xs text-slate-400 font-normal ml-1">(ঐচ্ছিক)</span></h2>
-                </div>
-                <textarea
-                  value={orderNotes}
-                  onChange={e => setOrderNotes(e.target.value)}
-                  placeholder="কোনো বিশেষ নির্দেশনা বা মন্তব্য..."
-                  rows={3}
-                  maxLength={500}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all bg-slate-50/30 text-sm resize-none text-slate-900 placeholder:text-slate-400"
-                />
-                <p className="text-xs text-slate-400 text-right mt-1">{orderNotes.length}/500</p>
-              </section>
-
-              {/* Terms */}
-              <section>
-                <label className="flex items-start gap-3 cursor-pointer group">
-                  <input
-                    type="checkbox"
-                    checked={termsAccepted}
-                    onChange={e => setTermsAccepted(e.target.checked)}
-                    className="mt-1 w-5 h-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 transition-all"
-                  />
-                  <span className="text-sm text-slate-600 leading-relaxed group-hover:text-slate-900">
-                    আমি সাইটের{' '}
-                    <a href="https://shahedstore.com.bd/terms-conditions" className="text-indigo-600 underline font-medium">শর্তাবলী</a>
-                    {' '}এবং{' '}
-                    <button type="button" onClick={() => navigate('/refund-policy')} className="text-indigo-600 underline font-medium">রিফান্ড নীতি</button>
-                    {' '}মেনে নিচ্ছি।
-                  </span>
-                </label>
-              </section>
-
-              {submitError && (
-                <div className="bg-rose-50 border border-rose-200 text-rose-700 text-sm px-4 py-3 rounded-xl flex items-center gap-2">
-                  <X size={14} /> {submitError}
-                </div>
-              )}
+      {/* Sticky Header */}
+      <div className="sticky top-0 z-10 glass-card border-b border-border px-4 py-3">
+        <div className="max-w-4xl mx-auto flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <button onClick={() => navigate(-1)} className="p-2 text-muted-foreground hover:text-foreground transition-colors">
+              <ArrowLeft size={20} />
+            </button>
+            <div className="flex items-center gap-2">
+              <ShoppingCart size={18} className="text-primary" />
+              <h1 className="font-bold text-foreground">Checkout</h1>
             </div>
-          </form>
+          </div>
+          {/* Guest / User badge */}
+          <div className="flex items-center gap-2 text-xs">
+            {user ? (
+              <span className="flex items-center gap-1 text-primary bg-primary/10 px-2.5 py-1 rounded-full">
+                <User size={11} /> {user.email?.split('@')[0]}
+              </span>
+            ) : (
+              <button onClick={() => setShowAuthModal(true)} className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors">
+                <LogIn size={13} /> লগইন করুন
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
 
-          {/* ===== RIGHT: ORDER SUMMARY ===== */}
-          <aside className="w-full lg:w-96 bg-slate-50/50 p-6 md:p-10 lg:p-12 flex flex-col border-t lg:border-t-0 border-slate-100">
+      <div className="max-w-4xl mx-auto px-4 py-6 grid md:grid-cols-[1fr_360px] gap-6 items-start">
+
+        {/* ===== LEFT: FORM ===== */}
+        <form id="checkout-form" onSubmit={handleSubmit} className="space-y-5">
+
+          {/* Customer Info */}
+          <div className="glass-card p-5 rounded-2xl border border-border space-y-4">
+            <h2 className="font-bold text-foreground flex items-center gap-2">
+              <span>📋</span> আপনার তথ্য
+              {!user && <span className="text-xs text-muted-foreground font-normal ml-auto">Guest Checkout</span>}
+            </h2>
+            {[
+              { key: 'name', label: 'পুরো নাম *', type: 'text', placeholder: 'আপনার নাম' },
+              { key: 'email', label: 'ইমেইল *', type: 'email', placeholder: 'example@email.com' },
+              { key: 'phone', label: 'ফোন নম্বর *', type: 'tel', placeholder: '01XXXXXXXXX' },
+            ].map(({ key, label, type, placeholder }) => (
+              <div key={key}>
+                <label className="text-sm text-muted-foreground mb-1 block">{label}</label>
+                <input
+                  type={type}
+                  value={form[key as keyof typeof form]}
+                  onChange={e => setForm(prev => ({ ...prev, [key]: e.target.value }))}
+                  placeholder={placeholder}
+                  className={`w-full bg-muted/30 border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/60 transition-all text-sm ${errors[key] ? 'border-destructive/60' : 'border-border'}`}
+                />
+                {errors[key] && <p className="text-destructive text-xs mt-1">{errors[key]}</p>}
+              </div>
+            ))}
+          </div>
+
+          {/* Payment Method */}
+          <div className="glass-card p-5 rounded-2xl border border-border space-y-4">
+            <h2 className="font-bold text-foreground">💳 পেমেন্ট পদ্ধতি</h2>
+            <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
+              {availablePaymentMethods.map(pm => (
+                <button
+                  key={pm.id}
+                  type="button"
+                  onClick={() => setPaymentMethod(pm.id)}
+                  className={`flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl text-xs font-semibold transition-all border-2 ${
+                    paymentMethod === pm.id
+                      ? 'border-primary bg-primary/8 scale-105 shadow-md text-foreground'
+                      : 'border-border bg-background/60 hover:border-primary/40 text-muted-foreground'
+                  }`}
+                >
+                  {pm.logo ? (
+                    <img src={pm.logo} alt={pm.label} className="h-8 w-auto object-contain rounded-md" />
+                  ) : (
+                    <div className={`h-8 w-10 rounded-md flex items-center justify-center bg-gradient-to-br ${pm.color}`}>
+                      <Wallet size={16} className="text-white" />
+                    </div>
+                  )}
+                  <span>{pm.label}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Wallet balance display */}
+            {paymentMethod === 'wallet' && (
+              <div className={`rounded-xl p-4 space-y-2 border ${walletBalance >= finalTotal ? 'bg-green-500/10 border-green-500/30' : 'bg-destructive/10 border-destructive/30'}`}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+                    <Wallet size={16} className="text-primary" />
+                    <span>ওয়ালেট ব্যালেন্স</span>
+                  </div>
+                  <span className={`font-bold text-lg ${walletBalance >= finalTotal ? 'text-green-500' : 'text-destructive'}`}>
+                    ৳{walletBalance.toLocaleString()}
+                  </span>
+                </div>
+                {walletBalance >= finalTotal ? (
+                  <p className="text-xs text-green-500">✅ পর্যাপ্ত ব্যালেন্স আছে। কোনো Transaction ID দরকার নেই।</p>
+                ) : (
+                  <p className="text-xs text-destructive">❌ ব্যালেন্স কম। আরও ৳{(finalTotal - walletBalance).toLocaleString()} দরকার। Dashboard থেকে টপ-আপ করুন।</p>
+                )}
+                {!user && <p className="text-xs text-destructive">⚠️ Wallet পেমেন্টের জন্য লগইন করতে হবে</p>}
+              </div>
+            )}
+
+            {/* bKash Online (PGW) info block */}
+            {paymentMethod === 'bkash_online' && (
+              <div className="rounded-xl p-4 space-y-2 border bg-pink-500/10 border-pink-500/30">
+                <div className="flex items-center gap-2 text-sm font-bold text-foreground">
+                  <img src={bkashLogoSrc} alt="bKash" className="h-6 w-auto" />
+                  <span>{bkashContent.title}</span>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed whitespace-pre-line">
+                  {bkashContent.description}
+                </p>
+                {bkashContent.bullets.length > 0 && (
+                  <ul className="text-[11px] text-muted-foreground space-y-1 pl-4 list-disc">
+                    {bkashContent.bullets.map((b, i) => <li key={i}>{b}</li>)}
+                  </ul>
+                )}
+                <p className="text-xs text-pink-600 dark:text-pink-300 font-medium">
+                  {bkashContent.amount_prefix} ৳{payableTotal.toLocaleString()}
+                </p>
+              </div>
+            )}
+
+            {/* Payment Instructions (only for manual methods) */}
+            {paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online' && (
+              <>
+                <PaymentInstructions
+                  paymentMethodId={paymentMethod as PMId}
+                  amount={finalTotal}
+                  amountLabel="মোট পরিমাণ"
+                />
+
+                {/* Transaction ID */}
+                <div>
+                  <label className="text-sm text-muted-foreground mb-1 block font-semibold">
+                    {paymentMethod === 'bank_transfer' ? 'Bank Reference / TRN নম্বর *' : 'Transaction ID (TrxID) *'}
+                  </label>
+                  <input
+                    type="text"
+                    value={transactionId}
+                    onChange={e => setTransactionId(e.target.value)}
+                    placeholder={paymentMethod === 'bank_transfer' ? 'যেমন: TRN123456789' : 'যেমন: 8F3K2P9X'}
+                    maxLength={50}
+                    className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono text-sm"
+                  />
+                </div>
+
+                {/* Optional Payment Screenshot */}
+                <div>
+                  <label className="text-sm text-muted-foreground mb-1 block font-semibold flex items-center gap-2">
+                    <ImageIcon size={14} className="text-muted-foreground" />
+                    Payment Screenshot
+                    <span className="text-xs text-muted-foreground font-normal">(optional)</span>
+                  </label>
+                  <p className="text-xs text-muted-foreground mb-2">
+                    পেমেন্ট প্রমাণ হিসেবে স্ক্রিনশট আপলোড করুন (ঐচ্ছিক — দ্রুত ভেরিফাই হবে)
+                  </p>
+                  {!screenshotPreview ? (
+                    <label
+                      htmlFor="payment-screenshot-input"
+                      className="flex flex-col items-center justify-center w-full p-5 bg-muted/20 border-2 border-dashed border-border rounded-xl cursor-pointer hover:bg-muted/30 hover:border-primary/40 transition-all"
+                    >
+                      <Upload size={20} className="text-muted-foreground mb-1.5" />
+                      <span className="text-sm text-foreground font-medium">স্ক্রিনশট সিলেক্ট করুন</span>
+                      <span className="text-xs text-muted-foreground mt-0.5">JPG, PNG • সর্বোচ্চ ৫MB</span>
+                      <input
+                        id="payment-screenshot-input"
+                        ref={screenshotInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleScreenshotChange}
+                        className="hidden"
+                      />
+                    </label>
+                  ) : (
+                    <div className="relative rounded-xl overflow-hidden border border-border bg-muted/20">
+                      <img
+                        src={screenshotPreview}
+                        alt="Payment screenshot preview"
+                        className="w-full max-h-64 object-contain"
+                      />
+                      <button
+                        type="button"
+                        onClick={removeScreenshot}
+                        className="absolute top-2 right-2 bg-black/60 hover:bg-black/80 text-white rounded-full p-1.5 transition-colors"
+                        aria-label="Remove screenshot"
+                      >
+                        <X size={14} />
+                      </button>
+                      <div className="px-3 py-2 text-xs text-muted-foreground flex items-center justify-between bg-muted/30">
+                        <span className="truncate">{paymentScreenshot?.name}</span>
+                        <span className="flex-shrink-0 ml-2">
+                          {paymentScreenshot && (paymentScreenshot.size / 1024).toFixed(0)} KB
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Order Notes */}
+          <div className="glass-card p-5 rounded-2xl border border-border space-y-3">
+            <h2 className="font-bold text-foreground flex items-center gap-2">
+              <FileText size={16} className="text-muted-foreground" /> Order Notes
+              <span className="text-xs text-muted-foreground font-normal">(optional)</span>
+            </h2>
+            <textarea
+              value={orderNotes}
+              onChange={e => setOrderNotes(e.target.value)}
+              placeholder="কোনো বিশেষ নির্দেশনা বা মন্তব্য..."
+              rows={3}
+              maxLength={500}
+              className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all text-sm resize-none"
+            />
+            <p className="text-xs text-muted-foreground text-right">{orderNotes.length}/500</p>
+          </div>
+
+          {/* Terms & Conditions */}
+          <div className="glass-card p-4 rounded-2xl border border-border">
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={termsAccepted}
+                onChange={e => setTermsAccepted(e.target.checked)}
+                className="mt-0.5 w-4 h-4 accent-primary flex-shrink-0"
+              />
+              <span className="text-sm text-muted-foreground leading-relaxed">
+                আমি{' '}
+                <a href="https://shahedstore.com.bd/terms-conditions" className="text-primary hover:underline">Terms & Conditions</a>
+                {' '}এবং{' '}
+                <button type="button" onClick={() => navigate('/refund-policy')} className="text-primary hover:underline">Refund Policy</button>
+                {' '}পড়েছি এবং সম্মত আছি।
+              </span>
+            </label>
+          </div>
+
+          {submitError && (
+            <div className="bg-destructive/10 border border-destructive/30 text-destructive text-sm px-4 py-3 rounded-xl flex items-center gap-2">
+              <X size={14} /> {submitError}
+            </div>
+          )}
+
+          {paymentMethod === 'bkash_online' ? (
+            <button
+              type="submit"
+              disabled={loading || !termsAccepted || items.length === 0}
+              className="group relative w-full overflow-hidden rounded-2xl py-4 px-5 font-bold text-base text-white shadow-[0_12px_40px_-8px_rgba(226,0,116,0.55)] transition-all duration-300 hover:shadow-[0_18px_55px_-8px_rgba(226,0,116,0.75)] hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+              style={{
+                background:
+                  'linear-gradient(135deg, #ff2e87 0%, #e2007a 45%, #b8005f 100%)',
+              }}
+            >
+              {/* shimmer sweep */}
+              <span
+                aria-hidden
+                className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full"
+              />
+              {/* soft inner highlight */}
+              <span
+                aria-hidden
+                className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-2xl bg-gradient-to-b from-white/25 to-transparent"
+              />
+              <span className="relative flex items-center justify-center gap-3">
+                {loading ? (
+                  <><Loader2 size={18} className="animate-spin" /> Processing…</>
+                ) : (
+                  <>
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-white/40">
+                      <img src={bkashLogoSrc} alt="bKash" className="h-5 w-5 object-contain" />
+                    </span>
+                    <span className="tracking-wide">
+                      bKash দিয়ে পরিশোধ করুন
+                    </span>
+                    <span className="ml-1 rounded-full bg-white/20 px-3 py-1 text-sm font-extrabold backdrop-blur-sm">
+                      ৳{payableTotal.toLocaleString()}
+                    </span>
+                  </>
+                )}
+              </span>
+            </button>
+          ) : (() => {
+            const isWallet = paymentMethod === 'wallet';
+            const gradient = isWallet
+              ? 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 45%, #4c1d95 100%)'
+              : 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 45%, #1e3a8a 100%)';
+            const shadow = isWallet
+              ? 'shadow-[0_12px_40px_-8px_rgba(139,92,246,0.55)] hover:shadow-[0_18px_55px_-8px_rgba(139,92,246,0.75)]'
+              : 'shadow-[0_12px_40px_-8px_rgba(79,70,229,0.55)] hover:shadow-[0_18px_55px_-8px_rgba(79,70,229,0.75)]';
+            return (
+              <button
+                type="submit"
+                disabled={loading || !termsAccepted || items.length === 0}
+                className={`group relative w-full overflow-hidden rounded-2xl py-4 px-5 font-bold text-base text-white ${shadow} transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0`}
+                style={{ background: gradient }}
+              >
+                <span aria-hidden className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full" />
+                <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-2xl bg-gradient-to-b from-white/25 to-transparent" />
+                <span className="relative flex items-center justify-center gap-3">
+                  {loading ? (
+                    <><Loader2 size={18} className="animate-spin" /> Processing…</>
+                  ) : (
+                    <>
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-white/40">
+                        {isWallet ? <Wallet size={16} className="text-violet-700" /> : <FileText size={16} className="text-indigo-700" />}
+                      </span>
+                      <span className="tracking-wide">
+                        {isWallet ? 'ওয়ালেট দিয়ে পরিশোধ করুন' : 'অর্ডার কনফার্ম করুন'}
+                      </span>
+                      <span className="ml-1 rounded-full bg-white/20 px-3 py-1 text-sm font-extrabold backdrop-blur-sm">
+                        ৳{(isWallet ? finalTotal : payableTotal).toLocaleString()}
+                      </span>
+                    </>
+                  )}
+                </span>
+              </button>
+            );
+          })()}
+
+          <p className="text-xs text-muted-foreground text-center flex items-center justify-center gap-1.5">
+            <Shield size={12} /> Secure checkout — Your data is protected
+          </p>
+        </form>
+
+        {/* ===== RIGHT: ORDER SUMMARY ===== */}
+        <div className="space-y-4 md:sticky md:top-20">
+          <div className="glass-card rounded-2xl border border-border overflow-hidden">
+            {/* Collapsible header on mobile */}
             <button
               type="button"
               onClick={() => setSummaryOpen(o => !o)}
-              className="w-full flex items-center justify-between mb-6 lg:cursor-default"
+              className="w-full flex items-center justify-between px-5 py-4 border-b border-border md:cursor-default"
             >
-              <h2 className="text-lg md:text-xl font-bold text-slate-800">
-                অর্ডার সামারি
-                <span className="text-xs text-slate-400 font-normal ml-2">({items.length} item{items.length !== 1 ? 's' : ''})</span>
+              <h2 className="font-bold text-foreground flex items-center gap-2">
+                🛒 অর্ডার সামারি
+                <span className="text-xs text-muted-foreground font-normal">({items.length} item{items.length !== 1 ? 's' : ''})</span>
               </h2>
-              <ChevronDown size={16} className={`text-slate-400 lg:hidden transition-transform ${summaryOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown size={16} className={`text-muted-foreground md:hidden transition-transform ${summaryOpen ? 'rotate-180' : ''}`} />
             </button>
 
-            <div className={`space-y-6 flex-1 ${summaryOpen ? '' : 'hidden lg:block'}`}>
-              {/* Items */}
-              <div className="space-y-4 max-h-72 overflow-y-auto pr-1">
-                {items.map(item => (
-                  <div key={`${item.id}-${item.variant}`} className="flex gap-3 pb-4 border-b border-slate-100 last:border-0 last:pb-0 group">
-                    <div className="w-16 h-16 rounded-2xl bg-white border border-slate-100 flex items-center justify-center shadow-sm overflow-hidden shrink-0">
+            {summaryOpen && (
+              <div className="px-5 py-4 space-y-4">
+                {/* Items */}
+                <div className="space-y-3 max-h-60 overflow-y-auto">
+                  {items.map(item => (
+                    <div key={`${item.id}-${item.variant}`} className="flex gap-3 group">
                       <img
                         src={item.image} alt={item.name}
-                        className="w-full h-full object-cover"
-                        onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/64x64/e2e8f0/64748b?text=P'; }}
+                        className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+                        onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/48x48/0a1628/00b4d8?text=P'; }}
                       />
-                    </div>
-                    <div className="flex-1 flex flex-col justify-between min-w-0">
-                      <div>
-                        <p className="text-sm font-bold text-slate-800 line-clamp-1">{item.name}</p>
-                        {item.variant && <p className="text-xs text-slate-500 mt-0.5">{item.variant}</p>}
-                      </div>
-                      <div className="flex items-center justify-between mt-1.5">
-                        <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-1.5 py-0.5">
-                          <button type="button" onClick={() => updateQuantity(item.id, item.quantity - 1)} className="text-slate-400 hover:text-indigo-600 p-1">
-                            <Minus size={10} />
-                          </button>
-                          <span className="text-xs font-bold w-4 text-center text-slate-800">{item.quantity}</span>
-                          <button type="button" onClick={() => updateQuantity(item.id, item.quantity + 1)} className="text-slate-400 hover:text-indigo-600 p-1">
-                            <Plus size={10} />
-                          </button>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-foreground line-clamp-1">{item.name}</p>
+                        {item.variant && <p className="text-xs text-muted-foreground">{item.variant}</p>}
+                        <div className="flex items-center justify-between mt-1">
+                          <div className="flex items-center gap-0 border border-border rounded-md overflow-hidden">
+                            <button type="button" onClick={() => updateQuantity(item.id, item.quantity - 1)} className="px-1.5 py-0.5 text-muted-foreground hover:bg-muted/40 text-xs">
+                              <Minus size={10} />
+                            </button>
+                            <span className="px-2 text-xs font-bold text-foreground">{item.quantity}</span>
+                            <button type="button" onClick={() => updateQuantity(item.id, item.quantity + 1)} className="px-1.5 py-0.5 text-muted-foreground hover:bg-muted/40 text-xs">
+                              <Plus size={10} />
+                            </button>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-xs font-bold text-primary">৳{(item.price * item.quantity).toLocaleString()}</span>
+                            <button type="button" onClick={() => removeFromCart(item.id)} className="text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity">
+                              <Trash2 size={11} />
+                            </button>
+                          </div>
                         </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Coupon */}
+                <div className="pt-2 border-t border-border">
+                  {!coupon.isApplied ? (
+                    <div className="space-y-1">
+                      <div className="flex gap-2">
+                        <div className="relative flex-1">
+                          <Tag size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                          <input
+                            type="text"
+                            value={couponCode}
+                            onChange={e => { setCouponCode(e.target.value.toUpperCase()); setCouponError(''); }}
+                            onKeyDown={e => e.key === 'Enter' && handleApplyCoupon()}
+                            placeholder="Coupon code"
+                            maxLength={30}
+                            className="w-full bg-muted/30 border border-border rounded-xl pl-8 pr-3 py-2.5 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary text-sm"
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleApplyCoupon()}
+                          disabled={couponLoading || !couponCode.trim()}
+                          className="px-4 py-2.5 rounded-xl border border-primary/40 text-primary text-sm font-medium hover:bg-primary/10 transition-colors disabled:opacity-50"
+                        >
+                          {couponLoading ? <Loader2 size={14} className="animate-spin" /> : 'Apply'}
+                        </button>
+                      </div>
+                      {couponError && <p className="text-destructive text-xs">{couponError}</p>}
+                    </div>
+                  ) : (
+                    <div className="relative overflow-hidden rounded-xl border border-emerald-400/40 bg-gradient-to-r from-emerald-500/15 via-green-500/10 to-emerald-500/15 px-3 py-2.5 shadow-[0_0_20px_-5px_rgba(16,185,129,0.4)]">
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.25),transparent_60%)] pointer-events-none" />
+                      <div className="relative flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <span className="font-bold text-slate-900 text-sm">৳{(item.price * item.quantity).toLocaleString()}</span>
-                          <button type="button" onClick={() => removeFromCart(item.id)} className="text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Trash2 size={11} />
-                          </button>
+                          <div className="relative">
+                            <CheckCircle size={16} className="text-emerald-400" />
+                            <span className="absolute inset-0 rounded-full bg-emerald-400/40 blur-md animate-pulse" />
+                          </div>
+                          <div className="flex flex-col leading-tight">
+                            <span className="text-[10px] uppercase tracking-wider text-emerald-300/80 font-bold">Approved ✨</span>
+                            <span className="text-xs font-bold text-emerald-300">{coupon.code} · ৳{discountAmount.toLocaleString()} ছাড়</span>
+                          </div>
                         </div>
+                        <button type="button" onClick={() => { resetCoupon(); setCouponCode(''); }} className="text-muted-foreground hover:text-destructive p-1">
+                          <X size={13} />
+                        </button>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  )}
+                </div>
 
-              {/* Coupon */}
-              <div>
-                {!coupon.isApplied ? (
-                  <div className="space-y-1.5">
-                    <div className="flex gap-2">
-                      <div className="relative flex-1">
-                        <Tag size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                        <input
-                          type="text"
-                          value={couponCode}
-                          onChange={e => { setCouponCode(e.target.value.toUpperCase()); setCouponError(''); }}
-                          onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleApplyCoupon())}
-                          placeholder="কুপন কোড"
-                          maxLength={30}
-                          className="w-full pl-8 pr-3 py-2.5 rounded-xl border border-slate-200 focus:border-indigo-500 outline-none bg-white text-sm text-slate-900 placeholder:text-slate-400"
-                        />
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => handleApplyCoupon()}
-                        disabled={couponLoading || !couponCode.trim()}
-                        className="px-4 py-2.5 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-black transition-colors disabled:opacity-50"
-                      >
-                        {couponLoading ? <Loader2 size={14} className="animate-spin" /> : 'প্রয়োগ'}
-                      </button>
+                {/* Pricing Breakdown */}
+                <div className="border-t border-border pt-3 space-y-2 text-sm">
+                  <div className="flex justify-between text-muted-foreground">
+                    <span>Subtotal</span><span>৳{subtotal.toLocaleString()}</span>
+                  </div>
+                  {discountAmount > 0 && (
+                    <div className="flex justify-between text-green-400">
+                      <span>Coupon ({coupon.code})</span><span>-৳{discountAmount.toLocaleString()}</span>
                     </div>
-                    {couponError && <p className="text-rose-500 text-xs">{couponError}</p>}
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2.5">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle size={16} className="text-emerald-600" />
-                      <div className="flex flex-col leading-tight">
-                        <span className="text-[10px] uppercase tracking-wider text-emerald-700 font-bold">Approved</span>
-                        <span className="text-xs font-bold text-emerald-800">{coupon.code} · ৳{discountAmount.toLocaleString()} ছাড়</span>
-                      </div>
+                  )}
+                  {taxAmount > 0 && (
+                    <div className="flex justify-between text-muted-foreground">
+                      <span>Tax</span><span>৳{taxAmount.toLocaleString()}</span>
                     </div>
-                    <button type="button" onClick={() => { resetCoupon(); setCouponCode(''); }} className="text-slate-400 hover:text-rose-500 p-1">
-                      <X size={13} />
-                    </button>
+                  )}
+                  {serviceFee > 0 && (
+                    <div className="flex justify-between text-muted-foreground">
+                      <span>Service Fee</span><span>৳{serviceFee.toLocaleString()}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between font-bold text-foreground text-base border-t border-border pt-2">
+                    <span>Total</span>
+                    <span className="text-primary text-lg">৳{finalTotal.toLocaleString()}</span>
                   </div>
-                )}
-              </div>
-
-              {/* Totals */}
-              <div className="space-y-3 pt-2">
-                <div className="flex justify-between text-sm text-slate-500">
-                  <span>সাব-টোটাল</span>
-                  <span>৳{subtotal.toLocaleString()}</span>
-                </div>
-                {discountAmount > 0 && (
-                  <div className="flex justify-between text-sm text-emerald-600">
-                    <span>ডিসকাউন্ট</span>
-                    <span>-৳{discountAmount.toLocaleString()}</span>
-                  </div>
-                )}
-                {taxAmount > 0 && (
-                  <div className="flex justify-between text-sm text-slate-500">
-                    <span>ট্যাক্স</span>
-                    <span>৳{taxAmount.toLocaleString()}</span>
-                  </div>
-                )}
-                {serviceFee > 0 && (
-                  <div className="flex justify-between text-sm text-slate-500">
-                    <span>সার্ভিস ফি</span>
-                    <span>৳{serviceFee.toLocaleString()}</span>
-                  </div>
-                )}
-                <div className="h-px bg-slate-200 my-2" />
-                <div className="flex justify-between items-center">
-                  <span className="text-lg font-bold text-slate-900">সর্বমোট</span>
-                  <span className="text-2xl font-black text-indigo-600">৳{finalTotal.toLocaleString()}</span>
                 </div>
               </div>
+            )}
+          </div>
 
-              {/* Trust bullets */}
-              <div className="pt-4 space-y-3 border-t border-slate-100">
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 shrink-0">
-                    <CheckCircle size={12} />
-                  </div>
-                  <span className="text-xs text-slate-600 font-medium">পেমেন্ট ভেরিফাই হলে ইনস্ট্যান্ট ডেলিভারি</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 shrink-0">
-                    <CheckCircle size={12} />
-                  </div>
-                  <span className="text-xs text-slate-600 font-medium">লাইসেন্স ইমেইল ও ড্যাশবোর্ডে পাঠানো হবে</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
-                    <Shield size={12} />
-                  </div>
-                  <span className="text-xs text-slate-600 font-medium">২৪/৭ কাস্টমার সাপোর্ট</span>
-                </div>
-              </div>
-            </div>
-
-            {/* CTA Button */}
-            {(() => {
-              const isBkashOnline = paymentMethod === 'bkash_online';
-              const isWallet = paymentMethod === 'wallet';
-              const gradient = isBkashOnline
-                ? 'linear-gradient(135deg, #ff2e87 0%, #e2007a 45%, #b8005f 100%)'
-                : isWallet
-                  ? 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 45%, #4c1d95 100%)'
-                  : 'linear-gradient(135deg, #6366f1 0%, #4f46e5 45%, #3730a3 100%)';
-              const shadow = isBkashOnline
-                ? 'shadow-[0_20px_40px_-12px_rgba(226,0,116,0.4)]'
-                : isWallet
-                  ? 'shadow-[0_20px_40px_-12px_rgba(139,92,246,0.4)]'
-                  : 'shadow-[0_20px_40px_-12px_rgba(79,70,229,0.35)]';
-              const amount = isWallet ? finalTotal : payableTotal;
-              return (
-                <button
-                  type="submit"
-                  form="checkout-form"
-                  disabled={loading || !termsAccepted || items.length === 0}
-                  className={`group relative w-full mt-8 lg:mt-10 py-4 md:py-5 text-white rounded-2xl font-bold text-base md:text-lg ${shadow} transition-all transform active:scale-[0.98] hover:-translate-y-0.5 flex items-center justify-center gap-3 overflow-hidden disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0`}
-                  style={{ background: gradient }}
-                >
-                  <span aria-hidden className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full" />
-                  <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/20 to-transparent" />
-                  <span className="relative flex items-center justify-center gap-3">
-                    {loading ? (
-                      <><Loader2 size={18} className="animate-spin" /> Processing…</>
-                    ) : (
-                      <>
-                        {isBkashOnline && (
-                          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-white/40">
-                            <img src={bkashLogoSrc} alt="bKash" className="h-5 w-5 object-contain" />
-                          </span>
-                        )}
-                        <span className="tracking-wide">
-                          {isBkashOnline ? 'bKash দিয়ে পরিশোধ করুন' : isWallet ? 'ওয়ালেট দিয়ে পরিশোধ করুন' : 'অর্ডার কনফার্ম করুন'}
-                        </span>
-                        <span className="ml-1 rounded-full bg-white/20 px-3 py-1 text-sm font-extrabold backdrop-blur-sm">
-                          ৳{amount.toLocaleString()}
-                        </span>
-                      </>
-                    )}
-                  </span>
-                </button>
-              );
-            })()}
-
-            <p className="text-center text-[10px] text-slate-400 mt-6 uppercase tracking-widest flex items-center justify-center gap-1.5">
-              <Shield size={11} /> 100% Secure Encrypted Checkout
-            </p>
-          </aside>
+          {/* Trust badges */}
+          <div className="glass-card rounded-2xl border border-border p-4 space-y-2 text-xs text-muted-foreground">
+            <p className="flex items-center gap-2"><CheckCircle size={13} className="text-green-400 flex-shrink-0" /> Instant Delivery after payment verification</p>
+            <p className="flex items-center gap-2"><CheckCircle size={13} className="text-green-400 flex-shrink-0" /> License key sent via email & dashboard</p>
+            <p className="flex items-center gap-2"><Shield size={13} className="text-primary flex-shrink-0" /> Secure & encrypted transaction</p>
+          </div>
         </div>
       </div>
     </div>
