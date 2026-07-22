@@ -159,8 +159,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [serviceFee] = useState(DEFAULT_SERVICE_FEE);
   const [selectedKeys, setSelectedKeys] = useState<string[]>(() => {
     try {
-      const stored = sanitizeItems(JSON.parse(localStorage.getItem(CART_KEY) || '[]'));
-      const base = stored.length > 0 ? stored : readBackup();
+      const rawPrimary = localStorage.getItem(CART_KEY);
+      const stored = sanitizeItems(JSON.parse(rawPrimary || '[]'));
+      const base = stored.length > 0 ? stored : (rawPrimary === null ? readBackup() : []);
       return base.map(i => `${i.id}__${i.variant || ''}`);
     } catch { return []; }
   });
