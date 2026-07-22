@@ -136,12 +136,14 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const [items, setItems] = useState<CartItem[]>(() => {
     try {
-      const primary = sanitizeItems(JSON.parse(localStorage.getItem(CART_KEY) || '[]'));
+      const rawPrimary = localStorage.getItem(CART_KEY);
+      const primary = sanitizeItems(JSON.parse(rawPrimary || '[]'));
       if (primary.length > 0) return primary;
-      // Primary cart is empty — recover from backup so abandoned-checkout carts survive
-      // browser hiccups, storage clears, or accidental navigation.
-      const backup = readBackup();
-      return backup;
+      // Only fall back to backup when the primary cart key has never been written
+      // (storage was wiped mid-checkout). If the user intentionally emptied their
+      // cart, CART_KEY exists as '[]' and we must respect that empty state.
+      if (rawPrimary === null) return readBackup();
+      return [];
     } catch { return []; }
   });
   const [wishlist, setWishlist] = useState<CartItem[]>(() => {
@@ -157,8 +159,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [serviceFee] = useState(DEFAULT_SERVICE_FEE);
   const [selectedKeys, setSelectedKeys] = useState<string[]>(() => {
     try {
-      const stored = sanitizeItems(JSON.parse(localStorage.getItem(CART_KEY) || '[]'));
-      const base = stored.length > 0 ? stored : readBackup();
+      const rawPrimary = localStorage.getItem(CART_KEY);
+      const stored = sanitizeItems(JSON.parse(rawPrimary || '[]'));
+      const base = stored.length > 0 ? stored : (rawPrimary === null ? readBackup() : []);
       return base.map(i => `${i.id}__${i.variant || ''}`);
     } catch { return []; }
   });
@@ -169,7 +172,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   // Persist locally + keep a rolling backup so an abandoned checkout can be resumed later.
   useEffect(() => {
     localStorage.setItem(CART_KEY, JSON.stringify(items));
-    writeBackup(items);
+    if (items.length > 0) {
+      writeBackup(items);
+    } else {
+      // Cart intentionally empty — drop the backup so removed items don't
+      // resurrect on next visit.
+      try { localStorage.removeItem(CART_BACKUP_KEY); } catch { /* ignore */ }
+    }
   }, [items]);
   useEffect(() => { localStorage.setItem('wishlist', JSON.stringify(wishlist)); }, [wishlist]);
   useEffect(() => { localStorage.setItem('cart_coupon', JSON.stringify(coupon)); }, [coupon]);
