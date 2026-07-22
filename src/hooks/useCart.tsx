@@ -136,12 +136,14 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const [items, setItems] = useState<CartItem[]>(() => {
     try {
-      const primary = sanitizeItems(JSON.parse(localStorage.getItem(CART_KEY) || '[]'));
+      const rawPrimary = localStorage.getItem(CART_KEY);
+      const primary = sanitizeItems(JSON.parse(rawPrimary || '[]'));
       if (primary.length > 0) return primary;
-      // Primary cart is empty — recover from backup so abandoned-checkout carts survive
-      // browser hiccups, storage clears, or accidental navigation.
-      const backup = readBackup();
-      return backup;
+      // Only fall back to backup when the primary cart key has never been written
+      // (storage was wiped mid-checkout). If the user intentionally emptied their
+      // cart, CART_KEY exists as '[]' and we must respect that empty state.
+      if (rawPrimary === null) return readBackup();
+      return [];
     } catch { return []; }
   });
   const [wishlist, setWishlist] = useState<CartItem[]>(() => {
