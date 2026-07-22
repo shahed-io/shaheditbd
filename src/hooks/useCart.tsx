@@ -172,7 +172,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   // Persist locally + keep a rolling backup so an abandoned checkout can be resumed later.
   useEffect(() => {
     localStorage.setItem(CART_KEY, JSON.stringify(items));
-    writeBackup(items);
+    if (items.length > 0) {
+      writeBackup(items);
+    } else {
+      // Cart intentionally empty — drop the backup so removed items don't
+      // resurrect on next visit.
+      try { localStorage.removeItem(CART_BACKUP_KEY); } catch { /* ignore */ }
+    }
   }, [items]);
   useEffect(() => { localStorage.setItem('wishlist', JSON.stringify(wishlist)); }, [wishlist]);
   useEffect(() => { localStorage.setItem('cart_coupon', JSON.stringify(coupon)); }, [coupon]);
