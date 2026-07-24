@@ -185,10 +185,11 @@ const HeroBanner = () => {
 
 
         {/* ══════════════════════════════════
-             MOBILE — Premium Clean White + Soft Bubble carousel
-             (< lg only; desktop keeps original layout below)
+             MOBILE — Premium Apple/SaaS-style hero carousel
+             (< lg only; fixed 3-slide spec, independent from desktop)
         ══════════════════════════════════ */}
-        <div className="lg:hidden px-3 pt-3 pb-4">
+        <MobileHeroCarousel />
+
           <div
             className="relative w-full rounded-[24px] bg-white border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.06)] overflow-hidden flex items-stretch"
             style={{ height: '210px' }}
