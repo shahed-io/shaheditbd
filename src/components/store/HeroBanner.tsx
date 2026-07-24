@@ -165,9 +165,9 @@ const HeroBanner = () => {
              MOBILE — Premium Clean White + Soft Bubble carousel
              (< lg only; desktop keeps original layout below)
         ══════════════════════════════════ */}
-        <div className="lg:hidden px-2 pt-2 pb-2">
+        <div className="lg:hidden px-2 pt-0 pb-2">
           <div
-            className="relative w-full rounded-[24px] border border-gray-100 overflow-hidden"
+            className="relative w-full rounded-[24px] border border-gray-100 overflow-hidden bg-white"
             style={{ height: '260px' }}
             role="region"
             aria-roledescription="carousel"
@@ -198,12 +198,12 @@ const HeroBanner = () => {
               }}
             />
 
-            {/* Left-side scrim for text legibility */}
+            {/* Stronger left-side scrim for text legibility across any background */}
             <div
               className="absolute inset-0 pointer-events-none"
               style={{
                 background:
-                  'linear-gradient(90deg, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.88) 32%, rgba(255,255,255,0.55) 52%, rgba(255,255,255,0.10) 72%, rgba(255,255,255,0) 100%)',
+                  'linear-gradient(90deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.96) 40%, rgba(255,255,255,0.78) 60%, rgba(255,255,255,0.25) 80%, rgba(255,255,255,0) 100%)',
               }}
             />
             {/* Subtle top/bottom vignette for depth */}
@@ -217,13 +217,14 @@ const HeroBanner = () => {
 
             {/* Left content — product info (name, price, CTA) */}
             <div
-              className="relative z-10 w-[66%] h-full pl-4 pr-2 py-3 flex flex-col justify-center gap-1.5"
+              className="relative z-10 w-[68%] h-full pl-4 pr-2 py-3 flex flex-col justify-center gap-1.5"
               style={{
                 opacity: dir === 'in' ? 1 : 0,
                 transform: dir === 'in' ? 'translateX(0)' : 'translateX(-14px)',
                 transition: 'opacity 0.32s ease, transform 0.32s ease',
               }}
             >
+
               {/* Tag row */}
               <div className="flex items-center gap-1.5 flex-wrap">
                 <span
