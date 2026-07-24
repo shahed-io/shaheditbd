@@ -2,6 +2,19 @@ import { SITE_URL, SITE_NAME } from './SEOHead';
 
 const PHONE = '+8801840099853';
 const BD_AREA_CODE = 'BD';
+const SUPABASE_STORAGE_ORIGIN = 'https://dpvdavjwqyviredzoorj.supabase.co';
+const SUPABASE_STORAGE_PUBLIC_PATH = '/storage/v1/object/public/';
+
+const seoImageUrl = (url?: string | null, fallback = `${SITE_URL}/favicon.png`) => {
+  const clean = (url || '').trim();
+  if (!clean) return fallback;
+  if (clean.startsWith(`${SUPABASE_STORAGE_ORIGIN}${SUPABASE_STORAGE_PUBLIC_PATH}`)) {
+    return clean.replace(SUPABASE_STORAGE_ORIGIN, SITE_URL);
+  }
+  if (clean.startsWith(SUPABASE_STORAGE_PUBLIC_PATH)) return `${SITE_URL}${clean}`;
+  if (clean.startsWith('/')) return `${SITE_URL}${clean}`;
+  return clean;
+};
 
 /** Product (offers) schema — enhanced for Bangladesh Google ranking */
 export const productSchema = (p: {
@@ -20,10 +33,11 @@ export const productSchema = (p: {
 }) => {
   // Build full image array for Google Image indexing
   const allImages: string[] = [];
-  if (p.image) allImages.push(p.image);
+  if (p.image) allImages.push(seoImageUrl(p.image));
   if (p.images) {
     for (const img of p.images) {
-      if (img && !allImages.includes(img)) allImages.push(img);
+      const normalized = seoImageUrl(img, '');
+      if (normalized && !allImages.includes(normalized)) allImages.push(normalized);
     }
   }
   if (allImages.length === 0) allImages.push(`${SITE_URL}/favicon.png`);
@@ -135,7 +149,7 @@ export const articleSchema = (post: {
   '@type': 'Article',
   headline: post.title,
   description: post.description || post.title,
-  image: post.image || `${SITE_URL}/favicon.png`,
+  image: seoImageUrl(post.image),
   url: `${SITE_URL}/blog/${post.slug}`,
   datePublished: post.publishedAt || new Date().toISOString(),
   dateModified: post.updatedAt || post.publishedAt || new Date().toISOString(),
@@ -279,7 +293,7 @@ export const itemListSchema = (items: { name: string; slug: string; image?: stri
     name: item.name,
     image: {
       '@type': 'ImageObject',
-      url: item.image || `${SITE_URL}/favicon.png`,
+      url: seoImageUrl(item.image),
       caption: `${item.name} - ${SITE_NAME}`,
     },
   })),
@@ -372,7 +386,7 @@ export const softwareApplicationSchema = (p: {
   '@type': 'SoftwareApplication',
   name: p.name,
   description: p.description || `${p.name} — Buy at the best price in Bangladesh`,
-  image: p.image || `${SITE_URL}/favicon.png`,
+  image: seoImageUrl(p.image),
   url: `${SITE_URL}/product/${p.slug}`,
   applicationCategory: p.category || 'BusinessApplication',
   operatingSystem: p.operatingSystem || 'Windows, macOS, Android, iOS',
@@ -404,7 +418,7 @@ export const howToSchema = (h: {
   '@type': 'HowTo',
   name: h.name,
   description: h.description,
-  image: h.image || `${SITE_URL}/favicon.png`,
+  image: seoImageUrl(h.image),
   totalTime: h.totalTime || 'PT5M',
   step: h.steps.map((s, i) => ({
     '@type': 'HowToStep',
@@ -424,7 +438,7 @@ export const videoObjectSchema = (v: {
   '@type': 'VideoObject',
   name: v.name,
   description: v.description,
-  thumbnailUrl: v.thumbnailUrl,
+  thumbnailUrl: seoImageUrl(v.thumbnailUrl, v.thumbnailUrl),
   uploadDate: v.uploadDate || new Date().toISOString(),
   ...(v.contentUrl ? { contentUrl: v.contentUrl } : {}),
   ...(v.embedUrl ? { embedUrl: v.embedUrl } : {}),

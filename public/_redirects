@@ -1,11 +1,13 @@
-# ── Sitemaps (served by edge functions for fresh data) ──────────
-/sitemap.xml         https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/sitemap         200
-/sitemap_index.xml   https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/sitemap-index   200
-/product-sitemap.xml https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/sitemap         200
-/image-sitemap.xml   https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/image-sitemap   200
+# ── Sitemaps (served as static files generated before dev/build) ──
+# Keep these static so Google always receives the exact checked-in XML.
 /rss.xml             https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/rss-feed       200
 /feed.xml            https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/rss-feed       200
 /atom.xml            https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/rss-feed       200
+
+# ── Same-domain public media for Google Images ───────────────────
+# Sitemaps and prerendered product HTML expose product images on the
+# primary domain; this proxy serves the underlying public storage file.
+/storage/v1/object/public/*  https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/:splat  200
 
 # ── Bot prerender for product pages ─────────────────────────────
 # When Googlebot / Bingbot / social crawlers hit a product URL we serve

@@ -1,100 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
-    <loc>https://shahedstore.com.bd/</loc>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/shop</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/blog</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/link</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/about</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/contact-us</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/faqs</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/free-tools</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/delivery-info</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/refund-policy</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/return-policy</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/order-policy</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/privacy-policy</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/terms-conditions</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/get-cid</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/check-key</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/affiliate</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/install</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
     <loc>https://shahedstore.com.bd/product/chtgpt-plus-price-in-bangladesh</loc>
-    <lastmod>2026-07-21</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774722773937-6pl8d444.png</image:loc>
       <image:title>ChatGPT Plus Price in Bangladesh ৳399 | Shahed Store</image:title>
@@ -104,9 +11,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/visio-2024-pro-price-in-bangladesh</loc>
-    <lastmod>2026-07-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1777538470973-k1o3xo76.png</image:loc>
       <image:title>Visio 2o24 Pro Price in Bangladesh ৳4999 | Shahed Store</image:title>
@@ -116,9 +20,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/le0nardo-ai-price-in-bangladesh</loc>
-    <lastmod>2026-07-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774556650977-oiyj8rcr.png</image:loc>
       <image:title>Leonardo AI Price in Bangladesh ৳1699 | Shahed Store</image:title>
@@ -128,9 +29,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/windows-11-pro-online-key-price-in-bangladesh</loc>
-    <lastmod>2026-07-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774122756757-vfnp0srr.png</image:loc>
       <image:title>Windows 11 Pro Online Key Price in Bangladesh ৳2499 | Shahed</image:title>
@@ -140,9 +38,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/microsoft-office-365-personal-price-in-bangladesh</loc>
-    <lastmod>2026-07-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774191973761-0eyv67ap.png</image:loc>
       <image:title>Microsoft Office 365 Personal Price in Bangladesh ৳1999 | Sh</image:title>
@@ -158,9 +53,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/windows-server-2019-standard-price-in-bangladesh</loc>
-    <lastmod>2026-07-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1777990908138-vhcd7qac.png</image:loc>
       <image:title>Windows Server 2o19 Standard Price in Bangladesh ৳1300 | Sha</image:title>
@@ -170,9 +62,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/nrdvpn-personal-subscription-price-in-bangladesh</loc>
-    <lastmod>2026-07-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1773862023072-xb9xm8xt.png</image:loc>
       <image:title>N@rdVPN Personal Subscription Price in BD | Shahed Store</image:title>
@@ -182,9 +71,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/microsoft-office-2024-pro-plus-ltse-price-in-bd</loc>
-    <lastmod>2026-07-19</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1777533960210-24pcqba6.png</image:loc>
       <image:title>Microsoft Office 2o24 Pro Plus LTSE Price in BD ৳699 | Shahe</image:title>
@@ -194,9 +80,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/adobe-creative-cloud-all-apps</loc>
-    <lastmod>2026-07-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1773859789781-s3mh6n55.jpg</image:loc>
       <image:title>Adobe Creative Cloud All Apps  ৳5999 | Shahed Store</image:title>
@@ -206,9 +89,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/curs0r-pro-price-in-bangladesh</loc>
-    <lastmod>2026-07-16</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1778598875381-rjom7sox.png</image:loc>
       <image:title>Cursor Pro Price in Bangladesh ৳14999 | Shahed Store</image:title>
@@ -218,9 +98,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/nrdvpn-premium-subscription-price-in-bd</loc>
-    <lastmod>2026-07-16</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1773862023072-xb9xm8xt.png</image:loc>
       <image:title>NardVPN Premium Subscription Price in BD ৳180 | Shahed Store</image:title>
@@ -230,9 +107,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/gemini-ai-pro-subscription-price-in-bd</loc>
-    <lastmod>2026-07-13</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774555470701-gdprblfc.png</image:loc>
       <image:title>Gemini AI Advanced Subscription Price in BD ৳499 | Shahed S</image:title>
@@ -242,9 +116,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/power-bi-pro-subscription-in-bangladesh</loc>
-    <lastmod>2026-07-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1773785232862-whtx0ance59.webp</image:loc>
       <image:title>Power BI Pro Subscription in Bangladesh ৳2499 | Shahed Store</image:title>
@@ -254,9 +125,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/amazon-prme-video-premium-price-in-bb</loc>
-    <lastmod>2026-07-09</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774199430550-gu3qhzf6.png</image:loc>
       <image:title>Amazon Prime Video Premium Price in BB ৳189 | Shahed Store</image:title>
@@ -266,9 +134,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/truecller-premium-price-in-bangladesh</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774191604673-w1pdoh7f.png</image:loc>
       <image:title>Truecaller Premium Price in Bangladesh ৳1299 | Shahed Store</image:title>
@@ -278,9 +143,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/microsoft-project-2021-professional-price-in-bd</loc>
-    <lastmod>2026-07-06</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1773788031772-gemxmrgt6h7.webp</image:loc>
       <image:title>Microsoft Project 2o21 Professional Price in BD ৳799 | Shahe</image:title>
@@ -290,9 +152,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/cheg-premium-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1776110911732-wybp0mbm.png</image:loc>
       <image:title>Che&amp;g Premium Price in Bangladesh ৳1999 | Shahed Store</image:title>
@@ -302,9 +161,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/ullu-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1776109948488-uj3c46oi.png</image:loc>
       <image:title>UlalU Price in Bangladesh ৳999 | Shahed Store</image:title>
@@ -314,9 +170,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/project-2024-professional-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1777536122468-xuvgxuqq.png</image:loc>
       <image:title>Project 2o24 Professional Price in Bangladesh ৳4999 | Shahed</image:title>
@@ -326,9 +179,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/you-tube-premium-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1776112069901-sg1n6tcw.png</image:loc>
       <image:title>You T*ube Prem*ium Price in Bangladesh ৳99 | Shahed Store</image:title>
@@ -338,9 +188,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/microsoft-office-2019-pro-plus-price-in-bd</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1773854974783-zlkx65tqhvb.webp</image:loc>
       <image:title>Microsoft Office 2o19 Pro Plus Price in BD ৳499 | Shahed Sto</image:title>
@@ -350,9 +197,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/microsoft-office-365-idpassword-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1773864446194-mdg65sz0.jpg</image:loc>
       <image:title>Microsoft Office 365 (Id;Password) Price in Bangladesh ৳499</image:title>
@@ -362,9 +206,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/google-meet-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1775209734534-hoj875iz.png</image:loc>
       <image:title>Google Meet Price in Bangladesh ৳799 | Shahed Store</image:title>
@@ -374,9 +215,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/hix-ai-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774177884652-5ercofsc.png</image:loc>
       <image:title>Hix Ai Price in Bangladesh ৳1699 | Shahed Store</image:title>
@@ -386,9 +224,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/ntflix-subscription-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774198884859-7vn5xgga.png</image:loc>
       <image:title>Netflix Subscription in Bangladesh ৳449 | Shahed Store</image:title>
@@ -404,9 +239,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/hma-vpn-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774192515837-c541tuwc.png</image:loc>
       <image:title>HM*A VPN Price in Bangladesh ৳290 | Shahed Store</image:title>
@@ -416,9 +248,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/winrar-license-key-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1776111492628-k8nwv3ob.png</image:loc>
       <image:title>Winrar License Key Price in Bangladesh ৳2999 | Shahed Store</image:title>
@@ -428,9 +257,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/windows-10-pro-license-key-price-in-bd</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774123124088-ha41nvtx.png</image:loc>
       <image:title>Windows 1o Pro License Key Price in BD ৳449 | Shahed Store</image:title>
@@ -440,9 +266,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/windows-server-2022-standard-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1776537988343-qp8fs3g3.png</image:loc>
       <image:title>Windows Server 2o22 Standard Price in Bangladesh ৳1999 | Sha</image:title>
@@ -452,9 +275,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/perplexty-pro-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774191104717-pnb0ympd.png</image:loc>
       <image:title>Perplexity Pro Price in Bangladesh ৳999 | Shahed Store</image:title>
@@ -464,9 +284,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/freepik-premium-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774553952268-oy4cu9f3.png</image:loc>
       <image:title>Freepik Premium Price in Bangladesh ৳1800 | Shahed Store</image:title>
@@ -476,9 +293,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/ipvanish-vpn-subscription-price-in-bd</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1776144117645-j1ife6nr.png</image:loc>
       <image:title>IPVanish VPN Subscription Price in BD ৳199 | Shahed Store</image:title>
@@ -488,9 +302,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/surfshrk-vpn-subscription-price-in-bd</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1773865491291-chs149w4.jpg</image:loc>
       <image:title>Surfshark VPN Subscription Price in BD ৳199 | Shahed Store</image:title>
@@ -500,9 +311,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/internet-download-manager-idm-lifetime-key</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1773826322605-q9qiqe4mcc.webp</image:loc>
       <image:title>Internet Download Manager (IDM) Lifetime Key ৳1111 | Shahed</image:title>
@@ -512,9 +320,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/n0tion-business-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1778606718247-djm528ky.png</image:loc>
       <image:title>Notion Business Price in Bangladesh ৳7999 | Shahed Store</image:title>
@@ -524,9 +329,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/microsoft-office-2016-pro-plus-license-key-price-in-bd</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1773854645074-psf19r0afyp.webp</image:loc>
       <image:title>Microsoft Office 2o16 Pro Plus License Key Price in BD ৳450</image:title>
@@ -536,9 +338,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/udemy-premium-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1776110605678-8dqtjuqz.png</image:loc>
       <image:title>Udemy Premium Price in Bangladesh ৳1399 | Shahed Store</image:title>
@@ -548,9 +347,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/office-2021-pro-plus-non-sync-license-key-price-in-bd</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1773839591999-922ndfmws67.webp</image:loc>
       <image:title>Office 2o21 Pro Plus Non Sync License Key Price in BD ৳499 |</image:title>
@@ -560,9 +356,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/microsoft-office-2010-pro-plus-license-key-price-in-bd</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1773853343068-2v3ol4btgvd.webp</image:loc>
       <image:title>Microsoft Office 2o1o Pro Plus License Key Price in BD ৳449</image:title>
@@ -572,9 +365,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/microsoft-office-365-family-1-year-price-in-bd</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1773864898088-nqowozru.png</image:loc>
       <image:title>Microsoft Office 365 Family 1 Year Price in BD ৳8499 | Shahe</image:title>
@@ -584,9 +374,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/linkedin-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1776110244127-fqf8x5vr.png</image:loc>
       <image:title>Linkedin Price in Bangladesh ৳8878 | Shahed Store</image:title>
@@ -596,9 +383,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/camscanner-premium-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774189408383-bwcny7c4.png</image:loc>
       <image:title>Camscanner Premium Price in Bangladesh ৳3499 | Shahed Store</image:title>
@@ -608,9 +392,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/protn-vpn-price-in-bd</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774177093745-twknj23b.png</image:loc>
       <image:title>Proton VPN Price in BD ৳199 | Shahed Store</image:title>
@@ -620,9 +401,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/crunchyroll-premium-subscription-price-in-bd</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774386677768-evr1s2lt.png</image:loc>
       <image:title>Crunchyroll Premium Subscription Price in BD ৳149 | Shahed S</image:title>
@@ -632,9 +410,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/visio-2021-pro-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1776107259268-3fi2rnsk.png</image:loc>
       <image:title>Visio 2o21 Pro Price in Bangladesh ৳1499 | Shahed Store</image:title>
@@ -644,9 +419,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/telegrm-premium-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774387567759-tkduz7qz.png</image:loc>
       <image:title>Telegram Premium Price in Bangladesh ৳4999 | Shahed Store</image:title>
@@ -656,9 +428,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/duolingo-subscription-price-in-bd</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774186499064-a4qj22wl.png</image:loc>
       <image:title>Duolingo Subscription Price in BD ৳999 | Shahed Store</image:title>
@@ -668,9 +437,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/quillbot-subscription-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774388497303-j3788bqm.png</image:loc>
       <image:title>Quillbot Subscription Price in Bangladesh ৳889 | Shahed Stor</image:title>
@@ -680,9 +446,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/hoichoi-premium-subscription-price-in-bd</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774196837537-x7xpihc1.png</image:loc>
       <image:title>Hoichoi Premium Subscription Price in BD ৳179 | Shahed Store</image:title>
@@ -692,9 +455,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/elevenlbs-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1776111843575-8yi25ykv.png</image:loc>
       <image:title>ELEVENLABS Price in Bangladesh ৳1899 | Shahed Store</image:title>
@@ -704,9 +464,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/sql-server-2019-standard-key-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1777398123911-vj8aq5qj.png</image:loc>
       <image:title>SQL Server 2o19 Standard Key Price in Bangladesh ৳2999 | Sha</image:title>
@@ -716,9 +473,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/replit-core-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1776142920558-21uc4nl6.png</image:loc>
       <image:title>Replit Core Price in Bangladesh ৳1499 | Shahed Store</image:title>
@@ -728,9 +482,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/windows-11-iot-enterprise-ltsc-2024-20pc</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774122587907-wgtnt6a0.png</image:loc>
       <image:title>Windows 11 IoT Enterprise LTSC 2o24 2oPC ৳6999 | Shahed Stor</image:title>
@@ -740,9 +491,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/windows-11-enterprise-license-key-price-in-bd</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1773838669078-t6mdpt3l5r.webp</image:loc>
       <image:title>Windows 11 Enterprise License Key Price in BD ৳4999 | Shahed</image:title>
@@ -752,9 +500,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/google-drive-storage-price-in-bd</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774387127612-awrsurf7.png</image:loc>
       <image:title>Google Drive Storage Price in BD ৳1199 | Shahed Store</image:title>
@@ -764,9 +509,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/itunes-gift-card-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774178558853-f6o52x3b.png</image:loc>
       <image:title>iTunes Gift Card Price in Bangladesh ৳677 | Shahed Store</image:title>
@@ -776,9 +518,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/grammarly-premium-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774553527188-3ik0gw9t.png</image:loc>
       <image:title>Grammarly Premium Price in Bangladesh ৳399 | Shahed Store</image:title>
@@ -788,9 +527,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/windows-11-home-license-key-price-in-bd</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774123357131-zy0mpdre.png</image:loc>
       <image:title>Windows 11 Home License Key Price in BD ৳549 | Shahed Store</image:title>
@@ -800,9 +536,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/chorki-premium-subscription-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774196389962-uxf2z6vg.png</image:loc>
       <image:title>Chorki Premium Subscription Price in Bangladesh ৳180 | Shahe</image:title>
@@ -812,9 +545,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/super-gr0k-ai-subscription-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/product-1773775917477-z53sifokqkr.png</image:loc>
       <image:title>Super Grok AI Subscription In Bangladesh ৳3500 | Shahed Stor</image:title>
@@ -824,9 +554,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/windows-11-pro-licence-key-price-in-bd</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774122756757-vfnp0srr.png</image:loc>
       <image:title>Windows 11 Pro Licence Key Price in BD ৳599 | Shahed Store</image:title>
@@ -836,9 +563,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/figma-premium-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1773860402535-5adb1jh6.png</image:loc>
       <image:title>Figma Premium Price in Bangladesh ৳3499 | Shahed Store</image:title>
@@ -848,9 +572,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/windows-11-pro-for-workstations-key-price-in-bd</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1773829329487-08wkzlyvq6aa.webp</image:loc>
       <image:title>Windows 11 Pro for Workstations Key Price in BD ৳1599 | Shah</image:title>
@@ -860,9 +581,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/spotify-premium-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774554530169-bnixtzxy.png</image:loc>
       <image:title>Spotify Premium Price in Bangladesh ৳149 | Shahed Store</image:title>
@@ -872,9 +590,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/purevpn-subscription-in-bd</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774176721626-5zctyt7e.png</image:loc>
       <image:title>PureVPN Subscription in BD ৳1499 | Shahed Store</image:title>
@@ -884,9 +599,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/windows-10-home-license-key-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1776142116101-rwy62yqt.png</image:loc>
       <image:title>Windows 1o Home License Key Price in Bangladesh ৳499 | Shahe</image:title>
@@ -896,9 +608,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/zoom-pro-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1773785956993-qqkikw8z7ja.webp</image:loc>
       <image:title>Zoom Pro Price in Bangladesh ৳799 | Shahed Store</image:title>
@@ -908,9 +617,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/pcsart-premium-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1776111209396-sktqo637.png</image:loc>
       <image:title>Picsart Premium Price in Bangladesh ৳3000 | Shahed Store</image:title>
@@ -920,9 +626,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/clude-pro-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1778579007764-iznf6cgt.png</image:loc>
       <image:title>Claude Pro Price in Bangladesh ৳3500 | Shahed Store</image:title>
@@ -932,9 +635,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/office-home-business-2024-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1776106961769-m8xbe9wn.png</image:loc>
       <image:title>Office Home &amp; Business 2o24 Price in Bangladesh ৳14999 | Sha</image:title>
@@ -950,9 +650,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/vidiq-boost-plan-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1776109283211-rfw3czr9.png</image:loc>
       <image:title>VidiQ Boost Plan Price in Bangladesh ৳999 | Shahed Store</image:title>
@@ -962,9 +659,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/exprev-pn-premium-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1773866277786-q8fxohjj.jpg</image:loc>
       <image:title>Exp*ressVPN Premium Price in Bangladesh ৳1499 | Shahed Store</image:title>
@@ -974,9 +668,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/coursera-plus-subscription-price-in-bd</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774388124157-puf83wbm.png</image:loc>
       <image:title>Coursera Plus Subscription Price in BD ৳4899 | Shahed Store</image:title>
@@ -986,9 +677,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/windows-10-pro-for-workstations-price-in-bangladesh</loc>
-    <lastmod>2026-07-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774116172530-a5zsmqm1.png</image:loc>
       <image:title>Windows 1o Pro for Workstations Price in Bangladesh ৳999 | S</image:title>
@@ -998,9 +686,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/windows-server-2025-datacenter-price-in-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1781014833178-g3nx7gxk.png</image:loc>
       <image:title>Windows Server 2025 Datacenter বাংলাদেশ | Shahed Store</image:title>
@@ -1010,9 +695,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/1111-warp-vpn-premium-price-in-bd</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1776143371798-igzsjnns.png</image:loc>
       <image:title>1.1.1.1 + WARP VPN Premium Price in BD ৳1399 | Shahed Store</image:title>
@@ -1022,9 +704,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/expresvpn-personal-price-in-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1773866277786-q8fxohjj.jpg</image:loc>
       <image:title>ExpressVPN Personal Price in Bangladesh – Shahed Store BD</image:title>
@@ -1034,9 +713,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/cnva-pro-price-in-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774188559249-ryo7my9c.png</image:loc>
       <image:title>Canva Pro Price in Bangladesh ৳350 | Shahed Store</image:title>
@@ -1046,9 +722,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/autodesk-subscription-price-in-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774176339829-tywdyi74.png</image:loc>
       <image:title>AutoDesk Subscription Price in Bangladesh ৳2499 | Shahed Sto</image:title>
@@ -1058,9 +731,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/cpcut-pro-price-in-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774178843862-mx5dfvol.png</image:loc>
       <image:title>CaPCut Pro Price in Bangladesh ৳399 | Shahed Store</image:title>
@@ -1075,22 +745,7 @@
     </image:image>
   </url>
   <url>
-    <loc>https://shahedstore.com.bd/shop?category=ai-tools</loc>
-    <lastmod>2026-03-21</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/shop?category=windows</loc>
-    <lastmod>2026-03-21</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://shahedstore.com.bd/shop?category=office</loc>
-    <lastmod>2026-04-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/category-icons/ms365-logo.png</image:loc>
       <image:title>Office - Buy in Bangladesh</image:title>
@@ -1099,28 +754,7 @@
     </image:image>
   </url>
   <url>
-    <loc>https://shahedstore.com.bd/shop?category=software</loc>
-    <lastmod>2026-03-21</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/shop?category=subscription</loc>
-    <lastmod>2026-03-21</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/shop?category=vpn</loc>
-    <lastmod>2026-03-21</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://shahedstore.com.bd/blog/coursera-plus-subscription-price-in-bd-review-buy-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774388124157-puf83wbm.png</image:loc>
       <image:title>Unlock Unlimited Learning: Coursera Plus Subscription Price in BD at Shahed Store</image:title>
@@ -1129,9 +763,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/blog/linkedin-price-in-bangladesh-review-buy-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1776110244127-fqf8x5vr.png</image:loc>
       <image:title>Unlock Your Career Potential: LinkedIn Premium Price in Bangladesh at Shahed Store – Save 66%!</image:title>
@@ -1140,9 +771,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/blog/leonardo-ai-price-in-bangladesh-review-buy-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774556650977-oiyj8rcr.png</image:loc>
       <image:title>Unlock Your Creative Potential: Leonardo AI Price in Bangladesh - Exclusive Deals at Shahed Store!</image:title>
@@ -1151,9 +779,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/blog/crunchyroll-premium-subscription-price-in-bd-review-buy-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774386677768-evr1s2lt.png</image:loc>
       <image:title>Crunchyroll Premium Price in BD: Unlock Unlimited Anime at Shahed Store – The Best Deal!</image:title>
@@ -1162,9 +787,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/blog/telegrm-premium-price-in-bangladesh-review-buy-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774387567759-tkduz7qz.png</image:loc>
       <image:title>Telegr@m Premium Price in Bangladesh: Unlock Exclusive Features with Shahed Store!</image:title>
@@ -1173,9 +795,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/blog/udemy-premium-price-in-bangladesh-review-buy-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1776110605678-8dqtjuqz.png</image:loc>
       <image:title>Unlock Your Potential: Udemy Premium Price in Bangladesh &amp; Affordable Learning at Shahed Store</image:title>
@@ -1184,9 +803,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/blog/grammarly-premium-price-in-bangladesh-review-buy-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774553527188-3ik0gw9t.png</image:loc>
       <image:title>Grammarly Premium Price in Bangladesh: Unlock Flawless Writing with Shahed Store!</image:title>
@@ -1195,9 +811,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/blog/freepik-premium-price-in-bangladesh-review-buy-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774553952268-oy4cu9f3.png</image:loc>
       <image:title>Freepik Premium Price in Bangladesh: Unlock Unlimited Creativity at Shahed Store</image:title>
@@ -1206,9 +819,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/blog/chtgpt-plus-price-in-bangladesh-review-buy-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774722773937-6pl8d444.png</image:loc>
       <image:title>Ch@tGPT Plus Price in Bangladesh: Unlock Advanced AI Power with Shahed Store!</image:title>
@@ -1217,9 +827,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/blog/amazon-prime-video-premium-price-in-bb-review-buy-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774199430550-gu3qhzf6.png</image:loc>
       <image:title>Amazon Prime Video Premium Price in BD: Stream Endless Entertainment at ৳189 with Shahed Store</image:title>
@@ -1228,9 +835,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/blog/netflix-subscription-in-bangladesh-review-buy-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774198884859-7vn5xgga.png</image:loc>
       <image:title>Unlock Endless Entertainment: Get Your Netflix Subscription in Bangladesh Today!</image:title>
@@ -1239,9 +843,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/blog/zoom-pro-price-in-bangladesh-review-buy-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1773785956993-qqkikw8z7ja.webp</image:loc>
       <image:title>Zoom Pro Price in Bangladesh: Affordable Online Meetings &amp; Collaboration</image:title>
@@ -1250,9 +851,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/blog/truecller-premium-price-in-bangladesh-review-buy-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774191604673-w1pdoh7f.png</image:loc>
       <image:title>Truecaller Premium Price in Bangladesh: Unlock Smarter, Safer Communication with Shahed Store</image:title>
@@ -1261,9 +859,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/blog/duolingo-subscription-price-in-bd-review-buy-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774186499064-a4qj22wl.png</image:loc>
       <image:title>Unlock New Languages: Duolingo Subscription Price in BD &amp; How to Save 50%!</image:title>
@@ -1272,9 +867,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/blog/grok-ai-subscription-in-bangladesh-review-buy-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/product-1773775917477-z53sifokqkr.png</image:loc>
       <image:title>Unlock AI Power: Grok AI Subscription in Bangladesh at an Unbeatable Price!</image:title>
@@ -1283,9 +875,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/blog/itunes-gift-card-price-in-bangladesh-review-buy-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774178558853-f6o52x3b.png</image:loc>
       <image:title>iTunes Gift Card Price in Bangladesh: Unlock Apple&apos;s World Affordably with Shahed Store</image:title>
@@ -1294,9 +883,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/blog/hix-ai-price-in-bangladesh-review-buy-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774177884652-5ercofsc.png</image:loc>
       <image:title>Hix AI Price in Bangladesh: Boost Your Content Creation with Shahed Store Affordable Subscription</image:title>
@@ -1305,9 +891,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/blog/cnva-pro-price-in-bangladesh-review-buy-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774188559249-ryo7my9c.png</image:loc>
       <image:title>C@nva Pro Price in Bangladesh: Unlock Premium Design at an Unbeatable Price</image:title>
@@ -1316,9 +899,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/blog/autodesk-subscription-price-in-bangladesh-review-buy-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774176339829-tywdyi74.png</image:loc>
       <image:title>AutoCAD &amp; Autodesk Subscription Price in Bangladesh: Unlock Creativity at 75% Off!</image:title>
@@ -1327,9 +907,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/blog/figma-premium-price-in-bangladesh-review-buy-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1773860402535-5adb1jh6.png</image:loc>
       <image:title>Figma Premium Price in Bangladesh: Unlock Lifetime Design Power at Shahed Store</image:title>
@@ -1338,9 +915,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/blog/chorki-premium-subscription-price-in-bangladesh-review-buy-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774196389962-uxf2z6vg.png</image:loc>
       <image:title>Chorki Premium Subscription Price in Bangladesh: Unlock Endless Bengali Entertainment at Shahed Store</image:title>
@@ -1349,9 +923,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/blog/cpcut-pro-price-in-bangladesh-review-buy-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774178843862-mx5dfvol.png</image:loc>
       <image:title>CapCut Pro Price in Bangladesh: Unlock Premium Video Editing for Less with Shahed Store</image:title>
@@ -1360,9 +931,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/blog/proton-vpn-price-in-bd-review-buy-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774177093745-twknj23b.png</image:loc>
       <image:title>Proton VPN Price in BD: Secure Your Digital Life with Shahed Store Best Deals!</image:title>
@@ -1371,9 +939,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/blog/gemini-ai-advanced-subscription-price-in-bd-review-buy-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774165709822-iqy38xjo.png</image:loc>
       <image:title>Unlock Google&apos;s Advanced AI: Gemini AI Advanced Subscription Price in BD - Save 75%!</image:title>
@@ -1382,9 +947,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/blog/windows-11-iot-enterprise-ltsc-2024-20pc-review-buy-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774122587907-wgtnt6a0.png</image:loc>
       <image:title>Unlock Industrial Power: Windows 11 IoT Enterprise LTSC 2024 for Your 20PC Devices in Bangladesh</image:title>
@@ -1393,9 +955,6 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/blog/hma-vpn-price-in-bangladesh-review-buy-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774192515837-c541tuwc.png</image:loc>
       <image:title>HM*A VPN Price in Bangladesh: Secure Your Digital Life at an Unbeatable Price!</image:title>
@@ -1404,37 +963,10 @@
   </url>
   <url>
     <loc>https://shahedstore.com.bd/blog/perplexity-pro-price-in-bangladesh-review-buy-bangladesh</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
     <image:image>
       <image:loc>https://shahedstore.com.bd/storage/v1/object/public/product-images/ai-card-1774191104717-pnb0ympd.png</image:loc>
       <image:title>Perplexity Pro Price in Bangladesh: Unlock Advanced AI Search at Shahed Store</image:title>
       <image:license>https://shahedstore.com.bd/terms-conditions</image:license>
     </image:image>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/blog/shahed-store-about-us-bangladesh-digital-software</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/blog/windows-11-pro-activation-guide-bangla</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/blog/microsoft-office-365-vs-2021-comparison-bangla</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/pay/pay-mrsygqhd-5qqlez</loc>
-    <lastmod>2026-07-20</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
   </url>
 </urlset>
