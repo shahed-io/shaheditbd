@@ -26,10 +26,12 @@ type Slide = {
   accentTo: string;
   emoji: string;
   logoImg: string;
+  bgImage: string;
   features: SlideFeature[];
   enabled: boolean;
   productSlug: string;
 };
+
 
 type BgSettings = {
   bgType: 'default' | 'gradient' | 'color';
@@ -68,9 +70,10 @@ const EMPTY_SLIDE = (): Slide => ({
   subtitle: 'Short subtitle here', desc: 'Describe the product briefly.',
   price: '৳999', original: '৳2,999', off: '67%', badge: 'HOT DEAL',
   accentFrom: 'hsl(243,75%,55%)', accentTo: 'hsl(263,70%,52%)',
-  emoji: '🛍️', logoImg: '', features: ['Feature 1', 'Feature 2', 'Feature 3'],
+  emoji: '🛍️', logoImg: '', bgImage: '', features: ['Feature 1', 'Feature 2', 'Feature 3'],
   enabled: true, productSlug: '',
 });
+
 
 /* ═══════════════════ COMPONENT ═══════════════════ */
 const AdminHeroBanner = () => {
@@ -335,6 +338,63 @@ const AdminHeroBanner = () => {
                     )}
                   </div>
                 </div>
+
+                {/* Banner Image Upload — appears on the right side of the desktop hero */}
+                <div className="bg-primary/5 border border-primary/20 rounded-xl p-3 space-y-2">
+                  <label className="text-[11px] font-bold text-foreground flex items-center gap-2">
+                    <ImageIcon size={12} className="text-primary" />
+                    ব্যানার ইমেজ (ডেস্কটপ ও মোবাইলের ডান পাশে বসবে)
+                  </label>
+                  <p className="text-[10px] text-muted-foreground leading-relaxed">
+                    📐 <b>প্রস্তাবিত সাইজ:</b> 1200 × 800 px (ratio ~3:2) · JPG / PNG / WebP · সর্বোচ্চ 800 KB
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <label className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg border-2 border-dashed border-primary/40 hover:border-primary/70 hover:bg-primary/5 cursor-pointer transition-colors text-xs font-semibold text-primary">
+                      <ImageIcon size={13} />
+                      {selectedSlide.bgImage ? 'ইমেজ পরিবর্তন করুন' : 'ব্যানার আপলোড করুন'}
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        className="hidden"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          if (file.size > 800 * 1024) {
+                            toast.error('ফাইল সাইজ 800 KB এর কম হতে হবে');
+                            return;
+                          }
+                          const ext = file.name.split('.').pop() || 'jpg';
+                          const path = `hero-banners/${selectedSlide.id}-${Date.now()}.${ext}`;
+                          const { error } = await supabase.storage.from('product-images').upload(path, file, { upsert: true });
+                          if (error) { toast.error('আপলোড ব্যর্থ: ' + error.message); return; }
+                          const { data } = supabase.storage.from('product-images').getPublicUrl(path);
+                          updateSlide(selectedSlide.id, 'bgImage', data.publicUrl);
+                          toast.success('ব্যানার ইমেজ আপলোড হয়েছে');
+                        }}
+                      />
+                    </label>
+                    {selectedSlide.bgImage && (
+                      <button
+                        onClick={() => updateSlide(selectedSlide.id, 'bgImage', '')}
+                        className="px-3 py-2 rounded-lg text-[11px] font-bold text-destructive hover:bg-destructive/10 border border-destructive/30 transition-colors"
+                      >
+                        রিমুভ
+                      </button>
+                    )}
+                  </div>
+                  <input
+                    value={selectedSlide.bgImage || ''}
+                    onChange={e => updateSlide(selectedSlide.id, 'bgImage', e.target.value)}
+                    placeholder="অথবা URL পেস্ট করুন: https://..."
+                    className="w-full bg-background border border-border rounded-lg px-3 py-2 text-[11px] font-mono focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                  />
+                  {selectedSlide.bgImage && (
+                    <div className="mt-1 rounded-lg overflow-hidden border border-border bg-muted/40">
+                      <img src={selectedSlide.bgImage} alt="Banner preview" className="w-full h-32 object-cover" />
+                    </div>
+                  )}
+                </div>
+
 
                 <div>
                   <label className="text-[11px] font-semibold text-muted-foreground mb-1 flex items-center gap-2 block">
