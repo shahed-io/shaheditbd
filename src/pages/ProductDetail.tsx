@@ -228,12 +228,23 @@ const ProductDetail = () => {
           }).catch(() => { /* silent */ });
           // Fetch review stats for Google rich snippet schema
           (supabase as any).from('product_reviews_public')
-            .select('rating')
+            .select('rating, review_text, user_name, created_at')
             .eq('product_slug', row.slug)
+            .order('created_at', { ascending: false })
             .then(({ data: rData }: { data: any[] | null }) => {
               if (rData && rData.length > 0) {
                 const avg = rData.reduce((s: number, r: any) => s + r.rating, 0) / rData.length;
-                if (!cancelled) setReviewStats({ avg: parseFloat(avg.toFixed(1)), count: rData.length });
+                if (!cancelled) {
+                  setReviewStats({ avg: parseFloat(avg.toFixed(1)), count: rData.length });
+                  setTopReviews(
+                    rData.slice(0, 10).map((r: any) => ({
+                      author: r.user_name || 'Verified Buyer',
+                      rating: Number(r.rating) || 5,
+                      body: r.review_text || '',
+                      date: r.created_at ? String(r.created_at).split('T')[0] : undefined,
+                    })).filter((r: any) => r.body),
+                  );
+                }
               }
             });
         }, 3000);
