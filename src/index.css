@@ -2602,21 +2602,23 @@ body.admin-page dt,
 body.admin-page dd,
 body.admin-page label,
 body.admin-page button,
-body.admin-page button *,
+body.admin-page button,
 body.admin-page [role="button"],
-body.admin-page [role="button"] *,
 body.admin-page [role="tab"],
-body.admin-page [role="tab"] *,
 body.admin-page .admin-nav-item,
-body.admin-page .admin-nav-item *,
 body.admin-page .badge,
-body.admin-page .badge *,
-body.admin-page [class*="rounded-full"],
-body.admin-page [class*="rounded-full"] * {
+body.admin-page [class*="rounded-full"]:not([class*="Card"]):not([class*="card"]) {
   white-space: nowrap !important;
   word-break: keep-all !important;
   overflow-wrap: normal !important;
   hyphens: none !important;
+}
+/* Only immediate text descendants of a button/badge stay nowrap — do NOT
+   cascade nowrap into arbitrary children (that was clipping card bodies). */
+body.admin-page button > span,
+body.admin-page [role="button"] > span,
+body.admin-page .badge > span {
+  white-space: nowrap !important;
 }
 
 body.admin-page .whitespace-pre,
