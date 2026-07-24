@@ -195,14 +195,24 @@ const FloatingSupport = () => {
     let assistantContent = '';
 
     try {
+      // Detect current page context so AI answers based on the product the user is viewing
+      const path = typeof window !== 'undefined' ? window.location.pathname : '';
+      const productMatch = path.match(/^\/product\/([^/?#]+)/);
+      const pageContext = {
+        path,
+        productSlug: productMatch ? decodeURIComponent(productMatch[1]) : null,
+        referrer: typeof document !== 'undefined' ? document.referrer : '',
+      };
+
       const resp = await fetch(CHAT_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ messages: newMessages }),
+        body: JSON.stringify({ messages: newMessages, pageContext }),
       });
+
 
       if (!resp.ok) {
         const errData = await resp.json().catch(() => ({}));
