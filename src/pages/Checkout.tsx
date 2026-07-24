@@ -1006,17 +1006,17 @@ const Checkout = () => {
       <SEOHead title="Checkout" description="Complete your secure checkout at Shahed Store." noIndex />
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} redirectAfterLogin={false} oauthRedirectTo={typeof window !== 'undefined' ? window.location.href : undefined} />
 
-      {/* Login Required Banner for guests */}
+      {/* Optional login prompt for guests — checkout works without login */}
       {!user && (
         <div className="max-w-4xl mx-auto px-4 pt-4">
-          <div className="flex items-center gap-3 p-4 rounded-2xl bg-primary/10 border border-primary/30">
+          <div className="flex items-center gap-3 p-4 rounded-2xl bg-primary/5 border border-primary/20">
             <LogIn size={20} className="text-primary shrink-0" />
             <div className="flex-1">
-              <p className="text-sm font-semibold text-foreground">অর্ডার করতে লগইন আবশ্যক</p>
-              <p className="text-xs text-muted-foreground mt-0.5">আপনার অ্যাকাউন্টে লগইন করুন অথবা নতুন অ্যাকাউন্ট তৈরি করুন।</p>
+              <p className="text-sm font-semibold text-foreground">Guest হিসেবে অর্ডার করা যাবে</p>
+              <p className="text-xs text-muted-foreground mt-0.5">অ্যাকাউন্ট থাকলে লগইন করুন — পয়েন্ট, ওয়ালেট ও পুরনো অর্ডার দেখতে পারবেন। না থাকলেও চিন্তা নেই: অর্ডারের পর আপনার ইমেইলে অ্যাকাউন্ট তৈরি হয়ে যাবে।</p>
             </div>
             <button onClick={() => setShowAuthModal(true)} className="btn-glow px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap flex items-center gap-1.5">
-              <LogIn size={14} /> লগইন করুন
+              <LogIn size={14} /> লগইন
             </button>
           </div>
         </div>
