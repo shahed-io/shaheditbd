@@ -31,10 +31,10 @@ const CurrencySwitcher = ({ className }: Props) => {
         >
           {/* Currency symbol badge (the universal money signal) */}
           <span
-            className="flex items-center justify-center w-7 h-7 rounded-full text-[13px] font-bold text-amber-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.6),0_0_10px_rgba(251,191,36,0.35)]"
-            style={{ background: "linear-gradient(135deg, #fde68a 0%, #fbbf24 55%, #d97706 100%)" }}
+            className="flex items-center justify-center w-7 h-7 rounded-full text-[17px] leading-none font-extrabold text-[#3b1f04] shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_0_10px_rgba(251,191,36,0.4)]"
+            style={{ background: "linear-gradient(135deg, #fde68a 0%, #fbbf24 55%, #d97706 100%)", fontFamily: "'Noto Sans Bengali', 'Hind Siliguri', system-ui, sans-serif" }}
           >
-            {active.symbol || "¤"}
+            <span className="translate-y-[-1px]">{active.symbol || "¤"}</span>
           </span>
 
           {/* Flag + ISO code */}
