@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Home, Store, Wallet, Package, User } from 'lucide-react';
+import { Home, Store, Globe, Package, User, Check } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useWishlist } from '@/hooks/useWishlist';
 import { useAuth } from '@/hooks/useAuth';
+import { useCurrency } from '@/hooks/useCurrency';
 import { supabase } from '@/integrations/supabase/client';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import AuthModal from './AuthModal';
 
 interface NavItem {
@@ -26,7 +28,9 @@ const MobileBottomNav = () => {
   const location = useLocation();
   const { wishlistCount } = useWishlist();
   const { user } = useAuth();
+  const { currencies, active: activeCurrency, setActive: setActiveCurrency } = useCurrency();
   const [authOpen, setAuthOpen] = useState(false);
+  const [currencyOpen, setCurrencyOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [orderCount, setOrderCount] = useState(0);
 
@@ -128,11 +132,10 @@ const MobileBottomNav = () => {
       gradient: 'linear-gradient(135deg, hsl(185 90% 52%), hsl(200 92% 55%))',
     },
     {
-      label: 'Wallet',
-      icon: Wallet,
-      path: '/dashboard?tab=wallet',
-      match: (p) => p.startsWith('/dashboard') && location.search.includes('tab=wallet'),
-      requireAuth: true,
+      label: activeCurrency?.code || 'BDT',
+      icon: Globe,
+      path: '__currency__',
+      match: () => currencyOpen,
       gradient: 'linear-gradient(135deg, hsl(160 75% 42%), hsl(175 85% 45%))',
     },
     {
@@ -158,6 +161,10 @@ const MobileBottomNav = () => {
   const activeIndex = navItems.findIndex((i) => i.match(location.pathname));
 
   const handleClick = (item: NavItem) => {
+    if (item.path === '__currency__') {
+      setCurrencyOpen(true);
+      return;
+    }
     if (item.requireAuth && !user) {
       setAuthOpen(true);
       return;
@@ -301,6 +308,53 @@ const MobileBottomNav = () => {
       </nav>
 
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
+
+      <Sheet open={currencyOpen} onOpenChange={setCurrencyOpen}>
+        <SheetContent
+          side="bottom"
+          className="md:hidden rounded-t-3xl border-t p-0 max-h-[75vh] overflow-hidden"
+        >
+          <SheetHeader className="px-5 pt-5 pb-3 text-left">
+            <SheetTitle className="text-base font-bold">Select Currency</SheetTitle>
+            <p className="text-xs text-muted-foreground">
+              Payment is always settled in BDT
+            </p>
+          </SheetHeader>
+          <div className="px-3 pb-6 overflow-y-auto max-h-[60vh]">
+            <ul className="grid gap-1.5">
+              {currencies.map((c) => {
+                const isActive = activeCurrency?.code === c.code;
+                return (
+                  <li key={c.code}>
+                    <button
+                      onClick={() => {
+                        setActiveCurrency(c.code);
+                        setCurrencyOpen(false);
+                      }}
+                      className={`w-full flex items-center gap-3 px-3 py-3 rounded-2xl transition-all active:scale-[0.98] ${
+                        isActive
+                          ? 'bg-primary/10 border border-primary/30'
+                          : 'hover:bg-muted/60 border border-transparent'
+                      }`}
+                    >
+                      <span className="text-2xl leading-none">{c.flag_emoji || '🌐'}</span>
+                      <span className="flex-1 text-left">
+                        <span className="block text-sm font-semibold">
+                          {c.code} <span className="opacity-60 font-normal">— {c.name}</span>
+                        </span>
+                        <span className="block text-[11px] text-muted-foreground">
+                          {c.symbol} · 1 {c.code} = {c.rate_from_bdt} BDT
+                        </span>
+                      </span>
+                      {isActive && <Check className="w-5 h-5 text-primary" />}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </SheetContent>
+      </Sheet>
     </>
   );
 };
