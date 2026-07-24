@@ -1527,7 +1527,14 @@ async function processUpdate(update: any, BOT_TOKEN: string, supabase: any): Pro
     const arg = text.replace(/^\/(checkkey|check_key|key)\s*/i, '');
     await handleCheckKey(BOT_TOKEN, chatId, arg, lang);
   } else if (text === '/getcid' || text === '/cid' || text === '/confirmation') {
-    await handleGetCidHint(BOT_TOKEN, chatId, lang);
+    // Confirmation ID system disabled — direct user to support.
+    await sendMsg(BOT_TOKEN, chatId,
+      lang === 'bn'
+        ? '⚠️ Confirmation ID সার্ভিসটি বর্তমানে বন্ধ রয়েছে।\n\nসহায়তার জন্য WhatsApp: 01840099853'
+        : '⚠️ The Confirmation ID service is currently disabled.\n\nFor help, WhatsApp: 01840099853',
+      inlineKb([[{ text: t(lang, 'btn_menu'), callback_data: 'start' }]])
+    );
+
 
   } else if (text.startsWith('/')) {
     await sendMsg(BOT_TOKEN, chatId,
