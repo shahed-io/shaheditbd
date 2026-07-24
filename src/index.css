@@ -972,17 +972,18 @@ body.admin-page td .font-mono {
 /* Non-table text (paragraphs, descriptions, card body) must wrap normally
    so long sentences don't overflow the card/container. */
 body.admin-page p,
-body.admin-page span:not([class*="badge"]):not([class*="Badge"]):not([class*="rounded-full"]),
-body.admin-page div:not([class*="flex"]):not([class*="grid"]),
 body.admin-page li,
 body.admin-page h1, body.admin-page h2, body.admin-page h3,
 body.admin-page h4, body.admin-page h5, body.admin-page h6,
 body.admin-page [class*="CardDescription"],
 body.admin-page [class*="CardTitle"],
-body.admin-page [class*="description"] {
-  white-space: normal;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+body.admin-page [class*="CardContent"],
+body.admin-page [class*="CardHeader"],
+body.admin-page [class*="description"],
+body.admin-page label:not(button label) {
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
 }
 /* Re-assert nowrap inside table cells even after the wrap rule above */
 body.admin-page th *, body.admin-page td * {
@@ -2602,21 +2603,23 @@ body.admin-page dt,
 body.admin-page dd,
 body.admin-page label,
 body.admin-page button,
-body.admin-page button *,
+body.admin-page button,
 body.admin-page [role="button"],
-body.admin-page [role="button"] *,
 body.admin-page [role="tab"],
-body.admin-page [role="tab"] *,
 body.admin-page .admin-nav-item,
-body.admin-page .admin-nav-item *,
 body.admin-page .badge,
-body.admin-page .badge *,
-body.admin-page [class*="rounded-full"],
-body.admin-page [class*="rounded-full"] * {
+body.admin-page [class*="rounded-full"]:not([class*="Card"]):not([class*="card"]) {
   white-space: nowrap !important;
   word-break: keep-all !important;
   overflow-wrap: normal !important;
   hyphens: none !important;
+}
+/* Only immediate text descendants of a button/badge stay nowrap — do NOT
+   cascade nowrap into arbitrary children (that was clipping card bodies). */
+body.admin-page button > span,
+body.admin-page [role="button"] > span,
+body.admin-page .badge > span {
+  white-space: nowrap !important;
 }
 
 body.admin-page .whitespace-pre,
@@ -2627,21 +2630,22 @@ body.admin-page textarea {
   white-space: pre-wrap !important;
 }
 
+/* Respect Tailwind's break-all / break-words utilities in admin as well. */
 body.admin-page .break-all,
+body.admin-page [class*="break-all"] {
+  word-break: break-all !important;
+  overflow-wrap: anywhere !important;
+  white-space: normal !important;
+}
 body.admin-page .break-words,
-body.admin-page [class*="break-all"],
 body.admin-page [class*="break-words"] {
-  word-break: keep-all !important;
-  overflow-wrap: normal !important;
-  white-space: nowrap !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+  white-space: normal !important;
 }
 
-body.admin-page .flex-wrap:has(.badge),
-body.admin-page .flex-wrap:has([class*="rounded-full"]),
-body.admin-page .flex-wrap:has(button) {
-  flex-wrap: nowrap !important;
-  overflow-x: auto;
-}
+/* Do NOT force flex-wrap containers into nowrap just because they contain
+   a button — that was clipping card descriptions and long text. */
 
 @media (max-width: 767px) {
   body.admin-page {
