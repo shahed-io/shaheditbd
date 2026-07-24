@@ -92,11 +92,12 @@ const StarRating = ({ rating, color }: { rating: number; color: string }) => (
   </div>
 );
 
-const AvatarCircle = ({ initials, index, seed }: { initials: string; index: number; seed: string }) => {
+const AvatarCircle = ({ initials, index, seed, name }: { initials: string; index: number; seed: string; name?: string }) => {
   const [a, b] = AVATAR_GRADIENTS[index % AVATAR_GRADIENTS.length];
   const [failed, setFailed] = useState(false);
-  // Real human portrait photos, deterministic per customer name/seed
-  const url = `https://i.pravatar.cc/160?u=${encodeURIComponent(seed)}`;
+  // Real Facebook photo if we have one for this customer, otherwise realistic portrait
+  const realAvatar = name ? getRealAvatar(name) : undefined;
+  const url = realAvatar ?? `https://i.pravatar.cc/160?u=${encodeURIComponent(seed)}`;
 
   return (
     <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0 overflow-hidden"
@@ -113,6 +114,7 @@ const AvatarCircle = ({ initials, index, seed }: { initials: string; index: numb
     </div>
   );
 };
+
 
 /* ─── Review Card ─────────────────────────────── */
 const ReviewCard = ({ review, index }: { review: Review; index: number }) => {
