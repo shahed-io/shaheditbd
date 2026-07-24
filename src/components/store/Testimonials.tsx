@@ -1,6 +1,27 @@
 import { useRef, useEffect, useState } from 'react';
 import { Star, Quote } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import avNapal from '@/assets/reviews/napal-datta.png';
+import avAmirul from '@/assets/reviews/md-amirul-islam.png';
+import avRizon from '@/assets/reviews/rizon-islam.png';
+import avLxMamun from '@/assets/reviews/lx-mamun.png';
+import avAlAmin from '@/assets/reviews/md-al-amin.png';
+import avSadiya from '@/assets/reviews/sadiya-akter.png';
+import avFarhan from '@/assets/reviews/farhan-ahmed.png';
+
+// Real Facebook profile photos (cropped from customer review screenshots)
+const REAL_FB_AVATARS: Record<string, string> = {
+  'napal datta': avNapal,
+  'md amirul islam': avAmirul,
+  'rizon islam': avRizon,
+  'lx mamun': avLxMamun,
+  'md al-amin': avAlAmin,
+  'sadiya akter': avSadiya,
+  'farhan ahmed': avFarhan,
+};
+const getRealAvatar = (name: string) =>
+  REAL_FB_AVATARS[(name || '').trim().toLowerCase()];
+
 
 interface Review {
   id: string;
