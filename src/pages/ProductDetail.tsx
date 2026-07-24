@@ -906,6 +906,11 @@ const ProductDetail = () => {
                       </span>
                     )}
                   </div>
+                  {activeCurrency && activeCurrency.code !== 'BDT' && (
+                    <p className="text-[11px] text-muted-foreground mt-1.5 px-1">
+                      ≈ ৳{displayPrice.toLocaleString()} · Payment settled in BDT
+                    </p>
+                  )}
 
                 </div>
               </div>
