@@ -792,8 +792,8 @@ const HeroBanner = () => {
           </div>
         </div>
 
-        {/* ── Slider Controls ── */}
-        <div className="flex items-center justify-center gap-4 pb-8">
+        {/* ── Slider Controls (desktop only — mobile has its own) ── */}
+        <div className="hidden lg:flex items-center justify-center gap-4 pb-8">
           <button onClick={() => advance(-1)}
             aria-label="Previous hero slide"
             className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
