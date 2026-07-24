@@ -127,8 +127,9 @@ Deno.serve(async (req) => {
           status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
-      // Ownership check — caller must own the order (or be admin)
-      if (o.user_id && o.user_id !== authUserId) {
+      // Ownership check — signed-in caller must own the order (or be admin).
+      // Guest orders (order.user_id IS NULL) are allowed for any caller.
+      if (o.user_id && authUserId && o.user_id !== authUserId) {
         const { data: roleRow } = await supabase
           .from('user_roles')
           .select('role')
@@ -140,6 +141,11 @@ Deno.serve(async (req) => {
             status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           });
         }
+      }
+      if (o.user_id && !authUserId) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
       }
       if (o.payment_status === 'paid') {
         return new Response(JSON.stringify({ error: 'Order already paid' }), {
