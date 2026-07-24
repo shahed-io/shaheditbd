@@ -291,7 +291,6 @@ const HeroBanner = () => {
             </div>
 
             {/* Swipe-only on mobile — no arrow buttons per selected prototype */}
-            </button>
           </div>
 
           {/* Pagination dots */}
