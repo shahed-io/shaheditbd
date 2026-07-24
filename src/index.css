@@ -969,6 +969,44 @@ body.admin-page td .font-mono {
   overflow-wrap: normal !important;
 }
 
+/* Non-table text (paragraphs, descriptions, card body) must wrap normally
+   so long sentences don't overflow the card/container. */
+body.admin-page p,
+body.admin-page span:not([class*="badge"]):not([class*="Badge"]):not([class*="rounded-full"]),
+body.admin-page div:not([class*="flex"]):not([class*="grid"]),
+body.admin-page li,
+body.admin-page h1, body.admin-page h2, body.admin-page h3,
+body.admin-page h4, body.admin-page h5, body.admin-page h6,
+body.admin-page [class*="CardDescription"],
+body.admin-page [class*="CardTitle"],
+body.admin-page [class*="description"] {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+/* Re-assert nowrap inside table cells even after the wrap rule above */
+body.admin-page th *, body.admin-page td * {
+  white-space: nowrap !important;
+}
+
+/* Allow flex/grid children to shrink so text can wrap instead of pushing out */
+body.admin-page main,
+body.admin-page section,
+body.admin-page article,
+body.admin-page [class*="Card"],
+body.admin-page [class*="card"],
+body.admin-page .flex > *,
+body.admin-page .grid > * {
+  min-width: 0;
+}
+/* Cards/containers should clip runaway content instead of spilling visually */
+body.admin-page [class*="Card"],
+body.admin-page [class*="rounded-xl"],
+body.admin-page [class*="rounded-2xl"],
+body.admin-page [class*="rounded-3xl"] {
+  overflow-wrap: anywhere;
+}
+
 /* Page header title scales fluidly */
 body.admin-page .admin-page-header h1,
 body.admin-page .admin-page-header .text-2xl,
