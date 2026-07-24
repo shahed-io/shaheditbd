@@ -133,10 +133,10 @@ const HeroBanner = () => {
   const slide = SLIDES[active] ?? SLIDES[0];
 
   return (
-    <section className="relative overflow-hidden mt-[54px] px-3 sm:px-5 lg:px-8 pt-2 pb-5 sm:pt-3 md:pt-4 md:pb-6 lg:pt-4 lg:pb-8" style={{ background: bgStyle }}>
+    <section className="relative overflow-hidden mt-[54px] px-0 sm:px-5 lg:px-8 pt-0 pb-3 sm:pt-3 md:pt-4 md:pb-6 lg:pt-4 lg:pb-8" style={{ background: bgStyle }}>
 
-      {/* ── Luminous ambient orbs (page-level) ── */}
-      <div className="absolute inset-0 pointer-events-none">
+      {/* ── Luminous ambient orbs (desktop only) ── */}
+      <div className="absolute inset-0 pointer-events-none hidden lg:block">
         <div className="absolute -top-[10%] -right-[5%] w-[500px] h-[500px] rounded-full"
           style={{ background: 'hsla(258,78%,62%,0.22)', filter: 'blur(120px)' }} />
         <div className="absolute -bottom-[10%] -left-[5%] w-[600px] h-[600px] rounded-full"
@@ -145,25 +145,22 @@ const HeroBanner = () => {
           style={{ background: 'hsla(270,70%,72%,0.16)', filter: 'blur(100px)' }} />
       </div>
 
-      {/* ── Glass card frame around hero content ── */}
-      <div className="relative mx-auto w-full max-w-[1800px] rounded-[28px] lg:rounded-[40px] overflow-hidden isolate"
+      {/* ── Glass card frame (desktop only — mobile shows the raw banner) ── */}
+      <div className="relative mx-auto w-full max-w-[1800px] lg:rounded-[40px] lg:overflow-hidden isolate lg:bg-[linear-gradient(135deg,rgba(255,255,255,0.72)_0%,rgba(245,243,255,0.55)_50%,rgba(235,240,255,0.6)_100%)] lg:backdrop-blur-[32px] lg:border lg:border-[hsla(258,60%,70%,0.45)]"
         style={{
-          background: 'linear-gradient(135deg, rgba(255,255,255,0.72) 0%, rgba(245,243,255,0.55) 50%, rgba(235,240,255,0.6) 100%)',
-          backdropFilter: 'blur(32px)',
-          WebkitBackdropFilter: 'blur(32px)',
-          border: '1.5px solid hsla(258,60%,70%,0.45)',
-          boxShadow: '0 24px 60px -18px hsla(258,78%,55%,0.28), 0 4px 16px -4px hsla(258,60%,60%,0.18), inset 0 1.5px 0 rgba(255,255,255,1), inset 1.5px 0 0 rgba(255,255,255,0.9)',
+          boxShadow: undefined,
         }}>
-        {/* Soft inner accent (kept inside so it doesn't break the top curve) */}
-        <div className="absolute top-0 right-0 w-96 h-96 rounded-full pointer-events-none"
+        {/* Soft inner accent — desktop only */}
+        <div className="absolute top-0 right-0 w-96 h-96 rounded-full pointer-events-none hidden lg:block"
           style={{ background: 'radial-gradient(circle, hsla(258,78%,60%,0.10), transparent 70%)', transform: 'translate(30%,-30%)' }} />
+
 
 
         {/* ══════════════════════════════════
              MOBILE — Premium Clean White + Soft Bubble carousel
              (< lg only; desktop keeps original layout below)
         ══════════════════════════════════ */}
-        <div className="lg:hidden px-3 pt-3 pb-4">
+        <div className="lg:hidden px-2 pt-2 pb-2">
           <div
             className="relative w-full rounded-[24px] border border-gray-100 overflow-hidden"
             style={{ height: '260px' }}
