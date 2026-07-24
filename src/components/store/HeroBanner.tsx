@@ -194,7 +194,7 @@ const HeroBanner = () => {
               touchStartX.current = null;
             }}
           >
-            {/* Full themed color background (already on wrapper). Decorative product image on the right, softened into the color. */}
+            {/* Full themed color background (already on wrapper). Crisp product image on the right, cleanly cropped into the color. */}
             <img
               key={`bg-${active}`}
               src={pickBannerBg(slide)}
@@ -206,19 +206,21 @@ const HeroBanner = () => {
               className="absolute right-0 top-0 h-full w-[62%] object-cover pointer-events-none"
               style={{
                 objectPosition: 'right center',
-                opacity: dir === 'in' ? 0.55 : 0.25,
+                opacity: dir === 'in' ? 1 : 0.4,
                 transform: dir === 'in' ? 'scale(1)' : 'scale(1.03)',
-                transition: 'opacity 0.45s ease, transform 0.6s ease',
-                maskImage: 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.4) 35%, #000 70%)',
-                WebkitMaskImage: 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.4) 35%, #000 70%)',
+                transition: 'opacity 0.35s ease, transform 0.5s ease',
+                maskImage: 'linear-gradient(90deg, transparent 0%, #000 28%)',
+                WebkitMaskImage: 'linear-gradient(90deg, transparent 0%, #000 28%)',
               }}
             />
 
-            {/* Soft ambient orbs for depth on the colored background */}
-            <div className="absolute -top-10 -left-10 w-40 h-40 rounded-full pointer-events-none"
-              style={{ background: 'rgba(255,255,255,0.55)', filter: 'blur(40px)' }} />
-            <div className="absolute -bottom-12 right-10 w-48 h-48 rounded-full pointer-events-none"
-              style={{ background: 'rgba(255,255,255,0.35)', filter: 'blur(50px)' }} />
+            {/* Left-side solid scrim so the text sits on a clean flat surface (no blur haze) */}
+            <div
+              className="absolute inset-y-0 left-0 w-[70%] pointer-events-none"
+              style={{
+                background: 'linear-gradient(90deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.85) 55%, rgba(255,255,255,0) 100%)',
+              }}
+            />
 
             {/* Left content — product info (name, price, CTA) */}
             <div
