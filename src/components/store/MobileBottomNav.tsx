@@ -132,11 +132,10 @@ const MobileBottomNav = () => {
       gradient: 'linear-gradient(135deg, hsl(185 90% 52%), hsl(200 92% 55%))',
     },
     {
-      label: 'Wallet',
-      icon: Wallet,
-      path: '/dashboard?tab=wallet',
-      match: (p) => p.startsWith('/dashboard') && location.search.includes('tab=wallet'),
-      requireAuth: true,
+      label: activeCurrency?.code || 'BDT',
+      icon: Globe,
+      path: '__currency__',
+      match: () => currencyOpen,
       gradient: 'linear-gradient(135deg, hsl(160 75% 42%), hsl(175 85% 45%))',
     },
     {
