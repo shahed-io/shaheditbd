@@ -8,6 +8,12 @@ import avLxMamun from '@/assets/reviews/lx-mamun.png';
 import avAlAmin from '@/assets/reviews/md-al-amin.png';
 import avSadiya from '@/assets/reviews/sadiya-akter.png';
 import avFarhan from '@/assets/reviews/farhan-ahmed.png';
+import avRafit from '@/assets/reviews/rafit-hasan.png';
+import avAbdurRahim from '@/assets/reviews/abdur-rahim-zirailee.png';
+import avJihad from '@/assets/reviews/jihad-hossain.png';
+import avKabirAli from '@/assets/reviews/kabir-ali.png';
+import avMdTawhid from '@/assets/reviews/md-tawhid.png';
+import avMohammedAnwar from '@/assets/reviews/mohammed-anwar.png';
 
 // Real Facebook profile photos (cropped from customer review screenshots)
 const REAL_FB_AVATARS: Record<string, string> = {
@@ -18,6 +24,12 @@ const REAL_FB_AVATARS: Record<string, string> = {
   'md al-amin': avAlAmin,
   'sadiya akter': avSadiya,
   'farhan ahmed': avFarhan,
+  'rafit hasan': avRafit,
+  'abdur rahim zirailee': avAbdurRahim,
+  'jihad hossain': avJihad,
+  'kabir ali': avKabirAli,
+  'md tawhid': avMdTawhid,
+  'mohammed anwar': avMohammedAnwar,
 };
 const getRealAvatar = (name: string) =>
   REAL_FB_AVATARS[(name || '').trim().toLowerCase()];
@@ -39,20 +51,34 @@ interface Review {
 // Real customer reviews collected from Facebook page recommendations
 const HARDCODED_REVIEWS: Review[] = [
   { id: crypto.randomUUID(), name: 'Mohammad Shafiqul Islam Tuhin', location: 'Facebook Review', avatar: 'MT', rating: 5, review: 'ধন্যবাদ Shahed Store এত দ্রুত ও চমৎকার সার্ভিসের জন্য। আমি গভীর রাত পর্যন্ত কিছু সমস্যা ফেস করছিলাম সেটা তারা নিরলসভাবে সমাধান করেছেন। Highly recommended 🌟 go ahead 👍', product: 'Verified Purchase', date: 'Aug 16, 2025', verified: true, is_visible: true },
-  { id: crypto.randomUUID(), name: 'Napal Datta', location: 'Facebook Review', avatar: 'ND', rating: 5, review: 'আমি আজ নিলাম অফিস ২০২৪। আপনাদের সার্ভিস অসাধারণ। অনলাইনে থেকে এই প্রথম এমন সার্ভিস পেলাম।', product: 'MS Office 2024', date: 'Dec 8, 2025', verified: true, is_visible: true },
-  { id: crypto.randomUUID(), name: 'MD Al-Amin', location: 'Facebook Review', avatar: 'AA', rating: 5, review: 'Your service is very helpful and your response is quick. I use Canva Pro and everyone can try Canva Pro from this page. I am happy of your quick service. Thank you so much.', product: 'Canva Pro', date: 'Jun 14, 2025', verified: true, is_visible: true },
-  { id: crypto.randomUUID(), name: 'Kamrul Hasan', location: 'Facebook Review', avatar: 'KH', rating: 5, review: 'If you are new at this service — this is the perfect Site for you. They helped me well. I am very Thankful.', product: 'Verified Purchase', date: 'Jun 30, 2025', verified: true, is_visible: true },
-  { id: crypto.randomUUID(), name: 'Farhan Ahmed', location: 'Facebook Review', avatar: 'FA', rating: 5, review: 'অবিশ্বাস্য, পেমেন্ট দেওয়ার আগেই দিয়ে ফেলল। এরকম সার্ভিস আগে পাইনি। ভাই পেমেন্ট করে ব্যবহার শুরু করলাম, আশাকরি দীর্ঘসময় ব্যবহার করতে পারব।', product: 'Verified Purchase', date: 'Jun 14, 2025', verified: true, is_visible: true },
   { id: crypto.randomUUID(), name: 'Md Kabir', location: 'Facebook Review', avatar: 'MK', rating: 5, review: 'Best service 🥰🥰🥰🥰 go ahead', product: 'Verified Purchase', date: 'Jul 24, 2025', verified: true, is_visible: true },
+  { id: crypto.randomUUID(), name: 'Kamrul Hasan', location: 'Facebook Review', avatar: 'KH', rating: 5, review: 'If you are new at this service — this is the perfect Site for you. They helped me well. I am very Thankful.', product: 'Verified Purchase', date: 'Jun 30, 2025', verified: true, is_visible: true },
   { id: crypto.randomUUID(), name: 'Rizon Islam', location: 'Facebook Review', avatar: 'RI', rating: 5, review: 'Thank you for your service. I am grateful for the passion and professionalism you continue to bring to your service.', product: 'Verified Purchase', date: 'Jun 14, 2025', verified: true, is_visible: true },
-  { id: crypto.randomUUID(), name: 'Sadiya Akter', location: 'Facebook Review', avatar: 'SA', rating: 5, review: 'Vai sera service, sob somossar solution dey vaiyera khub druto. Tnx vai apnader.', product: 'Verified Purchase', date: 'Jun 14, 2025', verified: true, is_visible: true },
-  { id: crypto.randomUUID(), name: 'বর্ণ ঘরকসী', location: 'Facebook Review', avatar: 'বঘ', rating: 5, review: 'A very good page, reasonable price and good service.', product: 'Verified Purchase', date: 'Jul 2, 2025', verified: true, is_visible: true },
   { id: crypto.randomUUID(), name: 'LX Mamun', location: 'Facebook Review', avatar: 'LM', rating: 5, review: 'Best page. Thank YOU so much for your service.', product: 'Verified Purchase', date: 'Jun 14, 2025', verified: true, is_visible: true },
+  { id: crypto.randomUUID(), name: 'MD Al-Amin', location: 'Facebook Review', avatar: 'AA', rating: 5, review: 'Your service is very helpful and your response is quick. I use Canva Pro and everyone can try Canva Pro from this page. I am happy of your quick service. Thank you so much.', product: 'Canva Pro', date: 'Jun 14, 2025', verified: true, is_visible: true },
+  { id: crypto.randomUUID(), name: 'Sadiya Akter', location: 'Facebook Review', avatar: 'SA', rating: 5, review: 'Vai sera service, sob somossar solution dey vaiyera khub druto. Tnx vai apnader.', product: 'Verified Purchase', date: 'Jun 14, 2025', verified: true, is_visible: true },
+  { id: crypto.randomUUID(), name: 'Farhan Ahmed', location: 'Facebook Review', avatar: 'FA', rating: 5, review: 'অবিশ্বাস্য, পেমেন্ট দেওয়ার আগেই দিয়ে ফেলল। এরকম সার্ভিস আগে পাইনি। ভাই পেমেন্ট করে ব্যবহার শুরু করলাম, আশাকরি দীর্ঘসময় ব্যবহার করতে পারব।', product: 'Verified Purchase', date: 'Jun 14, 2025', verified: true, is_visible: true },
+  { id: crypto.randomUUID(), name: 'Sajim Molla', location: 'Facebook Review', avatar: 'SM', rating: 5, review: 'দ্বিতীয়বার ক্যানভা প্রো প্রিমিয়াম নেওয়ার পর রিভিউ দিলাম। সার্ভিস এক কথায় অসাধারণ।', product: 'Canva Pro', date: 'Jun 14, 2025', verified: true, is_visible: true },
+  { id: crypto.randomUUID(), name: 'Prosenjit Bappi', location: 'Facebook Review', avatar: 'PB', rating: 5, review: 'I recommended this store due to their authenticity and reliability.', product: 'Verified Purchase', date: 'May 18, 2025', verified: true, is_visible: true },
+  { id: crypto.randomUUID(), name: 'Rafit Hasan', location: 'Facebook Review', avatar: 'RH', rating: 5, review: 'আমি এখান থেকে খুব ভালো সার্ভিস পেয়েছি। Keep up the good work! 100% trusted.', product: 'Verified Purchase', date: 'Feb 5, 2025', verified: true, is_visible: true },
+  { id: crypto.randomUUID(), name: 'Abdur Rahim Zirailee', location: 'Facebook Review', avatar: 'AZ', rating: 5, review: 'Great service quality, I am fully satisfied. Keep on good works and best of luck.', product: 'Verified Purchase', date: 'Feb 5, 2025', verified: true, is_visible: true },
+  { id: crypto.randomUUID(), name: 'Jihad Hossain', location: 'Facebook Review', avatar: 'JH', rating: 5, review: 'যে ভাবে বলছি ঠিক সেভাবেই করছে, অন্য কোনো পেজ হলে নির্ঘাত বলে দিত আপনার মত কাস্টমার দরকার নাই। অনেক অনেক শুভ কামনা রইল আপনার জন্য।', product: 'Verified Purchase', date: 'Feb 5, 2025', verified: true, is_visible: true },
+  { id: crypto.randomUUID(), name: 'Kabir Ali', location: 'Facebook Review', avatar: 'KA', rating: 5, review: 'Great service. I am fully satisfied. Keep on good works and best of luck.', product: 'Verified Purchase', date: 'Feb 5, 2025', verified: true, is_visible: true },
+  { id: crypto.randomUUID(), name: 'Md Tawhid', location: 'Facebook Review', avatar: 'MT', rating: 5, review: 'আজকে এক বছর জন্য ডিসপ্রেন নিলাম এবং কিছুদিন আগে ফ্রি পিকের একাউন্ট একটি নিয়েছি সবকিছু ঠিকঠাক আছে এবং সাপোর্ট ইনস্ট্যান্ট থাকে যা অনেক বড় বড় কোম্পানি দিতে পারেনা। আমি সবাইকে সাজেস্ট করবো এখান থেকে নিতে।', product: 'Verified Purchase', date: 'Feb 5, 2025', verified: true, is_visible: true },
+  { id: crypto.randomUUID(), name: 'Mohammed Anwar', location: 'Facebook Review', avatar: 'MA', rating: 5, review: 'আমি অফিস ২১ নিছি। ভালই সার্ভিস দিছে। আপনারাও নিতে পারেন।', product: 'MS Office 2021', date: 'Feb 5, 2025', verified: true, is_visible: true },
+  { id: crypto.randomUUID(), name: 'Fazlul Karim Anik', location: 'Facebook Review', avatar: 'FK', rating: 5, review: 'Trustable Shop & very quick service, better support provides. I bought Windows 10 and Office 2024.', product: 'Windows + Office', date: 'Feb 3, 2025', verified: true, is_visible: true },
+  { id: crypto.randomUUID(), name: 'Abdullah As Sadik', location: 'Facebook Review', avatar: 'AS', rating: 5, review: 'Started to use their 365 version of excel — overall experience good. Thanks to all of you.', product: 'Microsoft 365', date: 'Jan 27, 2025', verified: true, is_visible: true },
+  { id: crypto.randomUUID(), name: 'Muhammad Mamun', location: 'Facebook Review', avatar: 'MM', rating: 5, review: 'Very good services and support. Recommend all for buying any software from here.', product: 'Verified Purchase', date: 'Dec 19, 2025', verified: true, is_visible: true },
+  { id: crypto.randomUUID(), name: 'Napal Datta', location: 'Facebook Review', avatar: 'ND', rating: 5, review: 'আমি আজ নিলাম অফিস ২০২৪। আপনাদের সার্ভিস অসাধারণ। অনলাইনে থেকে এই প্রথম এমন সার্ভিস পেলাম।', product: 'MS Office 2024', date: 'Dec 8, 2025', verified: true, is_visible: true },
+  { id: crypto.randomUUID(), name: 'Madob Krishna Das', location: 'Facebook Review', avatar: 'MD', rating: 5, review: 'Shahed Store পেজ থেকে Windows OEM Key কিনে খুব ভালো অভিজ্ঞতা হয়েছে। Key পাওয়ার পর কোনো ঝামেলা ছাড়াই Windows সফলভাবে Activate করতে পেরেছি। তাদের রেসপন্স খুব দ্রুত এবং সাপোর্টও আন্তরিক ছিল। দাম ও যুক্তিসংগত। যারা আসল Windows Key খুঁজছেন, তাদের জন্য এই পেজটি অবশ্যই সুপারিশ করব। ধন্যবাদ সুপার সার্ভিস দেওয়ার জন্য।', product: 'Windows OEM Key', date: 'Jun 22', verified: true, is_visible: true },
+  { id: crypto.randomUUID(), name: 'Mo Min', location: 'Facebook Review', avatar: 'MM', rating: 5, review: 'আমি আজকে মাইক্রোসফট অফিস Shahed Store থেকে নিয়েছি। তাদের সার্ভিসটা খুবই ভালো, নিঃসন্দেহে আপনারা নিতে পারেন। এবং তাদের কাছ থেকে যে বিষয়টা ভালো লেগেছে সেটা হচ্ছে কোন প্রবলেমের কারণে তাদের মেসেজ দিলে সঙ্গে সঙ্গে তারা রিপ্লাই দেয়, এটা আমার কাছে খুবই ভালো লেগেছে। ধন্যবাদ Shahed Store.', product: 'MS Office', date: 'May 8', verified: true, is_visible: true },
+  { id: crypto.randomUUID(), name: 'Millat Hossain', location: 'Facebook Review', avatar: 'MH', rating: 5, review: 'I really liked your work, it was very interesting and I am very happy that you provided good service online 😊❤️', product: 'Verified Purchase', date: 'Jul 21, 2025', verified: true, is_visible: true },
+  { id: crypto.randomUUID(), name: 'Sayed Hasan', location: 'Facebook Review', avatar: 'SH', rating: 5, review: 'Highly Recommend Shahed Store to Purchase MS Office product. 5★ Satisfaction.', product: 'MS Office', date: 'Jul 12, 2025', verified: true, is_visible: true },
+  { id: crypto.randomUUID(), name: 'SK R', location: 'Facebook Review', avatar: 'SK', rating: 5, review: 'অনেক ভালো সার্ভিস। ধন্যবাদ Shahed store টিম।', product: 'Verified Purchase', date: 'Jul 6, 2025', verified: true, is_visible: true },
+  { id: crypto.randomUUID(), name: 'Abuturaf Mia', location: 'Facebook Review', avatar: 'AM', rating: 5, review: 'Shahed store থেকে প্রথমে জিনিস নিতে অনেক ভয় পাইছিলাম কারণ এত কম দামে কেউ দেয় না, দিলেও বাটপারি করে। কিন্তু যখন নিলাম সত্যি তাদের কথা এবং কাজে ১০০% মিল পেয়েছি আলহামদুলিল্লাহ। তাদের ব্যবহার ও অসাধারণ।', product: 'Verified Purchase', date: 'Jun 29, 2025', verified: true, is_visible: true },
   { id: crypto.randomUUID(), name: 'Md Amirul Islam', location: 'Facebook Review', avatar: 'AI', rating: 5, review: 'Nice Service. Trusted page.', product: 'Verified Purchase', date: 'Nov 13, 2025', verified: true, is_visible: true },
-  { id: crypto.randomUUID(), name: 'Sayed Hasan', location: 'Facebook Review', avatar: 'SH', rating: 5, review: 'Highly recommend Shahed Store to purchase MS Office product. 5★ Satisfaction.', product: 'MS Office', date: 'Recent', verified: true, is_visible: true },
-  { id: crypto.randomUUID(), name: 'Muhammed Mamun', location: 'Facebook Review', avatar: 'MM', rating: 5, review: 'Very good services and support. Recommend all for buying any software from here.', product: 'Verified Purchase', date: 'Recent', verified: true, is_visible: true },
-  { id: crypto.randomUUID(), name: 'Farl Rasel', location: 'Facebook Review', avatar: 'FR', rating: 5, review: 'The service is very good and they are helping me.', product: 'Verified Purchase', date: 'Recent', verified: true, is_visible: true },
 ];
+
 
 const PALETTES = [
   { from: 'hsl(243,75%,59%)', to: 'hsl(263,70%,62%)' },
