@@ -368,11 +368,12 @@ const AdminInvoiceGenerator = () => {
             <button
               onClick={handleSaveAsOrder}
               disabled={saving || !!savedOrderId}
-              className="w-full rounded-xl py-3 text-sm font-semibold flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="w-full rounded-xl py-3 text-sm font-semibold flex items-center justify-center gap-2 bg-white border-2 border-purple-500 text-purple-600 hover:bg-purple-50 hover:shadow-lg hover:shadow-purple-500/20 hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
-              <Database size={16} />
-              <span className="text-white">{savedOrderId ? 'অর্ডারে সেভ হয়েছে ✓' : saving ? 'সেভ হচ্ছে...' : 'অর্ডার হিসেবে সেভ করুন'}</span>
+              <Database size={16} className="text-purple-600" />
+              <span className="text-purple-600">{savedOrderId ? 'অর্ডারে সেভ হয়েছে ✓' : saving ? 'সেভ হচ্ছে...' : 'অর্ডার হিসেবে সেভ করুন'}</span>
             </button>
+
             {savedOrderId && (
               <p className="text-[11px] text-center text-muted-foreground">
                 Order #{invoiceNumber} • <a href="/ceo/orders" className="text-primary hover:underline font-medium">অর্ডার তালিকায় দেখুন →</a>
