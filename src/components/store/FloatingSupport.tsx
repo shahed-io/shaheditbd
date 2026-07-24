@@ -461,7 +461,7 @@ const FloatingSupport = () => {
                         <span className="w-1.5 h-1.5 bg-primary/70 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
                         <span className="w-1.5 h-1.5 bg-primary/70 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                       </span>
-                      <span className="text-xs text-muted-foreground animate-pulse">AI উত্তর লিখছে…</span>
+                      <span className="text-xs text-muted-foreground animate-pulse">{language === 'en' ? 'AI is typing…' : 'AI উত্তর লিখছে…'}</span>
                     </span>
                   ) : ''}
 
