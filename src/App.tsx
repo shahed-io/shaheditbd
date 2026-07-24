@@ -8,6 +8,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { CartProvider } from "@/hooks/useCart";
 import { WishlistProvider } from "@/hooks/useWishlist";
+import { CurrencyProvider } from "@/hooks/useCurrency";
 import { useAdminOrderNotification } from "@/hooks/useAdminOrderNotification";
 import { prefetchOnIdle } from "@/hooks/usePrefetchRoute";
 import { ViewTransitions } from "@/components/ViewTransitions";
@@ -423,11 +424,13 @@ const App = () => (
         }}
       >
         <AuthProvider>
-          <CartProvider>
-            <WishlistProvider>
-              <AppContent />
-            </WishlistProvider>
-          </CartProvider>
+          <CurrencyProvider>
+            <CartProvider>
+              <WishlistProvider>
+                <AppContent />
+              </WishlistProvider>
+            </CartProvider>
+          </CurrencyProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
