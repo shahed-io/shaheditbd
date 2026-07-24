@@ -66,6 +66,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               setIsAdmin(isAdminResult);
               setLoading(false);
             }
+            // Auto-link any guest orders placed with this email to the account
+            // that just signed in (fire-and-forget, safe if none exist).
+            if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+              supabase.rpc('link_guest_orders_to_current_user' as any).then(({ data, error }) => {
+                if (error) console.warn('[useAuth] link_guest_orders error:', error.message);
+                else if ((data as any)?.[0]?.linked_count > 0) {
+                  console.log(`[useAuth] Linked ${(data as any)[0].linked_count} guest orders`);
+                }
+              });
+            }
             // Login notification emails are currently DISABLED (per admin request).
             // To re-enable in future, set LOGIN_NOTIFICATIONS_ENABLED = true.
             const LOGIN_NOTIFICATIONS_ENABLED = false;
