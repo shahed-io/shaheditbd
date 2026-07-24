@@ -4695,6 +4695,10 @@ export type Database = {
         Returns: number
       }
       offers_auto_status_tick: { Args: never; Returns: undefined }
+      place_guest_order: {
+        Args: { p_items: Json; p_order: Json; p_proof?: Json }
+        Returns: string
+      }
       process_affiliate_withdrawal: {
         Args: {
           p_action: string

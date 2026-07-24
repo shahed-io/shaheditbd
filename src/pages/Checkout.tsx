@@ -556,63 +556,37 @@ const Checkout = () => {
       // Attach affiliate ref if present
       const affRef = getStoredAffiliateRef();
 
-      const { data: order, error: orderError } = await supabase
-        .from('orders')
-        .insert({
-          order_number: orderNum,
-          customer_name: form.name,
-          customer_email: form.email,
-          customer_phone: form.phone,
-          subtotal,
-          discount_amount: discountAmount + refCreditApplied,
-          total: payableTotal,
-          payment_method: paymentMethod,
-          transaction_id:
-            paymentMethod === 'wallet' ? `WALLET-${orderNum}` :
-            paymentMethod === 'bkash_online' ? `BKASH-PENDING-${orderNum}` :
-            transactionId.trim(),
-          coupon_code: coupon.isApplied ? coupon.code : null,
-          coupon_id: couponId,
-          status: paymentMethod === 'wallet' ? 'processing' : 'pending',
-          payment_status: paymentMethod === 'wallet' ? 'paid' : 'pending',
-          user_id: user?.id || null,
-          notes: (orderNotes.trim() || '') + (refCreditApplied > 0 ? `\n[Referral credit applied: ৳${refCreditApplied}]` : ''),
-          affiliate_referral_code: affRef?.code || null,
-        })
-        .select()
-        .single();
+      // Generate the order id client-side so we don't need a RETURNING clause.
+      // (Guest checkout can INSERT but cannot SELECT its own row under current RLS,
+      //  which made `.select().single()` fail with 42501 and abort the whole flow.)
+      const newOrderId = crypto.randomUUID();
+      const isGuest = !user;
 
-      if (orderError) throw orderError;
+      const orderPayload = {
+        id: newOrderId,
+        order_number: orderNum,
+        customer_name: form.name,
+        customer_email: form.email,
+        customer_phone: form.phone,
+        subtotal,
+        discount_amount: discountAmount + refCreditApplied,
+        total: payableTotal,
+        payment_method: paymentMethod,
+        transaction_id:
+          paymentMethod === 'wallet' ? `WALLET-${orderNum}` :
+          paymentMethod === 'bkash_online' ? `BKASH-PENDING-${orderNum}` :
+          transactionId.trim(),
+        coupon_code: coupon.isApplied ? coupon.code : null,
+        coupon_id: couponId,
+        status: paymentMethod === 'wallet' ? 'processing' : 'pending',
+        payment_status: paymentMethod === 'wallet' ? 'paid' : 'pending',
+        notes: (orderNotes.trim() || '') + (refCreditApplied > 0 ? `\n[Referral credit applied: ৳${refCreditApplied}]` : ''),
+        affiliate_referral_code: affRef?.code || null,
+      };
 
-      // Redeem referral credit (server validates 2× rule)
-      if (refCreditApplied > 0 && user) {
-        const { data: redeemRes } = await (supabase as any).rpc('redeem_referral_credit', {
-          p_user_id: user.id,
-          p_amount: refCreditApplied,
-          p_order_subtotal: subtotal,
-          p_order_id: order.id,
-        });
-        if (!(redeemRes as any)?.success) {
-          throw new Error((redeemRes as any)?.error || 'Referral credit redeem failed');
-        }
-      }
-
-      // Debit wallet if wallet payment
-      if (paymentMethod === 'wallet' && user) {
-        const { data: walletResult } = await supabase.rpc('wallet_debit' as any, {
-          p_user_id: user.id,
-          p_amount: payableTotal,
-          p_note: `অর্ডার পেমেন্ট - ${orderNum}`,
-          p_reference_id: order.id,
-          p_created_by: 'user',
-        });
-        if (!(walletResult as any)?.success) throw new Error('Wallet debit failed');
-      }
-
-      // Insert order items with product_id if available (strict UUID validation)
       const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
       const orderItems = items.map(item => ({
-        order_id: order.id,
+        order_id: newOrderId,
         product_name: item.name + (item.variant ? ` (${item.variant})` : ''),
         product_id: typeof item.id === 'string' && UUID_RE.test(item.id) ? item.id : null,
         price: item.price,
@@ -620,40 +594,13 @@ const Checkout = () => {
         total: item.price * item.quantity,
       }));
 
-      const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
-      if (itemsError) throw itemsError;
-
-      // ── Wallet payment: try auto-assign licenses → auto-complete if stock available ──
-      let walletInstantDelivered: boolean | null = null; // null = not wallet, true = delivered, false = pending
-      if (paymentMethod === 'wallet') {
-        try {
-          const { data: assignRes } = await (supabase as any).rpc('auto_assign_licenses', { p_order_id: order.id });
-          const assigned = (assignRes as any)?.assigned || 0;
-          const needed = (assignRes as any)?.needed || 0;
-          if (needed > 0 && assigned === needed) {
-            // All licenses assigned — mark order completed (triggers points, telegram, emails)
-            const { error: updErr } = await supabase
-              .from('orders')
-              .update({ status: 'completed', payment_status: 'paid' })
-              .eq('id', order.id);
-            if (!updErr) walletInstantDelivered = true;
-            else walletInstantDelivered = false;
-          } else {
-            walletInstantDelivered = false;
-          }
-        } catch (e) {
-          console.error('[Checkout] wallet auto-assign error:', e);
-          walletInstantDelivered = false;
-        }
-      }
-
-      // Upload optional payment screenshot (non-blocking — order succeeds even if upload fails)
+      // Upload optional payment screenshot up-front so guests can include the URL in the RPC.
       let screenshotUrl: string | null = null;
       if (paymentMethod !== 'wallet' && paymentScreenshot) {
         try {
           const folder = user?.id || 'guest';
           const ext = paymentScreenshot.name.split('.').pop()?.toLowerCase() || 'jpg';
-          const path = `${folder}/${order.id}-${Date.now()}.${ext}`;
+          const path = `${folder}/${newOrderId}-${Date.now()}.${ext}`;
           const { error: uploadErr } = await supabase.storage
             .from('payment-proofs')
             .upload(path, paymentScreenshot, {
@@ -673,19 +620,96 @@ const Checkout = () => {
         }
       }
 
-      // Insert payment proof for manual non-wallet, non-PGW payments so admin sees it in /ceo/payments
-      if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online') {
-        const { error: proofError } = await supabase.from('payment_proofs').insert({
-          order_id: order.id,
-          user_id: user?.id || null,
+      if (isGuest) {
+        // Guests can't SELECT orders or satisfy child-table RLS subqueries, so we
+        // create the order + items + proof in one SECURITY DEFINER RPC.
+        const proofPayload = (paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online') ? {
           transaction_id: transactionId.trim(),
           payment_method: paymentMethod,
           amount: payableTotal,
           screenshot_url: screenshotUrl,
           status: 'pending',
+        } : null;
+        const { error: rpcErr } = await (supabase as any).rpc('place_guest_order', {
+          p_order: orderPayload,
+          p_items: orderItems,
+          p_proof: proofPayload,
         });
-        if (proofError) console.error('[Checkout] payment_proof insert error:', proofError);
+        if (rpcErr) throw rpcErr;
+      } else {
+        const { error: orderError } = await supabase
+          .from('orders')
+          .insert({ ...orderPayload, user_id: user!.id } as any);
+        if (orderError) throw orderError;
+
+        // Redeem referral credit (server validates 2× rule)
+        if (refCreditApplied > 0) {
+          const { data: redeemRes } = await (supabase as any).rpc('redeem_referral_credit', {
+            p_user_id: user!.id,
+            p_amount: refCreditApplied,
+            p_order_subtotal: subtotal,
+            p_order_id: newOrderId,
+          });
+          if (!(redeemRes as any)?.success) {
+            throw new Error((redeemRes as any)?.error || 'Referral credit redeem failed');
+          }
+        }
+
+        // Debit wallet if wallet payment
+        if (paymentMethod === 'wallet') {
+          const { data: walletResult } = await supabase.rpc('wallet_debit' as any, {
+            p_user_id: user!.id,
+            p_amount: payableTotal,
+            p_note: `অর্ডার পেমেন্ট - ${orderNum}`,
+            p_reference_id: newOrderId,
+            p_created_by: 'user',
+          });
+          if (!(walletResult as any)?.success) throw new Error('Wallet debit failed');
+        }
+
+        const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
+        if (itemsError) throw itemsError;
+
+        // Insert payment proof for manual non-wallet, non-PGW payments so admin sees it in /ceo/payments
+        if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online') {
+          const { error: proofError } = await supabase.from('payment_proofs').insert({
+            order_id: newOrderId,
+            user_id: user!.id,
+            transaction_id: transactionId.trim(),
+            payment_method: paymentMethod,
+            amount: payableTotal,
+            screenshot_url: screenshotUrl,
+            status: 'pending',
+          });
+          if (proofError) console.error('[Checkout] payment_proof insert error:', proofError);
+        }
       }
+
+      const order = { id: newOrderId, order_number: orderNum } as { id: string; order_number: string };
+
+      // ── Wallet payment: try auto-assign licenses → auto-complete if stock available ──
+      let walletInstantDelivered: boolean | null = null; // null = not wallet, true = delivered, false = pending
+      if (paymentMethod === 'wallet' && !isGuest) {
+        try {
+          const { data: assignRes } = await (supabase as any).rpc('auto_assign_licenses', { p_order_id: order.id });
+          const assigned = (assignRes as any)?.assigned || 0;
+          const needed = (assignRes as any)?.needed || 0;
+          if (needed > 0 && assigned === needed) {
+            const { error: updErr } = await supabase
+              .from('orders')
+              .update({ status: 'completed', payment_status: 'paid' })
+              .eq('id', order.id);
+            if (!updErr) walletInstantDelivered = true;
+            else walletInstantDelivered = false;
+          } else {
+            walletInstantDelivered = false;
+          }
+        } catch (e) {
+          console.error('[Checkout] wallet auto-assign error:', e);
+          walletInstantDelivered = false;
+        }
+      }
+
 
       // ── bKash Online (PGW) — redirect to bKash hosted checkout ──
       if (paymentMethod === 'bkash_online') {
