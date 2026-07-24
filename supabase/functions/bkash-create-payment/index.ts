@@ -65,27 +65,22 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
-    // ── Require authenticated caller ─────────────────────────────────────
+    // Auth is OPTIONAL for order purpose (allows guest checkout). It's still
+    // required for wallet_topup (which is bound to a user).
     const authHeader = req.headers.get('Authorization') || '';
-    if (!authHeader.toLowerCase().startsWith('bearer ')) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+    let authUserId: string | null = null;
+    if (authHeader.toLowerCase().startsWith('bearer ')) {
+      const jwt = authHeader.slice(7).trim();
+      try {
+        const authClient = createClient(
+          Deno.env.get('SUPABASE_URL')!,
+          Deno.env.get('SUPABASE_ANON_KEY')!,
+          { global: { headers: { Authorization: authHeader } } },
+        );
+        const { data: claimsData } = await authClient.auth.getClaims(jwt);
+        authUserId = (claimsData?.claims?.sub as string) || null;
+      } catch { /* ignore — treated as guest */ }
     }
-    const jwt = authHeader.slice(7).trim();
-
-    const authClient = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_ANON_KEY')!,
-      { global: { headers: { Authorization: authHeader } } },
-    );
-    const { data: claimsData, error: claimsErr } = await authClient.auth.getClaims(jwt);
-    if (claimsErr || !claimsData?.claims?.sub) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-    const authUserId = claimsData.claims.sub as string;
 
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
@@ -132,8 +127,9 @@ Deno.serve(async (req) => {
           status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
-      // Ownership check — caller must own the order (or be admin)
-      if (o.user_id && o.user_id !== authUserId) {
+      // Ownership check — signed-in caller must own the order (or be admin).
+      // Guest orders (order.user_id IS NULL) are allowed for any caller.
+      if (o.user_id && authUserId && o.user_id !== authUserId) {
         const { data: roleRow } = await supabase
           .from('user_roles')
           .select('role')
@@ -146,6 +142,11 @@ Deno.serve(async (req) => {
           });
         }
       }
+      if (o.user_id && !authUserId) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
       if (o.payment_status === 'paid') {
         return new Response(JSON.stringify({ error: 'Order already paid' }), {
           status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -155,7 +156,12 @@ Deno.serve(async (req) => {
       // Authoritative amount comes from server-side order total
       amount = Number(o.total);
     } else {
-      // wallet_topup — bind to authenticated user, validate amount range
+      // wallet_topup — must be authenticated
+      if (!authUserId) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
       if (!Number.isFinite(amount) || amount < 10 || amount > 100000) {
         return new Response(JSON.stringify({ error: 'Invalid topup amount' }), {
           status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },

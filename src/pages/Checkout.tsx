@@ -146,6 +146,7 @@ const Checkout = () => {
   const [couponLoading, setCouponLoading] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
+  const [guestAccount, setGuestAccount] = useState<{ email: string; accountCreated: boolean } | null>(null);
   const [instantDelivered, setInstantDelivered] = useState<boolean | null>(null); // null = checking, true = licenses assigned, false = pending
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState('');
@@ -515,9 +516,11 @@ const Checkout = () => {
     if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online' && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
     if (items.length === 0) { setSubmitError('Cart empty'); return; }
 
-    if (!user) {
+    // Guest checkout is allowed for all payment methods except wallet
+    // (wallet debit requires an authenticated user with a balance).
+    if (!user && paymentMethod === 'wallet') {
       persistCheckoutState(true);
-      setSubmitError('লগইন করুন — লগইনের পর আপনার অর্ডার নিজে থেকেই সাবমিট হবে');
+      setSubmitError('Wallet পেমেন্টের জন্য লগইন করুন');
       setShowAuthModal(true);
       return;
     }
@@ -696,6 +699,22 @@ const Checkout = () => {
             });
           } catch { /* silent */ }
 
+          // Guest → auto-create account + send recovery email so the customer
+          // can access this order later, even if they never come back to the
+          // success screen (bKash redirects away from our site).
+          if (!user) {
+            try {
+              await supabase.functions.invoke('guest-order-finalize', {
+                body: {
+                  orderId: order.id,
+                  email: form.email,
+                  name: form.name,
+                  redirectTo: `${window.location.origin}/reset-password`,
+                },
+              });
+            } catch (e) { console.warn('[Checkout] guest finalize (bkash) failed:', e); }
+          }
+
           const { data: bkData, error: bkErr } = await supabase.functions.invoke('bkash-create-payment', {
             body: {
               orderId: order.id,
@@ -728,6 +747,30 @@ const Checkout = () => {
           return;
         }
       }
+
+      // ── Guest checkout finalization — non-bKash paths ─────────────────
+      // If the customer isn't logged in, silently create an account for
+      // the email they used and send them a password-reset email so they
+      // can later claim the order. We surface a friendly prompt on the
+      // success screen too.
+      if (!user) {
+        try {
+          const { data: finalizeRes } = await supabase.functions.invoke('guest-order-finalize', {
+            body: {
+              orderId: order.id,
+              email: form.email,
+              name: form.name,
+              redirectTo: `${window.location.origin}/reset-password`,
+            },
+          });
+          const created = !!(finalizeRes as any)?.accountCreated;
+          setGuestAccount({ email: form.email, accountCreated: created });
+        } catch (e) {
+          console.warn('[Checkout] guest finalize failed:', e);
+          setGuestAccount({ email: form.email, accountCreated: false });
+        }
+      }
+
 
       // Record affiliate conversion (non-blocking, server validates)
       if (affRef?.code) {
@@ -943,6 +986,29 @@ const Checkout = () => {
               </>
             );
           })()}
+          {/* Guest-order → account claim panel */}
+          {!user && guestAccount && (
+            <div className="text-left rounded-2xl border border-primary/30 bg-primary/5 p-4 space-y-2">
+              <p className="text-sm font-bold text-foreground flex items-center gap-2">
+                🔐 আপনার অর্ডারের জন্য অ্যাকাউন্ট প্রস্তুত
+              </p>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                {guestAccount.accountCreated ? (
+                  <>আপনার ইমেইল <span className="font-semibold text-primary">{guestAccount.email}</span>-এ একটি অ্যাকাউন্ট স্বয়ংক্রিয়ভাবে তৈরি হয়েছে। পাসওয়ার্ড সেট করার জন্য একটি লিংক ঐ ইমেইলে পাঠানো হয়েছে — লিংকে ক্লিক করে পাসওয়ার্ড সেট করলেই ড্যাশবোর্ড থেকে অর্ডার দেখতে পারবেন।</>
+                ) : (
+                  <>আপনার ইমেইল <span className="font-semibold text-primary">{guestAccount.email}</span> আমাদের সিস্টেমে আছে। লগইন করলেই এই অর্ডারটি স্বয়ংক্রিয়ভাবে আপনার ড্যাশবোর্ডে সংযুক্ত হবে।</>
+                )}
+              </p>
+              <div className="flex flex-wrap gap-2 pt-1">
+                <button onClick={() => setShowAuthModal(true)} className="btn-glow px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5">
+                  <LogIn size={13} /> এখনই লগইন করুন
+                </button>
+                <button onClick={() => navigate('/reset-password')} className="px-4 py-2 rounded-xl text-xs font-semibold border border-border text-muted-foreground hover:text-foreground">
+                  পাসওয়ার্ড সেট করুন
+                </button>
+              </div>
+            </div>
+          )}
           <div className="flex gap-3 justify-center">
             <button onClick={() => navigate('/')} className="px-6 py-3 rounded-xl font-semibold text-sm border border-border text-muted-foreground hover:text-foreground transition-colors">
               হোমে ফিরে যাও
@@ -963,17 +1029,17 @@ const Checkout = () => {
       <SEOHead title="Checkout" description="Complete your secure checkout at Shahed Store." noIndex />
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} redirectAfterLogin={false} oauthRedirectTo={typeof window !== 'undefined' ? window.location.href : undefined} />
 
-      {/* Login Required Banner for guests */}
+      {/* Optional login prompt for guests — checkout works without login */}
       {!user && (
         <div className="max-w-4xl mx-auto px-4 pt-4">
-          <div className="flex items-center gap-3 p-4 rounded-2xl bg-primary/10 border border-primary/30">
+          <div className="flex items-center gap-3 p-4 rounded-2xl bg-primary/5 border border-primary/20">
             <LogIn size={20} className="text-primary shrink-0" />
             <div className="flex-1">
-              <p className="text-sm font-semibold text-foreground">অর্ডার করতে লগইন আবশ্যক</p>
-              <p className="text-xs text-muted-foreground mt-0.5">আপনার অ্যাকাউন্টে লগইন করুন অথবা নতুন অ্যাকাউন্ট তৈরি করুন।</p>
+              <p className="text-sm font-semibold text-foreground">Guest হিসেবে অর্ডার করা যাবে</p>
+              <p className="text-xs text-muted-foreground mt-0.5">অ্যাকাউন্ট থাকলে লগইন করুন — পয়েন্ট, ওয়ালেট ও পুরনো অর্ডার দেখতে পারবেন। না থাকলেও চিন্তা নেই: অর্ডারের পর আপনার ইমেইলে অ্যাকাউন্ট তৈরি হয়ে যাবে।</p>
             </div>
             <button onClick={() => setShowAuthModal(true)} className="btn-glow px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap flex items-center gap-1.5">
-              <LogIn size={14} /> লগইন করুন
+              <LogIn size={14} /> লগইন
             </button>
           </div>
         </div>
