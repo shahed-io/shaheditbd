@@ -1399,7 +1399,12 @@ async function processUpdate(update: any, BOT_TOKEN: string, supabase: any): Pro
       await handleCheckKey(BOT_TOKEN, chatId, '', lang);
     } else if (cbData === 'getcid_hint') {
       await answerCb(BOT_TOKEN, cb.id);
-      await handleGetCidHint(BOT_TOKEN, chatId, lang);
+      // Confirmation ID system disabled.
+      await sendMsg(BOT_TOKEN, chatId,
+        lang === 'bn'
+          ? '⚠️ Confirmation ID সার্ভিসটি বর্তমানে বন্ধ রয়েছে।\n\nসহায়তার জন্য WhatsApp: 01840099853'
+          : '⚠️ The Confirmation ID service is currently disabled.\n\nFor help, WhatsApp: 01840099853');
+
 
 
     } else if (cbData.startsWith('cat:')) {
