@@ -121,25 +121,27 @@ const StarRating = ({ rating, color }: { rating: number; color: string }) => (
 const AvatarCircle = ({ initials, index, seed, name }: { initials: string; index: number; seed: string; name?: string }) => {
   const [a, b] = AVATAR_GRADIENTS[index % AVATAR_GRADIENTS.length];
   const [failed, setFailed] = useState(false);
-  // Real Facebook photo if we have one for this customer, otherwise realistic portrait
+  // Real Facebook photo only — no AI-generated fallbacks. Missing photos show initials on gradient.
   const realAvatar = name ? getRealAvatar(name) : undefined;
-  const url = realAvatar ?? `https://i.pravatar.cc/160?u=${encodeURIComponent(seed)}`;
 
   return (
     <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0 overflow-hidden"
       style={{ background: `linear-gradient(135deg, ${a}, ${b})`, boxShadow: `0 4px 12px ${a}45` }}>
-      {failed ? initials : (
+      {realAvatar && !failed ? (
         <img
-          src={url}
+          src={realAvatar}
           alt={initials}
           loading="lazy"
           onError={() => setFailed(true)}
           className="w-full h-full object-cover"
         />
+      ) : (
+        <span>{initials}</span>
       )}
     </div>
   );
 };
+
 
 
 /* ─── Review Card ─────────────────────────────── */
