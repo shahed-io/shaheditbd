@@ -70,9 +70,10 @@ const EMPTY_SLIDE = (): Slide => ({
   subtitle: 'Short subtitle here', desc: 'Describe the product briefly.',
   price: '৳999', original: '৳2,999', off: '67%', badge: 'HOT DEAL',
   accentFrom: 'hsl(243,75%,55%)', accentTo: 'hsl(263,70%,52%)',
-  emoji: '🛍️', logoImg: '', features: ['Feature 1', 'Feature 2', 'Feature 3'],
+  emoji: '🛍️', logoImg: '', bgImage: '', features: ['Feature 1', 'Feature 2', 'Feature 3'],
   enabled: true, productSlug: '',
 });
+
 
 /* ═══════════════════ COMPONENT ═══════════════════ */
 const AdminHeroBanner = () => {
