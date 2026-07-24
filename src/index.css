@@ -2578,10 +2578,11 @@ body.admin-page [class*="overflow-x-auto"] {
 
 body.admin-page .overflow-x-auto > table,
 body.admin-page [class*="overflow-x-auto"] > table {
-  table-layout: auto !important;
-  width: max-content !important;
-  min-width: 100% !important;
+  table-layout: auto;
+  width: 100%;
+  min-width: max-content;
 }
+
 
 /* Table cells stay one-line so the outer wrapper handles horizontal scroll */
 body.admin-page table th,
