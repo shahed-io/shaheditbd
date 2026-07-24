@@ -17,10 +17,12 @@ export type SlideData = {
   accentTo: string;
   emoji: string;
   logoImg: string;
+  bgImage: string;
   features: string[];
   enabled: boolean;
   productSlug: string;
 };
+
 
 export type BgSettings = {
   bgType: 'default' | 'gradient' | 'color';
