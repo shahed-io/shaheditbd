@@ -154,6 +154,13 @@ const HeroBanner = () => {
             role="region"
             aria-roledescription="carousel"
             aria-label="Featured deals"
+            onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+            onTouchEnd={(e) => {
+              if (touchStartX.current == null) return;
+              const dx = e.changedTouches[0].clientX - touchStartX.current;
+              if (Math.abs(dx) > 40) advance(dx < 0 ? 1 : -1);
+              touchStartX.current = null;
+            }}
           >
             {/* Left content ~62% */}
             <div
