@@ -491,6 +491,7 @@ const ProductDetail = () => {
     }),
     speakableSchema(['h1', '.product-title', '.product-description', '.lead']),
     ...(faqs.length > 0 ? [faqSchema(faqs)] : []),
+    ...(topReviews.length > 0 ? reviewSchema(productDisplayName, product.slug, topReviews) : []),
   ];
 
   const breadcrumbItems = [
