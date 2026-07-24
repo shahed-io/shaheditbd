@@ -508,7 +508,7 @@ const FloatingSupport = () => {
           {(config.whatsapp_enabled || config.phone_enabled || activeSets.length > 0) && (
             <div className="px-3 pb-2 pt-1 border-t border-border/40">
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2 px-1">
-                অন্যান্য যোগাযোগের উপায়
+                {language === 'en' ? 'Other ways to reach us' : 'অন্যান্য যোগাযোগের উপায়'}
               </p>
               <div className="flex flex-wrap gap-2">
                 {config.phone_enabled && (
