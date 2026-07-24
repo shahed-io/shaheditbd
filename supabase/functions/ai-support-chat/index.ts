@@ -298,16 +298,13 @@ serve(async (req) => {
   try {
     const { messages, pageContext } = await req.json();
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
-
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY");
     const supabase = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!);
 
     const lastUserMsg: string = (() => {
       for (let i = messages.length - 1; i >= 0; i--) {
-        if (messages[i].role === "user") return String(messages[i].content || "");
+        if (messages[i].role === "user") return getMessageText(messages[i]);
       }
       return "";
     })();
@@ -492,56 +489,24 @@ ${viewedProductBlock}${matchedBlock}${productContext}${couponContext}
 
 কোনো তথ্য একদমই না জানলে বিনয়ের সাথে বলুন এবং WhatsApp-এ যোগাযোগ করতে বলুন: ${supportPhone}`;
 
-    const aiMessages = [
+    const aiMessages: ChatMessage[] = [
       { role: "system", content: systemPrompt },
       ...messages,
     ];
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-3.6-flash",
-        messages: aiMessages,
-        stream: true,
-        max_tokens: 700,
-      }),
-    });
-
-    if (response.ok) {
-      return new Response(response.body, {
-        headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
-      });
-    }
-
-    console.warn(`Lovable AI failed (${response.status}); falling back`);
-
     try {
-      const { callAIWithFallback } = await import("../_shared/ai-fallback.ts");
-      const { text } = await callAIWithFallback({
-        model: "google/gemini-3.6-flash",
-        messages: aiMessages as any,
+      const aiKeys = await loadAiKeys(supabase);
+      const hasProductContext = Boolean(viewedProductBlock || matchedBlock || productContext);
+      const primaryProvider = pickPrimaryProvider(lastUserMsg, hasProductContext);
+
+      return await routeAiResponse({
+        provider: primaryProvider,
+        keys: aiKeys,
+        messages: aiMessages,
         maxTokens: 700,
       });
-
-      const encoder = new TextEncoder();
-      const stream = new ReadableStream({
-        start(controller) {
-          const chunk = { choices: [{ delta: { content: text }, index: 0 }] };
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify(chunk)}\n\n`));
-          controller.enqueue(encoder.encode(`data: [DONE]\n\n`));
-          controller.close();
-        },
-      });
-
-      return new Response(stream, {
-        headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
-      });
     } catch (fallbackErr) {
-      console.error("fallback failed:", fallbackErr);
+      console.error("AI providers failed:", fallbackErr);
       return new Response(
         JSON.stringify({
           error: `AI সাময়িকভাবে অনুপলব্ধ। সরাসরি WhatsApp-এ যোগাযোগ করুন: ${supportPhone}`,
