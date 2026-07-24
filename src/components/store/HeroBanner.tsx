@@ -56,8 +56,9 @@ const LOGO_MAP: Record<string, string> = {
   'slide-idm': idmLogo,
 };
 
-// Pick a full-bleed professional background image per slide (mobile banner)
+// Pick a full-bleed professional background image per slide. Admin-uploaded bgImage wins.
 const pickBannerBg = (s: Slide): string => {
+  if (s.bgImage && s.bgImage.trim()) return s.bgImage;
   const t = `${s.title} ${s.titleAccent}`.toLowerCase();
   const slug = (s.productSlug || '').toLowerCase();
   if (t.includes('idm') || slug.includes('idm') || slug.includes('download-manager')) return bannerIdm;
@@ -67,6 +68,7 @@ const pickBannerBg = (s: Slide): string => {
   const idx = Math.abs(t.split('').reduce((a, c) => a + c.charCodeAt(0), 0)) % pool.length;
   return pool[idx];
 };
+
 
 // Themed full-background color gradient per slide (mobile banner)
 const pickBannerTheme = (s: Slide): { bg: string; accent: string } => {
