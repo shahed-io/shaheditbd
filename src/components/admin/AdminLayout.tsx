@@ -186,6 +186,7 @@ const MENU_SECTIONS: MenuSection[] = [
       { icon: Shield, label: 'Copy Protection', path: '/ceo/copy-protection', badge: 'new' },
       { icon: Database, label: 'Backup', path: '/ceo/backup' },
       { icon: Settings, label: 'General Settings', path: '/ceo/settings' },
+      { icon: Globe, label: 'Multi Currency', path: '/ceo/currencies', badge: 'new' },
     ],
   },
 ];

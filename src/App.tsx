@@ -136,6 +136,7 @@ const AdminTelegramBot           = lazy(() => import("./pages/admin/AdminTelegra
 const AdminStaffManagement       = lazy(() => import("./pages/admin/AdminStaffManagement"));
 const AdminInventoryAlerts       = lazy(() => import("./pages/admin/AdminInventoryAlerts"));
 const AdminThemes                = lazy(() => import("./pages/admin/AdminThemes"));
+const AdminCurrencies            = lazy(() => import("./pages/admin/AdminCurrencies"));
 const AdminAiAssistant           = lazy(() => import("./pages/admin/AdminAiAssistant"));
 const AdminWelcomeDiscount       = lazy(() => import("./pages/admin/AdminWelcomeDiscount"));
 const AdminAffiliates            = lazy(() => import("./pages/admin/AdminAffiliates"));
@@ -356,6 +357,8 @@ const AppContent = () => {
             <Route path="staff" element={<AdminSuspense><AdminStaffManagement /></AdminSuspense>} />
             <Route path="inventory-alerts" element={<AdminSuspense><AdminInventoryAlerts /></AdminSuspense>} />
             <Route path="themes" element={<AdminSuspense><AdminThemes /></AdminSuspense>} />
+            <Route path="currencies" element={<AdminSuspense><AdminCurrencies /></AdminSuspense>} />
+
             <Route path="ai-assistant" element={<AdminSuspense><AdminAiAssistant /></AdminSuspense>} />
             <Route path="welcome-discount" element={<AdminSuspense><AdminWelcomeDiscount /></AdminSuspense>} />
             <Route path="affiliates" element={<AdminSuspense><AdminAffiliates /></AdminSuspense>} />
