@@ -214,13 +214,6 @@ const HeroBanner = () => {
               }}
             />
 
-            {/* Left-side solid scrim so the text sits on a clean flat surface (no blur haze) */}
-            <div
-              className="absolute inset-y-0 left-0 w-[70%] pointer-events-none"
-              style={{
-                background: 'linear-gradient(90deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.85) 55%, rgba(255,255,255,0) 100%)',
-              }}
-            />
 
             {/* Left content — product info (name, price, CTA) */}
             <div
