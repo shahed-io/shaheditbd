@@ -337,11 +337,20 @@ const AdminCoupons = () => {
           const usage = usagePercent(coupon);
           const isPercent = coupon.discount_type === 'percentage';
           const valueLabel = isPercent ? `${coupon.discount_value}%` : `৳${coupon.discount_value}`;
+          const selected = selectedIds.has(coupon.id);
           return (
             <div
               key={coupon.id}
-              className={`group relative overflow-hidden rounded-2xl border border-primary/15 bg-gradient-to-br from-background/80 via-primary/[0.04] to-background/80 backdrop-blur-xl p-5 shadow-[0_8px_30px_-12px_rgba(99,102,241,0.25)] hover:shadow-[0_15px_40px_-10px_rgba(99,102,241,0.4)] hover:border-primary/40 transition-all duration-500 ${expired ? 'opacity-60' : ''}`}
+              className={`group relative overflow-hidden rounded-2xl border backdrop-blur-xl p-5 shadow-[0_8px_30px_-12px_rgba(99,102,241,0.25)] hover:shadow-[0_15px_40px_-10px_rgba(99,102,241,0.4)] transition-all duration-500 ${expired ? 'opacity-60' : ''} ${selected ? 'border-primary ring-2 ring-primary/50 bg-gradient-to-br from-primary/10 via-primary/[0.06] to-background/80' : 'border-primary/15 bg-gradient-to-br from-background/80 via-primary/[0.04] to-background/80 hover:border-primary/40'}`}
             >
+              {/* Selection checkbox */}
+              <button
+                onClick={() => toggleSelect(coupon.id)}
+                className="absolute top-2 left-2 z-10 p-1 rounded-md bg-background/60 backdrop-blur-sm hover:bg-primary/20 transition-colors"
+                title={selected ? 'Deselect' : 'Select'}
+              >
+                {selected ? <CheckSquare size={16} className="text-primary" /> : <Square size={16} className="text-muted-foreground" />}
+              </button>
               {/* Decorative blob */}
               <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-gradient-to-br from-primary/30 to-purple-500/20 blur-3xl opacity-60 group-hover:opacity-100 transition-opacity pointer-events-none" />
               <div className="absolute -bottom-10 -left-10 w-28 h-28 rounded-full bg-gradient-to-br from-pink-500/20 to-amber-400/15 blur-3xl opacity-50 pointer-events-none" />
