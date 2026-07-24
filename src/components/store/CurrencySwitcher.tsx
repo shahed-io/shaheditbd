@@ -70,6 +70,7 @@ const CurrencySwitcher = ({ className }: Props) => {
                 {c.symbol || "¤"}
               </span>
               <span className="text-base" aria-hidden>{c.flag_emoji || "🌐"}</span>
+              <span className="font-semibold">{c.code}</span>
               <span className="text-muted-foreground text-xs truncate">{c.name}</span>
             </span>
             {active.code === c.code && <Check className="w-4 h-4 text-primary flex-shrink-0" />}
