@@ -55,6 +55,19 @@ const LOGO_MAP: Record<string, string> = {
   'slide-idm': idmLogo,
 };
 
+// Pick a full-bleed professional background image per slide (mobile banner)
+const pickBannerBg = (s: Slide): string => {
+  const t = `${s.title} ${s.titleAccent}`.toLowerCase();
+  const slug = (s.productSlug || '').toLowerCase();
+  if (t.includes('idm') || slug.includes('idm') || slug.includes('download-manager')) return bannerIdm;
+  if (t.includes('365') || t.includes('office') || slug.includes('365') || slug.includes('office')) return bannerMs365;
+  if (t.includes('windows') || slug.includes('windows')) return bannerWin11;
+  // default rotates by title hash so unknown products still get a themed bg
+  const pool = [bannerWin11, bannerMs365, bannerIdm];
+  const idx = Math.abs(t.split('').reduce((a, c) => a + c.charCodeAt(0), 0)) % pool.length;
+  return pool[idx];
+};
+
 const dbSlideToSlide = (s: SlideData): Slide => ({
   tag: s.tag, tagIcon: s.tagIcon || '', title: s.title, titleAccent: s.titleAccent,
   subtitle: s.subtitle, desc: s.desc, price: s.price,
