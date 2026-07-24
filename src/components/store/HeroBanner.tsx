@@ -254,13 +254,12 @@ const HeroBanner = () => {
               <div>
                 <h2
                   className="font-sora font-black leading-tight text-gray-900"
-                  style={{ fontSize: '19px', textShadow: '0 1px 0 rgba(255,255,255,0.6)' }}
+                  style={{ fontSize: '19px' }}
                 >
                   {slide.title}{' '}
                   <span
                     style={{
                       color: pickBannerTheme(slide).accent,
-                      textShadow: '0 1px 0 rgba(255,255,255,0.7)',
                     }}
                   >
                     {slide.titleAccent}
