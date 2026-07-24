@@ -328,6 +328,40 @@ const Checkout = () => {
     })();
   }, []);
 
+  // Deep-link support: /checkout?product=<slug>&qty=<n>
+  // If the requested product is not already in the cart, fetch it and add it.
+  // Lets a refresh / bookmark / shared link land on a fully-populated checkout.
+  useEffect(() => {
+    const slug = searchParams.get('product');
+    if (!slug) return;
+    const qty = Math.max(1, parseInt(searchParams.get('qty') || '1', 10) || 1);
+    const already = allItems.some(it => String((it as any).slug || '') === slug || String(it.id) === slug);
+    if (already) return;
+    (async () => {
+      try {
+        const { data: p, error } = await supabase
+          .from('products')
+          .select('id, name, price, original_price, image_url, categories(name)')
+          .eq('slug', slug)
+          .eq('is_active', true)
+          .maybeSingle();
+        if (error || !p) return;
+        addToCart({
+          id: p.id,
+          name: p.name,
+          category: (p as any).categories?.name || '',
+          price: Number(p.price) || 0,
+          originalPrice: p.original_price ? Number(p.original_price) : undefined,
+          image: p.image_url || '',
+        }, qty);
+      } catch (e) {
+        console.warn('[Checkout] deep-link product load failed:', e);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
   // Auto-apply coupon from URL ?coupon=CODE
   useEffect(() => {
     const urlCoupon = searchParams.get('coupon');
