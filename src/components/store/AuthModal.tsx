@@ -55,6 +55,16 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
       setMode('signup');
       setReferralCode(refFromUrl.toUpperCase());
     }
+    // As soon as the modal opens on any non-home page, persist the current
+    // location so post-login (email OR OAuth) can restore it. Prevents the
+    // "logged-in-and-dumped-on-home" bug on checkout, product, dashboard, etc.
+    try {
+      const cur = window.location.pathname + window.location.search;
+      if (cur && cur !== '/' && !cur.startsWith('/reset-password') && !cur.startsWith('/ceo')) {
+        sessionStorage.setItem('post_login_redirect', cur);
+        localStorage.setItem('post_login_redirect', cur);
+      }
+    } catch { /* ignore */ }
   }, [isOpen, searchParams]);
 
   if (!isOpen) return null;
@@ -77,11 +87,18 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
         if (error) throw error;
         toast.success('সফলভাবে লগইন হয়েছে!');
         onClose();
-        // If a post-login redirect target is set (e.g. checkout page), let the
-        // global PostLoginRedirect listener handle navigation instead of pushing /dashboard.
-        let hasRedirect = false;
-        try { hasRedirect = !!(sessionStorage.getItem('post_login_redirect') || localStorage.getItem('post_login_redirect')); } catch {}
-        if (redirectAfterLogin && !hasRedirect) navigate('/dashboard');
+        // Prefer explicit post-login redirect (set by caller / modal-open effect).
+        let target = '';
+        try { target = sessionStorage.getItem('post_login_redirect') || localStorage.getItem('post_login_redirect') || ''; } catch {}
+        if (target && target.startsWith('/')) {
+          const current = window.location.pathname + window.location.search;
+          if (target !== current) {
+            try { sessionStorage.removeItem('post_login_redirect'); localStorage.removeItem('post_login_redirect'); } catch {}
+            navigate(target, { replace: true });
+          }
+        } else if (redirectAfterLogin) {
+          navigate('/dashboard');
+        }
       } else {
         const { data, error } = await supabase.auth.signUp({
           email,
