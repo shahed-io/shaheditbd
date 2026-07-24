@@ -6,6 +6,7 @@ import { useWishlist } from '@/hooks/useWishlist';
 import QuickOrderModal from './QuickOrderModal';
 import { useNavigate } from 'react-router-dom';
 import { prefetchRoute } from '@/hooks/usePrefetchRoute';
+import { useCurrency } from '@/hooks/useCurrency';
 
 interface ProductCardProps {
   product: Product;
@@ -31,6 +32,7 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
   const { addToCart, isInCart }         = useCart();
   const { toggleWishlist, isWishlisted } = useWishlist();
   const navigate = useNavigate();
+  const { format: fmtPrice } = useCurrency();
 
   // Intersection observer for staggered entry — disabled on mobile to prevent scroll jank
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
@@ -153,9 +155,9 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
                 </div>
 
                 <div className="flex items-baseline gap-2">
-                  <span className="font-sora font-black text-2xl" style={{ color: 'hsl(271,91%,75%)' }}>৳{product.price.toLocaleString()}</span>
+                  <span className="font-sora font-black text-2xl" style={{ color: 'hsl(271,91%,75%)' }}>{fmtPrice(product.price)}</span>
                   {product.originalPrice && (
-                    <span className="text-sm line-through text-muted-foreground">৳{product.originalPrice.toLocaleString()}</span>
+                    <span className="text-sm line-through text-muted-foreground">{fmtPrice(product.originalPrice)}</span>
                   )}
                 </div>
 
@@ -418,10 +420,10 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
 
           <div className="flex items-baseline gap-2 mt-auto">
             <span className="text-xl font-sora font-black" style={{ color: 'hsl(271,91%,75%)' }}>
-              ৳{product.price.toLocaleString()}
+              {fmtPrice(product.price)}
             </span>
             {product.originalPrice && (
-              <span className="text-xs line-through text-muted-foreground">৳{product.originalPrice.toLocaleString()}</span>
+              <span className="text-xs line-through text-muted-foreground">{fmtPrice(product.originalPrice)}</span>
             )}
           </div>
 

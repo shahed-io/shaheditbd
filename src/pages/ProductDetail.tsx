@@ -5,6 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 const ReactMarkdown = lazy(() => import('react-markdown'));
 import { supabase } from '@/integrations/supabase/client';
 import { useCart } from '@/hooks/useCart';
+import { useCurrency } from '@/hooks/useCurrency';
 import Navbar from '@/components/store/Navbar';
 import Footer from '@/components/store/Footer';
 import {
@@ -111,6 +112,7 @@ const ProductDetail = () => {
   const navigate = useNavigate();
   const { addToCart, toggleWishlist, isWishlisted, isInCart } = useCart();
   const { user } = useAuth();
+  const { format: fmtPrice, active: activeCurrency } = useCurrency();
 
   const [product,       setProduct]      = useState<ProductFull | null>(null);
   const [loading,       setLoading]      = useState(true);
@@ -364,6 +366,7 @@ const ProductDetail = () => {
     return product.price;
   };
   const displayPrice = getSelectedPrice();
+
 
   // Original price: use selected plan's original_price if available, else product's
   const displayOriginalPrice = selectedPlan?.original_price
@@ -884,14 +887,14 @@ const ProductDetail = () => {
                   <div className="flex items-end flex-nowrap gap-2 sm:gap-3 py-3 px-3 sm:px-4 rounded-2xl overflow-hidden"
                     style={{ background: 'linear-gradient(135deg, hsla(258,78%,55%,0.07) 0%, hsla(185,90%,52%,0.05) 100%)', border: '1px solid hsla(258,78%,60%,0.14)' }}>
                     <span className="font-sora font-black whitespace-nowrap text-[26px] sm:text-3xl md:text-4xl flex-shrink-0" style={{ color: 'hsl(258,78%,42%)' }}>
-                      ৳{displayPrice.toLocaleString()}
+                      {fmtPrice(displayPrice)}
                     </span>
                     {displayOriginalPrice && displayOriginalPrice > displayPrice && (
                       <div className="flex flex-col min-w-0 flex-shrink">
-                        <div className="text-sm sm:text-base md:text-lg line-through whitespace-nowrap" style={{ color: 'hsl(226,25%,62%)' }}>৳{displayOriginalPrice.toLocaleString()}</div>
+                        <div className="text-sm sm:text-base md:text-lg line-through whitespace-nowrap" style={{ color: 'hsl(226,25%,62%)' }}>{fmtPrice(displayOriginalPrice)}</div>
                         {savings > 0 && (
                           <div className="text-[10px] sm:text-xs font-bold whitespace-nowrap" style={{ color: 'hsl(40,100%,48%)' }}>
-                            Save ৳{savings.toLocaleString()}
+                            Save {fmtPrice(savings)}
                           </div>
                         )}
                       </div>
@@ -903,6 +906,11 @@ const ProductDetail = () => {
                       </span>
                     )}
                   </div>
+                  {activeCurrency && activeCurrency.code !== 'BDT' && (
+                    <p className="text-[11px] text-muted-foreground mt-1.5 px-1">
+                      ≈ ৳{displayPrice.toLocaleString()} · Payment settled in BDT
+                    </p>
+                  )}
 
                 </div>
               </div>
