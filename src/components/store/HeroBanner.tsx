@@ -165,7 +165,7 @@ const HeroBanner = () => {
         ══════════════════════════════════ */}
         <div className="lg:hidden px-3 pt-3 pb-4">
           <div
-            className="relative w-full rounded-[24px] bg-white border border-gray-100 overflow-hidden flex items-stretch"
+            className="relative w-full rounded-[24px] border border-gray-100 overflow-hidden"
             style={{ height: '260px' }}
             role="region"
             aria-roledescription="carousel"
@@ -178,9 +178,44 @@ const HeroBanner = () => {
               touchStartX.current = null;
             }}
           >
-            {/* Left content ~62% */}
+            {/* Full-bleed professional background image */}
+            <img
+              key={`bg-${active}`}
+              src={pickBannerBg(slide)}
+              alt=""
+              aria-hidden="true"
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{
+                objectPosition: 'right center',
+                opacity: dir === 'in' ? 1 : 0.6,
+                transform: dir === 'in' ? 'scale(1)' : 'scale(1.03)',
+                transition: 'opacity 0.45s ease, transform 0.6s ease',
+              }}
+            />
+
+            {/* Left-side scrim for text legibility */}
             <div
-              className="w-[62%] pl-4 pr-2 py-3 flex flex-col justify-center gap-1.5 relative z-10"
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  'linear-gradient(90deg, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.88) 32%, rgba(255,255,255,0.55) 52%, rgba(255,255,255,0.10) 72%, rgba(255,255,255,0) 100%)',
+              }}
+            />
+            {/* Subtle top/bottom vignette for depth */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  'linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 25%, rgba(255,255,255,0) 75%, rgba(0,0,0,0.06) 100%)',
+              }}
+            />
+
+            {/* Left content — product info (name, price, CTA) */}
+            <div
+              className="relative z-10 w-[66%] h-full pl-4 pr-2 py-3 flex flex-col justify-center gap-1.5"
               style={{
                 opacity: dir === 'in' ? 1 : 0,
                 transform: dir === 'in' ? 'translateX(0)' : 'translateX(-14px)',
@@ -190,16 +225,16 @@ const HeroBanner = () => {
               {/* Tag row */}
               <div className="flex items-center gap-1.5 flex-wrap">
                 <span
-                  className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider border"
+                  className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider border backdrop-blur-sm"
                   style={{
-                    background: 'hsla(258,78%,55%,0.08)',
-                    borderColor: 'hsla(258,78%,55%,0.20)',
-                    color: 'hsl(258,78%,50%)',
+                    background: 'hsla(258,78%,55%,0.10)',
+                    borderColor: 'hsla(258,78%,55%,0.22)',
+                    color: 'hsl(258,78%,45%)',
                   }}
                 >
                   {slide.tagIcon} {slide.tag}
                 </span>
-                <span className="text-[9px] font-semibold text-gray-400 uppercase tracking-wide">
+                <span className="text-[9px] font-semibold text-gray-500 uppercase tracking-wide">
                   {slide.badge}
                 </span>
               </div>
@@ -208,7 +243,7 @@ const HeroBanner = () => {
               <div>
                 <h2
                   className="font-sora font-black leading-tight text-gray-900"
-                  style={{ fontSize: '19px' }}
+                  style={{ fontSize: '19px', textShadow: '0 1px 0 rgba(255,255,255,0.6)' }}
                 >
                   {slide.title}{' '}
                   <span
@@ -222,30 +257,30 @@ const HeroBanner = () => {
                     {slide.titleAccent}
                   </span>
                 </h2>
-                <p className="text-[11px] text-gray-500 font-medium leading-snug line-clamp-1">
+                <p className="text-[11px] text-gray-600 font-medium leading-snug line-clamp-1">
                   {slide.subtitle}
                 </p>
               </div>
 
               {/* Price */}
               <div className="flex items-baseline gap-1.5 flex-wrap pt-0.5">
-                <span className="text-[17px] font-black text-gray-900 leading-none font-sora">
+                <span className="text-[18px] font-black text-gray-900 leading-none font-sora">
                   {slide.price}
                 </span>
                 <span className="text-[10px] text-gray-400 line-through">{slide.original}</span>
-                <span className="text-[10px] font-bold" style={{ color: 'hsl(0,78%,55%)' }}>
+                <span className="text-[10px] font-bold" style={{ color: 'hsl(0,78%,50%)' }}>
                   {slide.off} OFF
                 </span>
               </div>
 
               {/* CTA */}
-              <div className="pt-1">
+              <div className="pt-1.5">
                 <a
                   href={slide.productSlug ? `/product/${slide.productSlug}` : '/shop'}
                   className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-white text-[11px] font-bold active:scale-95 transition-transform"
                   style={{
                     background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(215,82%,52%))',
-                    boxShadow: '0 6px 18px hsla(258,78%,55%,0.35)',
+                    boxShadow: '0 8px 20px hsla(258,78%,55%,0.42)',
                   }}
                 >
                   <ShoppingBag size={11} strokeWidth={2.5} />
@@ -254,36 +289,6 @@ const HeroBanner = () => {
                 </a>
               </div>
             </div>
-
-            {/* Right visual ~38% */}
-            <div className="w-[38%] relative flex items-center justify-center overflow-hidden">
-              {/* Glass bubble with product logo (glossy surroundings removed) */}
-              <div
-                className="relative z-10 w-[110px] h-[110px] rounded-[24px] flex items-center justify-center anim-float bg-white"
-                style={{
-                  border: '1px solid rgb(243,244,246)',
-                  opacity: dir === 'in' ? 1 : 0,
-                  transform:
-                    dir === 'in' ? 'translateX(0) scale(1)' : 'translateX(14px) scale(0.94)',
-                  transition: 'opacity 0.32s ease, transform 0.32s ease',
-                }}
-              >
-                {slide.logoImg ? (
-                  <img
-                    src={slide.logoImg}
-                    alt={`${slide.title} ${slide.titleAccent}`}
-                    loading="eager"
-                    decoding="async"
-                    fetchPriority="high"
-                    className="w-12 h-12 object-contain drop-shadow-md"
-                  />
-                ) : (
-                  <span className="text-4xl leading-none">{slide.emoji}</span>
-                )}
-              </div>
-            </div>
-
-            {/* Swipe-only on mobile — no arrow buttons per selected prototype */}
           </div>
 
           {/* Pagination dots */}
