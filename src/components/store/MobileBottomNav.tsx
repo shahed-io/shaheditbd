@@ -308,6 +308,53 @@ const MobileBottomNav = () => {
       </nav>
 
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
+
+      <Sheet open={currencyOpen} onOpenChange={setCurrencyOpen}>
+        <SheetContent
+          side="bottom"
+          className="md:hidden rounded-t-3xl border-t p-0 max-h-[75vh] overflow-hidden"
+        >
+          <SheetHeader className="px-5 pt-5 pb-3 text-left">
+            <SheetTitle className="text-base font-bold">Select Currency</SheetTitle>
+            <p className="text-xs text-muted-foreground">
+              Payment is always settled in BDT
+            </p>
+          </SheetHeader>
+          <div className="px-3 pb-6 overflow-y-auto max-h-[60vh]">
+            <ul className="grid gap-1.5">
+              {currencies.map((c) => {
+                const isActive = activeCurrency?.code === c.code;
+                return (
+                  <li key={c.code}>
+                    <button
+                      onClick={() => {
+                        setActiveCurrency(c.code);
+                        setCurrencyOpen(false);
+                      }}
+                      className={`w-full flex items-center gap-3 px-3 py-3 rounded-2xl transition-all active:scale-[0.98] ${
+                        isActive
+                          ? 'bg-primary/10 border border-primary/30'
+                          : 'hover:bg-muted/60 border border-transparent'
+                      }`}
+                    >
+                      <span className="text-2xl leading-none">{c.flag_emoji || '🌐'}</span>
+                      <span className="flex-1 text-left">
+                        <span className="block text-sm font-semibold">
+                          {c.code} <span className="opacity-60 font-normal">— {c.name}</span>
+                        </span>
+                        <span className="block text-[11px] text-muted-foreground">
+                          {c.symbol} · 1 {c.code} = {c.rate_from_bdt} BDT
+                        </span>
+                      </span>
+                      {isActive && <Check className="w-5 h-5 text-primary" />}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </SheetContent>
+      </Sheet>
     </>
   );
 };
