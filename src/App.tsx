@@ -158,6 +158,7 @@ const PaymentLink                = lazy(() => import("./pages/PaymentLink"));
 const PaymentLinkTrack           = lazy(() => import("./pages/PaymentLinkTrack"));
 const AdminOffers                = lazy(() => import("./pages/admin/AdminOffers"));
 const AdminOfferEditor           = lazy(() => import("./pages/admin/AdminOfferEditor"));
+const AdminReviews               = lazy(() => import("./pages/admin/AdminReviews"));
 
 const OfferPage                  = lazy(() => import("./pages/OfferPage"));
 const Winners                    = lazy(() => import("./pages/Winners"));
