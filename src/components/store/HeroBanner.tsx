@@ -181,7 +181,7 @@ const HeroBanner = () => {
         ══════════════════════════════════ */}
         <div className="lg:hidden px-2 pt-0 pb-2">
           <div
-            className="relative w-full rounded-[24px] border border-white/60 overflow-hidden"
+            className="relative w-full rounded-[24px] overflow-hidden"
             style={{ height: '260px', background: pickBannerTheme(slide).bg }}
             role="region"
             aria-roledescription="carousel"
