@@ -556,9 +556,14 @@ const Checkout = () => {
       // Attach affiliate ref if present
       const affRef = getStoredAffiliateRef();
 
-      const { data: order, error: orderError } = await supabase
+      // Generate the order id client-side so we don't need a RETURNING clause.
+      // (Guest checkout can INSERT but cannot SELECT its own row under current RLS,
+      //  which made `.select().single()` fail with 42501 and abort the whole flow.)
+      const newOrderId = crypto.randomUUID();
+      const { error: orderError } = await supabase
         .from('orders')
         .insert({
+          id: newOrderId,
           order_number: orderNum,
           customer_name: form.name,
           customer_email: form.email,
@@ -578,11 +583,11 @@ const Checkout = () => {
           user_id: user?.id || null,
           notes: (orderNotes.trim() || '') + (refCreditApplied > 0 ? `\n[Referral credit applied: ৳${refCreditApplied}]` : ''),
           affiliate_referral_code: affRef?.code || null,
-        })
-        .select()
-        .single();
+        });
 
       if (orderError) throw orderError;
+      const order = { id: newOrderId, order_number: orderNum } as { id: string; order_number: string };
+
 
       // Redeem referral credit (server validates 2× rule)
       if (refCreditApplied > 0 && user) {
