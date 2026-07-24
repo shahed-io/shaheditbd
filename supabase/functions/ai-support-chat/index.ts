@@ -296,7 +296,9 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { messages, pageContext } = await req.json();
+    const { messages, pageContext, language: rawLanguage } = await req.json();
+    const language: "bn" | "en" = rawLanguage === "en" ? "en" : "bn";
+
 
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY");
