@@ -1196,7 +1196,14 @@ const ProductDetail = () => {
                     </button>
                   ) : (
                     <button
-                      onClick={() => setShowModal(true)}
+                      onClick={() => {
+                        if (outOfStock) return;
+                        // Add to cart + go straight to the dedicated /checkout route.
+                        // Guest checkout is supported end-to-end there, and all form
+                        // state is preserved in localStorage across auth round-trips.
+                        addToCart(cartItem, quantity);
+                        navigate(`/checkout?product=${encodeURIComponent(slug || '')}&qty=${quantity}`);
+                      }}
                       className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-bold text-base transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
                       style={{
                         background: 'linear-gradient(135deg, rgba(255,255,255,0.88) 0%, rgba(245,243,255,0.82) 50%, rgba(235,245,255,0.88) 100%)',
@@ -1210,6 +1217,7 @@ const ProductDetail = () => {
                     >
                       <CreditCard size={18} strokeWidth={2.5} /> Buy Now
                     </button>
+
                   )}
 
                   {/* WhatsApp + Cart — row */}
