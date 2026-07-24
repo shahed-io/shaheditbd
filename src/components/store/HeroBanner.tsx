@@ -181,8 +181,8 @@ const HeroBanner = () => {
         ══════════════════════════════════ */}
         <div className="lg:hidden px-2 pt-0 pb-2">
           <div
-            className="relative w-full rounded-[24px] border border-gray-100 overflow-hidden bg-white"
-            style={{ height: '260px' }}
+            className="relative w-full rounded-[24px] border border-white/60 overflow-hidden"
+            style={{ height: '260px', background: pickBannerTheme(slide).bg }}
             role="region"
             aria-roledescription="carousel"
             aria-label="Featured deals"
@@ -194,7 +194,7 @@ const HeroBanner = () => {
               touchStartX.current = null;
             }}
           >
-            {/* Full-bleed professional background image */}
+            {/* Full themed color background (already on wrapper). Decorative product image on the right, softened into the color. */}
             <img
               key={`bg-${active}`}
               src={pickBannerBg(slide)}
@@ -203,41 +203,33 @@ const HeroBanner = () => {
               loading="eager"
               decoding="async"
               fetchPriority="high"
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute right-0 top-0 h-full w-[62%] object-cover pointer-events-none"
               style={{
                 objectPosition: 'right center',
-                opacity: dir === 'in' ? 1 : 0.6,
+                opacity: dir === 'in' ? 0.55 : 0.25,
                 transform: dir === 'in' ? 'scale(1)' : 'scale(1.03)',
                 transition: 'opacity 0.45s ease, transform 0.6s ease',
+                maskImage: 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.4) 35%, #000 70%)',
+                WebkitMaskImage: 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.4) 35%, #000 70%)',
               }}
             />
 
-            {/* Stronger left-side scrim for text legibility across any background */}
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background:
-                  'linear-gradient(90deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.96) 40%, rgba(255,255,255,0.78) 60%, rgba(255,255,255,0.25) 80%, rgba(255,255,255,0) 100%)',
-              }}
-            />
-            {/* Subtle top/bottom vignette for depth */}
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background:
-                  'linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 25%, rgba(255,255,255,0) 75%, rgba(0,0,0,0.06) 100%)',
-              }}
-            />
+            {/* Soft ambient orbs for depth on the colored background */}
+            <div className="absolute -top-10 -left-10 w-40 h-40 rounded-full pointer-events-none"
+              style={{ background: 'rgba(255,255,255,0.55)', filter: 'blur(40px)' }} />
+            <div className="absolute -bottom-12 right-10 w-48 h-48 rounded-full pointer-events-none"
+              style={{ background: 'rgba(255,255,255,0.35)', filter: 'blur(50px)' }} />
 
             {/* Left content — product info (name, price, CTA) */}
             <div
-              className="relative z-10 w-[68%] h-full pl-4 pr-2 py-3 flex flex-col justify-center gap-1.5"
+              className="relative z-10 w-[66%] h-full pl-4 pr-2 py-3 flex flex-col justify-center gap-1.5"
               style={{
                 opacity: dir === 'in' ? 1 : 0,
                 transform: dir === 'in' ? 'translateX(0)' : 'translateX(-14px)',
                 transition: 'opacity 0.32s ease, transform 0.32s ease',
               }}
             >
+
 
               {/* Tag row */}
               <div className="flex items-center gap-1.5 flex-wrap">
