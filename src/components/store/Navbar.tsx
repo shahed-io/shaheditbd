@@ -5,6 +5,7 @@ import AuthModal from './AuthModal';
 import BrandLogo from './BrandLogo';
 import VerifiedBadge from './VerifiedBadge';
 import SearchBar, { DesktopSearchPalette, MobileSearchOverlay } from './SearchBar';
+import CurrencySwitcher from './CurrencySwitcher';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -633,6 +634,11 @@ const Navbar = () => {
                 aria-label="Search">
                 <Search size={18} />
               </button>
+
+              {/* Currency Switcher — desktop */}
+              <div className="hidden md:block">
+                <CurrencySwitcher />
+              </div>
 
               {/* Cart Button — hidden on mobile, visible on sm+ */}
               <button onClick={() => setCartOpen(true)}
