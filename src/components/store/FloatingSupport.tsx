@@ -367,8 +367,8 @@ const FloatingSupport = () => {
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-primary to-primary/80">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
-                <Bot size={18} className="text-white" />
+              <div className="w-10 h-10 rounded-2xl bg-white/95 flex items-center justify-center shadow-lg ring-1 ring-white/60 backdrop-blur">
+                <AiLogo size={26} />
               </div>
               <div>
                 <p className="text-white text-sm font-bold">{config.ai_label}</p>
