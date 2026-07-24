@@ -421,45 +421,29 @@ async function getTelegramFileUrl(botToken: string, fileId: string): Promise<str
 }
 
 async function extractIIDFromImageUrl(imageUrl: string): Promise<string | null> {
-  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-  if (!LOVABLE_API_KEY) return null;
   try {
-    // Download and convert to data URL so provider can access
     const imgRes = await fetch(imageUrl);
     if (!imgRes.ok) return null;
     const buf = new Uint8Array(await imgRes.arrayBuffer());
     let bin = '';
     for (let i = 0; i < buf.length; i++) bin += String.fromCharCode(buf[i]);
     const b64 = btoa(bin);
-    const ct = imgRes.headers.get('content-type') || 'image/jpeg';
-    const dataUrl = `data:${ct};base64,${b64}`;
+    const mime = imgRes.headers.get('content-type') || 'image/jpeg';
 
-    const callModel = async (model: string) => fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model,
-        messages: [
-          { role: 'system', content:
-            'You are an OCR engine. Extract the Microsoft Installation ID from the screenshot. ' +
-            'It appears under labels like "Installation ID", "ইনস্টলেশন আইডি", "ステップ 2" and is a long number split into 9 numbered blocks (1-9 or A-I). ' +
-            'Each block has 6 OR 7 digits (total 54 or 63 digits). ' +
-            'Return ONLY the digits joined by dashes in 9 groups. If not found, return exactly: NONE' },
-          { role: 'user', content: [
-            { type: 'text', text: 'Extract the Installation ID. Output only 9 dash-separated numeric groups, or NONE.' },
-            { type: 'image_url', image_url: { url: dataUrl } },
-          ]},
-        ],
-      }),
+    const { geminiVisionExtract } = await import('../_shared/gemini-vision.ts');
+    const result = await geminiVisionExtract({
+      imageBase64: b64,
+      mimeType: mime,
+      systemPrompt:
+        'You are an OCR engine. Extract the Microsoft Installation ID from the screenshot. ' +
+        'It appears under labels like "Installation ID", "ইনস্টলেশন আইডি", "ステップ 2" and is a long number split into 9 numbered blocks (1-9 or A-I). ' +
+        'Each block has 6 OR 7 digits (total 54 or 63 digits). ' +
+        'Return ONLY the digits joined by dashes in 9 groups. If not found, return exactly: NONE',
+      userPrompt: 'Extract the Installation ID. Output only 9 dash-separated numeric groups, or NONE.',
+      models: ['gemini-2.5-flash', 'gemini-2.5-pro'],
     });
 
-    let resp = await callModel('google/gemini-2.5-pro');
-    if (!resp.ok && resp.status !== 429 && resp.status !== 402) {
-      resp = await callModel('google/gemini-2.5-flash');
-    }
-    if (!resp.ok) return null;
-    const data = await resp.json();
-    const raw = String(data.choices?.[0]?.message?.content ?? '').trim();
+    const raw = result.text.trim();
     if (/^none$/i.test(raw)) return null;
     const digits = raw.replace(/\D/g, '');
     let group = 0;
@@ -474,6 +458,7 @@ async function extractIIDFromImageUrl(imageUrl: string): Promise<string | null> 
     return out.join('-');
   } catch (e) { console.error('extractIID error', e); return null; }
 }
+
 
 async function callCidProvider(iid: string): Promise<{ ok: boolean; cid?: string; error?: string }> {
   const normalized = normalizeIID(iid);

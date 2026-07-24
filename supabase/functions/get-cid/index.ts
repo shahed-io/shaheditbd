@@ -378,72 +378,40 @@ Deno.serve(async (req) => {
       if (!imageBase64 || imageBase64.length < 100) {
         return json({ ok: false, error: 'image_base64 required' }, 400);
       }
-      const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-      if (!LOVABLE_API_KEY) return json({ ok: false, error: 'AI not configured' }, 500);
       try {
-        const dataUrl = imageBase64.startsWith('data:')
-          ? imageBase64
-          : `data:image/png;base64,${imageBase64}`;
+        // Strip optional data: prefix and infer mime
+        let mime = 'image/png';
+        let rawB64 = imageBase64;
+        const m = imageBase64.match(/^data:([^;]+);base64,(.*)$/);
+        if (m) { mime = m[1]; rawB64 = m[2]; }
 
-        const callModel = async (model: string) => {
-          return await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${LOVABLE_API_KEY}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              model,
-              messages: [
-                {
-                  role: 'system',
-                  content:
-                    'You are an OCR engine. Extract the Microsoft Installation ID from the screenshot. ' +
-                    'It appears under labels like "Installation ID", "ইনস্টলেশন আইডি", "ステップ 2" and is a long number split into 9 numbered blocks (labelled 1 to 9, A to I, or shown as rows). ' +
-                    'Each block contains 6 OR 7 digits (so the full ID is 54 or 63 digits). ' +
-                    'Read every visible digit carefully, including faint or low-contrast ones. ' +
-                    'Return ONLY the digits joined by dashes in 9 groups (e.g. 123456-789012-... or 1234567-1234567-...). ' +
-                    'If you cannot find an Installation ID in the image, return exactly: NONE',
-                },
-                {
-                  role: 'user',
-                  content: [
-                    { type: 'text', text: 'Extract the Installation ID. Output only the 9 dash-separated numeric groups, or NONE.' },
-                    { type: 'image_url', image_url: { url: dataUrl } },
-                  ],
-                },
-              ],
-            }),
-          });
-        };
+        const { geminiVisionExtract } = await import('../_shared/gemini-vision.ts');
+        const result = await geminiVisionExtract({
+          imageBase64: rawB64,
+          mimeType: mime,
+          systemPrompt:
+            'You are an OCR engine. Extract the Microsoft Installation ID from the screenshot. ' +
+            'It appears under labels like "Installation ID", "ইনস্টলেশন আইডি", "ステップ 2" and is a long number split into 9 numbered blocks (labelled 1 to 9, A to I, or shown as rows). ' +
+            'Each block contains 6 OR 7 digits (so the full ID is 54 or 63 digits). ' +
+            'Read every visible digit carefully, including faint or low-contrast ones. ' +
+            'Return ONLY the digits joined by dashes in 9 groups (e.g. 123456-789012-... or 1234567-1234567-...). ' +
+            'If you cannot find an Installation ID in the image, return exactly: NONE',
+          userPrompt: 'Extract the Installation ID. Output only the 9 dash-separated numeric groups, or NONE.',
+          models: ['gemini-2.5-flash', 'gemini-2.5-pro'],
+        });
 
-        let aiResp = await callModel('google/gemini-2.5-pro');
-        if (!aiResp.ok && aiResp.status !== 429 && aiResp.status !== 402) {
-          // Fallback to flash if pro fails for non-rate reasons
-          aiResp = await callModel('google/gemini-2.5-flash');
-        }
-        if (!aiResp.ok) {
-          if (aiResp.status === 429) return json({ ok: false, error: 'Too many requests, try again shortly.' }, 429);
-          if (aiResp.status === 402) return json({ ok: false, error: 'AI credits exhausted.' }, 402);
-          const errTxt = await aiResp.text().catch(() => '');
-          console.error('AI vision failed', aiResp.status, errTxt);
-          return json({ ok: false, error: 'AI vision failed' }, 500);
-        }
-        const aiData = await aiResp.json();
-        const raw = String(aiData.choices?.[0]?.message?.content ?? '').trim();
-        console.log('parse_screenshot raw AI output:', raw);
+        const raw = result.text.trim();
+        console.log(`parse_screenshot (${result.model}) raw:`, raw);
 
         if (/^none$/i.test(raw)) {
           return json({ ok: false, error: 'No Installation ID found in screenshot. Please upload a clearer image showing all 9 numbered groups.' }, 422);
         }
 
         const digits = raw.replace(/[^0-9]/g, '');
-        // Accept both 9×6 (54) and 9×7 (63) digit Installation IDs. Allow ±1 digit tolerance.
         let groupSize = 0;
         if (digits.length >= 62 && digits.length <= 64) groupSize = 7;
         else if (digits.length >= 53 && digits.length <= 55) groupSize = 6;
         else if (digits.length >= 50) {
-          // Best-effort: pick the closest of 6 or 7
           groupSize = Math.abs(digits.length - 63) < Math.abs(digits.length - 54) ? 7 : 6;
         } else {
           return json({
@@ -461,9 +429,11 @@ Deno.serve(async (req) => {
         return json({ ok: true, installation_id: groups.join('-') });
       } catch (e) {
         console.error('Vision error', e);
-        return json({ ok: false, error: `Vision error: ${String(e)}` }, 500);
+        const msg = String(e instanceof Error ? e.message : e);
+        return json({ ok: false, error: `Vision error: ${msg}` }, 500);
       }
     }
+
 
     if (action === 'user_getcid') {
       const auth = await authenticate();
