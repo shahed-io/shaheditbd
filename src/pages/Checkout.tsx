@@ -699,6 +699,22 @@ const Checkout = () => {
             });
           } catch { /* silent */ }
 
+          // Guest → auto-create account + send recovery email so the customer
+          // can access this order later, even if they never come back to the
+          // success screen (bKash redirects away from our site).
+          if (!user) {
+            try {
+              await supabase.functions.invoke('guest-order-finalize', {
+                body: {
+                  orderId: order.id,
+                  email: form.email,
+                  name: form.name,
+                  redirectTo: `${window.location.origin}/reset-password`,
+                },
+              });
+            } catch (e) { console.warn('[Checkout] guest finalize (bkash) failed:', e); }
+          }
+
           const { data: bkData, error: bkErr } = await supabase.functions.invoke('bkash-create-payment', {
             body: {
               orderId: order.id,
@@ -731,6 +747,30 @@ const Checkout = () => {
           return;
         }
       }
+
+      // ── Guest checkout finalization — non-bKash paths ─────────────────
+      // If the customer isn't logged in, silently create an account for
+      // the email they used and send them a password-reset email so they
+      // can later claim the order. We surface a friendly prompt on the
+      // success screen too.
+      if (!user) {
+        try {
+          const { data: finalizeRes } = await supabase.functions.invoke('guest-order-finalize', {
+            body: {
+              orderId: order.id,
+              email: form.email,
+              name: form.name,
+              redirectTo: `${window.location.origin}/reset-password`,
+            },
+          });
+          const created = !!(finalizeRes as any)?.accountCreated;
+          setGuestAccount({ email: form.email, accountCreated: created });
+        } catch (e) {
+          console.warn('[Checkout] guest finalize failed:', e);
+          setGuestAccount({ email: form.email, accountCreated: false });
+        }
+      }
+
 
       // Record affiliate conversion (non-blocking, server validates)
       if (affRef?.code) {
