@@ -290,24 +290,7 @@ const HeroBanner = () => {
               </div>
             </div>
 
-            {/* Swipe handlers overlay */}
-            <button
-              type="button"
-              aria-label="Previous slide"
-              onClick={() => advance(-1)}
-              className="absolute top-1/2 -translate-y-1/2 left-1 w-7 h-7 rounded-full bg-white/70 backdrop-blur border border-white/80 flex items-center justify-center z-20 active:scale-90 transition-transform"
-              style={{ color: 'hsl(258,78%,52%)', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}
-            >
-              <ChevronLeft size={14} strokeWidth={2.5} />
-            </button>
-            <button
-              type="button"
-              aria-label="Next slide"
-              onClick={() => advance(1)}
-              className="absolute top-1/2 -translate-y-1/2 right-1 w-7 h-7 rounded-full bg-white/70 backdrop-blur border border-white/80 flex items-center justify-center z-20 active:scale-90 transition-transform"
-              style={{ color: 'hsl(258,78%,52%)', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}
-            >
-              <ChevronRight size={14} strokeWidth={2.5} />
+            {/* Swipe-only on mobile — no arrow buttons per selected prototype */}
             </button>
           </div>
 
