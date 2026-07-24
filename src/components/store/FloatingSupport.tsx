@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import { Bot, X, Send, Loader2, Minimize2, MessageCircle, MessageCircleMore, Facebook, Send as TelegramIcon, Link as LinkIcon, Phone, Mail, Instagram, Twitter, Youtube, Video, Headphones, LifeBuoy, HelpCircle, Globe } from 'lucide-react';
-import aiLogo from '@/assets/ai-logo.png';
+import aiLogo from '@/assets/ai-support-agent.png';
 
-/** Premium AI brand mark — used across header, message avatars, and pill button */
+/** Professional AI support agent avatar — used across header, message avatars, and pill button */
 const AiLogo = ({ size = 20, className = '', glow = false }: { size?: number; className?: string; glow?: boolean }) => (
   <img
     src={aiLogo}
-    alt="Shahed AI"
+    alt="AI Support Agent"
     width={size}
     height={size}
     loading="lazy"
@@ -14,11 +14,14 @@ const AiLogo = ({ size = 20, className = '', glow = false }: { size?: number; cl
     style={{
       width: size,
       height: size,
-      objectFit: 'contain',
-      filter: glow ? 'drop-shadow(0 2px 6px rgba(125,61,240,0.55)) drop-shadow(0 0 12px rgba(24,115,239,0.35))' : undefined,
+      objectFit: 'cover',
+      borderRadius: '9999px',
+      background: '#fff',
+      filter: glow ? 'drop-shadow(0 2px 8px rgba(24,115,239,0.45))' : undefined,
     }}
   />
 );
+
 import { supabase } from '@/integrations/supabase/client';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
