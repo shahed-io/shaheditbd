@@ -470,9 +470,10 @@ const HeroBanner = () => {
                RIGHT — Admin-uploaded banner image (desktop)
           ══════════════════════════════════ */}
           <div
-            className="relative hidden lg:flex items-center justify-center flex-shrink-0"
-            style={{ width: '560px', xl: '620px' as unknown as string, minHeight: '440px' }}
+            className="relative hidden lg:flex items-center justify-center flex-shrink-0 w-[560px] xl:w-[620px]"
+            style={{ minHeight: '440px' }}
           >
+
             {/* Ambient glow behind the image */}
             <div
               className="absolute inset-0 pointer-events-none rounded-[32px]"
