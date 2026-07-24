@@ -44,6 +44,56 @@ const AdminCoupons = () => {
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkBusy, setBulkBusy] = useState(false);
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => {
+      const n = new Set(prev);
+      n.has(id) ? n.delete(id) : n.add(id);
+      return n;
+    });
+  };
+  const selectAll = () => setSelectedIds(new Set(coupons.map(c => c.id)));
+  const clearSelection = () => setSelectedIds(new Set());
+  const allSelected = coupons.length > 0 && selectedIds.size === coupons.length;
+
+  const bulkDelete = async () => {
+    const ids = Array.from(selectedIds);
+    if (!ids.length) return;
+    if (!confirm(`Delete ${ids.length} coupon(s)? This cannot be undone.`)) return;
+    setBulkBusy(true);
+    const { error } = await supabase.from('coupons').delete().in('id', ids);
+    setBulkBusy(false);
+    if (error) return toast.error(handleDbError(error));
+    toast.success(`Deleted ${ids.length} coupon(s)`);
+    clearSelection();
+    fetchCoupons();
+  };
+
+  const bulkSetActive = async (active: boolean) => {
+    const ids = Array.from(selectedIds);
+    if (!ids.length) return;
+    setBulkBusy(true);
+    const { error } = await supabase.from('coupons').update({ is_active: active }).in('id', ids);
+    setBulkBusy(false);
+    if (error) return toast.error(handleDbError(error));
+    toast.success(`${active ? 'Activated' : 'Deactivated'} ${ids.length} coupon(s)`);
+    clearSelection();
+    fetchCoupons();
+  };
+
+  const deleteExpired = async () => {
+    const ids = coupons.filter(c => isExpired(c.expires_at)).map(c => c.id);
+    if (!ids.length) return toast.info('No expired coupons found');
+    if (!confirm(`Delete ${ids.length} expired coupon(s)?`)) return;
+    setBulkBusy(true);
+    const { error } = await supabase.from('coupons').delete().in('id', ids);
+    setBulkBusy(false);
+    if (error) return toast.error(handleDbError(error));
+    toast.success(`Deleted ${ids.length} expired coupon(s)`);
+    fetchCoupons();
+  };
 
   const fetchCoupons = async () => {
     setLoading(true);
