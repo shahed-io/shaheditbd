@@ -53,3 +53,5 @@ verify_jwt = false
     verify_jwt = false
   [functions.auto-update-currency-rates]
     verify_jwt = false
+  [functions.guest-order-finalize]
+    verify_jwt = false
