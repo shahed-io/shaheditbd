@@ -2627,21 +2627,22 @@ body.admin-page textarea {
   white-space: pre-wrap !important;
 }
 
+/* Respect Tailwind's break-all / break-words utilities in admin as well. */
 body.admin-page .break-all,
+body.admin-page [class*="break-all"] {
+  word-break: break-all !important;
+  overflow-wrap: anywhere !important;
+  white-space: normal !important;
+}
 body.admin-page .break-words,
-body.admin-page [class*="break-all"],
 body.admin-page [class*="break-words"] {
-  word-break: keep-all !important;
-  overflow-wrap: normal !important;
-  white-space: nowrap !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+  white-space: normal !important;
 }
 
-body.admin-page .flex-wrap:has(.badge),
-body.admin-page .flex-wrap:has([class*="rounded-full"]),
-body.admin-page .flex-wrap:has(button) {
-  flex-wrap: nowrap !important;
-  overflow-x: auto;
-}
+/* Do NOT force flex-wrap containers into nowrap just because they contain
+   a button — that was clipping card descriptions and long text. */
 
 @media (max-width: 767px) {
   body.admin-page {
