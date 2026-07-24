@@ -1029,9 +1029,19 @@ const UserDashboard = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <a href="/" className="flex items-center group"><BrandLogo size="sm" /></a>
           <div className="flex items-center gap-2 sm:gap-3">
-            <a href="/" className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-xl transition-colors hover:bg-primary/8 text-muted-foreground">
-              <Home size={14} /> <span className="hidden sm:inline">Home</span>
+            <a
+              href="/"
+              aria-label="Home"
+              className="group relative flex items-center gap-2 h-9 px-3 rounded-full transition-all duration-300 active:scale-[0.97]"
+              style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid hsla(258,78%,75%,0.25)', boxShadow: '0 2px 8px hsla(243,75%,59%,0.08)' }}
+            >
+              <span className="flex items-center justify-center w-6 h-6 rounded-full text-white shadow-[0_0_10px_hsla(243,75%,59%,0.35)] group-hover:shadow-[0_0_14px_hsla(243,75%,59%,0.55)] transition-shadow"
+                style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                <Home size={13} strokeWidth={2.5} />
+              </span>
+              <span className="hidden sm:inline text-[13px] font-semibold tracking-wide text-foreground/80 group-hover:text-foreground transition-colors">Home</span>
             </a>
+
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl" style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid hsla(258,78%,75%,0.25)' }}>
               <div className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
                 style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
