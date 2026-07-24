@@ -26,10 +26,12 @@ type Slide = {
   accentTo: string;
   emoji: string;
   logoImg: string;
+  bgImage: string;
   features: SlideFeature[];
   enabled: boolean;
   productSlug: string;
 };
+
 
 type BgSettings = {
   bgType: 'default' | 'gradient' | 'color';
