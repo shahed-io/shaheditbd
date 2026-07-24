@@ -189,7 +189,9 @@ const FloatingSupport = () => {
 
     const userMsg: Message = { role: 'user', content: text };
     const newMessages = [...messages, userMsg];
-    setMessages(newMessages);
+    // Instantly show user message + empty assistant placeholder so the
+    // typing indicator appears immediately (before network round-trip).
+    setMessages([...newMessages, { role: 'assistant', content: '' }]);
     setLoading(true);
 
     let assistantContent = '';
@@ -225,13 +227,21 @@ const FloatingSupport = () => {
         } else if (resp.status >= 500) {
           friendlyMsg = '⚠️ সার্ভার সমস্যা। WhatsApp-এ যোগাযোগ করুন: 01840099853';
         }
-        setMessages(prev => [...prev, { role: 'assistant', content: friendlyMsg }]);
+        setMessages(prev => {
+          const updated = [...prev];
+          updated[updated.length - 1] = { role: 'assistant', content: friendlyMsg };
+          return updated;
+        });
         setLoading(false);
         return;
       }
 
       if (!resp.body) {
-        setMessages(prev => [...prev, { role: 'assistant', content: 'দুঃখিত, রেসপন্স পাওয়া যায়নি। WhatsApp: 01840099853' }]);
+        setMessages(prev => {
+          const updated = [...prev];
+          updated[updated.length - 1] = { role: 'assistant', content: 'দুঃখিত, রেসপন্স পাওয়া যায়নি। WhatsApp: 01840099853' };
+          return updated;
+        });
         setLoading(false);
         return;
       }
@@ -240,7 +250,7 @@ const FloatingSupport = () => {
       const decoder = new TextDecoder();
       let buffer = '';
 
-      setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+
 
       while (true) {
         const { done, value } = await reader.read();
@@ -284,10 +294,18 @@ const FloatingSupport = () => {
       }
     } catch (err: any) {
       console.warn('Chat error (handled):', err?.message);
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        content: '⚠️ সংযোগে সমস্যা হয়েছে। WhatsApp-এ যোগাযোগ করুন: 01840099853',
-      }]);
+      setMessages(prev => {
+        const updated = [...prev];
+        const last = updated[updated.length - 1];
+        const errMsg = { role: 'assistant' as const, content: '⚠️ সংযোগে সমস্যা হয়েছে। WhatsApp-এ যোগাযোগ করুন: 01840099853' };
+        if (last && last.role === 'assistant' && !last.content) {
+          updated[updated.length - 1] = errMsg;
+        } else {
+          updated.push(errMsg);
+        }
+        return updated;
+      });
+
     } finally {
       setLoading(false);
     }
@@ -367,12 +385,16 @@ const FloatingSupport = () => {
                       </ReactMarkdown>
                     </div>
                   ) : loading && i === messages.length - 1 ? (
-                    <span className="flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                      <span className="w-1.5 h-1.5 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                      <span className="w-1.5 h-1.5 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                    <span className="flex items-center gap-2">
+                      <span className="flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 bg-primary/70 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                        <span className="w-1.5 h-1.5 bg-primary/70 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                        <span className="w-1.5 h-1.5 bg-primary/70 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                      </span>
+                      <span className="text-xs text-muted-foreground animate-pulse">AI উত্তর লিখছে…</span>
                     </span>
                   ) : ''}
+
                 </div>
               </div>
             ))}
