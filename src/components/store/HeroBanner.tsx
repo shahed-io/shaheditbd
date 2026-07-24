@@ -160,7 +160,7 @@ const HeroBanner = () => {
              MOBILE — Premium Clean White + Soft Bubble carousel
              (< lg only; desktop keeps original layout below)
         ══════════════════════════════════ */}
-        <div className="lg:hidden px-3 pt-3 pb-4">
+        <div className="lg:hidden px-2 pt-2 pb-2">
           <div
             className="relative w-full rounded-[24px] border border-gray-100 overflow-hidden"
             style={{ height: '260px' }}
