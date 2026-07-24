@@ -4674,6 +4674,12 @@ export type Database = {
         Args: { p_user_id?: string; p_username: string }
         Returns: boolean
       }
+      link_guest_orders_to_current_user: {
+        Args: never
+        Returns: {
+          linked_count: number
+        }[]
+      }
       link_my_guest_orders: { Args: never; Returns: number }
       mark_abandoned_checkout_converted: {
         Args: { p_order_id: string; p_session_token: string }
