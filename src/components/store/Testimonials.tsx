@@ -1,38 +1,10 @@
 import { useRef, useEffect, useState } from 'react';
 import { Star, Quote } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import avNapal from '@/assets/reviews/napal-datta.png';
-import avAmirul from '@/assets/reviews/md-amirul-islam.png';
-import avRizon from '@/assets/reviews/rizon-islam.png';
-import avLxMamun from '@/assets/reviews/lx-mamun.png';
-import avAlAmin from '@/assets/reviews/md-al-amin.png';
-import avSadiya from '@/assets/reviews/sadiya-akter.png';
-import avFarhan from '@/assets/reviews/farhan-ahmed.png';
-import avRafit from '@/assets/reviews/rafit-hasan.png';
-import avAbdurRahim from '@/assets/reviews/abdur-rahim-zirailee.png';
-import avJihad from '@/assets/reviews/jihad-hossain.png';
-import avKabirAli from '@/assets/reviews/kabir-ali.png';
-import avMdTawhid from '@/assets/reviews/md-tawhid.png';
-import avMohammedAnwar from '@/assets/reviews/mohammed-anwar.png';
 
-// Real Facebook profile photos (cropped from customer review screenshots)
-const REAL_FB_AVATARS: Record<string, string> = {
-  'napal datta': avNapal,
-  'md amirul islam': avAmirul,
-  'rizon islam': avRizon,
-  'lx mamun': avLxMamun,
-  'md al-amin': avAlAmin,
-  'sadiya akter': avSadiya,
-  'farhan ahmed': avFarhan,
-  'rafit hasan': avRafit,
-  'abdur rahim zirailee': avAbdurRahim,
-  'jihad hossain': avJihad,
-  'kabir ali': avKabirAli,
-  'md tawhid': avMdTawhid,
-  'mohammed anwar': avMohammedAnwar,
-};
-const getRealAvatar = (name: string) =>
-  REAL_FB_AVATARS[(name || '').trim().toLowerCase()];
+// Human photos intentionally removed — reviews use branded initials on gradient avatars.
+const getRealAvatar = (_name: string): string | undefined => undefined;
+
 
 
 interface Review {
