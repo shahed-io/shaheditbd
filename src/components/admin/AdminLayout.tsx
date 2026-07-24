@@ -117,6 +117,7 @@ const MENU_SECTIONS: MenuSection[] = [
       { icon: Layout, label: 'Footer Settings', path: '/ceo/footer-settings' },
       { icon: FileText, label: 'Text Manager', path: '/ceo/text-manager' },
       { icon: Palette, label: 'Themes', path: '/ceo/themes' },
+      { icon: Star, label: 'Customer Reviews', path: '/ceo/customer-reviews', badge: 'new' },
     ],
   },
   {

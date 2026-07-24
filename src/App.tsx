@@ -158,6 +158,7 @@ const PaymentLink                = lazy(() => import("./pages/PaymentLink"));
 const PaymentLinkTrack           = lazy(() => import("./pages/PaymentLinkTrack"));
 const AdminOffers                = lazy(() => import("./pages/admin/AdminOffers"));
 const AdminOfferEditor           = lazy(() => import("./pages/admin/AdminOfferEditor"));
+const AdminCustomerReviews       = lazy(() => import("./pages/admin/AdminReviews"));
 
 const OfferPage                  = lazy(() => import("./pages/OfferPage"));
 const Winners                    = lazy(() => import("./pages/Winners"));
@@ -375,6 +376,7 @@ const AppContent = () => {
             <Route path="security" element={<AdminSuspense><AdminSecurity2FA /></AdminSuspense>} />
             <Route path="offers" element={<AdminSuspense><AdminOffers /></AdminSuspense>} />
             <Route path="offers/:id" element={<AdminSuspense><AdminOfferEditor /></AdminSuspense>} />
+            <Route path="customer-reviews" element={<AdminSuspense><AdminCustomerReviews /></AdminSuspense>} />
             
             <Route path="notices" element={<AdminSuspense><AdminNotices /></AdminSuspense>} />
           </Route>
