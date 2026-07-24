@@ -214,10 +214,34 @@ const HeroBanner = () => {
               }}
             />
 
-
-            {/* Left content — product info (name, price, CTA) */}
+            {/* Luminous glow on the LEFT side — matches the illuminated feel of the product image on the right */}
             <div
-              className="relative z-10 w-[66%] h-full pl-4 pr-2 py-3 flex flex-col justify-center gap-1.5"
+              className="absolute pointer-events-none"
+              style={{
+                left: '-20%',
+                top: '-30%',
+                width: '75%',
+                height: '160%',
+                background: `radial-gradient(ellipse at center, ${pickBannerTheme(slide).accent.replace('hsl', 'hsla').replace(')', ',0.28)')} 0%, transparent 65%)`,
+                filter: 'blur(30px)',
+              }}
+            />
+            <div
+              className="absolute pointer-events-none"
+              style={{
+                left: '10%',
+                top: '20%',
+                width: '40%',
+                height: '60%',
+                background: 'radial-gradient(ellipse at center, rgba(255,255,255,0.55) 0%, transparent 70%)',
+                filter: 'blur(24px)',
+              }}
+            />
+
+
+            {/* Left content — product info (name, price, CTA). No top tag/badge row — cleaner premium look. */}
+            <div
+              className="relative z-10 w-[66%] h-full pl-4 pr-2 py-3 flex flex-col justify-center gap-2"
               style={{
                 opacity: dir === 'in' ? 1 : 0,
                 transform: dir === 'in' ? 'translateX(0)' : 'translateX(-14px)',
@@ -225,23 +249,6 @@ const HeroBanner = () => {
               }}
             >
 
-
-              {/* Tag row */}
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span
-                  className="px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-[0.14em] border"
-                  style={{
-                    background: 'rgba(255,255,255,0.55)',
-                    borderColor: 'hsla(258,78%,55%,0.28)',
-                    color: 'hsl(258,78%,42%)',
-                  }}
-                >
-                  {slide.tagIcon} {slide.tag}
-                </span>
-                <span className="text-[9px] font-semibold text-gray-600 uppercase tracking-[0.14em]">
-                  {slide.badge}
-                </span>
-              </div>
 
               {/* Title */}
               <div>
