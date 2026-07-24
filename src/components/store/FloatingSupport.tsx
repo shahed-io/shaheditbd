@@ -557,7 +557,7 @@ const FloatingSupport = () => {
             </button>
           </div>
           </>
-          )}
+
         </div>
 
       )}
