@@ -282,9 +282,18 @@ const AdminCurrencies = () => {
             then every other currency auto-converts from its <b>per-USD</b> rate.
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button variant="outline" size="sm" onClick={() => { load(); loadUsdRate(); }}>
             <RefreshCw className="w-4 h-4 mr-1" /> Refresh
+          </Button>
+          <Button
+            size="sm"
+            onClick={aiAutoUpdate}
+            disabled={aiUpdating}
+            className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
+          >
+            <Sparkles className="w-4 h-4 mr-1" />
+            {aiUpdating ? "Updating…" : "AI Auto-Update Rates"}
           </Button>
           <Button size="sm" onClick={openNew}>
             <Plus className="w-4 h-4 mr-1" /> Add Currency
