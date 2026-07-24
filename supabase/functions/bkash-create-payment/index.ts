@@ -65,27 +65,22 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
-    // ── Require authenticated caller ─────────────────────────────────────
+    // Auth is OPTIONAL for order purpose (allows guest checkout). It's still
+    // required for wallet_topup (which is bound to a user).
     const authHeader = req.headers.get('Authorization') || '';
-    if (!authHeader.toLowerCase().startsWith('bearer ')) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+    let authUserId: string | null = null;
+    if (authHeader.toLowerCase().startsWith('bearer ')) {
+      const jwt = authHeader.slice(7).trim();
+      try {
+        const authClient = createClient(
+          Deno.env.get('SUPABASE_URL')!,
+          Deno.env.get('SUPABASE_ANON_KEY')!,
+          { global: { headers: { Authorization: authHeader } } },
+        );
+        const { data: claimsData } = await authClient.auth.getClaims(jwt);
+        authUserId = (claimsData?.claims?.sub as string) || null;
+      } catch { /* ignore — treated as guest */ }
     }
-    const jwt = authHeader.slice(7).trim();
-
-    const authClient = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_ANON_KEY')!,
-      { global: { headers: { Authorization: authHeader } } },
-    );
-    const { data: claimsData, error: claimsErr } = await authClient.auth.getClaims(jwt);
-    if (claimsErr || !claimsData?.claims?.sub) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-    const authUserId = claimsData.claims.sub as string;
 
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
