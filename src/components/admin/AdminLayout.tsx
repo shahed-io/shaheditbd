@@ -74,6 +74,7 @@ const MENU_SECTIONS: MenuSection[] = [
       { icon: Palette, label: 'Invoice Design', path: '/ceo/invoice-design', badge: 'new' },
       { icon: CreditCard, label: 'Payments', path: '/ceo/payments' },
       { icon: CreditCard, label: 'bKash PGW', path: '/ceo/bkash-pgw', badge: 'new' },
+      { icon: CreditCard, label: 'SSLCommerz PGW', path: '/ceo/sslcommerz-pgw', badge: 'new' },
       { icon: CreditCard, label: 'EPS Gateway', path: '/ceo/eps-gateway', badge: 'new' },
       { icon: Receipt, label: 'bKash Transactions', path: '/ceo/bkash-transactions', badge: 'new' },
       { icon: KeyRound, label: 'License Manager', path: '/ceo/licenses' },
