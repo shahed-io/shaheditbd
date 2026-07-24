@@ -251,14 +251,13 @@ const HeroBanner = () => {
                   {slide.title}{' '}
                   <span
                     style={{
-                      background: 'linear-gradient(135deg, hsl(258,78%,52%), hsl(200,90%,46%))',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      backgroundClip: 'text',
+                      color: 'hsl(258,82%,48%)',
+                      textShadow: '0 1px 0 rgba(255,255,255,0.7)',
                     }}
                   >
                     {slide.titleAccent}
                   </span>
+
                 </h2>
                 <p className="text-[11px] text-gray-600 font-medium leading-snug line-clamp-1">
                   {slide.subtitle}
