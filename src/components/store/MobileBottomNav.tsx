@@ -161,6 +161,10 @@ const MobileBottomNav = () => {
   const activeIndex = navItems.findIndex((i) => i.match(location.pathname));
 
   const handleClick = (item: NavItem) => {
+    if (item.path === '__currency__') {
+      setCurrencyOpen(true);
+      return;
+    }
     if (item.requireAuth && !user) {
       setAuthOpen(true);
       return;
