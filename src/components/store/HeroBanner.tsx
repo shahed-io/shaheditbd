@@ -467,332 +467,47 @@ const HeroBanner = () => {
           </div>
 
           {/* ══════════════════════════════════
-               MIDDLE — Premium light bridge
+               RIGHT — Admin-uploaded banner image (desktop)
           ══════════════════════════════════ */}
-          <div className="hidden lg:flex relative items-center justify-center flex-shrink-0 overflow-visible"
-            style={{ width: '260px', minHeight: '520px' }}
-            aria-hidden="true">
-
-            {/* Iridescent ambient orbs */}
-            <div className="absolute -top-6 -right-4 pointer-events-none rounded-full"
-              style={{
-                width: '340px', height: '340px',
-                background: 'radial-gradient(circle, hsla(258,78%,70%,0.28) 0%, hsla(300,80%,72%,0.22) 40%, transparent 70%)',
-                filter: 'blur(60px)',
-              }} />
-            <div className="absolute -bottom-4 -left-8 pointer-events-none rounded-full"
-              style={{
-                width: '280px', height: '280px',
-                background: 'radial-gradient(circle, hsla(200,90%,72%,0.28) 0%, hsla(170,85%,68%,0.18) 45%, transparent 72%)',
-                filter: 'blur(70px)',
-              }} />
-
-            {/* Top-right small glassy card — high-reflectivity crystal border */}
-            <div className="absolute top-4 right-2 anim-float-slow"
-              style={{
-                width: '128px', height: '128px',
-                borderRadius: '22px',
-                background: 'linear-gradient(145deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.18) 100%)',
-                backdropFilter: 'blur(22px)',
-                WebkitBackdropFilter: 'blur(22px)',
-                border: '1.5px solid rgba(255,255,255,0.9)',
-                boxShadow: '0 20px 40px -12px hsla(258,60%,50%,0.28), inset 0 1.5px 0 rgba(255,255,255,1), inset -1px -1px 0 rgba(255,255,255,0.5), 0 0 0 1px hsla(258,80%,70%,0.4)',
-                transform: 'rotate(10deg)',
-              }}>
-              <div className="w-full h-full flex flex-col items-center justify-center p-4 gap-2">
-                <div style={{
-                  width: '44px', height: '44px', borderRadius: '12px',
-                  background: 'linear-gradient(135deg, hsl(258,78%,58%), hsl(285,75%,60%))',
-                  boxShadow: '0 8px 18px hsla(258,78%,55%,0.45), inset 0 1px 0 rgba(255,255,255,0.5)',
-                }} />
-                <div style={{ height: '6px', width: '56px', borderRadius: '3px', background: 'hsla(258,30%,60%,0.28)' }} />
-                <div style={{ height: '6px', width: '36px', borderRadius: '3px', background: 'hsla(258,30%,60%,0.18)' }} />
-              </div>
-            </div>
-
-            {/* Central large glassy shape with shield icon */}
-            <div className="relative anim-float"
-              style={{
-                width: '210px', height: '210px',
-                borderRadius: '54px',
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.60) 0%, rgba(255,255,255,0.20) 100%)',
-                backdropFilter: 'blur(28px)',
-                WebkitBackdropFilter: 'blur(28px)',
-                border: '1.5px solid rgba(255,255,255,0.95)',
-                boxShadow: '0 30px 60px -18px hsla(258,60%,50%,0.35), inset 0 2px 0 rgba(255,255,255,1), inset -1.5px -1.5px 0 rgba(255,255,255,0.5), 0 0 0 1.5px hsla(258,80%,68%,0.45)',
-              }}>
-              {/* Inner iridescent glow */}
-              <div className="absolute inset-0 rounded-[54px] pointer-events-none"
-                style={{
-                  background: 'radial-gradient(circle at 30% 25%, hsla(200,90%,70%,0.35), transparent 55%), radial-gradient(circle at 75% 80%, hsla(285,80%,72%,0.30), transparent 55%)',
-                }} />
-              {/* Circle center */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="relative flex items-center justify-center"
-                  style={{
-                    width: '132px', height: '132px', borderRadius: '50%',
-                    background: 'linear-gradient(145deg, rgba(255,255,255,0.75), rgba(255,255,255,0.30))',
-                    border: '1.5px solid rgba(255,255,255,0.95)',
-                    boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.9), 0 8px 20px hsla(258,60%,55%,0.20)',
-                  }}>
-                  <div className="absolute inset-0 rounded-full pointer-events-none"
-                    style={{
-                      background: 'radial-gradient(circle at 35% 30%, hsla(200,90%,65%,0.35), transparent 60%)',
-                      filter: 'blur(6px)',
-                    }} />
-                  <Shield size={54} strokeWidth={1.6}
-                    style={{ color: 'hsl(258,78%,52%)', filter: 'drop-shadow(0 4px 8px hsla(258,78%,55%,0.35))' }} />
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom-left ৳ glass bubble */}
-            <div className="absolute bottom-4 left-0 anim-float-delay"
-              style={{
-                width: '92px', height: '92px', borderRadius: '50%',
-                background: 'linear-gradient(145deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.25) 100%)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                border: '1.5px solid rgba(255,255,255,0.95)',
-                boxShadow: '0 16px 32px -10px hsla(258,60%,50%,0.30), inset 0 1.5px 0 rgba(255,255,255,1), 0 0 0 1px hsla(285,80%,70%,0.4)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-              <span style={{
-                fontSize: '30px', fontWeight: 900,
-                background: 'linear-gradient(135deg, hsl(258,78%,52%), hsl(200,90%,50%))',
-                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-              }}>৳</span>
-            </div>
-
-            <style>{`
-              @keyframes hb-float {
-                0%, 100% { transform: translateY(0); }
-                50% { transform: translateY(-10px); }
-              }
-              @keyframes hb-float-slow {
-                0%, 100% { transform: translateY(0) rotate(10deg); }
-                50% { transform: translateY(-8px) rotate(10deg); }
-              }
-              @keyframes hb-float-delay {
-                0%, 100% { transform: translateY(0); }
-                50% { transform: translateY(-12px); }
-              }
-              .anim-float { animation: hb-float 5s ease-in-out infinite; }
-              .anim-float-slow { animation: hb-float-slow 6s ease-in-out infinite; }
-              .anim-float-delay { animation: hb-float-delay 5.5s ease-in-out infinite 0.6s; }
-            `}</style>
-          </div>
-
-
-
-
-          {/* ══════════════════════════════════
-               RIGHT — Modern floating card
-          ══════════════════════════════════ */}
-          <div className="relative hidden lg:flex items-center justify-center w-[420px] xl:w-[460px] flex-shrink-0"
-            style={{ minHeight: '580px' }}>
-
-
-
-            {/* Ambient glow behind card */}
-            <div className="absolute inset-0 pointer-events-none"
-              style={{
-                background: 'radial-gradient(ellipse at 50% 50%, hsla(258,78%,62%,0.12) 0%, hsla(200,90%,55%,0.06) 50%, transparent 72%)',
-                filter: 'blur(20px)',
-              }} />
-
-            {/* ── Main product card ── */}
+          <div
+            className="relative hidden lg:flex items-center justify-center flex-shrink-0"
+            style={{ width: '560px', xl: '620px' as unknown as string, minHeight: '440px' }}
+          >
+            {/* Ambient glow behind the image */}
             <div
-              className="relative anim-float"
+              className="absolute inset-0 pointer-events-none rounded-[32px]"
               style={{
-                width: '300px',
+                background: 'radial-gradient(ellipse at 50% 50%, hsla(258,78%,62%,0.14) 0%, hsla(200,90%,55%,0.07) 55%, transparent 75%)',
+                filter: 'blur(24px)',
+              }}
+            />
+
+            <a
+              href={slide.productSlug ? `/product/${slide.productSlug}` : '/shop'}
+              className="relative block w-full h-full max-h-[440px] rounded-[28px] overflow-hidden"
+              style={{
+                boxShadow: '0 24px 64px hsla(226,35%,12%,0.12), 0 8px 24px hsla(258,78%,55%,0.10)',
+                border: '1.5px solid rgba(255,255,255,0.9)',
                 opacity: dir === 'in' ? 1 : 0,
-                transform: dir === 'in' ? 'translateY(0)' : 'translateY(16px)',
+                transform: dir === 'in' ? 'translateY(0)' : 'translateY(14px)',
                 transition: 'opacity 0.32s ease, transform 0.32s ease',
-              }}>
-
-              {/* Outer glow ring */}
-              <div className="absolute inset-0 rounded-[28px]"
-                style={{
-                  background: 'linear-gradient(145deg, hsla(258,78%,62%,0.22), hsla(200,90%,55%,0.14))',
-                  filter: 'blur(18px)',
-                  transform: 'scale(1.08)',
-                }} />
-
-              {/* Corner accent dots */}
-              {[
-                { top: '-4px', left: '-4px', bg: 'hsl(258,78%,58%)' },
-                { top: '-4px', right: '-4px', bg: 'hsl(200,90%,52%)' },
-                { bottom: '-4px', left: '-4px', bg: 'hsl(200,90%,52%)' },
-                { bottom: '-4px', right: '-4px', bg: 'hsl(258,78%,58%)' },
-              ].map((dot, i) => (
-                <div key={i} className="absolute w-2.5 h-2.5 rounded-full z-20"
-                  style={{
-                    ...dot,
-                    boxShadow: `0 0 10px 4px ${dot.bg}88`,
-                  }} />
-              ))}
-
-              {/* Card surface */}
-              <div className="relative rounded-[24px] overflow-hidden z-10"
-                style={{
-                  background: 'linear-gradient(160deg, rgba(255,255,255,0.97) 0%, rgba(248,246,255,0.95) 55%, rgba(240,250,255,0.96) 100%)',
-                  border: '1.5px solid rgba(255,255,255,0.95)',
-                  boxShadow: '0 24px 64px hsla(226,35%,12%,0.10), 0 8px 24px hsla(258,78%,55%,0.09), inset 0 1px 0 rgba(255,255,255,1)',
-                }}>
-
-                {/* Shimmer top line */}
-                <div className="absolute top-0 left-0 right-0 h-[1.5px]"
-                  style={{ background: 'linear-gradient(90deg, transparent 5%, hsla(258,78%,64%,0.9) 35%, hsla(200,90%,58%,0.8) 65%, transparent 95%)' }} />
-
-                {/* Specular light */}
-                <div className="absolute inset-0 pointer-events-none"
-                  style={{ background: 'radial-gradient(ellipse at 15% 10%, rgba(255,255,255,0.95) 0%, transparent 45%)' }} />
-
-                <div className="relative p-7">
-
-                  {/* Top row: logo + sparkle */}
-                  <div className="flex items-start justify-between mb-5">
-                    <div className="w-14 h-14 rounded-[18px] flex items-center justify-center overflow-hidden"
-                      style={{
-                        background: 'linear-gradient(145deg, hsl(220,30%,98%), hsl(220,20%,95%))',
-                        border: '1.5px solid hsla(258,78%,60%,0.16)',
-                        boxShadow: '0 4px 16px hsla(258,78%,55%,0.10), inset 0 1px 0 rgba(255,255,255,1)',
-                      }}>
-                      {slide.logoImg
-                        ? <img src={slide.logoImg} alt={`${slide.title || 'Featured Product'} — Buy Genuine License in Bangladesh`} title={slide.title} loading="eager" decoding="async" fetchPriority="high" className="w-9 h-9 object-contain" />
-                        : <span className="text-3xl leading-none">{slide.emoji}</span>}
-                    </div>
-                    <div className="flex flex-col items-end gap-1">
-                      <Sparkles size={16} className="anim-spin-slow" style={{ color: 'hsl(258,78%,55%)' }} />
-                      {slide.logoImg && (
-                        <span className="text-[8.5px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full text-white"
-                          style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,48%))' }}>
-                          OFFICIAL
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Featured label */}
-                  <div className="flex items-center gap-1.5 mb-2">
-                    <div className="w-1 h-1 rounded-full" style={{ background: 'hsl(258,78%,55%)' }} />
-                    <span className="text-[9.5px] font-black uppercase tracking-[0.22em]"
-                      style={{ color: 'hsl(258,78%,55%)' }}>
-                      Featured Deal
-                    </span>
-                  </div>
-
-                  {/* Product name */}
-                  <div className="font-sora font-black text-[21px] leading-tight mb-0.5"
-                    style={{ color: 'hsl(226,35%,14%)' }}>
-                    {slide.title}{' '}
-                    <span style={{
-                      background: 'linear-gradient(135deg, hsl(258,78%,52%), hsl(200,90%,46%))',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      backgroundClip: 'text',
-                    }}>
-                      {slide.titleAccent}
-                    </span>
-                  </div>
-                  <div className="text-[11.5px] font-medium mb-4" style={{ color: 'hsl(226,20%,48%)' }}>
-                    {slide.subtitle}
-                  </div>
-
-                  {/* Feature chips */}
-                  <div className="flex flex-wrap gap-1.5 mb-5">
-                    {slide.features.map(f => (
-                      <span key={f}
-                        className="text-[10px] font-semibold px-2.5 py-1.5 rounded-full"
-                        style={{
-                          background: 'hsla(258,78%,55%,0.07)',
-                          border: '1px solid hsla(258,78%,60%,0.16)',
-                          color: 'hsl(258,78%,50%)',
-                        }}>
-                        {f}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Divider */}
-                  <div className="mb-4" style={{ borderTop: '1px solid hsla(258,78%,55%,0.09)' }} />
-
-                  {/* Price row */}
-                  <div className="flex items-center justify-between mb-5">
-                    <div>
-                      <div className="text-[10.5px] line-through mb-0.5" style={{ color: 'hsl(226,15%,60%)' }}>
-                        {slide.original}
-                      </div>
-                      <div className="font-sora font-black leading-none"
-                        style={{ fontSize: '2.1rem', color: 'hsl(226,35%,12%)' }}>
-                        {slide.price}
-                      </div>
-                    </div>
-                    {/* Circular off badge */}
-                    <div className="w-16 h-16 rounded-full flex flex-col items-center justify-center flex-shrink-0"
-                      style={{
-                        background: 'linear-gradient(135deg, hsl(258,78%,52%), hsl(215,82%,50%), hsl(200,90%,46%))',
-                        boxShadow: '0 8px 22px hsla(258,78%,55%,0.42)',
-                      }}>
-                      <span className="font-fira font-black text-[13px] text-white leading-none">{slide.off}</span>
-                      <span className="text-[7.5px] text-white/80 uppercase tracking-wider mt-0.5">OFF</span>
-                    </div>
-                  </div>
-
-                  {/* Buy Now button */}
-                  <a href={slide.productSlug ? `/product/${slide.productSlug}` : '/shop'}
-                    className="btn-vision-primary flex items-center justify-center gap-2 w-full py-4 text-[13.5px]">
-                    <Package size={14} /> Buy Now <ArrowRight size={13} />
-                  </a>
-
-                </div>
-              </div>
-            </div>
-
-            {/* ── Floating stat cards ── */}
-            {[
-              { label: FLOATING[0]?.label ?? 'Orders Today', value: FLOATING[0]?.value ?? '248+', icon: FLOATING[0]?.icon ?? '📦', style: { top: '6%',  left: '-4%' }, delay: '0s'   },
-              { label: FLOATING[1]?.label ?? 'Happy Users',  value: FLOATING[1]?.value ?? '12K+', icon: FLOATING[1]?.icon ?? '😊', style: { top: '45%', right: '-6%' }, delay: '1.8s' },
-              { label: FLOATING[2]?.label ?? 'Avg Rating',   value: FLOATING[2]?.value ?? '4.9★', icon: FLOATING[2]?.icon ?? '⭐', style: { bottom: '8%', left: '-4%' }, delay: '3.2s' },
-            ].map((card, i) => (
-              <div key={i}
-                className="absolute anim-float"
-                style={{ ...card.style, animationDelay: card.delay }}>
-                <div className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl"
-                  style={{
-                    background: 'rgba(255,255,255,0.90)',
-                    backdropFilter: 'blur(20px)',
-                    border: '1px solid rgba(255,255,255,0.96)',
-                    boxShadow: '0 6px 22px hsla(226,35%,12%,0.09), 0 1px 0 rgba(255,255,255,1) inset',
-                    minWidth: '130px',
-                  }}>
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                    style={{
-                      background: 'linear-gradient(135deg, hsla(258,78%,55%,0.10), hsla(200,90%,55%,0.07))',
-                      border: '1px solid hsla(258,78%,60%,0.15)',
-                    }}>
-                    <span className="text-[18px] leading-none">{card.icon}</span>
-                  </div>
-                  <div>
-                    <div className="font-sora font-black text-[14px] leading-none"
-                      style={{
-                        background: 'linear-gradient(135deg, hsl(258,78%,52%), hsl(200,90%,45%))',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text',
-                      }}>
-                      {card.value}
-                    </div>
-                    <div className="text-[10px] mt-0.5 font-medium" style={{ color: 'hsl(226,20%,52%)' }}>
-                      {card.label}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+              }}
+              aria-label={`${slide.title} ${slide.titleAccent}`}
+            >
+              <img
+                key={`desktop-bg-${active}`}
+                src={pickBannerBg(slide)}
+                alt={`${slide.title} ${slide.titleAccent}`}
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+                className="w-full h-full object-cover"
+                style={{ display: 'block' }}
+              />
+            </a>
           </div>
         </div>
+
 
         {/* ── Slider Controls (desktop only — mobile has its own) ── */}
         <div className="hidden lg:flex items-center justify-center gap-4 pb-8">
