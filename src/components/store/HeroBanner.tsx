@@ -133,7 +133,12 @@ const HeroBanner = () => {
   const slide = SLIDES[active] ?? SLIDES[0];
 
   return (
-    <section className="relative overflow-hidden mt-[54px] px-0 sm:px-5 lg:px-8 pt-0 pb-3 sm:pt-3 md:pt-4 md:pb-6 lg:pt-4 lg:pb-8" style={{ background: bgStyle }}>
+    <section className="relative overflow-hidden mt-0 lg:mt-[54px] px-0 sm:px-5 lg:px-8 pt-0 pb-3 sm:pt-3 md:pt-4 md:pb-6 lg:pt-4 lg:pb-8" style={{ background: bgStyle }}>
+      {/* Preload first-slide backgrounds so mobile banner paints instantly */}
+      <link rel="preload" as="image" href={bannerWin11} />
+      <link rel="preload" as="image" href={bannerMs365} />
+      <link rel="preload" as="image" href={bannerIdm} />
+
 
       {/* ── Luminous ambient orbs (desktop only) ── */}
       <div className="absolute inset-0 pointer-events-none hidden lg:block">
@@ -160,9 +165,9 @@ const HeroBanner = () => {
              MOBILE — Premium Clean White + Soft Bubble carousel
              (< lg only; desktop keeps original layout below)
         ══════════════════════════════════ */}
-        <div className="lg:hidden px-2 pt-2 pb-2">
+        <div className="lg:hidden px-2 pt-0 pb-2">
           <div
-            className="relative w-full rounded-[24px] border border-gray-100 overflow-hidden"
+            className="relative w-full rounded-[24px] border border-gray-100 overflow-hidden bg-white"
             style={{ height: '260px' }}
             role="region"
             aria-roledescription="carousel"
@@ -193,12 +198,12 @@ const HeroBanner = () => {
               }}
             />
 
-            {/* Left-side scrim for text legibility */}
+            {/* Stronger left-side scrim for text legibility across any background */}
             <div
               className="absolute inset-0 pointer-events-none"
               style={{
                 background:
-                  'linear-gradient(90deg, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.88) 32%, rgba(255,255,255,0.55) 52%, rgba(255,255,255,0.10) 72%, rgba(255,255,255,0) 100%)',
+                  'linear-gradient(90deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.96) 40%, rgba(255,255,255,0.78) 60%, rgba(255,255,255,0.25) 80%, rgba(255,255,255,0) 100%)',
               }}
             />
             {/* Subtle top/bottom vignette for depth */}
@@ -212,13 +217,14 @@ const HeroBanner = () => {
 
             {/* Left content — product info (name, price, CTA) */}
             <div
-              className="relative z-10 w-[66%] h-full pl-4 pr-2 py-3 flex flex-col justify-center gap-1.5"
+              className="relative z-10 w-[68%] h-full pl-4 pr-2 py-3 flex flex-col justify-center gap-1.5"
               style={{
                 opacity: dir === 'in' ? 1 : 0,
                 transform: dir === 'in' ? 'translateX(0)' : 'translateX(-14px)',
                 transition: 'opacity 0.32s ease, transform 0.32s ease',
               }}
             >
+
               {/* Tag row */}
               <div className="flex items-center gap-1.5 flex-wrap">
                 <span
@@ -245,14 +251,13 @@ const HeroBanner = () => {
                   {slide.title}{' '}
                   <span
                     style={{
-                      background: 'linear-gradient(135deg, hsl(258,78%,52%), hsl(200,90%,46%))',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      backgroundClip: 'text',
+                      color: 'hsl(258,82%,48%)',
+                      textShadow: '0 1px 0 rgba(255,255,255,0.7)',
                     }}
                   >
                     {slide.titleAccent}
                   </span>
+
                 </h2>
                 <p className="text-[11px] text-gray-600 font-medium leading-snug line-clamp-1">
                   {slide.subtitle}
