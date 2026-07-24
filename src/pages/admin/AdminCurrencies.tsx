@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, RefreshCw, Globe, DollarSign, Calculator } from "lucide-react";
+import { Plus, Pencil, Trash2, RefreshCw, Globe, DollarSign, Calculator, Sparkles, Check, X } from "lucide-react";
 
 interface Currency {
   id: string;
@@ -62,6 +62,51 @@ const AdminCurrencies = () => {
   const [usdRate, setUsdRate] = useState<number>(120);
   const [usdRateInput, setUsdRateInput] = useState<string>("120");
   const [savingUsd, setSavingUsd] = useState(false);
+  const [aiUpdating, setAiUpdating] = useState(false);
+  const [inlineEdit, setInlineEdit] = useState<{ id: string; value: string } | null>(null);
+  const [inlineSaving, setInlineSaving] = useState(false);
+
+  const aiAutoUpdate = async () => {
+    if (!confirm("AI দ্বারা live exchange rates এনে সকল currency-এর দাম update করা হবে। চালিয়ে যাব?")) return;
+    setAiUpdating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("auto-update-currency-rates", { body: {} });
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || "Update failed");
+      toast.success(`AI update সফল: ${data.updated_count} currency update হয়েছে। 1 USD = ৳${Number(data.usd_to_bdt).toFixed(2)}`);
+      if (data.missing_codes?.length) {
+        toast.info(`FX feed-এ পাওয়া যায়নি: ${data.missing_codes.join(", ")}`);
+      }
+      await Promise.all([load(), loadUsdRate()]);
+    } catch (e: any) {
+      toast.error(e?.message || "AI auto-update failed");
+    } finally {
+      setAiUpdating(false);
+    }
+  };
+
+  const saveInlineRate = async (row: Currency) => {
+    if (!inlineEdit || inlineEdit.id !== row.id) return;
+    const rpu = Number(inlineEdit.value);
+    if (!isFinite(rpu) || rpu <= 0) {
+      toast.error("Rate must be a positive number");
+      return;
+    }
+    setInlineSaving(true);
+    const rateFromBdt = usdRate / rpu;
+    const { error } = await supabase
+      .from("currencies")
+      .update({ rate_per_usd: rpu, rate_from_bdt: rateFromBdt })
+      .eq("id", row.id);
+    setInlineSaving(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success(`${row.code} rate updated`);
+    setInlineEdit(null);
+    load();
+  };
 
   const loadUsdRate = async () => {
     const { data } = await supabase
