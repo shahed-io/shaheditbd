@@ -62,11 +62,24 @@ const pickBannerBg = (s: Slide): string => {
   if (t.includes('idm') || slug.includes('idm') || slug.includes('download-manager')) return bannerIdm;
   if (t.includes('365') || t.includes('office') || slug.includes('365') || slug.includes('office')) return bannerMs365;
   if (t.includes('windows') || slug.includes('windows')) return bannerWin11;
-  // default rotates by title hash so unknown products still get a themed bg
   const pool = [bannerWin11, bannerMs365, bannerIdm];
   const idx = Math.abs(t.split('').reduce((a, c) => a + c.charCodeAt(0), 0)) % pool.length;
   return pool[idx];
 };
+
+// Themed full-background color gradient per slide (mobile banner)
+const pickBannerTheme = (s: Slide): { bg: string; accent: string } => {
+  const t = `${s.title} ${s.titleAccent}`.toLowerCase();
+  const slug = (s.productSlug || '').toLowerCase();
+  if (t.includes('idm') || slug.includes('idm') || slug.includes('download-manager'))
+    return { bg: 'linear-gradient(120deg, #e0f7fa 0%, #b2ebf2 45%, #80deea 100%)', accent: 'hsl(188,85%,32%)' };
+  if (t.includes('365') || t.includes('office') || slug.includes('365') || slug.includes('office'))
+    return { bg: 'linear-gradient(120deg, #fff3e0 0%, #ffe0b2 45%, #ffcc80 100%)', accent: 'hsl(22,90%,42%)' };
+  if (t.includes('windows') || slug.includes('windows'))
+    return { bg: 'linear-gradient(120deg, #ede7f6 0%, #d1c4e9 45%, #b39ddb 100%)', accent: 'hsl(258,78%,45%)' };
+  return { bg: 'linear-gradient(120deg, #ede7f6 0%, #d1c4e9 45%, #b39ddb 100%)', accent: 'hsl(258,78%,45%)' };
+};
+
 
 const dbSlideToSlide = (s: SlideData): Slide => ({
   tag: s.tag, tagIcon: s.tagIcon || '', title: s.title, titleAccent: s.titleAccent,
