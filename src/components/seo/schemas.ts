@@ -28,6 +28,15 @@ export const productSchema = (p: {
   }
   if (allImages.length === 0) allImages.push(`${SITE_URL}/favicon.png`);
 
+  // Use ImageObject entries with captions — significantly boosts Google Images ranking
+  const imageObjects = allImages.map((url) => ({
+    '@type': 'ImageObject',
+    url,
+    contentUrl: url,
+    caption: `${p.name} - ${SITE_NAME}`,
+    representativeOfPage: true,
+  }));
+
   // Synthetic baseline rating to ensure rich snippet eligibility (overridden by real reviews)
   const rating = p.rating ?? 4.9;
   const reviewCount = p.reviewCount ?? 127;
@@ -38,7 +47,7 @@ export const productSchema = (p: {
   '@id': `${SITE_URL}/product/${p.slug}#product`,
   name: p.name,
   description: p.description || `${p.name} - Buy at the best price in Bangladesh from ${SITE_NAME}. 100% genuine. Instant delivery.`,
-  image: allImages,
+  image: imageObjects,
   url: `${SITE_URL}/product/${p.slug}`,
   sku: p.sku || p.slug,
   mpn: p.sku || p.slug,
