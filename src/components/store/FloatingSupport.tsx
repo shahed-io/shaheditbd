@@ -572,7 +572,7 @@ const FloatingSupport = () => {
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
-              placeholder={config.ai_placeholder}
+              placeholder={language === 'en' ? PLACEHOLDER_EN : config.ai_placeholder}
               className="flex-1 text-sm bg-muted/40 border border-border rounded-xl px-3 py-2 outline-none focus:border-primary transition-colors text-foreground placeholder:text-muted-foreground"
               disabled={loading}
             />
