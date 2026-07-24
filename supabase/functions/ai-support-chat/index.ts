@@ -496,7 +496,7 @@ ${viewedProductBlock}${matchedBlock}${productContext}${couponContext}
 
     try {
       const aiKeys = await loadAiKeys(supabase);
-      const hasProductContext = Boolean(viewedProductBlock || matchedBlock || productContext);
+      const hasProductContext = Boolean(viewedProductBlock || matchedBlock);
       const primaryProvider = pickPrimaryProvider(lastUserMsg, hasProductContext);
 
       return await routeAiResponse({
