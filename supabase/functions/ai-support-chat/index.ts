@@ -13,6 +13,261 @@ const stripHtml = (s: string | null | undefined) =>
 
 const truncate = (s: string, n: number) => (s.length > n ? s.slice(0, n - 1) + "…" : s);
 
+type ChatMessage = {
+  role: "system" | "user" | "assistant";
+  content: unknown;
+};
+
+type AiProvider = "openai" | "gemini";
+
+const getMessageText = (message: ChatMessage | any): string => {
+  const content = message?.content;
+  if (typeof content === "string") return content;
+  if (Array.isArray(content)) {
+    return content
+      .map((part) => {
+        if (typeof part === "string") return part;
+        if (typeof part?.text === "string") return part.text;
+        if (typeof part?.content === "string") return part.content;
+        return "";
+      })
+      .join(" ")
+      .trim();
+  }
+  return content == null ? "" : String(content);
+};
+
+const extractSettingValue = (value: unknown): string => {
+  if (typeof value === "string") return value.trim();
+  if (value && typeof value === "object" && "value" in value) {
+    const nested = (value as { value?: unknown }).value;
+    return typeof nested === "string" ? nested.trim() : "";
+  }
+  return "";
+};
+
+const uniqueKeys = (keys: Array<string | undefined | null>) =>
+  Array.from(new Set(keys.map((key) => key?.trim()).filter((key): key is string => Boolean(key && key.length > 10))));
+
+async function loadAiKeys(supabase: any) {
+  const dbKeys: Record<string, string[]> = { openai: [], gemini: [] };
+
+  try {
+    const { data } = await supabase
+      .from("site_settings")
+      .select("key, value, category")
+      .in("category", ["ai_config", "api_keys", "integrations", "credentials"]);
+
+    for (const row of data || []) {
+      const keyName = String(row.key || "").toLowerCase();
+      const value = extractSettingValue(row.value);
+      if (!value) continue;
+      if (keyName.includes("openai") || keyName.includes("chatgpt") || keyName.includes("gpt")) {
+        dbKeys.openai.push(value);
+      }
+      if (keyName.includes("gemini") || keyName.includes("google_ai") || keyName.includes("googleai")) {
+        dbKeys.gemini.push(value);
+      }
+    }
+  } catch (error) {
+    console.warn("AI key settings lookup skipped:", error);
+  }
+
+  return {
+    openai: uniqueKeys([
+      Deno.env.get("OPENAI_API_KEY"),
+      Deno.env.get("ChatGPT_API"),
+      Deno.env.get("CHATGPT_API"),
+      ...dbKeys.openai,
+    ]),
+    gemini: uniqueKeys([
+      Deno.env.get("GEMINI_API_KEY"),
+      Deno.env.get("GEMINI_API_KEY_2"),
+      Deno.env.get("GEMINI_API_KEY_3"),
+      Deno.env.get("GEMINI_API_KEY_4"),
+      Deno.env.get("GEMINI_API_KEY_5"),
+      Deno.env.get("GEMINI_API_KEY_6"),
+      Deno.env.get("GOOGLE_GEMINI_API_KEY"),
+      ...dbKeys.gemini,
+    ]),
+  };
+}
+
+const toOpenAiMessages = (messages: ChatMessage[]) =>
+  messages.map((message) => ({
+    role: message.role,
+    content: getMessageText(message),
+  })).filter((message) => message.content.length > 0);
+
+const toGeminiPayload = (messages: ChatMessage[], maxTokens: number) => {
+  const systemTexts: string[] = [];
+  const contents: Array<{ role: "user" | "model"; parts: Array<{ text: string }> }> = [];
+
+  for (const message of messages) {
+    const text = getMessageText(message);
+    if (!text) continue;
+    if (message.role === "system") {
+      systemTexts.push(text);
+      continue;
+    }
+    contents.push({
+      role: message.role === "assistant" ? "model" : "user",
+      parts: [{ text }],
+    });
+  }
+
+  const payload: any = {
+    contents,
+    generationConfig: {
+      maxOutputTokens: maxTokens,
+      temperature: 0.35,
+    },
+  };
+
+  if (systemTexts.length > 0) {
+    payload.systemInstruction = { parts: [{ text: systemTexts.join("\n\n") }] };
+  }
+
+  return payload;
+};
+
+const makeSseResponse = (text: string) => {
+  const encoder = new TextEncoder();
+  const stream = new ReadableStream({
+    start(controller) {
+      const chunk = { choices: [{ delta: { content: text }, index: 0 }] };
+      controller.enqueue(encoder.encode(`data: ${JSON.stringify(chunk)}\n\n`));
+      controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+      controller.close();
+    },
+  });
+
+  return new Response(stream, {
+    headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
+  });
+};
+
+async function callOpenAiStream(keys: string[], messages: ChatMessage[], maxTokens: number): Promise<Response> {
+  if (keys.length === 0) throw new Error("OpenAI key missing");
+
+  const modelCandidates = uniqueKeys([
+    Deno.env.get("OPENAI_CHAT_MODEL"),
+    "gpt-4o-mini",
+    "gpt-4.1-mini",
+  ]);
+
+  let lastError = "OpenAI unavailable";
+  for (const key of keys) {
+    for (const model of modelCandidates) {
+      try {
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${key}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model,
+            messages: toOpenAiMessages(messages),
+            stream: true,
+            max_tokens: maxTokens,
+            temperature: 0.35,
+          }),
+        });
+
+        if (response.ok && response.body) {
+          return new Response(response.body, {
+            headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
+          });
+        }
+
+        const errorText = await response.text().catch(() => "");
+        lastError = `OpenAI ${response.status}: ${errorText.slice(0, 160)}`;
+
+        if (response.status === 400 || response.status === 404) continue;
+        if (response.status === 401 || response.status === 403) break;
+      } catch (error) {
+        lastError = error instanceof Error ? error.message : String(error);
+      }
+    }
+  }
+
+  throw new Error(lastError);
+}
+
+async function callGeminiText(keys: string[], messages: ChatMessage[], maxTokens: number): Promise<Response> {
+  if (keys.length === 0) throw new Error("Gemini key missing");
+
+  const modelCandidates = ["gemini-2.5-flash", "gemini-2.5-flash-lite"];
+  const payload = toGeminiPayload(messages, maxTokens);
+  let lastError = "Gemini unavailable";
+
+  for (const model of modelCandidates) {
+    for (const key of [...keys].sort(() => Math.random() - 0.5)) {
+      try {
+        const response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          },
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          const text = (data.candidates?.[0]?.content?.parts || [])
+            .map((part: any) => part.text || "")
+            .join("")
+            .trim();
+          if (text) return makeSseResponse(text);
+          lastError = `Gemini ${model}: empty response`;
+          continue;
+        }
+
+        const errorText = await response.text().catch(() => "");
+        lastError = `Gemini ${response.status}: ${errorText.slice(0, 160)}`;
+        if (response.status === 429 || response.status >= 500) continue;
+      } catch (error) {
+        lastError = error instanceof Error ? error.message : String(error);
+      }
+    }
+  }
+
+  throw new Error(lastError);
+}
+
+const pickPrimaryProvider = (text: string, hasProductContext: boolean): AiProvider => {
+  const normalized = text.toLowerCase();
+  const storeIntent = /price|stock|order|payment|checkout|coupon|delivery|refund|license|subscription|product|buy|দাম|স্টক|অর্ডার|পেমেন্ট|চেকআউট|কুপন|ডেলিভারি|রিফান্ড|লাইসেন্স|সাবস্ক্রিপশন|প্রোডাক্ট|কিনতে/.test(normalized);
+  if (hasProductContext || storeIntent) return "openai";
+
+  const explainIntent = /how|why|compare|tutorial|install|setup|error|problem|explain|guide|কিভাবে|কীভাবে|কেন|তুলনা|টিউটোরিয়াল|ইনস্টল|সেটআপ|সমস্যা|বুঝিয়ে|গাইড/.test(normalized);
+  return explainIntent ? "gemini" : "openai";
+};
+
+async function routeAiResponse(opts: {
+  provider: AiProvider;
+  keys: { openai: string[]; gemini: string[] };
+  messages: ChatMessage[];
+  maxTokens: number;
+}) {
+  const providers: AiProvider[] = opts.provider === "openai" ? ["openai", "gemini"] : ["gemini", "openai"];
+  const errors: string[] = [];
+
+  for (const provider of providers) {
+    try {
+      if (provider === "openai") return await callOpenAiStream(opts.keys.openai, opts.messages, opts.maxTokens);
+      return await callGeminiText(opts.keys.gemini, opts.messages, opts.maxTokens);
+    } catch (error) {
+      errors.push(`${provider}: ${error instanceof Error ? error.message : String(error)}`);
+      console.warn(`${provider} provider failed; trying fallback`);
+    }
+  }
+
+  throw new Error(errors.join(" | "));
+};
+
 const formatProductBlock = (p: any, full = false) => {
   const stock =
     p.status === "out_of_stock" || (typeof p.stock_quantity === "number" && p.stock_quantity <= 0)
