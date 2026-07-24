@@ -333,36 +333,74 @@ Restore:
     e.target.value = '';
   };
 
-  // Upsert rows in batches — tries `id` then falls back without onConflict
+  // Natural conflict keys per table — used to de-duplicate on import.
+  // If a row already exists (by this key), it is SKIPPED (never overwritten).
+  // Only genuinely NEW rows are inserted. Falls back to `id` if not listed.
+  const CONFLICT_KEYS: Record<string, string> = {
+    products: 'slug',
+    categories: 'slug',
+    blog_posts: 'slug',
+    blog_categories: 'slug',
+    blog_tags: 'slug',
+    coupons: 'code',
+    currencies: 'code',
+    newsletter_subscribers: 'email',
+    site_settings: 'key',
+    text_overrides: 'key',
+    help_articles: 'slug',
+    software_downloads: 'slug',
+    notices: 'id',
+    product_categories: 'product_id,category_id',
+    blog_post_tags: 'post_id,tag_id',
+    user_roles: 'user_id,role',
+  };
+
+  // Insert rows in batches with de-duplication.
+  // Existing rows (matched by natural key or id) are KEPT AS-IS — never overwritten.
+  // Returns { added, skipped, failed, errors }.
   const upsertInBatches = async (
     tableName: string,
     rows: any[],
     onBatchDone?: (done: number, total: number) => void
-  ): Promise<{ ok: number; failed: number; errors: string[] }> => {
+  ): Promise<{ ok: number; added: number; skipped: number; failed: number; errors: string[] }> => {
     const BATCH = 100;
-    let ok = 0, failed = 0;
+    let added = 0, failed = 0;
     const errors: string[] = [];
+    const conflictKey = CONFLICT_KEYS[tableName] || (rows[0] && 'id' in rows[0] ? 'id' : undefined);
+
+    // Pre-count how many of the incoming rows already exist so we can report "skipped"
+    // accurately. We do a lightweight SELECT of the conflict key values in chunks.
+    let preExistingKeys = new Set<string>();
+    if (conflictKey && !conflictKey.includes(',')) {
+      const values = rows.map(r => r?.[conflictKey]).filter(v => v !== undefined && v !== null);
+      const uniq = Array.from(new Set(values.map(String)));
+      for (let i = 0; i < uniq.length; i += 500) {
+        const slice = uniq.slice(i, i + 500);
+        const { data } = await supabase.from(tableName as any).select(conflictKey).in(conflictKey, slice as any);
+        (data || []).forEach((r: any) => preExistingKeys.add(String(r[conflictKey])));
+      }
+    }
+
     for (let i = 0; i < rows.length; i += BATCH) {
       const chunk = rows.slice(i, i + BATCH);
-      const hasId = chunk[0] && 'id' in chunk[0];
-      const first = hasId
-        ? await supabase.from(tableName as any).upsert(chunk, { onConflict: 'id' })
-        : await supabase.from(tableName as any).upsert(chunk);
+      // ignoreDuplicates: true → matches on conflictKey and skips existing rows (does NOT overwrite)
+      const opts: any = conflictKey ? { onConflict: conflictKey, ignoreDuplicates: true } : { ignoreDuplicates: true };
+      const first = await supabase.from(tableName as any).upsert(chunk, opts).select();
       if (first.error) {
-        // Fallback: try insert one-by-one so a single bad row doesn't kill the whole chunk
+        // Row-by-row fallback so a single bad row doesn't kill the whole batch
         for (const row of chunk) {
-          const r = hasId
-            ? await supabase.from(tableName as any).upsert(row, { onConflict: 'id' })
-            : await supabase.from(tableName as any).upsert(row);
+          const r = await supabase.from(tableName as any).upsert(row, opts).select();
           if (r.error) { failed++; if (errors.length < 3) errors.push(r.error.message); }
-          else ok++;
+          else added += (r.data?.length || 0);
         }
       } else {
-        ok += chunk.length;
+        // .select() returns only rows that were actually inserted (skipped rows are omitted)
+        added += (first.data?.length || 0);
       }
       onBatchDone?.(Math.min(i + BATCH, rows.length), rows.length);
     }
-    return { ok, failed, errors };
+    const skipped = Math.max(0, rows.length - added - failed);
+    return { ok: added, added, skipped, failed, errors };
   };
 
   // ─── Restore Single Table ─────────────────────────────────────────
@@ -383,9 +421,15 @@ Restore:
         setProgress(Math.round((done / total) * 100));
       });
       const status: 'success' | 'error' = res.failed === 0 ? 'success' : 'error';
-      addHistory({ label: `Restore: ${label}`, tableName: table, date: new Date().toISOString(), records: res.ok, type: 'import', status, error: res.errors.join(' | ') });
-      setRestoreLog([`${label}: ✅ ${res.ok} ok, ❌ ${res.failed} failed`, ...res.errors.map(e => `  • ${e}`)]);
-      if (res.failed === 0) toast.success(`✅ ${label} রিস্টোর সম্পন্ন! ${res.ok} রেকর্ড।`);
+      addHistory({ label: `Restore: ${label}`, tableName: table, date: new Date().toISOString(), records: res.added, type: 'import', status, error: res.errors.join(' | ') });
+      setRestoreLog([
+        `${label}: ✨ ${res.added} নতুন যোগ, ⏭️ ${res.skipped} আগেই আছে (skipped), ❌ ${res.failed} failed`,
+        ...res.errors.map(e => `  • ${e}`)
+      ]);
+      if (res.failed === 0) {
+        if (res.added === 0) toast.info(`ℹ️ ${label}: সব রেকর্ড আগে থেকেই ছিল — কিছু যোগ হয়নি।`);
+        else toast.success(`✅ ${label}: ${res.added} নতুন যোগ হয়েছে, ${res.skipped} আগেই ছিল।`);
+      }
       else toast.error(`${label}: ${res.failed}টি রেকর্ড ব্যর্থ — ${res.errors[0]}`);
       fetchStats();
     } catch (e: any) {
@@ -415,7 +459,8 @@ Restore:
     ];
     const totalRows = orderedNames.reduce((s, n) => s + (tables[n]?.length || 0), 0) || 1;
     let processed = 0;
-    let totalOk = 0;
+    let totalAdded = 0;
+    let totalSkipped = 0;
     let totalFailed = 0;
 
     for (const table of orderedNames) {
@@ -428,9 +473,10 @@ Restore:
           const pct = Math.round(((processed + done) / totalRows) * 100);
           setProgress(pct);
         });
-        totalOk += res.ok;
+        totalAdded += res.added;
+        totalSkipped += res.skipped;
         totalFailed += res.failed;
-        log.push(`${label}: ✅ ${res.ok} ok${res.failed ? ` / ❌ ${res.failed} failed` : ''}${res.errors[0] ? ` — ${res.errors[0]}` : ''}`);
+        log.push(`${label}: ✨ ${res.added} added, ⏭️ ${res.skipped} already existed${res.failed ? ` / ❌ ${res.failed} failed` : ''}${res.errors[0] ? ` — ${res.errors[0]}` : ''}`);
       } catch (e: any) {
         totalFailed += rows.length;
         log.push(`${label}: ❌ crashed — ${e.message}`);
@@ -444,13 +490,13 @@ Restore:
       label: 'Full Restore',
       tableName: 'all',
       date: new Date().toISOString(),
-      records: totalOk,
+      records: totalAdded,
       type: 'import',
       status: totalFailed === 0 ? 'success' : 'error',
       error: totalFailed ? `${totalFailed} rows failed` : undefined,
     });
-    if (totalFailed === 0) toast.success(`✅ Full Restore সম্পন্ন! ${totalOk} রেকর্ড।`);
-    else toast.warning(`Restore শেষ — ${totalOk} ok, ${totalFailed} failed। বিস্তারিত log দেখুন।`);
+    if (totalFailed === 0) toast.success(`✅ Full Restore সম্পন্ন! ✨ ${totalAdded} নতুন যোগ, ⏭️ ${totalSkipped} আগেই ছিল।`);
+    else toast.warning(`Restore শেষ — ✨ ${totalAdded} added, ⏭️ ${totalSkipped} skipped, ❌ ${totalFailed} failed। বিস্তারিত log দেখুন।`);
     fetchStats();
     setProgress(100);
     setTimeout(() => { setProgress(0); setProgressLabel(''); }, 1500);
@@ -609,8 +655,8 @@ Restore:
               <AlertTriangle size={16} className="text-amber-400" />
             </div>
             <div>
-              <p className="text-sm font-bold text-foreground">⚠️ রিস্টোর করার আগে সতর্কতা</p>
-              <p className="text-xs text-muted-foreground mt-1">রিস্টোর করলে বিদ্যমান ডেটা <strong className="text-foreground">upsert</strong> হবে — একই ID থাকলে overwrite হবে। রিস্টোরের আগে অবশ্যই একটি <strong className="text-foreground">Full Backup</strong> নিয়ে রাখুন। parent টেবিল (categories, products) আগে restore হবে যাতে foreign key ভাঙে না।</p>
+              <p className="text-sm font-bold text-foreground">🛡️ Smart Restore — Duplicate-Safe</p>
+              <p className="text-xs text-muted-foreground mt-1">রিস্টোর করলে <strong className="text-foreground">শুধু নতুন রেকর্ড</strong> যোগ হবে। যেসব product/coupon/category/blog আগে থেকেই আছে (একই slug, code, key বা id মিললে) সেগুলো <strong className="text-foreground">অপরিবর্তিত থাকবে</strong> — overwrite হবে না। তাই double-import করলেও কিছু duplicate বা reset হবে না। parent টেবিল আগে restore হবে যাতে foreign key ভাঙে না।</p>
             </div>
           </div>
 
