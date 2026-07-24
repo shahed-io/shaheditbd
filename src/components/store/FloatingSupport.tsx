@@ -99,10 +99,10 @@ const FloatingSupport = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [language, setLanguage] = useState<'bn' | 'en' | null>(() => {
-    if (typeof window === 'undefined') return null;
+  const [language, setLanguage] = useState<'bn' | 'en'>(() => {
+    if (typeof window === 'undefined') return 'bn';
     const v = localStorage.getItem('fs_chat_lang');
-    return v === 'bn' || v === 'en' ? v : null;
+    return v === 'en' ? 'en' : 'bn';
   });
   const [helpDismissed, setHelpDismissed] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false;
@@ -116,18 +116,19 @@ const FloatingSupport = () => {
   const WELCOME_EN = "Hi! 👋 I'm the Shahed Store AI assistant. Ask me anything about Windows, Office, Adobe, Netflix, Spotify or any other product!";
   const PLACEHOLDER_EN = 'Type your question...';
 
-  const pickLanguage = (lang: 'bn' | 'en') => {
+  const switchLanguage = (lang: 'bn' | 'en') => {
+    if (lang === language) return;
     setLanguage(lang);
     try { localStorage.setItem('fs_chat_lang', lang); } catch {}
-    const welcome = lang === 'en' ? WELCOME_EN : config.ai_welcome_message;
-    setMessages([{ role: 'assistant', content: welcome }]);
-    setTimeout(() => inputRef.current?.focus(), 150);
-  };
-
-  const resetLanguage = () => {
-    try { localStorage.removeItem('fs_chat_lang'); } catch {}
-    setLanguage(null);
-    setMessages([]);
+    // Only refresh welcome if user hasn't started chatting yet
+    setMessages(prev => {
+      if (prev.length <= 1) {
+        const welcome = lang === 'en' ? WELCOME_EN : config.ai_welcome_message;
+        return [{ role: 'assistant', content: welcome }];
+      }
+      return prev;
+    });
+    setTimeout(() => inputRef.current?.focus(), 100);
   };
 
   const dismissHelp = (e: React.MouseEvent) => {
