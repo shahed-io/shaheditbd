@@ -515,9 +515,11 @@ const Checkout = () => {
     if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online' && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
     if (items.length === 0) { setSubmitError('Cart empty'); return; }
 
-    if (!user) {
+    // Guest checkout is allowed for all payment methods except wallet
+    // (wallet debit requires an authenticated user with a balance).
+    if (!user && paymentMethod === 'wallet') {
       persistCheckoutState(true);
-      setSubmitError('লগইন করুন — লগইনের পর আপনার অর্ডার নিজে থেকেই সাবমিট হবে');
+      setSubmitError('Wallet পেমেন্টের জন্য লগইন করুন');
       setShowAuthModal(true);
       return;
     }
