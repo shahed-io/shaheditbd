@@ -32,6 +32,7 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
   const { addToCart, isInCart }         = useCart();
   const { toggleWishlist, isWishlisted } = useWishlist();
   const navigate = useNavigate();
+  const { format: fmtPrice } = useCurrency();
 
   // Intersection observer for staggered entry — disabled on mobile to prevent scroll jank
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
