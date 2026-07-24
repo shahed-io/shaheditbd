@@ -12,8 +12,9 @@ type Slide = {
   tag: string; tagIcon: string; title: string; titleAccent: string; subtitle: string; desc: string;
   price: string; original: string; off: string; badge: string;
   accentFrom: string; accentTo: string;
-  emoji: string; logoImg?: string; features: string[]; productSlug?: string;
+  emoji: string; logoImg?: string; bgImage?: string; features: string[]; productSlug?: string;
 };
+
 
 const STATIC_SLIDES: Slide[] = [
   {
