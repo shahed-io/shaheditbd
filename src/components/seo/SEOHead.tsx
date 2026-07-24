@@ -34,8 +34,8 @@ const DEFAULT_DESC = 'Buy genuine Windows, Office, Adobe, antivirus, VPN and dig
 const DEFAULT_OG = '/og-image.jpg';
 const DEFAULT_KEYWORDS = 'windows 11 key bangladesh, microsoft office 365 bangladesh, adobe creative cloud bangladesh, antivirus cheap, buy digital software bangladesh, digital license key, Shahed Store';
 
-// Cache for GA/GSC settings so we only fetch once per session
-let _seoCache: { ga?: string; gsc?: string; verification?: Record<string, string>; loaded?: boolean } = {};
+// Cache for GA/GSC/Clarity settings so we only fetch once per session
+let _seoCache: { ga?: string; gsc?: string; clarity?: string; verification?: Record<string, string>; loaded?: boolean } = {};
 
 const VERIFICATION_META: Record<string, string> = {
   google: 'google-site-verification',
