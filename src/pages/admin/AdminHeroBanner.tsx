@@ -334,6 +334,9 @@ const AdminHeroBanner = () => {
                       <div className="flex items-center gap-2 mt-1.5">
                         <img src={selectedSlide.logoImg} alt="" className="w-7 h-7 object-contain rounded border border-border" />
                         <button onClick={() => updateSlide(selectedSlide.id, 'logoImg', '')} className="text-[10px] text-destructive hover:underline">রিমুভ</button>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Banner Image Upload — appears on the right side of the desktop hero */}
@@ -392,9 +395,6 @@ const AdminHeroBanner = () => {
                   )}
                 </div>
 
-                    )}
-                  </div>
-                </div>
 
                 <div>
                   <label className="text-[11px] font-semibold text-muted-foreground mb-1 flex items-center gap-2 block">
