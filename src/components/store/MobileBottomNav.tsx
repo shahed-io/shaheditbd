@@ -133,11 +133,13 @@ const MobileBottomNav = () => {
     },
     {
       label: activeCurrency?.code || 'BDT',
-      icon: Globe,
+      icon: Globe, // replaced by custom coin badge in render
       path: '__currency__',
       match: () => currencyOpen,
-      gradient: 'linear-gradient(135deg, hsl(160 75% 42%), hsl(175 85% 45%))',
-    },
+      gradient: 'linear-gradient(135deg, hsl(38 95% 55%), hsl(28 90% 50%))',
+      isCurrency: true,
+      currencySymbol: activeCurrency?.symbol || '৳',
+    } as NavItem & { isCurrency?: boolean; currencySymbol?: string },
     {
       label: 'Orders',
       icon: Package,
@@ -253,23 +255,40 @@ const MobileBottomNav = () => {
                       className="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 py-2 rounded-2xl transition-all duration-300 active:scale-90"
                     >
                       <span className="relative">
-                        <Icon
-                          size={22}
-                          strokeWidth={isActive ? 2.6 : 2}
-                          className={`transition-all duration-300 ${
-                            isActive
-                              ? 'text-white scale-110'
-                              : 'text-foreground/60'
-                          }`}
-                          style={
-                            isActive
-                              ? {
-                                  filter:
-                                    'drop-shadow(0 2px 4px rgba(0,0,0,0.25))',
-                                }
-                              : undefined
-                          }
-                        />
+                        {(item as any).isCurrency ? (
+                          <span
+                            aria-hidden
+                            className={`flex items-center justify-center rounded-full leading-none font-extrabold text-[#3b1f04] transition-all duration-300 ${
+                              isActive ? 'w-7 h-7 text-[17px] scale-110' : 'w-[22px] h-[22px] text-[14px]'
+                            }`}
+                            style={{
+                              background:
+                                'linear-gradient(135deg, #fde68a 0%, #fbbf24 55%, #d97706 100%)',
+                              boxShadow: isActive
+                                ? 'inset 0 1px 0 rgba(255,255,255,0.8), 0 0 0 1.5px rgba(255,255,255,0.9), 0 2px 8px rgba(217,119,6,0.55)'
+                                : 'inset 0 1px 0 rgba(255,255,255,0.7), 0 0 6px rgba(251,191,36,0.35)',
+                              fontFamily:
+                                "'Noto Sans Bengali', 'Hind Siliguri', system-ui, sans-serif",
+                            }}
+                          >
+                            <span className="translate-y-[-1px]">
+                              {(item as any).currencySymbol || '৳'}
+                            </span>
+                          </span>
+                        ) : (
+                          <Icon
+                            size={22}
+                            strokeWidth={isActive ? 2.6 : 2}
+                            className={`transition-all duration-300 ${
+                              isActive ? 'text-white scale-110' : 'text-foreground/60'
+                            }`}
+                            style={
+                              isActive
+                                ? { filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.25))' }
+                                : undefined
+                            }
+                          />
+                        )}
                         {item.badgeCount && item.badgeCount > 0 ? (
                           <span
                             className="absolute -top-2 -right-2.5 min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold flex items-center justify-center text-white border-2 border-white/90 animate-scale-in"
