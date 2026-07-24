@@ -28,6 +28,8 @@ interface SEOHeadProps {
 
 const SITE_NAME = 'Shahed Store';
 const SITE_URL = 'https://shahedstore.com.bd';
+const SUPABASE_STORAGE_ORIGIN = 'https://dpvdavjwqyviredzoorj.supabase.co';
+const SUPABASE_STORAGE_PUBLIC_PATH = '/storage/v1/object/public/';
 const DEFAULT_DESC = 'Buy genuine Windows, Office, Adobe, antivirus, VPN and digital subscriptions in Bangladesh with instant delivery from Shahed Store.';
 const DEFAULT_OG = '/og-image.jpg';
 const DEFAULT_KEYWORDS = 'windows 11 key bangladesh, microsoft office 365 bangladesh, adobe creative cloud bangladesh, antivirus cheap, buy digital software bangladesh, digital license key, Shahed Store';
@@ -57,6 +59,15 @@ const injectVerificationTags = (verif: Record<string, string>) => {
     m.content = value;
     document.head.appendChild(m);
   });
+};
+
+const normalizeSeoAssetUrl = (url: string) => {
+  if (url.startsWith(`${SUPABASE_STORAGE_ORIGIN}${SUPABASE_STORAGE_PUBLIC_PATH}`)) {
+    return url.replace(SUPABASE_STORAGE_ORIGIN, SITE_URL);
+  }
+  if (url.startsWith(SUPABASE_STORAGE_PUBLIC_PATH)) return `${SITE_URL}${url}`;
+  if (url.startsWith('http')) return url;
+  return `${SITE_URL}${url}`;
 };
 
 const SEOHead = ({
@@ -99,7 +110,7 @@ const SEOHead = ({
   const fullTitle = truncate(pageTitle.includes(SITE_NAME) ? pageTitle : `${pageTitle} | ${SITE_NAME}`, 60);
   const metaDescription = truncate(description, 160);
   const canonicalUrl = canonical || `${SITE_URL}${cleanPath}`;
-  const ogImageFull = ogImage.startsWith('http') ? ogImage : `${SITE_URL}${ogImage}`;
+  const ogImageFull = normalizeSeoAssetUrl(ogImage);
   const gaInjected = useRef(false);
 
 
@@ -224,7 +235,7 @@ const SEOHead = ({
     if (ogImages && ogImages.length > 0) {
       ogImages.forEach(img => {
         if (img && img !== ogImage) {
-          const imgUrl = img.startsWith('http') ? img : `${SITE_URL}${img}`;
+          const imgUrl = normalizeSeoAssetUrl(img);
           const el = document.createElement('meta');
           el.setAttribute('property', 'og:image');
           el.setAttribute('content', imgUrl);

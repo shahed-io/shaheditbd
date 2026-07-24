@@ -2,9 +2,22 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SITE_URL = 'https://shahedstore.com.bd';
 const SITE_NAME = 'Shahed Store';
+const SUPABASE_STORAGE_ORIGIN = 'https://dpvdavjwqyviredzoorj.supabase.co';
+const SUPABASE_STORAGE_PUBLIC_PATH = '/storage/v1/object/public/';
 
 const escape = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+const seoAssetUrl = (url?: string | null, fallback = `${SITE_URL}/favicon.png`) => {
+  const clean = (url || '').trim();
+  if (!clean) return fallback;
+  if (clean.startsWith(`${SUPABASE_STORAGE_ORIGIN}${SUPABASE_STORAGE_PUBLIC_PATH}`)) {
+    return clean.replace(SUPABASE_STORAGE_ORIGIN, SITE_URL);
+  }
+  if (clean.startsWith(SUPABASE_STORAGE_PUBLIC_PATH)) return `${SITE_URL}${clean}`;
+  if (clean.startsWith('/')) return `${SITE_URL}${clean}`;
+  return clean;
+};
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -64,15 +77,15 @@ Deno.serve(async (req) => {
     const title = product.seo_title || `${product.name} - Buy at Best Price in Bangladesh | ${SITE_NAME}`;
     const description = product.seo_description || product.short_description || `Buy ${product.name} at the lowest price in Bangladesh from ${SITE_NAME}. 100% genuine, instant delivery.`;
     const canonicalUrl = `${SITE_URL}/product/${product.slug}`;
-    const mainImage = product.image_url || '/favicon.png';
-    const mainImageFull = mainImage.startsWith('http') ? mainImage : `${SITE_URL}${mainImage}`;
+    const mainImageFull = seoAssetUrl(product.image_url);
 
     // All images
     const allImages: string[] = [];
-    if (product.image_url) allImages.push(product.image_url);
+    if (product.image_url) allImages.push(seoAssetUrl(product.image_url));
     if (Array.isArray(product.images)) {
       for (const img of product.images) {
-        if (img && !allImages.includes(img)) allImages.push(img);
+        const normalized = seoAssetUrl(img, '');
+        if (normalized && !allImages.includes(normalized)) allImages.push(normalized);
       }
     }
 
@@ -85,13 +98,22 @@ Deno.serve(async (req) => {
     // FAQ
     const faqItems = Array.isArray(product.faq) ? product.faq : [];
 
+    const seoImages = allImages.length > 0 ? allImages : [mainImageFull];
+    const imageObjects = seoImages.map((img, i) => ({
+      '@type': 'ImageObject',
+      url: img,
+      contentUrl: img,
+      caption: `${product.name} - ${SITE_NAME} Bangladesh${i > 0 ? ` image ${i + 1}` : ''}`,
+      representativeOfPage: i === 0,
+    }));
+
     // Schema.org Product
     const productSchema: any = {
       '@context': 'https://schema.org',
       '@type': 'Product',
       name: product.name,
       description: description,
-      image: allImages.length > 0 ? allImages : mainImageFull,
+      image: imageObjects,
       url: canonicalUrl,
       brand: { '@type': 'Brand', name: product.brand || SITE_NAME },
       sku: product.sku || product.slug,
@@ -155,8 +177,14 @@ Deno.serve(async (req) => {
     const whatYouGet = Array.isArray(product.what_you_get) ? product.what_you_get : [];
 
     // Build HTML
+    const extraOgImages = allImages
+      .filter((img) => img !== mainImageFull)
+      .slice(0, 5)
+      .map((img) => `  <meta property="og:image" content="${escape(img)}">`)
+      .join('\n');
+
     const html = `<!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="bn" dir="ltr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -178,6 +206,7 @@ Deno.serve(async (req) => {
   <meta property="og:type" content="product">
   <meta property="og:url" content="${canonicalUrl}">
   <meta property="og:image" content="${escape(mainImageFull)}">
+${extraOgImages}
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:site_name" content="${SITE_NAME}">
@@ -208,7 +237,7 @@ Deno.serve(async (req) => {
     <article itemscope itemtype="https://schema.org/Product">
       <h1 itemprop="name">${escape(product.name)}</h1>
 
-      ${allImages.map((img, i) => `<img src="${escape(img)}" alt="${escape(product.name)} - ${i === 0 ? 'Buy at Best Price in Bangladesh' : `Image ${i + 1}`} | ${SITE_NAME}" title="${escape(product.name)}" width="800" height="800" loading="${i === 0 ? 'eager' : 'lazy'}" itemprop="image">`).join('\n      ')}
+      ${seoImages.map((img, i) => `<img src="${escape(img)}" alt="${escape(product.name)} - ${i === 0 ? 'Buy at Best Price in Bangladesh' : `Image ${i + 1}`} | ${SITE_NAME}" title="${escape(product.name)}" width="800" height="800" loading="${i === 0 ? 'eager' : 'lazy'}" itemprop="image">`).join('\n      ')}
 
       <div itemprop="offers" itemscope itemtype="https://schema.org/Offer">
         <meta itemprop="priceCurrency" content="BDT">

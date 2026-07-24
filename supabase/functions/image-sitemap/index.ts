@@ -13,6 +13,8 @@ const corsHeaders = {
 };
 
 const SITE_URL = 'https://shahedstore.com.bd';
+const SUPABASE_STORAGE_ORIGIN = 'https://dpvdavjwqyviredzoorj.supabase.co';
+const SUPABASE_STORAGE_PUBLIC_PATH = '/storage/v1/object/public/';
 
 const escape = (s: string) =>
   (s || '')
@@ -21,6 +23,15 @@ const escape = (s: string) =>
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&apos;');
+
+const seoAssetUrl = (url?: string | null) => {
+  const clean = (url || '').trim();
+  if (clean.startsWith(`${SUPABASE_STORAGE_ORIGIN}${SUPABASE_STORAGE_PUBLIC_PATH}`)) {
+    return clean.replace(SUPABASE_STORAGE_ORIGIN, SITE_URL);
+  }
+  if (clean.startsWith(SUPABASE_STORAGE_PUBLIC_PATH)) return `${SITE_URL}${clean}`;
+  return clean;
+};
 
 // Strip markdown / HTML to a clean caption
 const cleanText = (s: string, max = 200) =>
@@ -79,8 +90,11 @@ Deno.serve(async (req) => {
     // ---------- Products ----------
     for (const p of productsRes.data || []) {
       const imgs: string[] = [];
-      if (p.image_url) imgs.push(p.image_url);
-      if (Array.isArray(p.images)) for (const i of p.images) if (i && !imgs.includes(i)) imgs.push(i);
+      if (p.image_url) imgs.push(seoAssetUrl(p.image_url));
+      if (Array.isArray(p.images)) for (const i of p.images) {
+        const normalized = seoAssetUrl(i);
+        if (normalized && !imgs.includes(normalized)) imgs.push(normalized);
+      }
       if (imgs.length === 0) continue;
 
       const pageUrl = `${SITE_URL}/product/${escape(p.slug)}`;
@@ -109,8 +123,11 @@ Deno.serve(async (req) => {
     // ---------- Blog posts ----------
     for (const b of blogsRes.data || []) {
       const imgs: string[] = [];
-      if (b.featured_image) imgs.push(b.featured_image);
-      for (const i of extractImages(b.content || '')) if (!imgs.includes(i)) imgs.push(i);
+      if (b.featured_image) imgs.push(seoAssetUrl(b.featured_image));
+      for (const i of extractImages(b.content || '')) {
+        const normalized = seoAssetUrl(i);
+        if (normalized && !imgs.includes(normalized)) imgs.push(normalized);
+      }
       if (imgs.length === 0) continue;
 
       const pageUrl = `${SITE_URL}/blog/${escape(b.slug)}`;
@@ -138,6 +155,7 @@ Deno.serve(async (req) => {
     // ---------- Categories ----------
     for (const c of catsRes.data || []) {
       if (!c.image_url) continue;
+      const categoryImage = seoAssetUrl(c.image_url);
       const pageUrl = `${SITE_URL}/shop?category=${encodeURIComponent(c.slug)}`;
       const title = `${c.name} - Buy in Bangladesh | Shahed Store`;
       const caption =
@@ -147,7 +165,7 @@ Deno.serve(async (req) => {
       urlBlocks.push(`  <url>
     <loc>${escape(pageUrl)}</loc>
     <image:image>
-      <image:loc>${escape(c.image_url)}</image:loc>
+      <image:loc>${escape(categoryImage)}</image:loc>
       <image:title>${escape(title)}</image:title>
       <image:caption>${escape(caption)}</image:caption>
       <image:license>${SITE_URL}/terms-conditions</image:license>

@@ -6,9 +6,20 @@ const corsHeaders = {
 };
 
 const SITE_URL = 'https://shahedstore.com.bd';
+const SUPABASE_STORAGE_ORIGIN = 'https://dpvdavjwqyviredzoorj.supabase.co';
+const SUPABASE_STORAGE_PUBLIC_PATH = '/storage/v1/object/public/';
 
 const escape = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+
+const seoAssetUrl = (url?: string | null) => {
+  const clean = (url || '').trim();
+  if (clean.startsWith(`${SUPABASE_STORAGE_ORIGIN}${SUPABASE_STORAGE_PUBLIC_PATH}`)) {
+    return clean.replace(SUPABASE_STORAGE_ORIGIN, SITE_URL);
+  }
+  if (clean.startsWith(SUPABASE_STORAGE_PUBLIC_PATH)) return `${SITE_URL}${clean}`;
+  return clean;
+};
 
 // W3C Datetime (ISO 8601) — full timestamp with timezone, e.g. 2026-05-09T12:34:56+00:00
 // Google honours this precision for `lastmod` and uses it to schedule re-crawls.
@@ -29,8 +40,6 @@ Deno.serve(async (req) => {
     );
 
     const urls: string[] = [];
-    const nowW3C = toW3C(new Date())!;
-
     // ── Fetch latest content first (parallel) ────────────────────
     const [productsRes, categoriesRes, blogRes, helpRes] = await Promise.all([
       supabase
@@ -70,31 +79,31 @@ Deno.serve(async (req) => {
       [newestProduct, newestBlog, newestHelp]
         .filter(Boolean)
         .sort()
-        .reverse()[0] || new Date()
-    )!;
+        .reverse()[0]
+    );
 
     // ── Static pages (with smart lastmod) ────────────────────────
-    const staticPages: Array<{ path: string; changefreq: string; priority: string; lastmod: string }> = [
+    const staticPages: Array<{ path: string; changefreq: string; priority: string; lastmod?: string | null }> = [
       { path: '/',                 changefreq: 'daily',   priority: '1.0', lastmod: newestOverall },
-      { path: '/shop',             changefreq: 'daily',   priority: '0.9', lastmod: toW3C(newestProduct) || nowW3C },
-      { path: '/blog',             changefreq: 'weekly',  priority: '0.8', lastmod: toW3C(newestBlog) || nowW3C },
-      { path: '/link',             changefreq: 'monthly', priority: '0.7', lastmod: toW3C(newestHelp) || nowW3C },
-      { path: '/free-tools',       changefreq: 'monthly', priority: '0.7', lastmod: nowW3C },
-      { path: '/about',            changefreq: 'monthly', priority: '0.6', lastmod: nowW3C },
-      { path: '/contact',          changefreq: 'monthly', priority: '0.6', lastmod: nowW3C },
-      { path: '/faqs',             changefreq: 'monthly', priority: '0.7', lastmod: nowW3C },
-      { path: '/privacy-policy',   changefreq: 'yearly',  priority: '0.3', lastmod: nowW3C },
-      { path: '/terms-conditions', changefreq: 'yearly',  priority: '0.3', lastmod: nowW3C },
-      { path: '/refund-policy',    changefreq: 'yearly',  priority: '0.4', lastmod: nowW3C },
-      { path: '/return-policy',    changefreq: 'yearly',  priority: '0.4', lastmod: nowW3C },
-      { path: '/delivery-info',    changefreq: 'monthly', priority: '0.5', lastmod: nowW3C },
-      { path: '/order-policy',     changefreq: 'yearly',  priority: '0.3', lastmod: nowW3C },
+      { path: '/shop',             changefreq: 'daily',   priority: '0.9', lastmod: toW3C(newestProduct) },
+      { path: '/blog',             changefreq: 'weekly',  priority: '0.8', lastmod: toW3C(newestBlog) },
+      { path: '/link',             changefreq: 'monthly', priority: '0.7', lastmod: toW3C(newestHelp) },
+      { path: '/free-tools',       changefreq: 'monthly', priority: '0.7' },
+      { path: '/about',            changefreq: 'monthly', priority: '0.6' },
+      { path: '/contact',          changefreq: 'monthly', priority: '0.6' },
+      { path: '/faqs',             changefreq: 'monthly', priority: '0.7' },
+      { path: '/privacy-policy',   changefreq: 'yearly',  priority: '0.3' },
+      { path: '/terms-conditions', changefreq: 'yearly',  priority: '0.3' },
+      { path: '/refund-policy',    changefreq: 'yearly',  priority: '0.4' },
+      { path: '/return-policy',    changefreq: 'yearly',  priority: '0.4' },
+      { path: '/delivery-info',    changefreq: 'monthly', priority: '0.5' },
+      { path: '/order-policy',     changefreq: 'yearly',  priority: '0.3' },
     ];
 
     for (const p of staticPages) {
       urls.push(`  <url>
-    <loc>${SITE_URL}${p.path}</loc>
-    <lastmod>${p.lastmod}</lastmod>
+    <loc>${SITE_URL}${p.path}</loc>${p.lastmod ? `
+    <lastmod>${p.lastmod}</lastmod>` : ''}
     <changefreq>${p.changefreq}</changefreq>
     <priority>${p.priority}</priority>
   </url>`);
@@ -103,10 +112,11 @@ Deno.serve(async (req) => {
     // ── Products (with images for Google Image indexing) ──────────
     for (const p of products) {
       const allImages: string[] = [];
-      if (p.image_url) allImages.push(p.image_url);
+      if (p.image_url) allImages.push(seoAssetUrl(p.image_url));
       if (Array.isArray(p.images)) {
         for (const img of p.images) {
-          if (img && !allImages.includes(img)) allImages.push(img);
+          const normalized = seoAssetUrl(img);
+          if (normalized && !allImages.includes(normalized)) allImages.push(normalized);
         }
       }
 
@@ -120,11 +130,11 @@ Deno.serve(async (req) => {
       <image:caption>${imageCaption}</image:caption>
     </image:image>`).join('');
 
-      const lastmod = toW3C(p.updated_at) || toW3C(p.created_at) || nowW3C;
+      const lastmod = toW3C(p.updated_at) || toW3C(p.created_at);
 
       urls.push(`  <url>
-    <loc>${SITE_URL}/product/${escape(p.slug)}</loc>
-    <lastmod>${lastmod}</lastmod>
+    <loc>${SITE_URL}/product/${escape(p.slug)}</loc>${lastmod ? `
+    <lastmod>${lastmod}</lastmod>` : ''}
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="bn-BD" href="${SITE_URL}/product/${escape(p.slug)}" />
@@ -135,10 +145,10 @@ Deno.serve(async (req) => {
 
     // ── Categories ───────────────────────────────────────────────
     for (const c of categories) {
-      const lastmod = toW3C(c.updated_at) || toW3C(c.created_at) || nowW3C;
+      const lastmod = toW3C(c.updated_at) || toW3C(c.created_at);
       urls.push(`  <url>
-    <loc>${SITE_URL}/shop?category=${escape(c.slug)}</loc>
-    <lastmod>${lastmod}</lastmod>
+    <loc>${SITE_URL}/shop?category=${escape(c.slug)}</loc>${lastmod ? `
+    <lastmod>${lastmod}</lastmod>` : ''}
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>`);
@@ -146,10 +156,10 @@ Deno.serve(async (req) => {
 
     // ── Blog posts ───────────────────────────────────────────────
     for (const b of blogPosts) {
-      const lastmod = toW3C(b.updated_at) || toW3C(b.published_at) || toW3C(b.created_at) || nowW3C;
+      const lastmod = toW3C(b.updated_at) || toW3C(b.published_at) || toW3C(b.created_at);
       urls.push(`  <url>
-    <loc>${SITE_URL}/blog/${escape(b.slug)}</loc>
-    <lastmod>${lastmod}</lastmod>
+    <loc>${SITE_URL}/blog/${escape(b.slug)}</loc>${lastmod ? `
+    <lastmod>${lastmod}</lastmod>` : ''}
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>`);
@@ -157,10 +167,10 @@ Deno.serve(async (req) => {
 
     // ── Help Articles ─────────────────────────────────────────────
     for (const h of helpArticles) {
-      const lastmod = toW3C(h.updated_at) || toW3C(h.created_at) || nowW3C;
+      const lastmod = toW3C(h.updated_at) || toW3C(h.created_at);
       urls.push(`  <url>
-    <loc>${SITE_URL}/link/${escape(h.slug)}</loc>
-    <lastmod>${lastmod}</lastmod>
+    <loc>${SITE_URL}/link/${escape(h.slug)}</loc>${lastmod ? `
+    <lastmod>${lastmod}</lastmod>` : ''}
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>`);

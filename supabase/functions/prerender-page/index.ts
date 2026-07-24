@@ -204,7 +204,8 @@ Deno.serve(async (req) => {
       if (products?.length) {
         productList = `<section><h2>Featured Products</h2><ul>${products.map(p => {
           const purl = `${SITE_URL}/product/${p.slug}`;
-          return `<li><a href="${purl}" title="${escape(p.name)}"><img src="${escape(p.image_url || '/favicon.png')}" alt="${escape(p.name)} — Price in Bangladesh" width="200" height="200" loading="lazy"><strong>${escape(p.name)}</strong> — <span>৳${p.price}</span>${p.short_description ? `<p>${escape(p.short_description)}</p>` : ''}</a></li>`;
+            const imageUrl = p.image_url || `${SITE_URL}/favicon.png`;
+            return `<li><a href="${purl}" title="${escape(p.name)}"><img src="${escape(imageUrl)}" alt="${escape(p.name)} — Price in Bangladesh" width="200" height="200" loading="lazy"><strong>${escape(p.name)}</strong> — <span>৳${p.price}</span>${p.short_description ? `<p>${escape(p.short_description)}</p>` : ''}</a></li>`;
         }).join('')}</ul></section>`;
 
         itemListJson = {
@@ -217,6 +218,7 @@ Deno.serve(async (req) => {
             position: i + 1,
             url: `${SITE_URL}/product/${p.slug}`,
             name: p.name,
+            image: p.image_url || `${SITE_URL}/favicon.png`,
           })),
         };
       }
@@ -267,7 +269,7 @@ function htmlResponse(html: string) {
 }
 
 function buildHtml(o: { title: string; description: string; canonical: string; h1: string; bodyHtml: string; schemas: any[]; }) {
-  return `<!DOCTYPE html><html lang="en"><head>
+  return `<!DOCTYPE html><html lang="bn"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${escape(o.title)}</title>
 <meta name="description" content="${escape(o.description)}">
@@ -282,7 +284,7 @@ function buildHtml(o: { title: string; description: string; canonical: string; h
 <meta property="og:url" content="${o.canonical}">
 <meta property="og:site_name" content="${SITE_NAME}">
 <meta property="og:type" content="website">
-<meta property="og:image" content="${SITE_URL}/favicon.png">
+<meta property="og:image" content="${SITE_URL}/og-image.jpg">
 <meta property="og:locale" content="bn_BD">
 <meta name="twitter:card" content="summary_large_image">
 ${o.schemas.map(s => `<script type="application/ld+json">${JSON.stringify(s)}</script>`).join('\n')}
