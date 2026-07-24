@@ -147,19 +147,20 @@ const FloatingSupport = () => {
       .eq('key', 'live_chat_settings')
       .maybeSingle()
       .then(({ data }) => {
+        let merged: LiveChatConfig = DEFAULTS;
         if (data?.value) {
           try {
             const parsed = JSON.parse(data.value);
-            const merged = { ...DEFAULTS, ...parsed };
+            merged = { ...DEFAULTS, ...parsed };
             setConfig(merged);
-            setMessages([{ role: 'assistant', content: merged.ai_welcome_message }]);
-          } catch {
-            setMessages([{ role: 'assistant', content: DEFAULTS.ai_welcome_message }]);
-          }
-        } else {
-          setMessages([{ role: 'assistant', content: DEFAULTS.ai_welcome_message }]);
+          } catch {}
+        }
+        if (language) {
+          const welcome = language === 'en' ? WELCOME_EN : merged.ai_welcome_message;
+          setMessages([{ role: 'assistant', content: welcome }]);
         }
       });
+
   }, []);
 
   useEffect(() => {
