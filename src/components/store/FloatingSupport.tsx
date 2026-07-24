@@ -99,6 +99,11 @@ const FloatingSupport = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [language, setLanguage] = useState<'bn' | 'en' | null>(() => {
+    if (typeof window === 'undefined') return null;
+    const v = localStorage.getItem('fs_chat_lang');
+    return v === 'bn' || v === 'en' ? v : null;
+  });
   const [helpDismissed, setHelpDismissed] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false;
     return localStorage.getItem('fs_help_dismissed') === '1';
@@ -108,11 +113,29 @@ const FloatingSupport = () => {
   const configLoaded = useRef(false);
   const sessionIdRef = useRef(crypto.randomUUID());
 
+  const WELCOME_EN = "Hi! 👋 I'm the Shahed Store AI assistant. Ask me anything about Windows, Office, Adobe, Netflix, Spotify or any other product!";
+  const PLACEHOLDER_EN = 'Type your question...';
+
+  const pickLanguage = (lang: 'bn' | 'en') => {
+    setLanguage(lang);
+    try { localStorage.setItem('fs_chat_lang', lang); } catch {}
+    const welcome = lang === 'en' ? WELCOME_EN : config.ai_welcome_message;
+    setMessages([{ role: 'assistant', content: welcome }]);
+    setTimeout(() => inputRef.current?.focus(), 150);
+  };
+
+  const resetLanguage = () => {
+    try { localStorage.removeItem('fs_chat_lang'); } catch {}
+    setLanguage(null);
+    setMessages([]);
+  };
+
   const dismissHelp = (e: React.MouseEvent) => {
     e.stopPropagation();
     setHelpDismissed(true);
     try { localStorage.setItem('fs_help_dismissed', '1'); } catch {}
   };
+
 
   // Load settings once
   useEffect(() => {
