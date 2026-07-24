@@ -6,6 +6,7 @@ import { useWishlist } from '@/hooks/useWishlist';
 import QuickOrderModal from './QuickOrderModal';
 import { useNavigate } from 'react-router-dom';
 import { prefetchRoute } from '@/hooks/usePrefetchRoute';
+import { useCurrency } from '@/hooks/useCurrency';
 
 interface ProductCardProps {
   product: Product;
