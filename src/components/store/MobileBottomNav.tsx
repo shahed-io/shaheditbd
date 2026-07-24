@@ -28,7 +28,9 @@ const MobileBottomNav = () => {
   const location = useLocation();
   const { wishlistCount } = useWishlist();
   const { user } = useAuth();
+  const { currencies, active: activeCurrency, setActive: setActiveCurrency } = useCurrency();
   const [authOpen, setAuthOpen] = useState(false);
+  const [currencyOpen, setCurrencyOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [orderCount, setOrderCount] = useState(0);
 
