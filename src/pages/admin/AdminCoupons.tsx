@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Plus, Edit, Trash2, Tag, Copy, CheckCircle, Sparkles, Calendar, TrendingUp, Users } from 'lucide-react';
+import { Plus, Edit, Trash2, Tag, Copy, CheckCircle, Sparkles, Calendar, TrendingUp, Users, CheckSquare, Square, Power, PowerOff, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { handleDbError } from '@/lib/errorHandler';
 import { z } from 'zod';
@@ -44,6 +44,56 @@ const AdminCoupons = () => {
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkBusy, setBulkBusy] = useState(false);
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => {
+      const n = new Set(prev);
+      n.has(id) ? n.delete(id) : n.add(id);
+      return n;
+    });
+  };
+  const selectAll = () => setSelectedIds(new Set(coupons.map(c => c.id)));
+  const clearSelection = () => setSelectedIds(new Set());
+  const allSelected = coupons.length > 0 && selectedIds.size === coupons.length;
+
+  const bulkDelete = async () => {
+    const ids = Array.from(selectedIds);
+    if (!ids.length) return;
+    if (!confirm(`Delete ${ids.length} coupon(s)? This cannot be undone.`)) return;
+    setBulkBusy(true);
+    const { error } = await supabase.from('coupons').delete().in('id', ids);
+    setBulkBusy(false);
+    if (error) return toast.error(handleDbError(error));
+    toast.success(`Deleted ${ids.length} coupon(s)`);
+    clearSelection();
+    fetchCoupons();
+  };
+
+  const bulkSetActive = async (active: boolean) => {
+    const ids = Array.from(selectedIds);
+    if (!ids.length) return;
+    setBulkBusy(true);
+    const { error } = await supabase.from('coupons').update({ is_active: active }).in('id', ids);
+    setBulkBusy(false);
+    if (error) return toast.error(handleDbError(error));
+    toast.success(`${active ? 'Activated' : 'Deactivated'} ${ids.length} coupon(s)`);
+    clearSelection();
+    fetchCoupons();
+  };
+
+  const deleteExpired = async () => {
+    const ids = coupons.filter(c => isExpired(c.expires_at)).map(c => c.id);
+    if (!ids.length) return toast.info('No expired coupons found');
+    if (!confirm(`Delete ${ids.length} expired coupon(s)?`)) return;
+    setBulkBusy(true);
+    const { error } = await supabase.from('coupons').delete().in('id', ids);
+    setBulkBusy(false);
+    if (error) return toast.error(handleDbError(error));
+    toast.success(`Deleted ${ids.length} expired coupon(s)`);
+    fetchCoupons();
+  };
 
   const fetchCoupons = async () => {
     setLoading(true);
@@ -136,6 +186,57 @@ const AdminCoupons = () => {
         >
           <Plus size={16} /> New Coupon
         </button>
+      </div>
+
+      {/* Bulk Actions Toolbar */}
+      <div className="glass-card rounded-xl p-3 flex flex-wrap items-center gap-2">
+        <button
+          onClick={allSelected ? clearSelection : selectAll}
+          className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+        >
+          {allSelected ? <CheckSquare size={14} /> : <Square size={14} />}
+          {allSelected ? 'Deselect All' : 'Select All'}
+        </button>
+        <span className="text-xs text-muted-foreground">
+          {selectedIds.size > 0 ? `${selectedIds.size} selected` : 'No selection'}
+        </span>
+        <div className="flex-1" />
+        <button
+          onClick={deleteExpired}
+          disabled={bulkBusy}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 disabled:opacity-50 transition-colors"
+        >
+          <Calendar size={14} /> Delete Expired
+        </button>
+        <button
+          onClick={() => bulkSetActive(true)}
+          disabled={bulkBusy || selectedIds.size === 0}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        >
+          <Power size={14} /> Activate
+        </button>
+        <button
+          onClick={() => bulkSetActive(false)}
+          disabled={bulkBusy || selectedIds.size === 0}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-muted/40 text-muted-foreground hover:bg-muted/60 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        >
+          <PowerOff size={14} /> Deactivate
+        </button>
+        <button
+          onClick={bulkDelete}
+          disabled={bulkBusy || selectedIds.size === 0}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-destructive/10 text-destructive hover:bg-destructive/20 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        >
+          <Trash2 size={14} /> Delete Selected
+        </button>
+        {selectedIds.size > 0 && (
+          <button
+            onClick={clearSelection}
+            className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <X size={14} />
+          </button>
+        )}
       </div>
 
       {/* Form Modal */}
@@ -236,11 +337,20 @@ const AdminCoupons = () => {
           const usage = usagePercent(coupon);
           const isPercent = coupon.discount_type === 'percentage';
           const valueLabel = isPercent ? `${coupon.discount_value}%` : `৳${coupon.discount_value}`;
+          const selected = selectedIds.has(coupon.id);
           return (
             <div
               key={coupon.id}
-              className={`group relative overflow-hidden rounded-2xl border border-primary/15 bg-gradient-to-br from-background/80 via-primary/[0.04] to-background/80 backdrop-blur-xl p-5 shadow-[0_8px_30px_-12px_rgba(99,102,241,0.25)] hover:shadow-[0_15px_40px_-10px_rgba(99,102,241,0.4)] hover:border-primary/40 transition-all duration-500 ${expired ? 'opacity-60' : ''}`}
+              className={`group relative overflow-hidden rounded-2xl border backdrop-blur-xl p-5 shadow-[0_8px_30px_-12px_rgba(99,102,241,0.25)] hover:shadow-[0_15px_40px_-10px_rgba(99,102,241,0.4)] transition-all duration-500 ${expired ? 'opacity-60' : ''} ${selected ? 'border-primary ring-2 ring-primary/50 bg-gradient-to-br from-primary/10 via-primary/[0.06] to-background/80' : 'border-primary/15 bg-gradient-to-br from-background/80 via-primary/[0.04] to-background/80 hover:border-primary/40'}`}
             >
+              {/* Selection checkbox */}
+              <button
+                onClick={() => toggleSelect(coupon.id)}
+                className="absolute top-2 left-2 z-10 p-1 rounded-md bg-background/60 backdrop-blur-sm hover:bg-primary/20 transition-colors"
+                title={selected ? 'Deselect' : 'Select'}
+              >
+                {selected ? <CheckSquare size={16} className="text-primary" /> : <Square size={16} className="text-muted-foreground" />}
+              </button>
               {/* Decorative blob */}
               <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-gradient-to-br from-primary/30 to-purple-500/20 blur-3xl opacity-60 group-hover:opacity-100 transition-opacity pointer-events-none" />
               <div className="absolute -bottom-10 -left-10 w-28 h-28 rounded-full bg-gradient-to-br from-pink-500/20 to-amber-400/15 blur-3xl opacity-50 pointer-events-none" />
