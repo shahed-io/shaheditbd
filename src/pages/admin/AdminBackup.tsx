@@ -655,8 +655,8 @@ Restore:
               <AlertTriangle size={16} className="text-amber-400" />
             </div>
             <div>
-              <p className="text-sm font-bold text-foreground">⚠️ রিস্টোর করার আগে সতর্কতা</p>
-              <p className="text-xs text-muted-foreground mt-1">রিস্টোর করলে বিদ্যমান ডেটা <strong className="text-foreground">upsert</strong> হবে — একই ID থাকলে overwrite হবে। রিস্টোরের আগে অবশ্যই একটি <strong className="text-foreground">Full Backup</strong> নিয়ে রাখুন। parent টেবিল (categories, products) আগে restore হবে যাতে foreign key ভাঙে না।</p>
+              <p className="text-sm font-bold text-foreground">🛡️ Smart Restore — Duplicate-Safe</p>
+              <p className="text-xs text-muted-foreground mt-1">রিস্টোর করলে <strong className="text-foreground">শুধু নতুন রেকর্ড</strong> যোগ হবে। যেসব product/coupon/category/blog আগে থেকেই আছে (একই slug, code, key বা id মিললে) সেগুলো <strong className="text-foreground">অপরিবর্তিত থাকবে</strong> — overwrite হবে না। তাই double-import করলেও কিছু duplicate বা reset হবে না। parent টেবিল আগে restore হবে যাতে foreign key ভাঙে না।</p>
             </div>
           </div>
 
