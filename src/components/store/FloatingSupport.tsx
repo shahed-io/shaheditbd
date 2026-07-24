@@ -649,7 +649,7 @@ const FloatingSupport = () => {
                   'ai', openChat,
                   'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
                   'hsla(271,91%,60%,0.55)',
-                  Bot, config.ai_label, config.ai_subtitle,
+                  AiLogo, config.ai_label, config.ai_subtitle,
                 ));
               }
 
