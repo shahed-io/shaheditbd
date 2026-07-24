@@ -214,9 +214,36 @@ export const organizationSchema = () => ({
     '@type': 'OfferCatalog',
     name: 'Digital Software Products',
     itemListElement: [
-      { '@type': 'Offer', itemOffered: { '@type': 'Product', name: 'Windows 11 License Key Bangladesh' } },
-      { '@type': 'Offer', itemOffered: { '@type': 'Product', name: 'Microsoft Office 365 Bangladesh' } },
-      { '@type': 'Offer', itemOffered: { '@type': 'Product', name: 'Adobe Creative Cloud Bangladesh' } },
+      {
+        '@type': 'Offer',
+        priceCurrency: 'BDT',
+        itemOffered: {
+          '@type': 'Product',
+          name: 'Windows 11 License Key Bangladesh',
+          image: `${SITE_URL}/favicon.png`,
+          url: `${SITE_URL}/shop?category=windows`,
+        },
+      },
+      {
+        '@type': 'Offer',
+        priceCurrency: 'BDT',
+        itemOffered: {
+          '@type': 'Product',
+          name: 'Microsoft Office 365 Bangladesh',
+          image: `${SITE_URL}/favicon.png`,
+          url: `${SITE_URL}/shop?category=office`,
+        },
+      },
+      {
+        '@type': 'Offer',
+        priceCurrency: 'BDT',
+        itemOffered: {
+          '@type': 'Product',
+          name: 'Adobe Creative Cloud Bangladesh',
+          image: `${SITE_URL}/favicon.png`,
+          url: `${SITE_URL}/shop?category=adobe`,
+        },
+      },
     ],
   },
 });
