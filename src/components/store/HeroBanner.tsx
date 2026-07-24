@@ -133,7 +133,12 @@ const HeroBanner = () => {
   const slide = SLIDES[active] ?? SLIDES[0];
 
   return (
-    <section className="relative overflow-hidden mt-[54px] px-0 sm:px-5 lg:px-8 pt-0 pb-3 sm:pt-3 md:pt-4 md:pb-6 lg:pt-4 lg:pb-8" style={{ background: bgStyle }}>
+    <section className="relative overflow-hidden mt-0 lg:mt-[54px] px-0 sm:px-5 lg:px-8 pt-0 pb-3 sm:pt-3 md:pt-4 md:pb-6 lg:pt-4 lg:pb-8" style={{ background: bgStyle }}>
+      {/* Preload first-slide backgrounds so mobile banner paints instantly */}
+      <link rel="preload" as="image" href={bannerWin11} />
+      <link rel="preload" as="image" href={bannerMs365} />
+      <link rel="preload" as="image" href={bannerIdm} />
+
 
       {/* ── Luminous ambient orbs (desktop only) ── */}
       <div className="absolute inset-0 pointer-events-none hidden lg:block">
