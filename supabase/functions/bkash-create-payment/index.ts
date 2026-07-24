@@ -156,7 +156,12 @@ Deno.serve(async (req) => {
       // Authoritative amount comes from server-side order total
       amount = Number(o.total);
     } else {
-      // wallet_topup — bind to authenticated user, validate amount range
+      // wallet_topup — must be authenticated
+      if (!authUserId) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
       if (!Number.isFinite(amount) || amount < 10 || amount > 100000) {
         return new Response(JSON.stringify({ error: 'Invalid topup amount' }), {
           status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
