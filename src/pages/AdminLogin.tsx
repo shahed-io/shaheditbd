@@ -225,10 +225,11 @@ const AdminLogin = () => {
 
         {stage === '2fa' && (
           <form onSubmit={handleVerify2FA} className="space-y-4">
-            <p className="text-sm text-center text-muted-foreground">
+            <p className="text-sm text-center text-muted-foreground whitespace-normal break-words leading-relaxed">
               Enter your <strong>Google Authenticator</strong> 6-digit code, a backup code,
               or request a code by email below.
             </p>
+
             <div className="relative">
               <KeyRound size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <input
