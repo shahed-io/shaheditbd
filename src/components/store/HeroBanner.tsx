@@ -149,8 +149,8 @@ const HeroBanner = () => {
         ══════════════════════════════════ */}
         <div className="lg:hidden px-3 pt-3 pb-4">
           <div
-            className="relative w-full rounded-[24px] bg-white border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.06)] overflow-hidden flex items-stretch"
-            style={{ height: '210px' }}
+            className="relative w-full rounded-[24px] bg-white border border-gray-100 overflow-hidden flex items-stretch"
+            style={{ height: '260px' }}
             role="region"
             aria-roledescription="carousel"
             aria-label="Featured deals"
