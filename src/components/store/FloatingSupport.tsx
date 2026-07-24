@@ -581,7 +581,10 @@ const FloatingSupport = () => {
               {loading ? <Loader2 size={15} className="animate-spin" /> : <Send size={15} />}
             </button>
           </div>
+          </>
+          )}
         </div>
+
       )}
 
       {/* ── Option Menu (stacked floating pill buttons) ── */}
