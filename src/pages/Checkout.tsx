@@ -986,6 +986,29 @@ const Checkout = () => {
               </>
             );
           })()}
+          {/* Guest-order → account claim panel */}
+          {!user && guestAccount && (
+            <div className="text-left rounded-2xl border border-primary/30 bg-primary/5 p-4 space-y-2">
+              <p className="text-sm font-bold text-foreground flex items-center gap-2">
+                🔐 আপনার অর্ডারের জন্য অ্যাকাউন্ট প্রস্তুত
+              </p>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                {guestAccount.accountCreated ? (
+                  <>আপনার ইমেইল <span className="font-semibold text-primary">{guestAccount.email}</span>-এ একটি অ্যাকাউন্ট স্বয়ংক্রিয়ভাবে তৈরি হয়েছে। পাসওয়ার্ড সেট করার জন্য একটি লিংক ঐ ইমেইলে পাঠানো হয়েছে — লিংকে ক্লিক করে পাসওয়ার্ড সেট করলেই ড্যাশবোর্ড থেকে অর্ডার দেখতে পারবেন।</>
+                ) : (
+                  <>আপনার ইমেইল <span className="font-semibold text-primary">{guestAccount.email}</span> আমাদের সিস্টেমে আছে। লগইন করলেই এই অর্ডারটি স্বয়ংক্রিয়ভাবে আপনার ড্যাশবোর্ডে সংযুক্ত হবে।</>
+                )}
+              </p>
+              <div className="flex flex-wrap gap-2 pt-1">
+                <button onClick={() => setShowAuthModal(true)} className="btn-glow px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5">
+                  <LogIn size={13} /> এখনই লগইন করুন
+                </button>
+                <button onClick={() => navigate('/reset-password')} className="px-4 py-2 rounded-xl text-xs font-semibold border border-border text-muted-foreground hover:text-foreground">
+                  পাসওয়ার্ড সেট করুন
+                </button>
+              </div>
+            </div>
+          )}
           <div className="flex gap-3 justify-center">
             <button onClick={() => navigate('/')} className="px-6 py-3 rounded-xl font-semibold text-sm border border-border text-muted-foreground hover:text-foreground transition-colors">
               হোমে ফিরে যাও
