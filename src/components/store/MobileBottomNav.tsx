@@ -133,11 +133,13 @@ const MobileBottomNav = () => {
     },
     {
       label: activeCurrency?.code || 'BDT',
-      icon: Globe,
+      icon: Globe, // replaced by custom coin badge in render
       path: '__currency__',
       match: () => currencyOpen,
-      gradient: 'linear-gradient(135deg, hsl(160 75% 42%), hsl(175 85% 45%))',
-    },
+      gradient: 'linear-gradient(135deg, hsl(38 95% 55%), hsl(28 90% 50%))',
+      isCurrency: true,
+      currencySymbol: activeCurrency?.symbol || '৳',
+    } as NavItem & { isCurrency?: boolean; currencySymbol?: string },
     {
       label: 'Orders',
       icon: Package,
