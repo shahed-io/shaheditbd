@@ -459,7 +459,8 @@ Restore:
     ];
     const totalRows = orderedNames.reduce((s, n) => s + (tables[n]?.length || 0), 0) || 1;
     let processed = 0;
-    let totalOk = 0;
+    let totalAdded = 0;
+    let totalSkipped = 0;
     let totalFailed = 0;
 
     for (const table of orderedNames) {
@@ -472,9 +473,10 @@ Restore:
           const pct = Math.round(((processed + done) / totalRows) * 100);
           setProgress(pct);
         });
-        totalOk += res.ok;
+        totalAdded += res.added;
+        totalSkipped += res.skipped;
         totalFailed += res.failed;
-        log.push(`${label}: ✅ ${res.ok} ok${res.failed ? ` / ❌ ${res.failed} failed` : ''}${res.errors[0] ? ` — ${res.errors[0]}` : ''}`);
+        log.push(`${label}: ✨ ${res.added} added, ⏭️ ${res.skipped} already existed${res.failed ? ` / ❌ ${res.failed} failed` : ''}${res.errors[0] ? ` — ${res.errors[0]}` : ''}`);
       } catch (e: any) {
         totalFailed += rows.length;
         log.push(`${label}: ❌ crashed — ${e.message}`);
@@ -488,13 +490,13 @@ Restore:
       label: 'Full Restore',
       tableName: 'all',
       date: new Date().toISOString(),
-      records: totalOk,
+      records: totalAdded,
       type: 'import',
       status: totalFailed === 0 ? 'success' : 'error',
       error: totalFailed ? `${totalFailed} rows failed` : undefined,
     });
-    if (totalFailed === 0) toast.success(`✅ Full Restore সম্পন্ন! ${totalOk} রেকর্ড।`);
-    else toast.warning(`Restore শেষ — ${totalOk} ok, ${totalFailed} failed। বিস্তারিত log দেখুন।`);
+    if (totalFailed === 0) toast.success(`✅ Full Restore সম্পন্ন! ✨ ${totalAdded} নতুন যোগ, ⏭️ ${totalSkipped} আগেই ছিল।`);
+    else toast.warning(`Restore শেষ — ✨ ${totalAdded} added, ⏭️ ${totalSkipped} skipped, ❌ ${totalFailed} failed। বিস্তারিত log দেখুন।`);
     fetchStats();
     setProgress(100);
     setTimeout(() => { setProgress(0); setProgressLabel(''); }, 1500);
