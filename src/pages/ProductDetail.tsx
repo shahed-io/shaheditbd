@@ -887,14 +887,14 @@ const ProductDetail = () => {
                   <div className="flex items-end flex-nowrap gap-2 sm:gap-3 py-3 px-3 sm:px-4 rounded-2xl overflow-hidden"
                     style={{ background: 'linear-gradient(135deg, hsla(258,78%,55%,0.07) 0%, hsla(185,90%,52%,0.05) 100%)', border: '1px solid hsla(258,78%,60%,0.14)' }}>
                     <span className="font-sora font-black whitespace-nowrap text-[26px] sm:text-3xl md:text-4xl flex-shrink-0" style={{ color: 'hsl(258,78%,42%)' }}>
-                      ৳{displayPrice.toLocaleString()}
+                      {fmtPrice(displayPrice)}
                     </span>
                     {displayOriginalPrice && displayOriginalPrice > displayPrice && (
                       <div className="flex flex-col min-w-0 flex-shrink">
-                        <div className="text-sm sm:text-base md:text-lg line-through whitespace-nowrap" style={{ color: 'hsl(226,25%,62%)' }}>৳{displayOriginalPrice.toLocaleString()}</div>
+                        <div className="text-sm sm:text-base md:text-lg line-through whitespace-nowrap" style={{ color: 'hsl(226,25%,62%)' }}>{fmtPrice(displayOriginalPrice)}</div>
                         {savings > 0 && (
                           <div className="text-[10px] sm:text-xs font-bold whitespace-nowrap" style={{ color: 'hsl(40,100%,48%)' }}>
-                            Save ৳{savings.toLocaleString()}
+                            Save {fmtPrice(savings)}
                           </div>
                         )}
                       </div>
