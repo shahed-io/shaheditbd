@@ -199,39 +199,43 @@ export default function AdminPaymentLinks() {
 
         <TabsContent value="links">
           <Card><CardContent className="p-0 overflow-x-auto">
-            <Table>
+            <Table className="w-full">
               <TableHeader>
                 <TableRow>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Slug</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Uses</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead className="w-[28%]">Title</TableHead>
+                  <TableHead className="w-[22%]">Slug</TableHead>
+                  <TableHead className="w-[10%]">Amount</TableHead>
+                  <TableHead className="w-[8%]">Uses</TableHead>
+                  <TableHead className="w-[10%]">Status</TableHead>
+                  <TableHead className="w-[12%]">Created</TableHead>
+                  <TableHead className="w-[10%] text-right pr-4">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {loading ? <TableRow><TableCell colSpan={6} className="text-center py-8"><Loader2 className="w-5 h-5 animate-spin mx-auto" /></TableCell></TableRow> :
-                  links.length === 0 ? <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">No links yet</TableCell></TableRow> :
+                {loading ? <TableRow><TableCell colSpan={7} className="text-center py-8"><Loader2 className="w-5 h-5 animate-spin mx-auto" /></TableCell></TableRow> :
+                  links.length === 0 ? <TableRow><TableCell colSpan={7} className="text-center py-8 text-muted-foreground">No links yet</TableCell></TableRow> :
                   links.map(l => (
                     <TableRow key={l.id}>
                       <TableCell>
                         <div className="font-medium">{l.title}</div>
                         <div className="text-xs text-muted-foreground">{l.product_name}</div>
                       </TableCell>
-                      <TableCell><code className="text-xs">{l.slug}</code></TableCell>
+                      <TableCell><code className="text-xs break-all">{l.slug}</code></TableCell>
                       <TableCell>৳{Number(l.amount).toLocaleString()}</TableCell>
                       <TableCell>{l.current_uses}{l.max_uses ? `/${l.max_uses}` : ''}</TableCell>
                       <TableCell>
                         <Badge variant={l.status === 'active' ? 'default' : 'secondary'}>{l.status}</Badge>
                       </TableCell>
+                      <TableCell className="text-xs text-muted-foreground">
+                        {l.created_at ? new Date(l.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
+                      </TableCell>
                       <TableCell>
-                        <div className="flex gap-1">
-                          <Button size="sm" variant="ghost" onClick={() => copyLink(l.slug)}><Copy className="w-4 h-4" /></Button>
-                          <Button size="sm" variant="ghost" asChild><a href={`/pay/${l.slug}`} target="_blank" rel="noreferrer"><ExternalLink className="w-4 h-4" /></a></Button>
-                          <Button size="sm" variant="ghost" onClick={() => toggleStatus(l)}>{l.status === 'active' ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}</Button>
-                          <Button size="sm" variant="ghost" onClick={() => setEditor({ ...l })}><Edit className="w-4 h-4" /></Button>
-                          <Button size="sm" variant="ghost" onClick={() => deleteLink(l.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
+                        <div className="flex gap-1 justify-end pr-2">
+                          <Button size="sm" variant="ghost" title="Copy link" onClick={() => copyLink(l.slug)}><Copy className="w-4 h-4" /></Button>
+                          <Button size="sm" variant="ghost" title="Open" asChild><a href={`/pay/${l.slug}`} target="_blank" rel="noreferrer"><ExternalLink className="w-4 h-4" /></a></Button>
+                          <Button size="sm" variant="ghost" title={l.status === 'active' ? 'Pause' : 'Activate'} onClick={() => toggleStatus(l)}>{l.status === 'active' ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}</Button>
+                          <Button size="sm" variant="ghost" title="Edit" onClick={() => setEditor({ ...l })}><Edit className="w-4 h-4" /></Button>
+                          <Button size="sm" variant="ghost" title="Delete" onClick={() => deleteLink(l.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -239,6 +243,7 @@ export default function AdminPaymentLinks() {
               </TableBody>
             </Table>
           </CardContent></Card>
+
         </TabsContent>
 
         <TabsContent value="submissions">
