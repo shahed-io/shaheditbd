@@ -277,7 +277,11 @@ export const itemListSchema = (items: { name: string; slug: string; image?: stri
     position: i + 1,
     url: `${SITE_URL}/product/${item.slug}`,
     name: item.name,
-    image: item.image || `${SITE_URL}/favicon.png`,
+    image: {
+      '@type': 'ImageObject',
+      url: item.image || `${SITE_URL}/favicon.png`,
+      caption: `${item.name} - ${SITE_NAME}`,
+    },
   })),
 });
 
