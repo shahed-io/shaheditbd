@@ -1,6 +1,27 @@
 import { useRef, useEffect, useState } from 'react';
 import { Star, Quote } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import avNapal from '@/assets/reviews/napal-datta.png';
+import avAmirul from '@/assets/reviews/md-amirul-islam.png';
+import avRizon from '@/assets/reviews/rizon-islam.png';
+import avLxMamun from '@/assets/reviews/lx-mamun.png';
+import avAlAmin from '@/assets/reviews/md-al-amin.png';
+import avSadiya from '@/assets/reviews/sadiya-akter.png';
+import avFarhan from '@/assets/reviews/farhan-ahmed.png';
+
+// Real Facebook profile photos (cropped from customer review screenshots)
+const REAL_FB_AVATARS: Record<string, string> = {
+  'napal datta': avNapal,
+  'md amirul islam': avAmirul,
+  'rizon islam': avRizon,
+  'lx mamun': avLxMamun,
+  'md al-amin': avAlAmin,
+  'sadiya akter': avSadiya,
+  'farhan ahmed': avFarhan,
+};
+const getRealAvatar = (name: string) =>
+  REAL_FB_AVATARS[(name || '').trim().toLowerCase()];
+
 
 interface Review {
   id: string;
@@ -71,11 +92,12 @@ const StarRating = ({ rating, color }: { rating: number; color: string }) => (
   </div>
 );
 
-const AvatarCircle = ({ initials, index, seed }: { initials: string; index: number; seed: string }) => {
+const AvatarCircle = ({ initials, index, seed, name }: { initials: string; index: number; seed: string; name?: string }) => {
   const [a, b] = AVATAR_GRADIENTS[index % AVATAR_GRADIENTS.length];
   const [failed, setFailed] = useState(false);
-  // Real human portrait photos, deterministic per customer name/seed
-  const url = `https://i.pravatar.cc/160?u=${encodeURIComponent(seed)}`;
+  // Real Facebook photo if we have one for this customer, otherwise realistic portrait
+  const realAvatar = name ? getRealAvatar(name) : undefined;
+  const url = realAvatar ?? `https://i.pravatar.cc/160?u=${encodeURIComponent(seed)}`;
 
   return (
     <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0 overflow-hidden"
@@ -92,6 +114,7 @@ const AvatarCircle = ({ initials, index, seed }: { initials: string; index: numb
     </div>
   );
 };
+
 
 /* ─── Review Card ─────────────────────────────── */
 const ReviewCard = ({ review, index }: { review: Review; index: number }) => {
@@ -151,7 +174,7 @@ const ReviewCard = ({ review, index }: { review: Review; index: number }) => {
           style={{ background: `linear-gradient(90deg, transparent, ${from.replace('hsl(','hsla(').replace(')',',0.18)')}, transparent)` }} />
 
         <div className="flex items-center gap-3">
-          <AvatarCircle initials={review.avatar || review.name?.slice(0,2).toUpperCase()} index={index} seed={review.name || review.id} />
+          <AvatarCircle initials={review.avatar || review.name?.slice(0,2).toUpperCase()} index={index} seed={review.name || review.id} name={review.name} />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5">
               <p className="text-[13px] font-bold truncate" style={{ color: 'hsl(226,35%,14%)' }}>
