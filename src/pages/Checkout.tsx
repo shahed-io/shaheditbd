@@ -639,7 +639,7 @@ const Checkout = () => {
       } else {
         const { error: orderError } = await supabase
           .from('orders')
-          .insert({ ...orderPayload, user_id: user!.id });
+          .insert({ ...orderPayload, user_id: user!.id } as any);
         if (orderError) throw orderError;
 
         // Redeem referral credit (server validates 2× rule)
