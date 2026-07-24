@@ -360,10 +360,56 @@ const FloatingSupport = () => {
                 </div>
               </div>
             </div>
-            <button onClick={() => setChatOpen(false)} className="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors">
-              <Minimize2 size={16} />
-            </button>
+            <div className="flex items-center gap-1.5">
+              {language && (
+                <button
+                  onClick={resetLanguage}
+                  title={language === 'en' ? 'Change language' : 'ভাষা পরিবর্তন'}
+                  className="h-8 px-2 rounded-lg bg-white/10 hover:bg-white/20 flex items-center gap-1 text-white text-[11px] font-semibold transition-colors"
+                >
+                  <Globe size={13} />
+                  {language === 'en' ? 'EN' : 'বাং'}
+                </button>
+              )}
+              <button onClick={() => setChatOpen(false)} className="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors">
+                <Minimize2 size={16} />
+              </button>
+            </div>
           </div>
+
+          {!language ? (
+            /* ── Language Picker ── */
+            <div className="p-6 flex flex-col items-center gap-4 bg-muted/20 min-h-[280px] justify-center">
+              <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
+                <Globe size={26} className="text-primary" />
+              </div>
+              <div className="text-center space-y-1">
+                <p className="text-sm font-bold text-foreground">Choose your language</p>
+                <p className="text-sm font-bold text-foreground">আপনার ভাষা নির্বাচন করুন</p>
+                <p className="text-xs text-muted-foreground mt-1">AI আপনার নির্বাচিত ভাষায় উত্তর দেবে</p>
+              </div>
+              <div className="grid grid-cols-2 gap-3 w-full max-w-xs">
+                <button
+                  onClick={() => pickLanguage('bn')}
+                  className="flex flex-col items-center gap-1.5 py-4 px-3 rounded-2xl bg-background border-2 border-border hover:border-primary hover:bg-primary/5 transition-all group"
+                >
+                  <span className="text-2xl">🇧🇩</span>
+                  <span className="text-sm font-bold text-foreground">বাংলা</span>
+                  <span className="text-[10px] text-muted-foreground">Bengali</span>
+                </button>
+                <button
+                  onClick={() => pickLanguage('en')}
+                  className="flex flex-col items-center gap-1.5 py-4 px-3 rounded-2xl bg-background border-2 border-border hover:border-primary hover:bg-primary/5 transition-all group"
+                >
+                  <span className="text-2xl">🇬🇧</span>
+                  <span className="text-sm font-bold text-foreground">English</span>
+                  <span className="text-[10px] text-muted-foreground">ইংরেজি</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+          <>
+
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-3 space-y-3 max-h-80 min-h-52 bg-muted/20">
