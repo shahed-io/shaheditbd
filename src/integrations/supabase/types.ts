@@ -1240,6 +1240,7 @@ export type Database = {
           name: string
           position: number
           rate_from_bdt: number
+          rate_per_usd: number | null
           symbol: string
           symbol_position: string
           updated_at: string
@@ -1255,6 +1256,7 @@ export type Database = {
           name: string
           position?: number
           rate_from_bdt?: number
+          rate_per_usd?: number | null
           symbol: string
           symbol_position?: string
           updated_at?: string
@@ -1270,6 +1272,7 @@ export type Database = {
           name?: string
           position?: number
           rate_from_bdt?: number
+          rate_per_usd?: number | null
           symbol?: string
           symbol_position?: string
           updated_at?: string

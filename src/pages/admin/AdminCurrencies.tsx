@@ -19,11 +19,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, RefreshCw, Globe } from "lucide-react";
+import { Plus, Pencil, Trash2, RefreshCw, Globe, DollarSign, Calculator } from "lucide-react";
 
 interface Currency {
   id: string;
@@ -31,6 +30,7 @@ interface Currency {
   name: string;
   symbol: string;
   rate_from_bdt: number;
+  rate_per_usd: number | null;
   is_default: boolean;
   is_active: boolean;
   position: number;
@@ -44,6 +44,7 @@ const EMPTY: Partial<Currency> = {
   name: "",
   symbol: "",
   rate_from_bdt: 1,
+  rate_per_usd: null,
   is_default: false,
   is_active: true,
   position: 0,
@@ -58,6 +59,22 @@ const AdminCurrencies = () => {
   const [editing, setEditing] = useState<Partial<Currency> | null>(null);
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [usdRate, setUsdRate] = useState<number>(120);
+  const [usdRateInput, setUsdRateInput] = useState<string>("120");
+  const [savingUsd, setSavingUsd] = useState(false);
+
+  const loadUsdRate = async () => {
+    const { data } = await supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "usd_to_bdt_rate")
+      .maybeSingle();
+    const v = Number(data?.value ?? 120);
+    if (isFinite(v) && v > 0) {
+      setUsdRate(v);
+      setUsdRateInput(String(v));
+    }
+  };
 
   const load = async () => {
     setLoading(true);
@@ -72,6 +89,7 @@ const AdminCurrencies = () => {
 
   useEffect(() => {
     load();
+    loadUsdRate();
   }, []);
 
   const openNew = () => {
@@ -91,7 +109,16 @@ const AdminCurrencies = () => {
       toast.error("Code, Name and Symbol are required");
       return;
     }
-    const rate = Number(editing.rate_from_bdt);
+    const rpu = editing.rate_per_usd == null || (editing.rate_per_usd as any) === ""
+      ? null
+      : Number(editing.rate_per_usd);
+    let rate = Number(editing.rate_from_bdt);
+    if (code === "BDT") {
+      rate = 1;
+    } else if (rpu != null && isFinite(rpu) && rpu > 0) {
+      // Derive rate_from_bdt from USD pivot: 1 unit = usdRate / rpu BDT
+      rate = usdRate / rpu;
+    }
     if (!isFinite(rate) || rate <= 0) {
       toast.error("Rate must be a positive number");
       return;
@@ -102,6 +129,7 @@ const AdminCurrencies = () => {
       name: editing.name,
       symbol: editing.symbol,
       rate_from_bdt: rate,
+      rate_per_usd: code === "BDT" ? null : rpu,
       is_default: !!editing.is_default,
       is_active: editing.is_active !== false,
       position: Number(editing.position) || 0,
@@ -159,6 +187,44 @@ const AdminCurrencies = () => {
     }
   };
 
+  const saveUsdRateAndRecalc = async () => {
+    const newRate = Number(usdRateInput);
+    if (!isFinite(newRate) || newRate <= 0) {
+      toast.error("USD rate must be a positive number");
+      return;
+    }
+    setSavingUsd(true);
+    // 1) Save USD -> BDT pivot rate
+    const { error: settingsErr } = await supabase
+      .from("site_settings")
+      .upsert({ key: "usd_to_bdt_rate", value: newRate as any }, { onConflict: "key" });
+    if (settingsErr) {
+      setSavingUsd(false);
+      toast.error(settingsErr.message);
+      return;
+    }
+    // 2) Recalculate rate_from_bdt for every currency that has rate_per_usd
+    const updates = rows
+      .filter((r) => r.code !== "BDT" && r.rate_per_usd != null && Number(r.rate_per_usd) > 0)
+      .map((r) => {
+        const newFromBdt = newRate / Number(r.rate_per_usd);
+        return supabase
+          .from("currencies")
+          .update({ rate_from_bdt: newFromBdt })
+          .eq("id", r.id);
+      });
+    const results = await Promise.all(updates);
+    const failed = results.find((r) => r.error);
+    setSavingUsd(false);
+    if (failed?.error) {
+      toast.error(failed.error.message);
+      return;
+    }
+    setUsdRate(newRate);
+    toast.success(`USD rate saved. ${updates.length} currencies recalculated.`);
+    load();
+  };
+
   return (
     <div className="p-4 md:p-6 space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -167,12 +233,12 @@ const AdminCurrencies = () => {
             <Globe className="w-6 h-6" /> Multi Currency Manager
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Base currency is <b>BDT (৳)</b>. For every other currency, set{" "}
-            <b>1 unit = how many BDT</b>. Example: 1 USD = 130 BDT.
+            Product prices are stored in <b>BDT (৳)</b>. Set the <b>USD → BDT</b> rate below,
+            then every other currency auto-converts from its <b>per-USD</b> rate.
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={load}>
+          <Button variant="outline" size="sm" onClick={() => { load(); loadUsdRate(); }}>
             <RefreshCw className="w-4 h-4 mr-1" /> Refresh
           </Button>
           <Button size="sm" onClick={openNew}>
@@ -180,6 +246,42 @@ const AdminCurrencies = () => {
           </Button>
         </div>
       </div>
+
+      {/* USD Pivot Rate */}
+      <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-transparent">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center gap-2">
+            <DollarSign className="w-5 h-5 text-primary" /> Base Rate: 1 USD = ? BDT
+          </CardTitle>
+          <CardDescription>
+            Enter today's USD → BDT rate (e.g. <b>135</b>). When you save, every currency with
+            a "rate per USD" is auto-recalculated. Example: if 1 USD = 135 BDT and 1 USD = 0.92 EUR,
+            then 1 EUR = 135 ÷ 0.92 ≈ 146.74 BDT.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap items-end gap-3">
+            <div className="flex-1 min-w-[200px] max-w-xs">
+              <Label>1 USD equals how many BDT?</Label>
+              <Input
+                type="number"
+                step="0.0001"
+                min="0.0001"
+                value={usdRateInput}
+                onChange={(e) => setUsdRateInput(e.target.value)}
+                placeholder="135"
+              />
+            </div>
+            <Button onClick={saveUsdRateAndRecalc} disabled={savingUsd}>
+              <Calculator className="w-4 h-4 mr-1" />
+              {savingUsd ? "Recalculating…" : "Save & Recalculate All"}
+            </Button>
+            <div className="text-xs text-muted-foreground ml-auto">
+              Current stored rate: <b>1 USD = ৳{usdRate}</b>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader className="pb-3">
@@ -196,6 +298,7 @@ const AdminCurrencies = () => {
                 <TableHead className="whitespace-nowrap">Code</TableHead>
                 <TableHead className="whitespace-nowrap">Name</TableHead>
                 <TableHead className="whitespace-nowrap">Symbol</TableHead>
+                <TableHead className="whitespace-nowrap">1 USD = ? {`{code}`}</TableHead>
                 <TableHead className="whitespace-nowrap">1 unit = BDT</TableHead>
                 <TableHead className="whitespace-nowrap">Preview (৳1000)</TableHead>
                 <TableHead className="whitespace-nowrap">Default</TableHead>
@@ -206,7 +309,7 @@ const AdminCurrencies = () => {
             <TableBody>
               {loading && (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={10} className="text-center py-8 text-muted-foreground">
                     Loading…
                   </TableCell>
                 </TableRow>
@@ -233,9 +336,18 @@ const AdminCurrencies = () => {
                       <TableCell className="whitespace-nowrap">{row.symbol}</TableCell>
                       <TableCell className="whitespace-nowrap">
                         {row.code === "BDT" ? (
+                          <span className="text-muted-foreground text-xs">—</span>
+                        ) : row.rate_per_usd != null ? (
+                          <span className="font-mono text-xs">{Number(row.rate_per_usd)}</span>
+                        ) : (
+                          <span className="text-muted-foreground text-xs">manual</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {row.code === "BDT" ? (
                           <span className="text-muted-foreground text-xs">base</span>
                         ) : (
-                          row.rate_from_bdt
+                          Number(row.rate_from_bdt).toFixed(4)
                         )}
                       </TableCell>
                       <TableCell className="whitespace-nowrap font-mono text-xs">
@@ -273,7 +385,7 @@ const AdminCurrencies = () => {
                 })}
               {!loading && rows.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={10} className="text-center py-8 text-muted-foreground">
                     No currencies. Click "Add Currency".
                   </TableCell>
                 </TableRow>
@@ -340,22 +452,59 @@ const AdminCurrencies = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="col-span-1">
-                <Label>1 unit = how many BDT?</Label>
-                <Input
-                  type="number"
-                  step="0.0001"
-                  min="0.0001"
-                  value={editing.rate_from_bdt ?? 1}
-                  onChange={(e) =>
-                    setEditing({ ...editing, rate_from_bdt: Number(e.target.value) })
-                  }
-                  placeholder="130"
-                />
-                <p className="text-[11px] text-muted-foreground mt-1">
-                  Ex: for USD, if 1 USD = ৳130, enter <b>130</b>.
-                </p>
-              </div>
+
+              {(editing.code || "").toUpperCase() !== "BDT" && (
+                <>
+                  <div className="col-span-2 rounded-md border border-primary/20 bg-primary/5 p-3">
+                    <Label className="text-sm font-semibold">
+                      1 USD = how many {(editing.code || "units").toUpperCase()}?
+                    </Label>
+                    <Input
+                      type="number"
+                      step="0.0001"
+                      min="0"
+                      value={editing.rate_per_usd ?? ""}
+                      onChange={(e) =>
+                        setEditing({
+                          ...editing,
+                          rate_per_usd: e.target.value === "" ? null : Number(e.target.value),
+                        })
+                      }
+                      placeholder="e.g. 0.92 for EUR, 83 for INR, 1 for USD"
+                      className="mt-1"
+                    />
+                    <p className="text-[11px] text-muted-foreground mt-1">
+                      Recommended. This currency auto-recalculates whenever the USD → BDT rate
+                      changes. For USD itself, enter <b>1</b>. Leave empty to enter a fixed BDT
+                      rate manually below.
+                    </p>
+                    {editing.rate_per_usd != null && Number(editing.rate_per_usd) > 0 && (
+                      <p className="text-[11px] mt-1">
+                        → Auto: 1 {(editing.code || "").toUpperCase()} ={" "}
+                        <b>৳{(usdRate / Number(editing.rate_per_usd)).toFixed(4)}</b>
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="col-span-1">
+                    <Label>Manual: 1 unit = BDT</Label>
+                    <Input
+                      type="number"
+                      step="0.0001"
+                      min="0.0001"
+                      value={editing.rate_from_bdt ?? 1}
+                      onChange={(e) =>
+                        setEditing({ ...editing, rate_from_bdt: Number(e.target.value) })
+                      }
+                      placeholder="130"
+                      disabled={editing.rate_per_usd != null && Number(editing.rate_per_usd) > 0}
+                    />
+                    <p className="text-[11px] text-muted-foreground mt-1">
+                      Used only if "rate per USD" is empty.
+                    </p>
+                  </div>
+                </>
+              )}
               <div className="col-span-1">
                 <Label>Decimals</Label>
                 <Input
