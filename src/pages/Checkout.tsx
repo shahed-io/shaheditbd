@@ -343,7 +343,7 @@ const Checkout = () => {
           .from('products')
           .select('id, name, price, original_price, image_url, categories(name)')
           .eq('slug', slug)
-          .eq('is_active', true)
+          .eq('status', 'active')
           .maybeSingle();
         if (error || !p) return;
         addToCart({
