@@ -1228,6 +1228,54 @@ export type Database = {
           },
         ]
       }
+      currencies: {
+        Row: {
+          code: string
+          created_at: string
+          decimals: number
+          flag_emoji: string | null
+          id: string
+          is_active: boolean
+          is_default: boolean
+          name: string
+          position: number
+          rate_from_bdt: number
+          symbol: string
+          symbol_position: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          decimals?: number
+          flag_emoji?: string | null
+          id?: string
+          is_active?: boolean
+          is_default?: boolean
+          name: string
+          position?: number
+          rate_from_bdt?: number
+          symbol: string
+          symbol_position?: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          decimals?: number
+          flag_emoji?: string | null
+          id?: string
+          is_active?: boolean
+          is_default?: boolean
+          name?: string
+          position?: number
+          rate_from_bdt?: number
+          symbol?: string
+          symbol_position?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
