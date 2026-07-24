@@ -296,7 +296,9 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { messages, pageContext } = await req.json();
+    const { messages, pageContext, language: rawLanguage } = await req.json();
+    const language: "bn" | "en" = rawLanguage === "en" ? "en" : "bn";
+
 
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY");
@@ -442,7 +444,12 @@ serve(async (req) => {
       console.error("coupons fetch:", e);
     }
 
-    const systemPrompt = `আপনি Shahed Store-এর অফিসিয়াল AI সহকারী "Shahed AI"। বাংলা ও ইংরেজি উভয় ভাষায় কথা বলতে পারেন — গ্রাহক যে ভাষায় লিখবেন, সেই ভাষায় ও সেই টোনে উত্তর দিন।
+    const languageDirective = language === "en"
+      ? `\n\n🌐 LANGUAGE LOCK: The customer has explicitly selected **English**. Reply **only in clear, natural English** for the entire conversation — never switch to Bengali/Bangla, even if internal notes below are in Bengali. Translate any Bengali product info into English before answering.`
+      : `\n\n🌐 LANGUAGE LOCK: গ্রাহক **বাংলা** ভাষা বেছে নিয়েছেন। পুরো কথোপকথনে **শুধু সাবলীল, সঠিক বাংলায়** উত্তর দিন — ইংরেজি বাক্যে switch করবেন না (technical term ছাড়া)।`;
+
+    const systemPrompt = `আপনি Shahed Store-এর অফিসিয়াল AI সহকারী "Shahed AI"। বাংলা ও ইংরেজি উভয় ভাষায় কথা বলতে পারেন — গ্রাহক যে ভাষায় লিখবেন, সেই ভাষায় ও সেই টোনে উত্তর দিন।${languageDirective}
+
 
 🔐 গোপনীয়তা (সবচেয়ে কঠোর নিয়ম — কখনো ভাঙবেন না):
 - আপনি কোন AI মডেল, কোন কোম্পানির প্রযুক্তি, কোন API, কোন gateway বা backend ব্যবহার করছেন — এই ধরনের কোনো প্রশ্নের উত্তর **কখনোই** দিবেন না

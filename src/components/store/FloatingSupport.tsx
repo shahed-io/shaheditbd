@@ -99,6 +99,11 @@ const FloatingSupport = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [language, setLanguage] = useState<'bn' | 'en' | null>(() => {
+    if (typeof window === 'undefined') return null;
+    const v = localStorage.getItem('fs_chat_lang');
+    return v === 'bn' || v === 'en' ? v : null;
+  });
   const [helpDismissed, setHelpDismissed] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false;
     return localStorage.getItem('fs_help_dismissed') === '1';
@@ -108,11 +113,29 @@ const FloatingSupport = () => {
   const configLoaded = useRef(false);
   const sessionIdRef = useRef(crypto.randomUUID());
 
+  const WELCOME_EN = "Hi! 👋 I'm the Shahed Store AI assistant. Ask me anything about Windows, Office, Adobe, Netflix, Spotify or any other product!";
+  const PLACEHOLDER_EN = 'Type your question...';
+
+  const pickLanguage = (lang: 'bn' | 'en') => {
+    setLanguage(lang);
+    try { localStorage.setItem('fs_chat_lang', lang); } catch {}
+    const welcome = lang === 'en' ? WELCOME_EN : config.ai_welcome_message;
+    setMessages([{ role: 'assistant', content: welcome }]);
+    setTimeout(() => inputRef.current?.focus(), 150);
+  };
+
+  const resetLanguage = () => {
+    try { localStorage.removeItem('fs_chat_lang'); } catch {}
+    setLanguage(null);
+    setMessages([]);
+  };
+
   const dismissHelp = (e: React.MouseEvent) => {
     e.stopPropagation();
     setHelpDismissed(true);
     try { localStorage.setItem('fs_help_dismissed', '1'); } catch {}
   };
+
 
   // Load settings once
   useEffect(() => {
@@ -124,19 +147,20 @@ const FloatingSupport = () => {
       .eq('key', 'live_chat_settings')
       .maybeSingle()
       .then(({ data }) => {
+        let merged: LiveChatConfig = DEFAULTS;
         if (data?.value) {
           try {
             const parsed = JSON.parse(data.value);
-            const merged = { ...DEFAULTS, ...parsed };
+            merged = { ...DEFAULTS, ...parsed };
             setConfig(merged);
-            setMessages([{ role: 'assistant', content: merged.ai_welcome_message }]);
-          } catch {
-            setMessages([{ role: 'assistant', content: DEFAULTS.ai_welcome_message }]);
-          }
-        } else {
-          setMessages([{ role: 'assistant', content: DEFAULTS.ai_welcome_message }]);
+          } catch {}
+        }
+        if (language) {
+          const welcome = language === 'en' ? WELCOME_EN : merged.ai_welcome_message;
+          setMessages([{ role: 'assistant', content: welcome }]);
         }
       });
+
   }, []);
 
   useEffect(() => {
@@ -212,7 +236,7 @@ const FloatingSupport = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ messages: newMessages, pageContext }),
+        body: JSON.stringify({ messages: newMessages, pageContext, language: language || 'bn' }),
       });
 
 
@@ -336,10 +360,56 @@ const FloatingSupport = () => {
                 </div>
               </div>
             </div>
-            <button onClick={() => setChatOpen(false)} className="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors">
-              <Minimize2 size={16} />
-            </button>
+            <div className="flex items-center gap-1.5">
+              {language && (
+                <button
+                  onClick={resetLanguage}
+                  title={language === 'en' ? 'Change language' : 'ভাষা পরিবর্তন'}
+                  className="h-8 px-2 rounded-lg bg-white/10 hover:bg-white/20 flex items-center gap-1 text-white text-[11px] font-semibold transition-colors"
+                >
+                  <Globe size={13} />
+                  {language === 'en' ? 'EN' : 'বাং'}
+                </button>
+              )}
+              <button onClick={() => setChatOpen(false)} className="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors">
+                <Minimize2 size={16} />
+              </button>
+            </div>
           </div>
+
+          {!language ? (
+            /* ── Language Picker ── */
+            <div className="p-6 flex flex-col items-center gap-4 bg-muted/20 min-h-[280px] justify-center">
+              <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
+                <Globe size={26} className="text-primary" />
+              </div>
+              <div className="text-center space-y-1">
+                <p className="text-sm font-bold text-foreground">Choose your language</p>
+                <p className="text-sm font-bold text-foreground">আপনার ভাষা নির্বাচন করুন</p>
+                <p className="text-xs text-muted-foreground mt-1">AI আপনার নির্বাচিত ভাষায় উত্তর দেবে</p>
+              </div>
+              <div className="grid grid-cols-2 gap-3 w-full max-w-xs">
+                <button
+                  onClick={() => pickLanguage('bn')}
+                  className="flex flex-col items-center gap-1.5 py-4 px-3 rounded-2xl bg-background border-2 border-border hover:border-primary hover:bg-primary/5 transition-all group"
+                >
+                  <span className="text-2xl">🇧🇩</span>
+                  <span className="text-sm font-bold text-foreground">বাংলা</span>
+                  <span className="text-[10px] text-muted-foreground">Bengali</span>
+                </button>
+                <button
+                  onClick={() => pickLanguage('en')}
+                  className="flex flex-col items-center gap-1.5 py-4 px-3 rounded-2xl bg-background border-2 border-border hover:border-primary hover:bg-primary/5 transition-all group"
+                >
+                  <span className="text-2xl">🇬🇧</span>
+                  <span className="text-sm font-bold text-foreground">English</span>
+                  <span className="text-[10px] text-muted-foreground">ইংরেজি</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+          <>
+
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-3 space-y-3 max-h-80 min-h-52 bg-muted/20">
@@ -391,7 +461,7 @@ const FloatingSupport = () => {
                         <span className="w-1.5 h-1.5 bg-primary/70 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
                         <span className="w-1.5 h-1.5 bg-primary/70 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                       </span>
-                      <span className="text-xs text-muted-foreground animate-pulse">AI উত্তর লিখছে…</span>
+                      <span className="text-xs text-muted-foreground animate-pulse">{language === 'en' ? 'AI is typing…' : 'AI উত্তর লিখছে…'}</span>
                     </span>
                   ) : ''}
 
@@ -438,7 +508,7 @@ const FloatingSupport = () => {
           {(config.whatsapp_enabled || config.phone_enabled || activeSets.length > 0) && (
             <div className="px-3 pb-2 pt-1 border-t border-border/40">
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2 px-1">
-                অন্যান্য যোগাযোগের উপায়
+                {language === 'en' ? 'Other ways to reach us' : 'অন্যান্য যোগাযোগের উপায়'}
               </p>
               <div className="flex flex-wrap gap-2">
                 {config.phone_enabled && (
@@ -502,7 +572,7 @@ const FloatingSupport = () => {
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
-              placeholder={config.ai_placeholder}
+              placeholder={language === 'en' ? PLACEHOLDER_EN : config.ai_placeholder}
               className="flex-1 text-sm bg-muted/40 border border-border rounded-xl px-3 py-2 outline-none focus:border-primary transition-colors text-foreground placeholder:text-muted-foreground"
               disabled={loading}
             />
@@ -511,7 +581,10 @@ const FloatingSupport = () => {
               {loading ? <Loader2 size={15} className="animate-spin" /> : <Send size={15} />}
             </button>
           </div>
+          </>
+          )}
         </div>
+
       )}
 
       {/* ── Option Menu (stacked floating pill buttons) ── */}
