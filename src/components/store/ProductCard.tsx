@@ -155,9 +155,9 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
                 </div>
 
                 <div className="flex items-baseline gap-2">
-                  <span className="font-sora font-black text-2xl" style={{ color: 'hsl(271,91%,75%)' }}>৳{product.price.toLocaleString()}</span>
+                  <span className="font-sora font-black text-2xl" style={{ color: 'hsl(271,91%,75%)' }}>{fmtPrice(product.price)}</span>
                   {product.originalPrice && (
-                    <span className="text-sm line-through text-muted-foreground">৳{product.originalPrice.toLocaleString()}</span>
+                    <span className="text-sm line-through text-muted-foreground">{fmtPrice(product.originalPrice)}</span>
                   )}
                 </div>
 
