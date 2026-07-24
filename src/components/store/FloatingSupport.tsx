@@ -156,10 +156,8 @@ const FloatingSupport = () => {
             setConfig(merged);
           } catch {}
         }
-        if (language) {
-          const welcome = language === 'en' ? WELCOME_EN : merged.ai_welcome_message;
-          setMessages([{ role: 'assistant', content: welcome }]);
-        }
+        const welcome = language === 'en' ? WELCOME_EN : merged.ai_welcome_message;
+        setMessages([{ role: 'assistant', content: welcome }]);
       });
 
   }, []);
