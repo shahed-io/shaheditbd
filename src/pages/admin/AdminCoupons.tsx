@@ -188,6 +188,57 @@ const AdminCoupons = () => {
         </button>
       </div>
 
+      {/* Bulk Actions Toolbar */}
+      <div className="glass-card rounded-xl p-3 flex flex-wrap items-center gap-2">
+        <button
+          onClick={allSelected ? clearSelection : selectAll}
+          className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+        >
+          {allSelected ? <CheckSquare size={14} /> : <Square size={14} />}
+          {allSelected ? 'Deselect All' : 'Select All'}
+        </button>
+        <span className="text-xs text-muted-foreground">
+          {selectedIds.size > 0 ? `${selectedIds.size} selected` : 'No selection'}
+        </span>
+        <div className="flex-1" />
+        <button
+          onClick={deleteExpired}
+          disabled={bulkBusy}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 disabled:opacity-50 transition-colors"
+        >
+          <Calendar size={14} /> Delete Expired
+        </button>
+        <button
+          onClick={() => bulkSetActive(true)}
+          disabled={bulkBusy || selectedIds.size === 0}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        >
+          <Power size={14} /> Activate
+        </button>
+        <button
+          onClick={() => bulkSetActive(false)}
+          disabled={bulkBusy || selectedIds.size === 0}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-muted/40 text-muted-foreground hover:bg-muted/60 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        >
+          <PowerOff size={14} /> Deactivate
+        </button>
+        <button
+          onClick={bulkDelete}
+          disabled={bulkBusy || selectedIds.size === 0}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-destructive/10 text-destructive hover:bg-destructive/20 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        >
+          <Trash2 size={14} /> Delete Selected
+        </button>
+        {selectedIds.size > 0 && (
+          <button
+            onClick={clearSelection}
+            className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <X size={14} />
+          </button>
+        )}
+      </div>
+
       {/* Form Modal */}
       {showForm && (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
