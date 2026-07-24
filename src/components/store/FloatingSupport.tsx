@@ -236,7 +236,7 @@ const FloatingSupport = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ messages: newMessages, pageContext }),
+        body: JSON.stringify({ messages: newMessages, pageContext, language: language || 'bn' }),
       });
 
 
