@@ -391,10 +391,38 @@ const AdminCurrencies = () => {
                       <TableCell className="whitespace-nowrap">
                         {row.code === "BDT" ? (
                           <span className="text-muted-foreground text-xs">—</span>
-                        ) : row.rate_per_usd != null ? (
-                          <span className="font-mono text-xs">{Number(row.rate_per_usd)}</span>
+                        ) : inlineEdit?.id === row.id ? (
+                          <div className="flex items-center gap-1">
+                            <Input
+                              type="number"
+                              step="0.0001"
+                              min="0"
+                              autoFocus
+                              value={inlineEdit.value}
+                              onChange={(e) => setInlineEdit({ id: row.id, value: e.target.value })}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") saveInlineRate(row);
+                                if (e.key === "Escape") setInlineEdit(null);
+                              }}
+                              className="h-8 w-24 text-xs font-mono"
+                            />
+                            <Button size="icon" variant="ghost" className="h-7 w-7 text-green-600" disabled={inlineSaving} onClick={() => saveInlineRate(row)}>
+                              <Check className="w-3.5 h-3.5" />
+                            </Button>
+                            <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground" onClick={() => setInlineEdit(null)}>
+                              <X className="w-3.5 h-3.5" />
+                            </Button>
+                          </div>
                         ) : (
-                          <span className="text-muted-foreground text-xs">manual</span>
+                          <button
+                            type="button"
+                            onClick={() => setInlineEdit({ id: row.id, value: String(row.rate_per_usd ?? "") })}
+                            className="font-mono text-xs px-2 py-1 rounded hover:bg-primary/10 hover:text-primary transition-colors border border-transparent hover:border-primary/30"
+                            title="Click to edit"
+                          >
+                            {row.rate_per_usd != null ? Number(row.rate_per_usd) : <span className="text-muted-foreground">manual</span>}
+                            <Pencil className="w-3 h-3 inline-block ml-1 opacity-50" />
+                          </button>
                         )}
                       </TableCell>
                       <TableCell className="whitespace-nowrap">
