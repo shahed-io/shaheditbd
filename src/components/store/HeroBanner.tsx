@@ -704,4 +704,169 @@ const HeroBanner = () => {
   );
 };
 
+/* ══════════════════════════════════════════════════════════════
+   Premium Mobile Hero Carousel — Apple / SaaS style
+   • Fixed 3 slides (IDM, Microsoft 365, Windows 11 Pro)
+   • Clean white theme, blue accent (#2563EB)
+   • ~200px height, image ~60% / text ~40%
+   • Auto-slide 4.5s, infinite loop, swipe, pagination dots
+   • Fade + slide transition
+══════════════════════════════════════════════════════════════ */
+const MobileHeroCarousel = () => {
+  const [active, setActive] = useState(0);
+  const [dir, setDir] = useState<'in' | 'out'>('in');
+  const touchStartX = useRef<number | null>(null);
+  const total = MOBILE_SLIDES.length;
+
+  const go = (delta: number) => {
+    setDir('out');
+    setTimeout(() => {
+      setActive((p) => (p + delta + total) % total);
+      setDir('in');
+    }, 220);
+  };
+
+  const jump = (i: number) => {
+    if (i === active) return;
+    setDir('out');
+    setTimeout(() => {
+      setActive(i);
+      setDir('in');
+    }, 220);
+  };
+
+  useEffect(() => {
+    const t = setInterval(() => go(1), 4500);
+    return () => clearInterval(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active]);
+
+  const s = MOBILE_SLIDES[active];
+  const BLUE = '#2563EB';
+
+  return (
+    <div className="lg:hidden px-3 pt-3 pb-4">
+      <div
+        className="relative w-full rounded-[22px] bg-white overflow-hidden flex items-stretch"
+        style={{
+          height: '200px',
+          border: '1px solid rgba(37,99,235,0.08)',
+          boxShadow:
+            '0 10px 30px -8px rgba(37,99,235,0.14), 0 2px 8px -2px rgba(15,23,42,0.06)',
+        }}
+        role="region"
+        aria-roledescription="carousel"
+        aria-label="Featured products"
+        onTouchStart={(e) => {
+          touchStartX.current = e.touches[0].clientX;
+        }}
+        onTouchEnd={(e) => {
+          if (touchStartX.current == null) return;
+          const dx = e.changedTouches[0].clientX - touchStartX.current;
+          if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+          touchStartX.current = null;
+        }}
+      >
+        {/* Soft ambient glow behind visual */}
+        <div
+          className="absolute -top-10 -right-10 w-56 h-56 rounded-full pointer-events-none"
+          style={{ background: 'rgba(37,99,235,0.10)', filter: 'blur(50px)' }}
+        />
+        <div
+          className="absolute -bottom-10 right-16 w-40 h-40 rounded-full pointer-events-none"
+          style={{ background: 'rgba(96,165,250,0.14)', filter: 'blur(40px)' }}
+        />
+
+        {/* LEFT — Text (40%) */}
+        <div
+          className="w-[40%] pl-4 pr-1 py-4 flex flex-col justify-center gap-2 relative z-10"
+          style={{
+            opacity: dir === 'in' ? 1 : 0,
+            transform: dir === 'in' ? 'translateX(0)' : 'translateX(-12px)',
+            transition: 'opacity 0.32s ease, transform 0.32s ease',
+          }}
+        >
+          <h2
+            className="font-sora font-bold leading-[1.15] text-gray-900"
+            style={{
+              fontSize: '16px',
+              letterSpacing: '-0.01em',
+            }}
+          >
+            {s.headline}
+          </h2>
+          <p
+            className="text-[10.5px] text-gray-500 leading-snug font-medium"
+            style={{ letterSpacing: '0.005em' }}
+          >
+            {s.subheadline}
+          </p>
+          <div className="pt-1">
+            <a
+              href={s.href}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-white text-[11px] font-semibold active:scale-95 transition-all duration-200"
+              style={{
+                background: `linear-gradient(135deg, ${BLUE} 0%, #1D4ED8 100%)`,
+                boxShadow: `0 6px 16px -4px ${BLUE}66, inset 0 1px 0 rgba(255,255,255,0.25)`,
+              }}
+            >
+              {s.cta}
+              <ArrowRight size={12} strokeWidth={2.5} />
+            </a>
+          </div>
+        </div>
+
+        {/* RIGHT — Illustration (60%) */}
+        <div className="w-[60%] relative flex items-center justify-center overflow-hidden">
+          {/* Subtle tinted panel */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'linear-gradient(135deg, rgba(219,234,254,0.35) 0%, rgba(255,255,255,0) 60%)',
+            }}
+          />
+          <img
+            key={s.image}
+            src={s.image}
+            alt={s.alt}
+            loading="lazy"
+            decoding="async"
+            width={1024}
+            height={1024}
+            className="relative z-10 w-[86%] h-[86%] object-contain"
+            style={{
+              opacity: dir === 'in' ? 1 : 0,
+              transform:
+                dir === 'in' ? 'translateX(0) scale(1)' : 'translateX(14px) scale(0.94)',
+              transition: 'opacity 0.4s ease, transform 0.4s ease',
+              filter: 'drop-shadow(0 10px 20px rgba(37,99,235,0.18))',
+            }}
+          />
+        </div>
+      </div>
+
+      {/* Pagination dots */}
+      <div className="flex justify-center items-center gap-1.5 pt-3">
+        {MOBILE_SLIDES.map((_, i) => (
+          <button
+            key={i}
+            type="button"
+            aria-label={`Show slide ${i + 1}`}
+            onClick={() => jump(i)}
+            className="rounded-full transition-all duration-300"
+            style={{
+              width: i === active ? '22px' : '6px',
+              height: '6px',
+              background: i === active ? BLUE : 'rgba(37,99,235,0.20)',
+              boxShadow: i === active ? `0 0 8px ${BLUE}66` : 'none',
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export default HeroBanner;
+
