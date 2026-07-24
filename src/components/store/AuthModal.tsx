@@ -55,6 +55,16 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
       setMode('signup');
       setReferralCode(refFromUrl.toUpperCase());
     }
+    // As soon as the modal opens on any non-home page, persist the current
+    // location so post-login (email OR OAuth) can restore it. Prevents the
+    // "logged-in-and-dumped-on-home" bug on checkout, product, dashboard, etc.
+    try {
+      const cur = window.location.pathname + window.location.search;
+      if (cur && cur !== '/' && !cur.startsWith('/reset-password') && !cur.startsWith('/ceo')) {
+        sessionStorage.setItem('post_login_redirect', cur);
+        localStorage.setItem('post_login_redirect', cur);
+      }
+    } catch { /* ignore */ }
   }, [isOpen, searchParams]);
 
   if (!isOpen) return null;
