@@ -3,7 +3,48 @@ import { ArrowRight, ShoppingBag, TrendingUp, Zap, Shield, Clock, Star, ChevronL
 import idmLogo from '@/assets/idm.webp';
 import ms365Logo from '@/assets/ms365-logo.png';
 import winLogo from '@/assets/windows-logo.png';
+import heroMobileIdm from '@/assets/hero-mobile-idm.png';
+import heroMobileM365 from '@/assets/hero-mobile-m365.png';
+import heroMobileWin11 from '@/assets/hero-mobile-win11.png';
 import { useHeroBanner, type SlideData } from '@/hooks/useHeroBanner';
+
+// Fixed 3-slide mobile hero spec (independent of DB-driven desktop slides)
+type MobileSlide = {
+  headline: string;
+  subheadline: string;
+  cta: string;
+  image: string;
+  href: string;
+  alt: string;
+};
+
+const MOBILE_SLIDES: MobileSlide[] = [
+  {
+    headline: 'Internet Download Manager',
+    subheadline: 'Lifetime License • Genuine Activation • Instant Delivery',
+    cta: 'Order Now',
+    image: heroMobileIdm,
+    href: '/product/internet-download-manager-idm-lifetime-key',
+    alt: 'IDM Lifetime License',
+  },
+  {
+    headline: 'Microsoft 365 Personal',
+    subheadline: 'Official Subscription • Instant Activation • 1 Device',
+    cta: 'Shop Now',
+    image: heroMobileM365,
+    href: '/product/microsoft-office-365-personal-subscription-price-in-bd',
+    alt: 'Microsoft 365 Personal',
+  },
+  {
+    headline: 'Windows 11 Pro',
+    subheadline: 'Official License • Lifetime Activation • Instant Delivery',
+    cta: 'Buy Now',
+    image: heroMobileWin11,
+    href: '/product/windows-11-pro-licence-key-price-in-bd',
+    alt: 'Windows 11 Pro',
+  },
+];
+
 
 type Slide = {
   tag: string; tagIcon: string; title: string; titleAccent: string; subtitle: string; desc: string;
@@ -144,183 +185,12 @@ const HeroBanner = () => {
 
 
         {/* ══════════════════════════════════
-             MOBILE — Premium Clean White + Soft Bubble carousel
-             (< lg only; desktop keeps original layout below)
+             MOBILE — Premium Apple/SaaS-style hero carousel
+             (< lg only; fixed 3-slide spec, independent from desktop)
         ══════════════════════════════════ */}
-        <div className="lg:hidden px-3 pt-3 pb-4">
-          <div
-            className="relative w-full rounded-[24px] bg-white border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.06)] overflow-hidden flex items-stretch"
-            style={{ height: '210px' }}
-            role="region"
-            aria-roledescription="carousel"
-            aria-label="Featured deals"
-            onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
-            onTouchEnd={(e) => {
-              if (touchStartX.current == null) return;
-              const dx = e.changedTouches[0].clientX - touchStartX.current;
-              if (Math.abs(dx) > 40) advance(dx < 0 ? 1 : -1);
-              touchStartX.current = null;
-            }}
-          >
-            {/* Left content ~62% */}
-            <div
-              className="w-[62%] pl-4 pr-2 py-3 flex flex-col justify-center gap-1.5 relative z-10"
-              style={{
-                opacity: dir === 'in' ? 1 : 0,
-                transform: dir === 'in' ? 'translateX(0)' : 'translateX(-14px)',
-                transition: 'opacity 0.32s ease, transform 0.32s ease',
-              }}
-            >
-              {/* Tag row */}
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span
-                  className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider border"
-                  style={{
-                    background: 'hsla(258,78%,55%,0.08)',
-                    borderColor: 'hsla(258,78%,55%,0.20)',
-                    color: 'hsl(258,78%,50%)',
-                  }}
-                >
-                  {slide.tagIcon} {slide.tag}
-                </span>
-                <span className="text-[9px] font-semibold text-gray-400 uppercase tracking-wide">
-                  {slide.badge}
-                </span>
-              </div>
+        <MobileHeroCarousel />
 
-              {/* Title */}
-              <div>
-                <h2
-                  className="font-sora font-black leading-tight text-gray-900"
-                  style={{ fontSize: '19px' }}
-                >
-                  {slide.title}{' '}
-                  <span
-                    style={{
-                      background: 'linear-gradient(135deg, hsl(258,78%,52%), hsl(200,90%,46%))',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      backgroundClip: 'text',
-                    }}
-                  >
-                    {slide.titleAccent}
-                  </span>
-                </h2>
-                <p className="text-[11px] text-gray-500 font-medium leading-snug line-clamp-1">
-                  {slide.subtitle}
-                </p>
-              </div>
 
-              {/* Price */}
-              <div className="flex items-baseline gap-1.5 flex-wrap pt-0.5">
-                <span className="text-[17px] font-black text-gray-900 leading-none font-sora">
-                  {slide.price}
-                </span>
-                <span className="text-[10px] text-gray-400 line-through">{slide.original}</span>
-                <span className="text-[10px] font-bold" style={{ color: 'hsl(0,78%,55%)' }}>
-                  {slide.off} OFF
-                </span>
-              </div>
-
-              {/* CTA */}
-              <div className="pt-1">
-                <a
-                  href={slide.productSlug ? `/product/${slide.productSlug}` : '/shop'}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-white text-[11px] font-bold active:scale-95 transition-transform"
-                  style={{
-                    background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(215,82%,52%))',
-                    boxShadow: '0 6px 18px hsla(258,78%,55%,0.35)',
-                  }}
-                >
-                  <ShoppingBag size={11} strokeWidth={2.5} />
-                  Buy Now
-                  <ArrowRight size={11} strokeWidth={2.5} />
-                </a>
-              </div>
-            </div>
-
-            {/* Right visual ~38% */}
-            <div className="w-[38%] relative flex items-center justify-center overflow-hidden">
-              {/* Soft tinted panel */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  background:
-                    'linear-gradient(135deg, hsla(200,90%,55%,0.08) 0%, hsla(258,78%,60%,0.06) 100%)',
-                }}
-              />
-              {/* Decorative ambient blobs */}
-              <div
-                className="absolute top-4 right-2 w-16 h-16 rounded-full"
-                style={{ background: 'hsla(200,90%,55%,0.18)', filter: 'blur(20px)' }}
-              />
-              <div
-                className="absolute bottom-4 right-6 w-20 h-20 rounded-full"
-                style={{ background: 'hsla(258,78%,60%,0.18)', filter: 'blur(22px)' }}
-              />
-
-              {/* Glass bubble with product logo */}
-              <div
-                className="relative z-10 w-[86px] h-[86px] rounded-[22px] flex items-center justify-center anim-float"
-                style={{
-                  background: 'linear-gradient(145deg, rgba(255,255,255,0.85), rgba(255,255,255,0.45))',
-                  backdropFilter: 'blur(16px)',
-                  WebkitBackdropFilter: 'blur(16px)',
-                  border: '1.5px solid rgba(255,255,255,0.95)',
-                  boxShadow:
-                    '0 10px 24px -6px hsla(258,60%,50%,0.25), inset 0 1.5px 0 rgba(255,255,255,1)',
-                  opacity: dir === 'in' ? 1 : 0,
-                  transform:
-                    dir === 'in' ? 'translateX(0) scale(1)' : 'translateX(14px) scale(0.94)',
-                  transition: 'opacity 0.32s ease, transform 0.32s ease',
-                }}
-              >
-                {slide.logoImg ? (
-                  <img
-                    src={slide.logoImg}
-                    alt={`${slide.title} ${slide.titleAccent}`}
-                    loading="eager"
-                    decoding="async"
-                    fetchPriority="high"
-                    className="w-12 h-12 object-contain drop-shadow-md"
-                  />
-                ) : (
-                  <span className="text-4xl leading-none">{slide.emoji}</span>
-                )}
-              </div>
-            </div>
-
-            {/* Swipe-only on mobile — no arrow buttons per selected prototype */}
-          </div>
-
-          {/* Pagination dots */}
-          <div className="flex justify-center items-center gap-1.5 pt-3">
-            {SLIDES.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                aria-label={`Show slide ${i + 1}`}
-                onClick={() => {
-                  setDir('out');
-                  setTimeout(() => {
-                    setActive(i);
-                    setDir('in');
-                  }, 260);
-                }}
-                className="rounded-full transition-all duration-300"
-                style={{
-                  width: i === active ? '22px' : '6px',
-                  height: '6px',
-                  background:
-                    i === active
-                      ? 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,48%))'
-                      : 'hsla(220,15%,80%,1)',
-                  boxShadow: i === active ? '0 0 8px hsla(258,78%,55%,0.55)' : 'none',
-                }}
-              />
-            ))}
-          </div>
-        </div>
 
         <div className="relative container-fluid hidden lg:block">
         <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-0 pt-3 pb-5 md:pt-4 md:pb-6 lg:pt-5 lg:pb-6">
@@ -834,4 +704,169 @@ const HeroBanner = () => {
   );
 };
 
+/* ══════════════════════════════════════════════════════════════
+   Premium Mobile Hero Carousel — Apple / SaaS style
+   • Fixed 3 slides (IDM, Microsoft 365, Windows 11 Pro)
+   • Clean white theme, blue accent (#2563EB)
+   • ~200px height, image ~60% / text ~40%
+   • Auto-slide 4.5s, infinite loop, swipe, pagination dots
+   • Fade + slide transition
+══════════════════════════════════════════════════════════════ */
+const MobileHeroCarousel = () => {
+  const [active, setActive] = useState(0);
+  const [dir, setDir] = useState<'in' | 'out'>('in');
+  const touchStartX = useRef<number | null>(null);
+  const total = MOBILE_SLIDES.length;
+
+  const go = (delta: number) => {
+    setDir('out');
+    setTimeout(() => {
+      setActive((p) => (p + delta + total) % total);
+      setDir('in');
+    }, 220);
+  };
+
+  const jump = (i: number) => {
+    if (i === active) return;
+    setDir('out');
+    setTimeout(() => {
+      setActive(i);
+      setDir('in');
+    }, 220);
+  };
+
+  useEffect(() => {
+    const t = setInterval(() => go(1), 4500);
+    return () => clearInterval(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active]);
+
+  const s = MOBILE_SLIDES[active];
+  const BLUE = '#2563EB';
+
+  return (
+    <div className="lg:hidden px-3 pt-3 pb-4">
+      <div
+        className="relative w-full rounded-[22px] bg-white overflow-hidden flex items-stretch"
+        style={{
+          height: '200px',
+          border: '1px solid rgba(37,99,235,0.08)',
+          boxShadow:
+            '0 10px 30px -8px rgba(37,99,235,0.14), 0 2px 8px -2px rgba(15,23,42,0.06)',
+        }}
+        role="region"
+        aria-roledescription="carousel"
+        aria-label="Featured products"
+        onTouchStart={(e) => {
+          touchStartX.current = e.touches[0].clientX;
+        }}
+        onTouchEnd={(e) => {
+          if (touchStartX.current == null) return;
+          const dx = e.changedTouches[0].clientX - touchStartX.current;
+          if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+          touchStartX.current = null;
+        }}
+      >
+        {/* Soft ambient glow behind visual */}
+        <div
+          className="absolute -top-10 -right-10 w-56 h-56 rounded-full pointer-events-none"
+          style={{ background: 'rgba(37,99,235,0.10)', filter: 'blur(50px)' }}
+        />
+        <div
+          className="absolute -bottom-10 right-16 w-40 h-40 rounded-full pointer-events-none"
+          style={{ background: 'rgba(96,165,250,0.14)', filter: 'blur(40px)' }}
+        />
+
+        {/* LEFT — Text (40%) */}
+        <div
+          className="w-[40%] pl-4 pr-1 py-4 flex flex-col justify-center gap-2 relative z-10"
+          style={{
+            opacity: dir === 'in' ? 1 : 0,
+            transform: dir === 'in' ? 'translateX(0)' : 'translateX(-12px)',
+            transition: 'opacity 0.32s ease, transform 0.32s ease',
+          }}
+        >
+          <h2
+            className="font-sora font-bold leading-[1.15] text-gray-900"
+            style={{
+              fontSize: '16px',
+              letterSpacing: '-0.01em',
+            }}
+          >
+            {s.headline}
+          </h2>
+          <p
+            className="text-[10.5px] text-gray-500 leading-snug font-medium"
+            style={{ letterSpacing: '0.005em' }}
+          >
+            {s.subheadline}
+          </p>
+          <div className="pt-1">
+            <a
+              href={s.href}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-white text-[11px] font-semibold active:scale-95 transition-all duration-200"
+              style={{
+                background: `linear-gradient(135deg, ${BLUE} 0%, #1D4ED8 100%)`,
+                boxShadow: `0 6px 16px -4px ${BLUE}66, inset 0 1px 0 rgba(255,255,255,0.25)`,
+              }}
+            >
+              {s.cta}
+              <ArrowRight size={12} strokeWidth={2.5} />
+            </a>
+          </div>
+        </div>
+
+        {/* RIGHT — Illustration (60%) */}
+        <div className="w-[60%] relative flex items-center justify-center overflow-hidden">
+          {/* Subtle tinted panel */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'linear-gradient(135deg, rgba(219,234,254,0.35) 0%, rgba(255,255,255,0) 60%)',
+            }}
+          />
+          <img
+            key={s.image}
+            src={s.image}
+            alt={s.alt}
+            loading="lazy"
+            decoding="async"
+            width={1024}
+            height={1024}
+            className="relative z-10 w-[86%] h-[86%] object-contain"
+            style={{
+              opacity: dir === 'in' ? 1 : 0,
+              transform:
+                dir === 'in' ? 'translateX(0) scale(1)' : 'translateX(14px) scale(0.94)',
+              transition: 'opacity 0.4s ease, transform 0.4s ease',
+              filter: 'drop-shadow(0 10px 20px rgba(37,99,235,0.18))',
+            }}
+          />
+        </div>
+      </div>
+
+      {/* Pagination dots */}
+      <div className="flex justify-center items-center gap-1.5 pt-3">
+        {MOBILE_SLIDES.map((_, i) => (
+          <button
+            key={i}
+            type="button"
+            aria-label={`Show slide ${i + 1}`}
+            onClick={() => jump(i)}
+            className="rounded-full transition-all duration-300"
+            style={{
+              width: i === active ? '22px' : '6px',
+              height: '6px',
+              background: i === active ? BLUE : 'rgba(37,99,235,0.20)',
+              boxShadow: i === active ? `0 0 8px ${BLUE}66` : 'none',
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export default HeroBanner;
+
