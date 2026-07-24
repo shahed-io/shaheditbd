@@ -576,7 +576,8 @@ async function registerBotCommands(botToken: string) {
     { command: 'orders', description: '📋 আমার অর্ডারসমূহ' },
     { command: 'track', description: '📦 অর্ডার ট্র্যাক — /track <নম্বর>' },
     { command: 'checkkey', description: '🔑 লাইসেন্স কী চেক — /checkkey <কী>' },
-    { command: 'getcid', description: '🆔 স্ক্রিনশট পাঠিয়ে Confirmation ID নিন' },
+
+
 
 
     { command: 'account', description: '👤 অ্যাকাউন্ট ও ওয়ালেট' },
@@ -602,7 +603,8 @@ async function registerBotCommands(botToken: string) {
     { command: 'orders', description: '📋 My orders' },
     { command: 'track', description: '📦 Track order — /track <number>' },
     { command: 'checkkey', description: '🔑 Check license key — /checkkey <key>' },
-    { command: 'getcid', description: '🆔 Send screenshot to get Confirmation ID' },
+
+
 
 
     { command: 'account', description: '👤 Account & wallet' },
@@ -1399,7 +1401,12 @@ async function processUpdate(update: any, BOT_TOKEN: string, supabase: any): Pro
       await handleCheckKey(BOT_TOKEN, chatId, '', lang);
     } else if (cbData === 'getcid_hint') {
       await answerCb(BOT_TOKEN, cb.id);
-      await handleGetCidHint(BOT_TOKEN, chatId, lang);
+      // Confirmation ID system disabled.
+      await sendMsg(BOT_TOKEN, chatId,
+        lang === 'bn'
+          ? '⚠️ Confirmation ID সার্ভিসটি বর্তমানে বন্ধ রয়েছে।\n\nসহায়তার জন্য WhatsApp: 01840099853'
+          : '⚠️ The Confirmation ID service is currently disabled.\n\nFor help, WhatsApp: 01840099853');
+
 
 
     } else if (cbData.startsWith('cat:')) {
@@ -1459,22 +1466,11 @@ async function processUpdate(update: any, BOT_TOKEN: string, supabase: any): Pro
     return;
   }
 
-  // ─── PHOTO MESSAGE (Installation ID screenshot → auto CID) ─────────────
+  // ─── PHOTO / IMAGE MESSAGES ──────────────────────────────────
+  // (Confirmation ID from screenshot system disabled by admin request.)
   const msg = update.message;
-  if (msg && Array.isArray(msg.photo) && msg.photo.length > 0) {
-    const chatId = msg.chat.id;
-    const lang = await getLang(supabase, chatId);
-    // Pick the largest photo size
-    const best = msg.photo.reduce((a: any, b: any) => (a.file_size ?? 0) > (b.file_size ?? 0) ? a : b);
-    await handleGetCidFromPhoto(BOT_TOKEN, chatId, best.file_id, lang);
-    return;
-  }
-  if (msg && msg.document && typeof msg.document.mime_type === 'string' && msg.document.mime_type.startsWith('image/')) {
-    const chatId = msg.chat.id;
-    const lang = await getLang(supabase, chatId);
-    await handleGetCidFromPhoto(BOT_TOKEN, chatId, msg.document.file_id, lang);
-    return;
-  }
+
+
 
   // ─── TEXT MESSAGE ────────────────────────────────────────────
   if (!msg || !msg.text) return;
@@ -1538,7 +1534,14 @@ async function processUpdate(update: any, BOT_TOKEN: string, supabase: any): Pro
     const arg = text.replace(/^\/(checkkey|check_key|key)\s*/i, '');
     await handleCheckKey(BOT_TOKEN, chatId, arg, lang);
   } else if (text === '/getcid' || text === '/cid' || text === '/confirmation') {
-    await handleGetCidHint(BOT_TOKEN, chatId, lang);
+    // Confirmation ID system disabled — direct user to support.
+    await sendMsg(BOT_TOKEN, chatId,
+      lang === 'bn'
+        ? '⚠️ Confirmation ID সার্ভিসটি বর্তমানে বন্ধ রয়েছে।\n\nসহায়তার জন্য WhatsApp: 01840099853'
+        : '⚠️ The Confirmation ID service is currently disabled.\n\nFor help, WhatsApp: 01840099853',
+      inlineKb([[{ text: t(lang, 'btn_menu'), callback_data: 'start' }]])
+    );
+
 
   } else if (text.startsWith('/')) {
     await sendMsg(BOT_TOKEN, chatId,
