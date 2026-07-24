@@ -410,8 +410,8 @@ const FloatingSupport = () => {
             {messages.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} items-end gap-2`}>
                 {msg.role === 'assistant' && (
-                  <div className="w-6 h-6 rounded-full bg-primary/15 flex items-center justify-center flex-shrink-0 mb-1">
-                    <Bot size={12} className="text-primary" />
+                  <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0 mb-1 shadow-md ring-1 ring-primary/15">
+                    <AiLogo size={18} />
                   </div>
                 )}
                 <div className={`max-w-[82%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
