@@ -83,6 +83,7 @@ const DEFAULT_TRUST = [
 const HeroBanner = () => {
   const [active, setActive] = useState(0);
   const [dir, setDir] = useState<'in' | 'out'>('in');
+  const touchStartX = React.useRef<number | null>(null);
   const { data: bannerData } = useHeroBanner();
 
   const SLIDES: Slide[] = bannerData?.slides && bannerData.slides.length > 0
