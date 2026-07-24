@@ -112,6 +112,7 @@ const ProductDetail = () => {
   const navigate = useNavigate();
   const { addToCart, toggleWishlist, isWishlisted, isInCart } = useCart();
   const { user } = useAuth();
+  const { format: fmtPrice, active: activeCurrency } = useCurrency();
 
   const [product,       setProduct]      = useState<ProductFull | null>(null);
   const [loading,       setLoading]      = useState(true);
@@ -365,7 +366,7 @@ const ProductDetail = () => {
     return product.price;
   };
   const displayPrice = getSelectedPrice();
-  const { format: fmtPrice, active: activeCurrency } = useCurrency();
+
 
   // Original price: use selected plan's original_price if available, else product's
   const displayOriginalPrice = selectedPlan?.original_price
