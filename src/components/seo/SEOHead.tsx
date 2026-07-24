@@ -34,8 +34,8 @@ const DEFAULT_DESC = 'Buy genuine Windows, Office, Adobe, antivirus, VPN and dig
 const DEFAULT_OG = '/og-image.jpg';
 const DEFAULT_KEYWORDS = 'windows 11 key bangladesh, microsoft office 365 bangladesh, adobe creative cloud bangladesh, antivirus cheap, buy digital software bangladesh, digital license key, Shahed Store';
 
-// Cache for GA/GSC settings so we only fetch once per session
-let _seoCache: { ga?: string; gsc?: string; verification?: Record<string, string>; loaded?: boolean } = {};
+// Cache for GA/GSC/Clarity settings so we only fetch once per session
+let _seoCache: { ga?: string; gsc?: string; clarity?: string; verification?: Record<string, string>; loaded?: boolean } = {};
 
 const VERIFICATION_META: Record<string, string> = {
   google: 'google-site-verification',
@@ -119,22 +119,25 @@ const SEOHead = ({
     if (_seoCache.loaded) {
       injectGA(_seoCache.ga);
       injectGSC(_seoCache.gsc);
+      injectClarity(_seoCache.clarity);
       if (_seoCache.verification) injectVerificationTags(_seoCache.verification);
       return;
     }
     supabase.from('site_settings').select('key,value')
-      .in('key', ['google_analytics', 'google_site_verification', 'seo_verification'])
+      .in('key', ['google_analytics', 'google_site_verification', 'seo_verification', 'microsoft_clarity_id'])
       .then(({ data }) => {
         _seoCache.loaded = true;
         data?.forEach(r => {
           if (r.key === 'google_analytics') _seoCache.ga = r.value || '';
           if (r.key === 'google_site_verification') _seoCache.gsc = r.value || '';
+          if (r.key === 'microsoft_clarity_id') _seoCache.clarity = r.value || '';
           if (r.key === 'seo_verification') {
             try { _seoCache.verification = JSON.parse(r.value || '{}'); } catch { _seoCache.verification = {}; }
           }
         });
         injectGA(_seoCache.ga);
         injectGSC(_seoCache.gsc);
+        injectClarity(_seoCache.clarity);
         if (_seoCache.verification) injectVerificationTags(_seoCache.verification);
       });
   }, []);
@@ -159,6 +162,15 @@ const SEOHead = ({
     m.name = 'google-site-verification';
     m.content = code;
     document.head.appendChild(m);
+  }
+
+  function injectClarity(projectId?: string) {
+    if (!projectId) return;
+    if (document.querySelector('script[data-clarity-id]')) return;
+    const s = document.createElement('script');
+    s.setAttribute('data-clarity-id', projectId);
+    s.textContent = `(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "${projectId}");`;
+    document.head.appendChild(s);
   }
 
   useEffect(() => {
