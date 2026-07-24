@@ -181,7 +181,7 @@ const HeroBanner = () => {
         ══════════════════════════════════ */}
         <div className="lg:hidden px-2 pt-0 pb-2">
           <div
-            className="relative w-full rounded-[24px] border border-white/60 overflow-hidden"
+            className="relative w-full rounded-[24px] overflow-hidden"
             style={{ height: '260px', background: pickBannerTheme(slide).bg }}
             role="region"
             aria-roledescription="carousel"
@@ -229,16 +229,16 @@ const HeroBanner = () => {
               {/* Tag row */}
               <div className="flex items-center gap-1.5 flex-wrap">
                 <span
-                  className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider border backdrop-blur-sm"
+                  className="px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-[0.14em] border"
                   style={{
-                    background: 'hsla(258,78%,55%,0.10)',
-                    borderColor: 'hsla(258,78%,55%,0.22)',
-                    color: 'hsl(258,78%,45%)',
+                    background: 'rgba(255,255,255,0.55)',
+                    borderColor: 'hsla(258,78%,55%,0.28)',
+                    color: 'hsl(258,78%,42%)',
                   }}
                 >
                   {slide.tagIcon} {slide.tag}
                 </span>
-                <span className="text-[9px] font-semibold text-gray-500 uppercase tracking-wide">
+                <span className="text-[9px] font-semibold text-gray-600 uppercase tracking-[0.14em]">
                   {slide.badge}
                 </span>
               </div>
@@ -246,32 +246,31 @@ const HeroBanner = () => {
               {/* Title */}
               <div>
                 <h2
-                  className="font-sora font-black leading-tight text-gray-900"
-                  style={{ fontSize: '19px' }}
+                  className="font-sora font-black leading-[1.1] text-gray-900 tracking-tight"
+                  style={{ fontSize: '20px' }}
                 >
                   {slide.title}{' '}
                   <span
                     style={{
                       color: pickBannerTheme(slide).accent,
+                      fontWeight: 900,
                     }}
                   >
                     {slide.titleAccent}
                   </span>
-
-
                 </h2>
-                <p className="text-[11px] text-gray-600 font-medium leading-snug line-clamp-1">
+                <p className="text-[11px] text-gray-700 font-medium leading-snug line-clamp-1 mt-0.5">
                   {slide.subtitle}
                 </p>
               </div>
 
               {/* Price */}
               <div className="flex items-baseline gap-1.5 flex-wrap pt-0.5">
-                <span className="text-[18px] font-black text-gray-900 leading-none font-sora">
+                <span className="text-[20px] font-black text-gray-900 leading-none font-sora tracking-tight">
                   {slide.price}
                 </span>
-                <span className="text-[10px] text-gray-400 line-through">{slide.original}</span>
-                <span className="text-[10px] font-bold" style={{ color: 'hsl(0,78%,50%)' }}>
+                <span className="text-[10px] text-gray-500 line-through">{slide.original}</span>
+                <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded" style={{ color: 'hsl(0,78%,45%)', background: 'hsla(0,78%,50%,0.10)' }}>
                   {slide.off} OFF
                 </span>
               </div>
@@ -282,8 +281,7 @@ const HeroBanner = () => {
                   href={slide.productSlug ? `/product/${slide.productSlug}` : '/shop'}
                   className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-white text-[11px] font-bold active:scale-95 transition-transform"
                   style={{
-                    background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(215,82%,52%))',
-                    boxShadow: '0 8px 20px hsla(258,78%,55%,0.42)',
+                    background: 'linear-gradient(135deg, hsl(258,78%,52%), hsl(215,82%,50%))',
                   }}
                 >
                   <ShoppingBag size={11} strokeWidth={2.5} />
