@@ -3,7 +3,48 @@ import { ArrowRight, ShoppingBag, TrendingUp, Zap, Shield, Clock, Star, ChevronL
 import idmLogo from '@/assets/idm.webp';
 import ms365Logo from '@/assets/ms365-logo.png';
 import winLogo from '@/assets/windows-logo.png';
+import heroMobileIdm from '@/assets/hero-mobile-idm.png';
+import heroMobileM365 from '@/assets/hero-mobile-m365.png';
+import heroMobileWin11 from '@/assets/hero-mobile-win11.png';
 import { useHeroBanner, type SlideData } from '@/hooks/useHeroBanner';
+
+// Fixed 3-slide mobile hero spec (independent of DB-driven desktop slides)
+type MobileSlide = {
+  headline: string;
+  subheadline: string;
+  cta: string;
+  image: string;
+  href: string;
+  alt: string;
+};
+
+const MOBILE_SLIDES: MobileSlide[] = [
+  {
+    headline: 'Internet Download Manager',
+    subheadline: 'Lifetime License • Genuine Activation • Instant Delivery',
+    cta: 'Order Now',
+    image: heroMobileIdm,
+    href: '/product/internet-download-manager-idm-lifetime-key',
+    alt: 'IDM Lifetime License',
+  },
+  {
+    headline: 'Microsoft 365 Personal',
+    subheadline: 'Official Subscription • Instant Activation • 1 Device',
+    cta: 'Shop Now',
+    image: heroMobileM365,
+    href: '/product/microsoft-office-365-personal-subscription-price-in-bd',
+    alt: 'Microsoft 365 Personal',
+  },
+  {
+    headline: 'Windows 11 Pro',
+    subheadline: 'Official License • Lifetime Activation • Instant Delivery',
+    cta: 'Buy Now',
+    image: heroMobileWin11,
+    href: '/product/windows-11-pro-licence-key-price-in-bd',
+    alt: 'Windows 11 Pro',
+  },
+];
+
 
 type Slide = {
   tag: string; tagIcon: string; title: string; titleAccent: string; subtitle: string; desc: string;
