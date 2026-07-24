@@ -89,8 +89,11 @@ const dbSlideToSlide = (s: SlideData): Slide => ({
   subtitle: s.subtitle, desc: s.desc, price: s.price,
   original: s.original, off: s.off.startsWith('-') ? s.off : `-${s.off}`, badge: s.badge,
   accentFrom: s.accentFrom || 'hsl(258,78%,55%)', accentTo: s.accentTo || 'hsl(200,90%,48%)',
-  emoji: s.emoji, logoImg: LOGO_MAP[s.id] || s.logoImg || undefined, features: s.features, productSlug: s.productSlug || '',
+  emoji: s.emoji, logoImg: LOGO_MAP[s.id] || s.logoImg || undefined,
+  bgImage: s.bgImage || undefined,
+  features: s.features, productSlug: s.productSlug || '',
 });
+
 
 const DEFAULT_STATS = [
   { label: 'Products',         value: '500+', icon: '🛍️' },
