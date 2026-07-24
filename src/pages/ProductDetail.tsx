@@ -5,6 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 const ReactMarkdown = lazy(() => import('react-markdown'));
 import { supabase } from '@/integrations/supabase/client';
 import { useCart } from '@/hooks/useCart';
+import { useCurrency } from '@/hooks/useCurrency';
 import Navbar from '@/components/store/Navbar';
 import Footer from '@/components/store/Footer';
 import {
@@ -364,6 +365,7 @@ const ProductDetail = () => {
     return product.price;
   };
   const displayPrice = getSelectedPrice();
+  const { format: fmtPrice, active: activeCurrency } = useCurrency();
 
   // Original price: use selected plan's original_price if available, else product's
   const displayOriginalPrice = selectedPlan?.original_price
