@@ -1,5 +1,24 @@
 import { useState, useRef, useEffect } from 'react';
 import { Bot, X, Send, Loader2, Minimize2, MessageCircle, MessageCircleMore, Facebook, Send as TelegramIcon, Link as LinkIcon, Phone, Mail, Instagram, Twitter, Youtube, Video, Headphones, LifeBuoy, HelpCircle, Globe } from 'lucide-react';
+import aiLogo from '@/assets/ai-logo.png';
+
+/** Premium AI brand mark — used across header, message avatars, and pill button */
+const AiLogo = ({ size = 20, className = '', glow = false }: { size?: number; className?: string; glow?: boolean }) => (
+  <img
+    src={aiLogo}
+    alt="Shahed AI"
+    width={size}
+    height={size}
+    loading="lazy"
+    className={className}
+    style={{
+      width: size,
+      height: size,
+      objectFit: 'contain',
+      filter: glow ? 'drop-shadow(0 2px 6px rgba(125,61,240,0.55)) drop-shadow(0 0 12px rgba(24,115,239,0.35))' : undefined,
+    }}
+  />
+);
 import { supabase } from '@/integrations/supabase/client';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -348,8 +367,8 @@ const FloatingSupport = () => {
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-primary to-primary/80">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
-                <Bot size={18} className="text-white" />
+              <div className="w-10 h-10 rounded-2xl bg-white/95 flex items-center justify-center shadow-lg ring-1 ring-white/60 backdrop-blur">
+                <AiLogo size={26} />
               </div>
               <div>
                 <p className="text-white text-sm font-bold">{config.ai_label}</p>
@@ -391,8 +410,8 @@ const FloatingSupport = () => {
             {messages.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} items-end gap-2`}>
                 {msg.role === 'assistant' && (
-                  <div className="w-6 h-6 rounded-full bg-primary/15 flex items-center justify-center flex-shrink-0 mb-1">
-                    <Bot size={12} className="text-primary" />
+                  <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0 mb-1 shadow-md ring-1 ring-primary/15">
+                    <AiLogo size={18} />
                   </div>
                 )}
                 <div className={`max-w-[82%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
@@ -630,7 +649,7 @@ const FloatingSupport = () => {
                   'ai', openChat,
                   'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
                   'hsla(271,91%,60%,0.55)',
-                  Bot, config.ai_label, config.ai_subtitle,
+                  AiLogo, config.ai_label, config.ai_subtitle,
                 ));
               }
 
