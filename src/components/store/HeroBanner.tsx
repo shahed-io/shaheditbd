@@ -149,8 +149,8 @@ const HeroBanner = () => {
         ══════════════════════════════════ */}
         <div className="lg:hidden px-3 pt-3 pb-4">
           <div
-            className="relative w-full rounded-[24px] bg-white border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.06)] overflow-hidden flex items-stretch"
-            style={{ height: '210px' }}
+            className="relative w-full rounded-[24px] bg-white border border-gray-100 overflow-hidden flex items-stretch"
+            style={{ height: '260px' }}
             role="region"
             aria-roledescription="carousel"
             aria-label="Featured deals"
@@ -241,34 +241,11 @@ const HeroBanner = () => {
 
             {/* Right visual ~38% */}
             <div className="w-[38%] relative flex items-center justify-center overflow-hidden">
-              {/* Soft tinted panel */}
+              {/* Glass bubble with product logo (glossy surroundings removed) */}
               <div
-                className="absolute inset-0"
+                className="relative z-10 w-[110px] h-[110px] rounded-[24px] flex items-center justify-center anim-float bg-white"
                 style={{
-                  background:
-                    'linear-gradient(135deg, hsla(200,90%,55%,0.08) 0%, hsla(258,78%,60%,0.06) 100%)',
-                }}
-              />
-              {/* Decorative ambient blobs */}
-              <div
-                className="absolute top-4 right-2 w-16 h-16 rounded-full"
-                style={{ background: 'hsla(200,90%,55%,0.18)', filter: 'blur(20px)' }}
-              />
-              <div
-                className="absolute bottom-4 right-6 w-20 h-20 rounded-full"
-                style={{ background: 'hsla(258,78%,60%,0.18)', filter: 'blur(22px)' }}
-              />
-
-              {/* Glass bubble with product logo */}
-              <div
-                className="relative z-10 w-[86px] h-[86px] rounded-[22px] flex items-center justify-center anim-float"
-                style={{
-                  background: 'linear-gradient(145deg, rgba(255,255,255,0.85), rgba(255,255,255,0.45))',
-                  backdropFilter: 'blur(16px)',
-                  WebkitBackdropFilter: 'blur(16px)',
-                  border: '1.5px solid rgba(255,255,255,0.95)',
-                  boxShadow:
-                    '0 10px 24px -6px hsla(258,60%,50%,0.25), inset 0 1.5px 0 rgba(255,255,255,1)',
+                  border: '1px solid rgb(243,244,246)',
                   opacity: dir === 'in' ? 1 : 0,
                   transform:
                     dir === 'in' ? 'translateX(0) scale(1)' : 'translateX(14px) scale(0.94)',
