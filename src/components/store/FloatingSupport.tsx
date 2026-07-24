@@ -189,7 +189,9 @@ const FloatingSupport = () => {
 
     const userMsg: Message = { role: 'user', content: text };
     const newMessages = [...messages, userMsg];
-    setMessages(newMessages);
+    // Instantly show user message + empty assistant placeholder so the
+    // typing indicator appears immediately (before network round-trip).
+    setMessages([...newMessages, { role: 'assistant', content: '' }]);
     setLoading(true);
 
     let assistantContent = '';
@@ -225,13 +227,21 @@ const FloatingSupport = () => {
         } else if (resp.status >= 500) {
           friendlyMsg = '⚠️ সার্ভার সমস্যা। WhatsApp-এ যোগাযোগ করুন: 01840099853';
         }
-        setMessages(prev => [...prev, { role: 'assistant', content: friendlyMsg }]);
+        setMessages(prev => {
+          const updated = [...prev];
+          updated[updated.length - 1] = { role: 'assistant', content: friendlyMsg };
+          return updated;
+        });
         setLoading(false);
         return;
       }
 
       if (!resp.body) {
-        setMessages(prev => [...prev, { role: 'assistant', content: 'দুঃখিত, রেসপন্স পাওয়া যায়নি। WhatsApp: 01840099853' }]);
+        setMessages(prev => {
+          const updated = [...prev];
+          updated[updated.length - 1] = { role: 'assistant', content: 'দুঃখিত, রেসপন্স পাওয়া যায়নি। WhatsApp: 01840099853' };
+          return updated;
+        });
         setLoading(false);
         return;
       }
@@ -240,7 +250,7 @@ const FloatingSupport = () => {
       const decoder = new TextDecoder();
       let buffer = '';
 
-      setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+
 
       while (true) {
         const { done, value } = await reader.read();
