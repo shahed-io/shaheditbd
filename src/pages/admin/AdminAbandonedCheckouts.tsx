@@ -188,6 +188,32 @@ export default function AdminAbandonedCheckouts() {
       const { error: itemsErr } = await supabase.from('order_items').insert(itemsPayload);
       if (itemsErr) throw itemsErr;
 
+      // Auto-link the order to a customer account by email.
+      // If no account exists for that email, guest-order-finalize will
+      // create one silently and email the customer a recovery link so
+      // the order shows up in their dashboard automatically.
+      const emailForLink = row.customer_email?.trim().toLowerCase();
+      let linkedUserId: string | null = row.user_id || null;
+      if (!linkedUserId && emailForLink && !emailForLink.endsWith('@recovered.local')) {
+        try {
+          const { data: linkRes, error: linkErr } = await supabase.functions.invoke('guest-order-finalize', {
+            body: {
+              orderId: order.id,
+              email: emailForLink,
+              name: row.customer_name?.trim() || undefined,
+              redirectTo: `${window.location.origin}/reset-password`,
+            },
+          });
+          if (linkErr) {
+            console.warn('[abandoned→order] link failed:', linkErr.message);
+          } else if ((linkRes as any)?.userId) {
+            linkedUserId = (linkRes as any).userId;
+          }
+        } catch (e: any) {
+          console.warn('[abandoned→order] link exception:', e?.message);
+        }
+      }
+
       // Mark abandoned checkout as converted
       await supabase.from('abandoned_checkouts').update({
         converted: true,
@@ -199,7 +225,11 @@ export default function AdminAbandonedCheckouts() {
       setConvertRow(null);
       if (selected?.id === row.id) setSelected(null);
 
-      toast.success(`Order ${orderNumber} created`);
+      toast.success(
+        linkedUserId
+          ? `Order ${orderNumber} created & synced to customer account`
+          : `Order ${orderNumber} created`
+      );
       if (opts.redirect) {
         navigate(`/ceo/orders?focus=${order.id}`);
       }
