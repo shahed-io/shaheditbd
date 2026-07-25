@@ -247,7 +247,7 @@ const HeroBanner = () => {
           >
             <div className="w-full sm:w-[62%] lg:w-[52%] pl-4 sm:pl-6 md:pl-8 lg:pl-12 pr-3 sm:pr-4 space-y-2 sm:space-y-3 md:space-y-4">
               {/* Tag + badge */}
-              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              <div key={`row1-${active}`} className="flex flex-wrap items-center gap-1.5 sm:gap-2 hb-fade-up" style={{ animationDelay: '0.05s' }}>
                 <span
                   className="inline-flex items-center gap-1 text-[8px] sm:text-[9.5px] font-black uppercase tracking-[0.16em] px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-white"
                   style={{
