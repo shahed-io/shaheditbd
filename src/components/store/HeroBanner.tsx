@@ -272,7 +272,7 @@ const HeroBanner = () => {
               </div>
 
               {/* Headline */}
-              <div>
+              <div key={`h-${active}`} className="hb-fade-up" style={{ animationDelay: '0.15s' }}>
                 <h1
                   className="font-sora font-black leading-[1.05] tracking-tight"
                   style={{
@@ -281,15 +281,7 @@ const HeroBanner = () => {
                   }}
                 >
                   <span className="block">{slide.title}</span>
-                  <span
-                    className="block"
-                    style={{
-                      background: 'linear-gradient(135deg, hsl(258,78%,52%) 0%, hsl(215,82%,52%) 50%, hsl(200,90%,46%) 100%)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      backgroundClip: 'text',
-                    }}
-                  >
+                  <span className="block hb-shimmer-text">
                     {slide.titleAccent}
                   </span>
                 </h1>
@@ -300,6 +292,7 @@ const HeroBanner = () => {
                   {slide.subtitle}
                 </p>
               </div>
+
 
               {/* Description — hidden on very small screens to keep it clean */}
               <p
