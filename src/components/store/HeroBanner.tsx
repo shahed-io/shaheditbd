@@ -132,7 +132,7 @@ const HeroBanner = () => {
         }}
       >
         {/* Full-bleed banner image — admin-uploaded design lives here */}
-        <div className="relative w-full aspect-[3/2] max-h-[560px] bg-white">
+        <div className="relative w-full aspect-[3/2] sm:aspect-[16/9] lg:aspect-[21/9] max-h-[560px]">
           <img
             key={`bg-${active}`}
             src={bgUrl}
@@ -140,7 +140,7 @@ const HeroBanner = () => {
             loading="eager"
             decoding="async"
             fetchPriority="high"
-            className="absolute inset-0 w-full h-full object-contain"
+            className="absolute inset-0 w-full h-full object-cover"
             style={{
               opacity: dir === 'in' ? 1 : 0.55,
               transform: dir === 'in' ? 'scale(1)' : 'scale(1.02)',
