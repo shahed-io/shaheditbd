@@ -346,9 +346,10 @@ const AdminHeroBanner = () => {
                     ব্যানার ইমেজ (সম্পূর্ণ হিরো ব্যানার হিসেবে বসবে)
                   </label>
                   <p className="text-[10px] text-muted-foreground leading-relaxed">
-                    📐 <b>প্রস্তাবিত সাইজ:</b> ডেস্কটপ <b>1600 × 686 px</b> (21:9) · মোবাইল ফ্রেন্ডলি <b>1536 × 1024 px</b> (3:2)<br/>
+                    📐 <b>যেকোনো সাইজ চলবে</b> — ছবি স্বয়ংক্রিয়ভাবে ফিট হবে।<br/>
+                    ✅ <b>প্রস্তাবিত (সেরা মানের জন্য):</b> ডেস্কটপ <b>1600 × 686 px</b> (21:9) · ট্যাবলেট <b>1600 × 900 px</b> (16:9) · মোবাইল <b>1200 × 800 px</b> (3:2)<br/>
                     ✍️ ছবির <b>বাম পাশ ফাঁকা</b> রাখুন — টেক্সট (টাইটেল, দাম, বাটন) স্বয়ংক্রিয়ভাবে সেখানে বসবে · ডান পাশে প্রোডাক্ট আর্টওয়ার্ক দিন<br/>
-                    JPG / PNG / WebP · সর্বোচ্চ 800 KB
+                    JPG / PNG / WebP / AVIF / SVG · সর্বোচ্চ <b>5 MB</b>
                   </p>
                   <div className="flex items-center gap-2">
                     <label className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg border-2 border-dashed border-primary/40 hover:border-primary/70 hover:bg-primary/5 cursor-pointer transition-colors text-xs font-semibold text-primary">
@@ -356,18 +357,18 @@ const AdminHeroBanner = () => {
                       {selectedSlide.bgImage ? 'ইমেজ পরিবর্তন করুন' : 'ব্যানার আপলোড করুন'}
                       <input
                         type="file"
-                        accept="image/jpeg,image/png,image/webp"
+                        accept="image/jpeg,image/png,image/webp,image/avif,image/svg+xml"
                         className="hidden"
                         onChange={async (e) => {
                           const file = e.target.files?.[0];
                           if (!file) return;
-                          if (file.size > 800 * 1024) {
-                            toast.error('ফাইল সাইজ 800 KB এর কম হতে হবে');
+                          if (file.size > 5 * 1024 * 1024) {
+                            toast.error('ফাইল সাইজ 5 MB এর কম হতে হবে');
                             return;
                           }
                           const ext = file.name.split('.').pop() || 'jpg';
                           const path = `hero-banners/${selectedSlide.id}-${Date.now()}.${ext}`;
-                          const { error } = await supabase.storage.from('product-images').upload(path, file, { upsert: true });
+                          const { error } = await supabase.storage.from('product-images').upload(path, file, { upsert: true, contentType: file.type });
                           if (error) { toast.error('আপলোড ব্যর্থ: ' + error.message); return; }
                           const { data } = supabase.storage.from('product-images').getPublicUrl(path);
                           updateSlide(selectedSlide.id, 'bgImage', data.publicUrl);
@@ -375,6 +376,7 @@ const AdminHeroBanner = () => {
                         }}
                       />
                     </label>
+
                     {selectedSlide.bgImage && (
                       <button
                         onClick={() => updateSlide(selectedSlide.id, 'bgImage', '')}
