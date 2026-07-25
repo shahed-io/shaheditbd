@@ -1,5 +1,4 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 export type SlideData = {
@@ -37,15 +36,6 @@ export type HeroFloatCard = { label: string; value: string; icon: string };
 export type HeroTrustItem = { text: string; icon: string };
 
 export const useHeroBanner = () => {
-  const qc = useQueryClient();
-
-  useEffect(() => {
-    if (typeof window === 'undefined' || !('BroadcastChannel' in window)) return;
-    const ch = new BroadcastChannel('hero-banner-sync');
-    ch.onmessage = () => qc.invalidateQueries({ queryKey: ['hero-banner-settings'] });
-    return () => ch.close();
-  }, [qc]);
-
   return useQuery({
     queryKey: ['hero-banner-settings'],
     queryFn: async () => {
@@ -64,9 +54,8 @@ export const useHeroBanner = () => {
 
       return { slides, bg, stats, floating, trust };
     },
-    staleTime: 30 * 1000,
-    gcTime: 5 * 60 * 1000,
-    refetchOnWindowFocus: true,
-    refetchOnMount: 'always',
+    staleTime: 1000 * 60 * 10,
+    gcTime: 1000 * 60 * 30,
+    refetchOnWindowFocus: false,
   });
 };
