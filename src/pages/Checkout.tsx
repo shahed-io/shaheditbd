@@ -750,6 +750,39 @@ const Checkout = () => {
       }
 
 
+      // ── PayPal — open PayPal SDK modal; capture happens on approval ──
+      if (paymentMethod === 'paypal') {
+        try {
+          try {
+            await supabase.rpc('mark_abandoned_checkout_converted', {
+              p_session_token: sessionTokenRef.current,
+              p_order_id: order.id,
+            });
+          } catch { /* silent */ }
+          if (!user) {
+            try {
+              await supabase.functions.invoke('guest-order-finalize', {
+                body: {
+                  orderId: order.id,
+                  email: form.email,
+                  name: form.name,
+                  redirectTo: `${window.location.origin}/reset-password`,
+                },
+              });
+            } catch (e) { console.warn('[Checkout] guest finalize (paypal) failed:', e); }
+          }
+          setOrderNumber(orderNum);
+          setPaypalOrderId(order.id);
+          return;
+        } catch (e) {
+          console.error('[Checkout] paypal invoke failed:', e);
+          setSubmitError('PayPal শুরু করা যায়নি। আবার চেষ্টা করুন।');
+          setLoading(false);
+          submittingRef.current = false;
+          return;
+        }
+      }
+
       // ── bKash Online (PGW) — redirect to bKash hosted checkout ──
       if (paymentMethod === 'bkash_online') {
         try {
