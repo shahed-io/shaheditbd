@@ -65,6 +65,11 @@ export default function AdminPayPalPGW() {
     onSuccess: () => {
       toast.success('PayPal configuration saved');
       qc.invalidateQueries({ queryKey: ['paypal-pgw-config'] });
+      try {
+        const bc = new BroadcastChannel('paypal-pgw-config-update');
+        bc.postMessage('updated');
+        bc.close();
+      } catch { /* Safari fallback */ }
     },
     onError: (e: any) => toast.error(e.message || 'Save failed'),
   });
