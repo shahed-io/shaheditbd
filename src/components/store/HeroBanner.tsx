@@ -225,13 +225,14 @@ const HeroBanner = () => {
             className="absolute -bottom-20 left-1/4 w-72 h-72 rounded-full pointer-events-none hb-orb"
             style={{ background: 'radial-gradient(circle, hsla(200,90%,48%,0.22), transparent 70%)', filter: 'blur(24px)', animationDelay: '2s' }}
           />
-
+          <div
             className="absolute inset-0 pointer-events-none"
             style={{
               background:
                 'linear-gradient(90deg, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0.20) 30%, rgba(255,255,255,0) 55%)',
             }}
           />
+
 
 
 
