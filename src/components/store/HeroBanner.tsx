@@ -207,16 +207,25 @@ const HeroBanner = () => {
             loading="eager"
             decoding="async"
             fetchPriority="high"
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover hb-ken"
             style={{
               opacity: dir === 'in' ? 1 : 0.55,
-              transform: dir === 'in' ? 'scale(1)' : 'scale(1.02)',
-              transition: 'opacity 0.35s ease, transform 0.5s ease',
+              transition: 'opacity 0.35s ease',
             }}
           />
 
-          {/* Very light left wash — new AI banners already have clean empty left space, so we only add a whisper of readability */}
+          {/* Ambient floating orbs — very subtle */}
           <div
+            aria-hidden
+            className="absolute -top-16 -right-10 w-64 h-64 rounded-full pointer-events-none hb-orb"
+            style={{ background: 'radial-gradient(circle, hsla(258,78%,55%,0.28), transparent 70%)', filter: 'blur(20px)' }}
+          />
+          <div
+            aria-hidden
+            className="absolute -bottom-20 left-1/4 w-72 h-72 rounded-full pointer-events-none hb-orb"
+            style={{ background: 'radial-gradient(circle, hsla(200,90%,48%,0.22), transparent 70%)', filter: 'blur(24px)', animationDelay: '2s' }}
+          />
+
             className="absolute inset-0 pointer-events-none"
             style={{
               background:
