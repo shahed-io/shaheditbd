@@ -140,7 +140,7 @@ const HeroBanner = () => {
             loading="eager"
             decoding="async"
             fetchPriority="high"
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-fill"
             style={{
               opacity: dir === 'in' ? 1 : 0.55,
               transform: dir === 'in' ? 'scale(1)' : 'scale(1.02)',
