@@ -296,14 +296,15 @@ const HeroBanner = () => {
 
               {/* Description — hidden on very small screens to keep it clean */}
               <p
-                className="hidden md:block text-[12.5px] leading-relaxed max-w-[420px]"
-                style={{ color: 'hsl(226,18%,48%)' }}
+                key={`d-${active}`}
+                className="hidden md:block text-[12.5px] leading-relaxed max-w-[420px] hb-fade-up"
+                style={{ color: 'hsl(226,18%,48%)', animationDelay: '0.25s' }}
               >
                 {slide.desc}
               </p>
 
-              {/* Feature pills — desktop only */}
-              <div className="hidden lg:flex flex-wrap gap-1.5">
+              <div key={`fp-${active}`} className="hidden lg:flex flex-wrap gap-1.5 hb-fade-up" style={{ animationDelay: '0.35s' }}>
+
                 {slide.features.map((f) => (
                   <span
                     key={f}
