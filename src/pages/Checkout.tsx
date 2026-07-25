@@ -339,8 +339,6 @@ const Checkout = () => {
     const slug = searchParams.get('product');
     if (!slug) return;
     const qty = Math.max(1, parseInt(searchParams.get('qty') || '1', 10) || 1);
-    const already = allItems.some(it => String((it as any).slug || '') === slug || String(it.id) === slug);
-    if (already) return;
     (async () => {
       try {
         const { data: p, error } = await supabase
@@ -350,6 +348,9 @@ const Checkout = () => {
           .eq('status', 'active')
           .maybeSingle();
         if (error || !p) return;
+        // Guard against double-add: if the product is already in the cart
+        // (from the originating "Buy Now" click), skip.
+        if (allItems.some(it => String(it.id) === String(p.id))) return;
         addToCart({
           id: p.id,
           name: p.name,
