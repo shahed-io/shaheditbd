@@ -3,9 +3,12 @@ import { ArrowRight, ShoppingBag, TrendingUp, Zap, Shield, Clock, Star, ChevronL
 import idmLogo from '@/assets/idm.webp';
 import ms365Logo from '@/assets/ms365-logo.png';
 import winLogo from '@/assets/windows-logo.png';
-import bannerWin11 from '@/assets/banner-win11.jpg';
-import bannerMs365 from '@/assets/banner-ms365.jpg';
-import bannerIdm from '@/assets/banner-idm.jpg';
+import bannerWin11Asset from '@/assets/banner-win11.webp.asset.json';
+import bannerMs365Asset from '@/assets/banner-ms365.webp.asset.json';
+import bannerIdmAsset from '@/assets/banner-idm.webp.asset.json';
+const bannerWin11 = bannerWin11Asset.url;
+const bannerMs365 = bannerMs365Asset.url;
+const bannerIdm = bannerIdmAsset.url;
 import { useHeroBanner, type SlideData } from '@/hooks/useHeroBanner';
 
 type Slide = {
@@ -23,7 +26,7 @@ const STATIC_SLIDES: Slide[] = [
     desc: 'Genuine Microsoft Windows 11 Pro — instant digital delivery to your inbox within minutes.',
     price: '৳599', original: '৳9,999', off: '-94%', badge: 'MOST POPULAR',
     accentFrom: 'hsl(258,78%,55%)', accentTo: 'hsl(200,90%,48%)',
-    emoji: '🪟', features: ['Lifetime License', 'Instant Delivery', 'All Devices'],
+    emoji: '🪟', bgImage: bannerWin11, features: ['Lifetime License', 'Instant Delivery', 'All Devices'],
     productSlug: 'windows-11-pro-licence-key-price-in-bd',
   },
   {
@@ -33,8 +36,8 @@ const STATIC_SLIDES: Slide[] = [
     desc: 'Full Office suite: Word, Excel, PowerPoint, OneDrive 1TB. Premium productivity tools.',
     price: '৳1,999', original: '৳16,500', off: '-88%', badge: 'LIMITED TIME',
     accentFrom: 'hsl(258,78%,55%)', accentTo: 'hsl(200,90%,48%)',
-    emoji: '📦', logoImg: ms365Logo, features: ['1TB OneDrive', '5 Devices', '1 Year'],
-    productSlug: 'microsoft-office-365-personal-subscription-price-in-bd',
+    emoji: '📦', logoImg: ms365Logo, bgImage: bannerMs365, features: ['1TB OneDrive', '5 Devices', '1 Year'],
+    productSlug: 'microsoft-office-365-personal-price-in-bangladesh',
   },
   {
     tag: 'Official Reseller', tagIcon: '🏆',
@@ -43,7 +46,7 @@ const STATIC_SLIDES: Slide[] = [
     desc: 'আমরা IDM-এর অফিশিয়াল রিসেলার। একবার কিনুন, সারাজীবন ব্যবহার করুন।',
     price: '৳2,650', original: '৳6,500', off: '-59%', badge: 'OFFICIAL RESELLER',
     accentFrom: 'hsl(258,78%,55%)', accentTo: 'hsl(200,90%,48%)',
-    emoji: '⚡', logoImg: idmLogo, features: ['Official Reseller ✓', 'Lifetime License', 'Instant Delivery'],
+    emoji: '⚡', logoImg: idmLogo, bgImage: bannerIdm, features: ['Official Reseller ✓', 'Lifetime License', 'Instant Delivery'],
     productSlug: 'internet-download-manager-idm-lifetime-key',
   },
 ];
