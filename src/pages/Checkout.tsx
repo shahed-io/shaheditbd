@@ -18,6 +18,8 @@ import { gTrackBeginCheckout, gTrackPurchase } from '@/components/store/GoogleTr
 import SEOHead from '@/components/seo/SEOHead';
 import { useBkashPgwContent } from '@/hooks/useBkashPgwContent';
 import { getPaymentLogo } from '@/lib/paymentLogos';
+import PayPalButton from '@/components/store/PayPalButton';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const checkoutSchema = z.object({
   name: z.string().trim().min(2, 'নাম কমপক্ষে ২ অক্ষরের হতে হবে').max(100),
@@ -153,6 +155,7 @@ const Checkout = () => {
   const [submitError, setSubmitError] = useState('');
   const [summaryOpen, setSummaryOpen] = useState(true);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [paypalOrderId, setPaypalOrderId] = useState<string | null>(null);
   const abandonedTimer = useRef<ReturnType<typeof setTimeout>>();
   const [walletBalance, setWalletBalance] = useState(0);
   const [refCreditBalance, setRefCreditBalance] = useState(0);
