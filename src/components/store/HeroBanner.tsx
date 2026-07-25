@@ -148,14 +148,15 @@ const HeroBanner = () => {
             }}
           />
 
-          {/* Soft left-side wash so text stays readable over any banner artwork */}
+          {/* Soft left-side wash so text stays readable — lighter so side artwork/curve stays visible */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
               background:
-                'linear-gradient(90deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.72) 32%, rgba(255,255,255,0.25) 55%, rgba(255,255,255,0) 72%)',
+                'linear-gradient(90deg, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.50) 28%, rgba(255,255,255,0.12) 48%, rgba(255,255,255,0) 62%)',
             }}
           />
+
 
           {/* Text overlay — same copy as before, sits on the empty left side of the banner */}
           <div
