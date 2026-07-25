@@ -116,6 +116,70 @@ const HeroBanner = () => {
 
   return (
     <section className="relative mt-[64px] lg:mt-[54px] px-2 sm:px-4 lg:px-6 pt-2 pb-3 md:pt-3 md:pb-5">
+      <style>{`
+        @keyframes hb-ken-burns {
+          0%   { transform: scale(1.02) translate(0,0); }
+          50%  { transform: scale(1.08) translate(-1.2%, -0.8%); }
+          100% { transform: scale(1.02) translate(0,0); }
+        }
+        @keyframes hb-shimmer {
+          0%   { background-position: -200% center; }
+          100% { background-position: 200% center; }
+        }
+        @keyframes hb-fade-up {
+          0%   { opacity: 0; transform: translateY(18px); filter: blur(6px); }
+          100% { opacity: 1; transform: translateY(0);    filter: blur(0);   }
+        }
+        @keyframes hb-pulse-dot {
+          0%,100% { transform: scale(1);   opacity: 1;   }
+          50%     { transform: scale(1.4); opacity: 0.7; }
+        }
+        @keyframes hb-cta-glow {
+          0%,100% { box-shadow: 0 8px 22px hsla(258,78%,55%,0.35), 0 0 0 0 hsla(200,90%,48%,0.35); }
+          50%     { box-shadow: 0 12px 32px hsla(258,78%,55%,0.55), 0 0 26px 6px hsla(200,90%,48%,0.28); }
+        }
+        @keyframes hb-sweep {
+          0%   { transform: translateX(-120%) skewX(-18deg); }
+          100% { transform: translateX(260%)  skewX(-18deg); }
+        }
+        @keyframes hb-float-orb {
+          0%,100% { transform: translate(0,0) scale(1);   opacity: 0.55; }
+          50%     { transform: translate(14px,-18px) scale(1.08); opacity: 0.85; }
+        }
+        @keyframes hb-badge-breathe {
+          0%,100% { box-shadow: 0 4px 16px hsla(258,78%,55%,0.32); }
+          50%     { box-shadow: 0 6px 24px hsla(258,78%,55%,0.55), 0 0 18px hsla(200,90%,48%,0.35); }
+        }
+        .hb-ken       { animation: hb-ken-burns 18s ease-in-out infinite; }
+        .hb-fade-up   { animation: hb-fade-up 0.75s cubic-bezier(.16,1,.3,1) both; }
+        .hb-pulse-dot { animation: hb-pulse-dot 1.6s ease-in-out infinite; }
+        .hb-cta-glow  { animation: hb-cta-glow 2.8s ease-in-out infinite; }
+        .hb-badge-breathe { animation: hb-badge-breathe 3s ease-in-out infinite; }
+        .hb-orb       { animation: hb-float-orb 7s ease-in-out infinite; }
+        .hb-shimmer-text {
+          background-image: linear-gradient(90deg,
+            hsl(258,78%,52%) 0%, hsl(215,82%,52%) 25%, hsl(200,90%,46%) 50%,
+            hsl(215,82%,52%) 75%, hsl(258,78%,52%) 100%);
+          background-size: 200% auto;
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+          animation: hb-shimmer 4.5s linear infinite;
+        }
+        .hb-cta-sweep::after {
+          content: '';
+          position: absolute; inset: 0;
+          background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.55) 50%, transparent 100%);
+          transform: translateX(-120%) skewX(-18deg);
+          animation: hb-sweep 3.2s ease-in-out infinite;
+          pointer-events: none;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .hb-ken, .hb-fade-up, .hb-pulse-dot, .hb-cta-glow, .hb-badge-breathe,
+          .hb-orb, .hb-shimmer-text, .hb-cta-sweep::after { animation: none !important; }
+        }
+      `}</style>
+
       {/* Preload fallback banners so first paint is instant */}
       <link rel="preload" as="image" href={bannerWin11} />
       <link rel="preload" as="image" href={bannerMs365} />
