@@ -25,7 +25,7 @@ const checkoutSchema = z.object({
   phone: z.string().trim().regex(/^(\+880|0)[0-9]{10}$/, 'সঠিক বাংলাদেশি নম্বর দিন (01XXXXXXXXX)').max(20),
 });
 
-type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 'bank_transfer' | 'wallet' | 'bkash_online';
+type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 'bank_transfer' | 'wallet' | 'bkash_online' | 'paypal';
 
 const Checkout = () => {
   const {
@@ -60,6 +60,7 @@ const Checkout = () => {
   // Build dynamic payment methods from DB config
   const paymentMethods = [
     { id: 'bkash_online' as PaymentMethod, label: 'bKash (Online)', color: 'from-pink-600 to-rose-700', number: '', type: 'bKash PGW', logo: bkashLogoSrc },
+    { id: 'paypal' as PaymentMethod, label: 'PayPal', color: 'from-blue-600 to-indigo-700', number: '', type: 'PayPal Checkout', logo: 'https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg' },
     ...paymentConfigs
       .filter(c => c.isActive)
       .sort((a, b) => a.sortOrder - b.sortOrder)
@@ -547,7 +548,7 @@ const Checkout = () => {
       return;
     }
 
-    if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online' && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
+    if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online' && paymentMethod !== 'paypal' && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
     if (items.length === 0) { setSubmitError('Cart empty'); return; }
 
     // Guest checkout is allowed for all payment methods except wallet
@@ -609,6 +610,7 @@ const Checkout = () => {
         transaction_id:
           paymentMethod === 'wallet' ? `WALLET-${orderNum}` :
           paymentMethod === 'bkash_online' ? `BKASH-PENDING-${orderNum}` :
+          paymentMethod === 'paypal' ? `PAYPAL-PENDING-${orderNum}` :
           transactionId.trim(),
         coupon_code: coupon.isApplied ? coupon.code : null,
         coupon_id: couponId,
