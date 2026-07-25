@@ -249,15 +249,16 @@ const HeroBanner = () => {
               {/* Tag + badge */}
               <div key={`row1-${active}`} className="flex flex-wrap items-center gap-1.5 sm:gap-2 hb-fade-up" style={{ animationDelay: '0.05s' }}>
                 <span
-                  className="inline-flex items-center gap-1 text-[8px] sm:text-[9.5px] font-black uppercase tracking-[0.16em] px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-white"
+                  className="inline-flex items-center gap-1 text-[8px] sm:text-[9.5px] font-black uppercase tracking-[0.16em] px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-white hb-badge-breathe"
                   style={{
                     background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(215,82%,52%))',
                     boxShadow: '0 4px 16px hsla(258,78%,55%,0.32)',
                   }}
                 >
-                  <span className="text-[10px] sm:text-[11px]">{slide.tagIcon || '✦'}</span>
+                  <span className="text-[10px] sm:text-[11px] inline-block hb-pulse-dot">{slide.tagIcon || '✦'}</span>
                   {slide.tag}
                 </span>
+
                 <span
                   className="hidden sm:inline-flex items-center text-[9px] font-bold tracking-widest uppercase px-2.5 py-1.5 rounded-full"
                   style={{
