@@ -349,15 +349,15 @@ const HeroBanner = () => {
               </div>
 
               {/* CTAs */}
-              <div className="flex flex-wrap gap-2">
+              <div key={`c-${active}`} className="flex flex-wrap gap-2 hb-fade-up" style={{ animationDelay: '0.55s' }}>
                 <a
                   href={href}
-                  className="inline-flex items-center gap-1.5 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full text-white text-[11px] sm:text-[12.5px] font-bold active:scale-95 transition-transform"
+                  className="hb-cta-sweep hb-cta-glow relative overflow-hidden inline-flex items-center gap-1.5 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full text-white text-[11px] sm:text-[12.5px] font-bold active:scale-95 hover:scale-[1.03] transition-transform"
                   style={{
                     background: 'linear-gradient(135deg, hsl(258,78%,52%), hsl(215,82%,50%))',
-                    boxShadow: '0 8px 22px hsla(258,78%,55%,0.35)',
                   }}
                 >
+
                   <ShoppingBag size={12} strokeWidth={2.5} />
                   Buy Now
                   <ArrowRight size={12} strokeWidth={2.5} />
