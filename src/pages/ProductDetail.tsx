@@ -230,7 +230,7 @@ const ProductDetail = () => {
           }).catch(() => { /* silent */ });
           // Fetch review stats for Google rich snippet schema
           (supabase as any).from('product_reviews_public')
-            .select('rating, review_text, user_name, created_at')
+            .select('rating, body, author_name, created_at')
             .eq('product_slug', row.slug)
             .order('created_at', { ascending: false })
             .then(({ data: rData }: { data: any[] | null }) => {
@@ -240,9 +240,9 @@ const ProductDetail = () => {
                   setReviewStats({ avg: parseFloat(avg.toFixed(1)), count: rData.length });
                   setTopReviews(
                     rData.slice(0, 10).map((r: any) => ({
-                      author: r.user_name || 'Verified Buyer',
+                      author: r.author_name || 'Verified Buyer',
                       rating: Number(r.rating) || 5,
-                      body: r.review_text || '',
+                      body: r.body || '',
                       date: r.created_at ? String(r.created_at).split('T')[0] : undefined,
                     })).filter((r: any) => r.body),
                   );
@@ -1202,7 +1202,7 @@ const ProductDetail = () => {
                         // Guest checkout is supported end-to-end there, and all form
                         // state is preserved in localStorage across auth round-trips.
                         addToCart(cartItem, quantity);
-                        navigate(`/checkout?product=${encodeURIComponent(slug || '')}&qty=${quantity}`);
+                        navigate('/checkout');
                       }}
                       className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-bold text-base transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
                       style={{
