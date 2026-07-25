@@ -324,7 +324,7 @@ const HeroBanner = () => {
               </div>
 
               {/* Price */}
-              <div className="flex items-baseline gap-2 flex-wrap">
+              <div key={`p-${active}`} className="flex items-baseline gap-2 flex-wrap hb-fade-up" style={{ animationDelay: '0.45s' }}>
                 <span
                   className="font-sora font-black leading-none tracking-tight"
                   style={{
