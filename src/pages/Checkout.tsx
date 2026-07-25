@@ -1092,6 +1092,27 @@ const Checkout = () => {
       <SEOHead title="Checkout" description="Complete your secure checkout at Shahed Store." noIndex />
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} redirectAfterLogin={false} oauthRedirectTo={typeof window !== 'undefined' ? window.location.href : undefined} />
 
+      <Dialog open={!!paypalOrderId} onOpenChange={(v) => { if (!v) { setPaypalOrderId(null); setLoading(false); submittingRef.current = false; } }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>Complete PayPal Payment</DialogTitle></DialogHeader>
+          {paypalOrderId && (
+            <PayPalButton
+              orderId={paypalOrderId}
+              onSuccess={({ orderId }) => {
+                setPaypalOrderId(null);
+                setOrderNumber(orderNumber || '');
+                setOrderPlaced(true);
+                setInstantDelivered(true);
+                finishCart();
+                try { navigate(`/dashboard?tab=orders&order=${orderId}`); } catch {}
+              }}
+              onCancel={() => { setPaypalOrderId(null); setLoading(false); submittingRef.current = false; }}
+              onError={() => { setPaypalOrderId(null); setLoading(false); submittingRef.current = false; }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* Optional login prompt for guests — checkout works without login */}
       {!user && (
         <div className="max-w-4xl mx-auto px-4 pt-4">
