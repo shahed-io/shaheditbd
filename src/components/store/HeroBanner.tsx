@@ -148,14 +148,15 @@ const HeroBanner = () => {
             }}
           />
 
-          {/* Soft left-side wash so text stays readable — lighter so side artwork/curve stays visible */}
+          {/* Very light left wash — new AI banners already have clean empty left space, so we only add a whisper of readability */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
               background:
-                'linear-gradient(90deg, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.50) 28%, rgba(255,255,255,0.12) 48%, rgba(255,255,255,0) 62%)',
+                'linear-gradient(90deg, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0.20) 30%, rgba(255,255,255,0) 55%)',
             }}
           />
+
 
 
           {/* Text overlay — same copy as before, sits on the empty left side of the banner */}
