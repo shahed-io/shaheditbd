@@ -112,14 +112,14 @@ const HeroBanner = () => {
   const href = slide.productSlug ? `/product/${slide.productSlug}` : '/shop';
 
   return (
-    <section className="relative mt-[64px] lg:mt-[54px] px-2 sm:px-4 lg:px-8 pt-2 pb-3 md:pt-3 md:pb-5">
+    <section className="relative mt-[64px] lg:mt-[54px] px-2 sm:px-4 lg:px-6 pt-2 pb-3 md:pt-3 md:pb-5">
       {/* Preload fallback banners so first paint is instant */}
       <link rel="preload" as="image" href={bannerWin11} />
       <link rel="preload" as="image" href={bannerMs365} />
       <link rel="preload" as="image" href={bannerIdm} />
 
       <div
-        className="relative mx-auto w-full max-w-[1600px] rounded-[20px] lg:rounded-[28px] overflow-hidden"
+        className="relative mx-auto w-full max-w-[1800px] rounded-[20px] lg:rounded-[28px] overflow-hidden"
         role="region"
         aria-roledescription="carousel"
         aria-label="Featured deals"
