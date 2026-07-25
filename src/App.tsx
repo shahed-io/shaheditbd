@@ -48,6 +48,8 @@ const AdminCopyProtection   = lazy(() => import("./pages/admin/AdminCopyProtecti
 const AdminTickets          = lazy(() => import("./pages/admin/AdminTickets"));
 const AdminPayments         = lazy(() => import("./pages/admin/AdminPayments"));
 const AdminBkashPGW         = lazy(() => import("./pages/admin/AdminBkashPGW"));
+const AdminPayPalPGW        = lazy(() => import("./pages/admin/AdminPayPalPGW"));
+const AdminPayPalTransactions = lazy(() => import("./pages/admin/AdminPayPalTransactions"));
 const AdminSSLCommerzPGW    = lazy(() => import("./pages/admin/AdminSSLCommerzPGW"));
 const AdminEpsGateway       = lazy(() => import("./pages/admin/AdminEpsGateway"));
 const AdminBkashTransactions = lazy(() => import("./pages/admin/AdminBkashTransactions"));
@@ -299,6 +301,8 @@ const AppContent = () => {
             <Route path="sslcommerz-pgw" element={<AdminSuspense><AdminSSLCommerzPGW /></AdminSuspense>} />
             <Route path="eps-gateway" element={<AdminSuspense><AdminEpsGateway /></AdminSuspense>} />
             <Route path="bkash-transactions" element={<AdminSuspense><AdminBkashTransactions /></AdminSuspense>} />
+            <Route path="paypal-pgw" element={<AdminSuspense><AdminPayPalPGW /></AdminSuspense>} />
+            <Route path="paypal-transactions" element={<AdminSuspense><AdminPayPalTransactions /></AdminSuspense>} />
             <Route path="tickets" element={<AdminSuspense><AdminTickets /></AdminSuspense>} />
             <Route path="reports" element={<AdminSuspense><AdminReports /></AdminSuspense>} />
             <Route path="marketing" element={<AdminSuspense><AdminMarketing /></AdminSuspense>} />

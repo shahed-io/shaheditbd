@@ -18,6 +18,8 @@ import { gTrackBeginCheckout, gTrackPurchase } from '@/components/store/GoogleTr
 import SEOHead from '@/components/seo/SEOHead';
 import { useBkashPgwContent } from '@/hooks/useBkashPgwContent';
 import { getPaymentLogo } from '@/lib/paymentLogos';
+import PayPalButton from '@/components/store/PayPalButton';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const checkoutSchema = z.object({
   name: z.string().trim().min(2, 'নাম কমপক্ষে ২ অক্ষরের হতে হবে').max(100),
@@ -25,7 +27,7 @@ const checkoutSchema = z.object({
   phone: z.string().trim().regex(/^(\+880|0)[0-9]{10}$/, 'সঠিক বাংলাদেশি নম্বর দিন (01XXXXXXXXX)').max(20),
 });
 
-type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 'bank_transfer' | 'wallet' | 'bkash_online';
+type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 'bank_transfer' | 'wallet' | 'bkash_online' | 'paypal';
 
 const Checkout = () => {
   const {
@@ -60,6 +62,7 @@ const Checkout = () => {
   // Build dynamic payment methods from DB config
   const paymentMethods = [
     { id: 'bkash_online' as PaymentMethod, label: 'bKash (Online)', color: 'from-pink-600 to-rose-700', number: '', type: 'bKash PGW', logo: bkashLogoSrc },
+    { id: 'paypal' as PaymentMethod, label: 'PayPal', color: 'from-blue-600 to-indigo-700', number: '', type: 'PayPal Checkout', logo: 'https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg' },
     ...paymentConfigs
       .filter(c => c.isActive)
       .sort((a, b) => a.sortOrder - b.sortOrder)
@@ -152,6 +155,7 @@ const Checkout = () => {
   const [submitError, setSubmitError] = useState('');
   const [summaryOpen, setSummaryOpen] = useState(true);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [paypalOrderId, setPaypalOrderId] = useState<string | null>(null);
   const abandonedTimer = useRef<ReturnType<typeof setTimeout>>();
   const [walletBalance, setWalletBalance] = useState(0);
   const [refCreditBalance, setRefCreditBalance] = useState(0);
@@ -547,7 +551,7 @@ const Checkout = () => {
       return;
     }
 
-    if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online' && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
+    if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online' && paymentMethod !== 'paypal' && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
     if (items.length === 0) { setSubmitError('Cart empty'); return; }
 
     // Guest checkout is allowed for all payment methods except wallet
@@ -609,6 +613,7 @@ const Checkout = () => {
         transaction_id:
           paymentMethod === 'wallet' ? `WALLET-${orderNum}` :
           paymentMethod === 'bkash_online' ? `BKASH-PENDING-${orderNum}` :
+          paymentMethod === 'paypal' ? `PAYPAL-PENDING-${orderNum}` :
           transactionId.trim(),
         coupon_code: coupon.isApplied ? coupon.code : null,
         coupon_id: couponId,
@@ -744,6 +749,39 @@ const Checkout = () => {
         }
       }
 
+
+      // ── PayPal — open PayPal SDK modal; capture happens on approval ──
+      if (paymentMethod === 'paypal') {
+        try {
+          try {
+            await supabase.rpc('mark_abandoned_checkout_converted', {
+              p_session_token: sessionTokenRef.current,
+              p_order_id: order.id,
+            });
+          } catch { /* silent */ }
+          if (!user) {
+            try {
+              await supabase.functions.invoke('guest-order-finalize', {
+                body: {
+                  orderId: order.id,
+                  email: form.email,
+                  name: form.name,
+                  redirectTo: `${window.location.origin}/reset-password`,
+                },
+              });
+            } catch (e) { console.warn('[Checkout] guest finalize (paypal) failed:', e); }
+          }
+          setOrderNumber(orderNum);
+          setPaypalOrderId(order.id);
+          return;
+        } catch (e) {
+          console.error('[Checkout] paypal invoke failed:', e);
+          setSubmitError('PayPal শুরু করা যায়নি। আবার চেষ্টা করুন।');
+          setLoading(false);
+          submittingRef.current = false;
+          return;
+        }
+      }
 
       // ── bKash Online (PGW) — redirect to bKash hosted checkout ──
       if (paymentMethod === 'bkash_online') {
@@ -1086,6 +1124,27 @@ const Checkout = () => {
     <div className="min-h-screen bg-background">
       <SEOHead title="Checkout" description="Complete your secure checkout at Shahed Store." noIndex />
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} redirectAfterLogin={false} oauthRedirectTo={typeof window !== 'undefined' ? window.location.href : undefined} />
+
+      <Dialog open={!!paypalOrderId} onOpenChange={(v) => { if (!v) { setPaypalOrderId(null); setLoading(false); submittingRef.current = false; } }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>Complete PayPal Payment</DialogTitle></DialogHeader>
+          {paypalOrderId && (
+            <PayPalButton
+              orderId={paypalOrderId}
+              onSuccess={({ orderId }) => {
+                setPaypalOrderId(null);
+                setOrderNumber(orderNumber || '');
+                setOrderPlaced(true);
+                setInstantDelivered(true);
+                finishCart();
+                try { navigate(`/dashboard?tab=orders&order=${orderId}`); } catch {}
+              }}
+              onCancel={() => { setPaypalOrderId(null); setLoading(false); submittingRef.current = false; }}
+              onError={() => { setPaypalOrderId(null); setLoading(false); submittingRef.current = false; }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Optional login prompt for guests — checkout works without login */}
       {!user && (

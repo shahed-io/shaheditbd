@@ -55,3 +55,11 @@ verify_jwt = false
     verify_jwt = false
   [functions.guest-order-finalize]
     verify_jwt = false
+  [functions.paypal-create-order]
+    verify_jwt = false
+  [functions.paypal-capture-order]
+    verify_jwt = false
+  [functions.paypal-webhook]
+    verify_jwt = false
+  [functions.paypal-refund]
+    verify_jwt = false

@@ -2248,8 +2248,11 @@ export type Database = {
           notes: string | null
           notes_enc: string | null
           order_number: string
+          paid_at: string | null
           payment_method: string | null
           payment_status: string | null
+          paypal_capture_id: string | null
+          paypal_order_id: string | null
           status: Database["public"]["Enums"]["order_status"]
           subtotal: number
           total: number
@@ -2276,8 +2279,11 @@ export type Database = {
           notes?: string | null
           notes_enc?: string | null
           order_number: string
+          paid_at?: string | null
           payment_method?: string | null
           payment_status?: string | null
+          paypal_capture_id?: string | null
+          paypal_order_id?: string | null
           status?: Database["public"]["Enums"]["order_status"]
           subtotal?: number
           total?: number
@@ -2304,8 +2310,11 @@ export type Database = {
           notes?: string | null
           notes_enc?: string | null
           order_number?: string
+          paid_at?: string | null
           payment_method?: string | null
           payment_status?: string | null
+          paypal_capture_id?: string | null
+          paypal_order_id?: string | null
           status?: Database["public"]["Enums"]["order_status"]
           subtotal?: number
           total?: number
@@ -2661,6 +2670,92 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "payment_proofs_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      paypal_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          error_message: string | null
+          id: string
+          mode: string
+          order_id: string | null
+          order_number: string | null
+          paid_at: string | null
+          payer_email: string | null
+          payer_id: string | null
+          payer_name: string | null
+          paypal_capture_id: string | null
+          paypal_order_id: string | null
+          raw_capture: Json | null
+          raw_create: Json | null
+          raw_refund: Json | null
+          raw_webhook: Json | null
+          refunded_amount: number
+          status: string
+          transaction_id: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          error_message?: string | null
+          id?: string
+          mode?: string
+          order_id?: string | null
+          order_number?: string | null
+          paid_at?: string | null
+          payer_email?: string | null
+          payer_id?: string | null
+          payer_name?: string | null
+          paypal_capture_id?: string | null
+          paypal_order_id?: string | null
+          raw_capture?: Json | null
+          raw_create?: Json | null
+          raw_refund?: Json | null
+          raw_webhook?: Json | null
+          refunded_amount?: number
+          status?: string
+          transaction_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          error_message?: string | null
+          id?: string
+          mode?: string
+          order_id?: string | null
+          order_number?: string | null
+          paid_at?: string | null
+          payer_email?: string | null
+          payer_id?: string | null
+          payer_name?: string | null
+          paypal_capture_id?: string | null
+          paypal_order_id?: string | null
+          raw_capture?: Json | null
+          raw_create?: Json | null
+          raw_refund?: Json | null
+          raw_webhook?: Json | null
+          refunded_amount?: number
+          status?: string
+          transaction_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "paypal_transactions_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "orders"
