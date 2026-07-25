@@ -116,7 +116,14 @@ const AdminHeroBanner = () => {
       supabase.from('site_settings').upsert({ key: 'hero_floating', value: JSON.stringify(floating) }, { onConflict: 'key' }),
       supabase.from('site_settings').upsert({ key: 'hero_trust', value: JSON.stringify(trust) }, { onConflict: 'key' }),
     ]);
-    toast.success('হিরো ব্যানার সেভ হয়েছে! হোমপেজে রিফ্রেশ করলে দেখতে পাবেন।');
+    try {
+      if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+        const ch = new BroadcastChannel('hero-banner-sync');
+        ch.postMessage({ type: 'updated', at: Date.now() });
+        ch.close();
+      }
+    } catch {}
+    toast.success('হিরো ব্যানার সেভ হয়েছে! হোমপেজে সাথে সাথে আপডেট হবে।');
     setSaving(false);
   };
 
