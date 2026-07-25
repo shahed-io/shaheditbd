@@ -17,6 +17,7 @@ import { getStoredAffiliateRef, clearStoredAffiliateRef } from '@/hooks/useAffil
 import { gTrackBeginCheckout, gTrackPurchase } from '@/components/store/GoogleTracking';
 import SEOHead from '@/components/seo/SEOHead';
 import { useBkashPgwContent } from '@/hooks/useBkashPgwContent';
+import { usePayPalPgwConfig } from '@/hooks/usePayPalPgwConfig';
 import { getPaymentLogo } from '@/lib/paymentLogos';
 import PayPalButton from '@/components/store/PayPalButton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
