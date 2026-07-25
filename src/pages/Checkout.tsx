@@ -57,12 +57,15 @@ const Checkout = () => {
   const { user } = useAuth();
   const { configs: paymentConfigs } = usePaymentSettings();
   const bkashContent = useBkashPgwContent();
+  const paypalCfg = usePayPalPgwConfig();
   const bkashLogoSrc = getPaymentLogo('bkash_online', '', bkashContent.logo_url);
 
   // Build dynamic payment methods from DB config
   const paymentMethods = [
     { id: 'bkash_online' as PaymentMethod, label: 'bKash (Online)', color: 'from-pink-600 to-rose-700', number: '', type: 'bKash PGW', logo: bkashLogoSrc },
-    { id: 'paypal' as PaymentMethod, label: 'PayPal', color: 'from-blue-600 to-indigo-700', number: '', type: 'PayPal Checkout', logo: 'https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg' },
+    ...(paypalCfg.is_active && paypalCfg.client_id ? [
+      { id: 'paypal' as PaymentMethod, label: 'PayPal', color: 'from-blue-600 to-indigo-700', number: '', type: 'PayPal Checkout', logo: 'https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg' },
+    ] : []),
     ...paymentConfigs
       .filter(c => c.isActive)
       .sort((a, b) => a.sortOrder - b.sortOrder)
