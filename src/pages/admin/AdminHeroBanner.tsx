@@ -343,10 +343,12 @@ const AdminHeroBanner = () => {
                 <div className="bg-primary/5 border border-primary/20 rounded-xl p-3 space-y-2">
                   <label className="text-[11px] font-bold text-foreground flex items-center gap-2">
                     <ImageIcon size={12} className="text-primary" />
-                    ব্যানার ইমেজ (ডেস্কটপ ও মোবাইলের ডান পাশে বসবে)
+                    ব্যানার ইমেজ (সম্পূর্ণ হিরো ব্যানার হিসেবে বসবে)
                   </label>
                   <p className="text-[10px] text-muted-foreground leading-relaxed">
-                    📐 <b>প্রস্তাবিত সাইজ:</b> 1200 × 800 px (ratio ~3:2) · JPG / PNG / WebP · সর্বোচ্চ 800 KB
+                    📐 <b>প্রস্তাবিত সাইজ:</b> ডেস্কটপ <b>1600 × 686 px</b> (21:9) · মোবাইল ফ্রেন্ডলি <b>1536 × 1024 px</b> (3:2)<br/>
+                    ✍️ ছবির <b>বাম পাশ ফাঁকা</b> রাখুন — টেক্সট (টাইটেল, দাম, বাটন) স্বয়ংক্রিয়ভাবে সেখানে বসবে · ডান পাশে প্রোডাক্ট আর্টওয়ার্ক দিন<br/>
+                    JPG / PNG / WebP · সর্বোচ্চ 800 KB
                   </p>
                   <div className="flex items-center gap-2">
                     <label className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg border-2 border-dashed border-primary/40 hover:border-primary/70 hover:bg-primary/5 cursor-pointer transition-colors text-xs font-semibold text-primary">
