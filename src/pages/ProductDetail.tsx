@@ -432,21 +432,22 @@ const ProductDetail = () => {
   const dbSeoTitle = normalizeBrandNameText((product as any).seo_title || '');
   const dbSeoDesc = normalizeBrandNameText((product as any).seo_description || '');
 
+  // Title format: "{Product Name} Price in Bangladesh | Shahed Store" (English, per SEO spec)
   const seoTitle = dbSeoTitle
     ? dbSeoTitle
-    : `${productDisplayName} কিনুন বাংলাদেশ | ৳${displayPrice.toLocaleString()} | Shahed Store`;
+    : `${productDisplayName} Price in Bangladesh | Shahed Store`;
 
   const seoDescription = (() => {
     if (dbSeoDesc) return dbSeoDesc.substring(0, 160);
-    // Auto-generate rich Bangladesh-targeted description
-    const base = shortDescription || description || '';
-    const clean = base.replace(/[#*_`[\]]/g, '').substring(0, 100).trim();
-    const priceStr = `৳${displayPrice.toLocaleString()}`;
-    const discountStr = product.discount_percent ? ` | ${product.discount_percent}% ছাড়` : '';
-    const catStr = product.categories?.name ? ` | ${product.categories.name}` : '';
-    const suffix = `${productDisplayName} কিনুন ${priceStr}${discountStr}${catStr}. ১০০% genuine license. Instant delivery. Shahed Store Bangladesh.`;
-    return clean ? `${clean}. ${suffix}`.substring(0, 160) : suffix.substring(0, 160);
+    // Auto-generate 150-160 char description mentioning product name, BDT price, instant delivery.
+    const priceStr = `৳${displayPrice.toLocaleString()} BDT`;
+    const catStr = product.categories?.name ? ` ${product.categories.name.toLowerCase()}` : '';
+    const base = `Buy ${productDisplayName} at ${priceStr} in Bangladesh. 100% genuine${catStr} license with instant delivery via email. bKash/Nagad accepted — Shahed Store.`;
+    // Pad short strings to hit 150+ chars; truncate long ones to 160.
+    if (base.length >= 150) return base.substring(0, 160);
+    return `${base} Trusted digital software shop in BD.`.substring(0, 160);
   })();
+
 
   // Keywords for meta tag — Bangladesh-targeted long-tail
   const seoKeywords = [
