@@ -130,9 +130,11 @@ if (typeof window !== 'undefined') {
 
 createRoot(document.getElementById("root")!).render(
   <RootErrorBoundary>
-    <ScraperShield>
-      <App />
-    </ScraperShield>
+    <HelmetProvider>
+      <ScraperShield>
+        <App />
+      </ScraperShield>
+    </HelmetProvider>
   </RootErrorBoundary>
 );
 
