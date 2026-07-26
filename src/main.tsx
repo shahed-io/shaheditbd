@@ -8,6 +8,7 @@ import "@fontsource/hind-siliguri/600.css";
 import "@fontsource/hind-siliguri/700.css";
 import React from "react";
 import { ScraperShield } from "./components/ScraperShield";
+import { HelmetProvider } from "react-helmet-async";
 
 // Global error boundary to prevent blank screens
 class RootErrorBoundary extends React.Component<
