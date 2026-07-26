@@ -97,6 +97,7 @@ const Unsubscribe           = lazy(() => import("./pages/Unsubscribe"));
 // SEO sub-pages
 const AdminMetaTags         = lazy(() => import("./pages/admin/seo/AdminMetaTags"));
 const AdminSitemap          = lazy(() => import("./pages/admin/seo/AdminSitemap"));
+const AdminGoogleFeed       = lazy(() => import("./pages/admin/AdminGoogleFeed"));
 const AdminRobots           = lazy(() => import("./pages/admin/seo/AdminRobots"));
 const AdminSchema           = lazy(() => import("./pages/admin/seo/AdminSchema"));
 const AdminKeywords         = lazy(() => import("./pages/admin/seo/AdminKeywords"));
@@ -322,6 +323,7 @@ const AppContent = () => {
             <Route path="semrush" element={<AdminSuspense><AdminSemrush /></AdminSuspense>} />
             <Route path="seo/meta-tags" element={<AdminSuspense><AdminMetaTags /></AdminSuspense>} />
             <Route path="seo/sitemap" element={<AdminSuspense><AdminSitemap /></AdminSuspense>} />
+            <Route path="google-feed" element={<AdminSuspense><AdminGoogleFeed /></AdminSuspense>} />
             <Route path="seo/robots" element={<AdminSuspense><AdminRobots /></AdminSuspense>} />
             <Route path="seo/schema" element={<AdminSuspense><AdminSchema /></AdminSuspense>} />
             <Route path="seo/keywords" element={<AdminSuspense><AdminKeywords /></AdminSuspense>} />

@@ -19,6 +19,7 @@ import {
   Bot, KeyRound, Star, BarChart2,
   ImageIcon, ImageOff, ArrowLeftRight, Wallet, Sliders, Flame, Mail, Facebook, Layers, ShieldCheck, MessageCircle, Brain, AlertTriangle, Palette, Sparkles, Activity, Network, Trophy,
   ShoppingCart as ShopIcon, CreditCard as CreditIcon,
+  ShoppingBag,
 } from 'lucide-react';
 
 interface AdminNotif {
@@ -154,6 +155,7 @@ const MENU_SECTIONS: MenuSection[] = [
       { icon: Activity, label: 'SEO Monitor', path: '/ceo/seo-monitor', badge: 'new' },
       { icon: TrendingUp, label: 'Semrush Rankings', path: '/ceo/semrush', badge: 'new' },
       { icon: Search, label: 'Search Console', path: '/ceo/seo/search-console' },
+      { icon: ShoppingBag, label: 'Google Feed', path: '/ceo/google-feed', badge: 'new' },
       { icon: ShieldCheck, label: 'Site Verification', path: '/ceo/site-verification' },
     ],
   },
