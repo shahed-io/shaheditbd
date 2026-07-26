@@ -18,6 +18,7 @@ import { gTrackBeginCheckout, gTrackPurchase } from '@/components/store/GoogleTr
 import SEOHead from '@/components/seo/SEOHead';
 import { useBkashPgwContent } from '@/hooks/useBkashPgwContent';
 import { usePayPalPgwConfig } from '@/hooks/usePayPalPgwConfig';
+import { useUddoktapayPgwConfig } from '@/hooks/useUddoktapayPgwConfig';
 import { getPaymentLogo } from '@/lib/paymentLogos';
 import PayPalButton from '@/components/store/PayPalButton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -28,7 +29,7 @@ const checkoutSchema = z.object({
   phone: z.string().trim().regex(/^(\+880|0)[0-9]{10}$/, 'সঠিক বাংলাদেশি নম্বর দিন (01XXXXXXXXX)').max(20),
 });
 
-type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 'bank_transfer' | 'wallet' | 'bkash_online' | 'paypal';
+type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 'bank_transfer' | 'wallet' | 'bkash_online' | 'paypal' | 'uddoktapay';
 
 const Checkout = () => {
   const {
@@ -59,6 +60,7 @@ const Checkout = () => {
   const { configs: paymentConfigs } = usePaymentSettings();
   const bkashContent = useBkashPgwContent();
   const paypalCfg = usePayPalPgwConfig();
+  const uddoktapayCfg = useUddoktapayPgwConfig();
   const bkashLogoSrc = getPaymentLogo('bkash_online', '', bkashContent.logo_url);
 
   // Build dynamic payment methods from DB config
@@ -66,6 +68,9 @@ const Checkout = () => {
     { id: 'bkash_online' as PaymentMethod, label: 'bKash (Online)', color: 'from-pink-600 to-rose-700', number: '', type: 'bKash PGW', logo: bkashLogoSrc },
     ...(paypalCfg.is_active && paypalCfg.client_id ? [
       { id: 'paypal' as PaymentMethod, label: 'PayPal', color: 'from-blue-600 to-indigo-700', number: '', type: 'PayPal Checkout', logo: 'https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg' },
+    ] : []),
+    ...(uddoktapayCfg.is_active && uddoktapayCfg.api_key ? [
+      { id: 'uddoktapay' as PaymentMethod, label: 'Uddoktapay (bKash/Nagad/Card)', color: 'from-emerald-600 to-teal-700', number: '', type: 'Uddoktapay Aggregator', logo: 'https://uddoktapay.com/assets/img/logo.png' },
     ] : []),
     ...paymentConfigs
       .filter(c => c.isActive)
@@ -556,7 +561,7 @@ const Checkout = () => {
       return;
     }
 
-    if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online' && paymentMethod !== 'paypal' && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
+    if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online' && paymentMethod !== 'paypal' && paymentMethod !== 'uddoktapay' && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
     if (items.length === 0) { setSubmitError('Cart empty'); return; }
 
     // Guest checkout is allowed for all payment methods except wallet
@@ -619,6 +624,7 @@ const Checkout = () => {
           paymentMethod === 'wallet' ? `WALLET-${orderNum}` :
           paymentMethod === 'bkash_online' ? `BKASH-PENDING-${orderNum}` :
           paymentMethod === 'paypal' ? `PAYPAL-PENDING-${orderNum}` :
+          paymentMethod === 'uddoktapay' ? `UDDOKTAPAY-PENDING-${orderNum}` :
           transactionId.trim(),
         coupon_code: coupon.isApplied ? coupon.code : null,
         coupon_id: couponId,
@@ -788,7 +794,53 @@ const Checkout = () => {
         }
       }
 
-      // ── bKash Online (PGW) — redirect to bKash hosted checkout ──
+      // ── Uddoktapay (aggregator) — redirect to Uddoktapay hosted checkout ──
+      if (paymentMethod === 'uddoktapay') {
+        try {
+          try {
+            await supabase.rpc('mark_abandoned_checkout_converted', {
+              p_session_token: sessionTokenRef.current,
+              p_order_id: order.id,
+            });
+          } catch { /* silent */ }
+          if (!user) {
+            try {
+              await supabase.functions.invoke('guest-order-finalize', {
+                body: {
+                  orderId: order.id,
+                  email: form.email,
+                  name: form.name,
+                  redirectTo: `${window.location.origin}/reset-password`,
+                },
+              });
+            } catch (e) { console.warn('[Checkout] guest finalize (uddoktapay) failed:', e); }
+          }
+          const { data: upData, error: upErr } = await supabase.functions.invoke('uddoktapay-create', {
+            body: { orderId: order.id },
+          });
+          if (upErr || !(upData as any)?.payment_url) {
+            console.error('[Checkout] uddoktapay-create error:', upErr, upData);
+            setSubmitError('Uddoktapay পেমেন্ট শুরু করা যায়নি। আবার চেষ্টা করুন।');
+            setLoading(false);
+            submittingRef.current = false;
+            return;
+          }
+          try {
+            const newTok = 'cs_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 10);
+            localStorage.setItem('checkout_session_token', newTok);
+            sessionTokenRef.current = newTok;
+          } catch {}
+          window.location.href = (upData as any).payment_url;
+          return;
+        } catch (e) {
+          console.error('[Checkout] uddoktapay invoke failed:', e);
+          setSubmitError('Uddoktapay গেটওয়ে কানেক্ট হয়নি। আবার চেষ্টা করুন।');
+          setLoading(false);
+          submittingRef.current = false;
+          return;
+        }
+      }
+
       if (paymentMethod === 'bkash_online') {
         try {
           // Mark abandoned checkout as converted BEFORE redirect, otherwise
