@@ -148,7 +148,7 @@ const ProductDetail = () => {
       try {
         const { data, error } = await supabase
           .from('products')
-          .select('id,name,slug,description,short_description,price,original_price,discount_percent,sku,stock_quantity,status,category_id,image_url,images,tags,is_featured,is_digital,download_link,sort_order,total_sales,total_views,created_at,updated_at,delivery_time,what_you_get,faq,seo_title,seo_description,variants,brand,video_url,product_type,badge,demo_url,warranty_note,refund_note,delivery_type,attributes,subcategory_id,custom_fields, category:category_id(name, slug)')
+          .select('id,name,slug,description,short_description,price,original_price,discount_percent,sku,stock_quantity,status,category_id,image_url,image_alt,images,tags,is_featured,is_digital,download_link,sort_order,total_sales,total_views,created_at,updated_at,delivery_time,what_you_get,faq,seo_title,seo_description,variants,brand,video_url,product_type,badge,demo_url,warranty_note,refund_note,delivery_type,attributes,subcategory_id,custom_fields, category:category_id(name, slug)')
           .eq('slug', slug)
           .eq('status', 'active')
           .limit(1);
@@ -562,7 +562,7 @@ const ProductDetail = () => {
                 <img
                   key={images[activeImg]}
                   src={images[activeImg]}
-                  alt={`${productDisplayName} price in Bangladesh - Shahed Store`}
+                  alt={(product as any).image_alt || `${productDisplayName} price in Bangladesh - Shahed Store`}
                   title={`${productDisplayName} - ৳${displayPrice.toLocaleString()} | Shahed Store Bangladesh`}
                   width={800}
                   height={800}
@@ -633,7 +633,7 @@ const ProductDetail = () => {
                   {images.map((img, i) => (
                     <button key={i} onClick={() => { setActiveImg(i); setImgLoaded(false); }}
                       className={`flex-shrink-0 w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all hover:scale-105 ${activeImg === i ? 'border-primary shadow-[0_0_16px_hsla(271,91%,65%,0.5)]' : 'border-border hover:border-primary/50'}`}>
-                      <img src={img} alt={`${productDisplayName} price in Bangladesh - Shahed Store`} title={`${productDisplayName} gallery image ${i + 1}`} width={160} height={160} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+                      <img src={img} alt={(product as any).image_alt || `${productDisplayName} price in Bangladesh - Shahed Store`} title={`${productDisplayName} gallery image ${i + 1}`} width={160} height={160} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                     </button>
                   ))}
                 </div>

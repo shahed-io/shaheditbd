@@ -3158,6 +3158,7 @@ export type Database = {
           download_link: string | null
           faq: Json | null
           id: string
+          image_alt: string | null
           image_url: string | null
           images: string[] | null
           is_digital: boolean | null
@@ -3201,6 +3202,7 @@ export type Database = {
           download_link?: string | null
           faq?: Json | null
           id?: string
+          image_alt?: string | null
           image_url?: string | null
           images?: string[] | null
           is_digital?: boolean | null
@@ -3244,6 +3246,7 @@ export type Database = {
           download_link?: string | null
           faq?: Json | null
           id?: string
+          image_alt?: string | null
           image_url?: string | null
           images?: string[] | null
           is_digital?: boolean | null
@@ -4644,6 +4647,7 @@ export type Database = {
           download_link: string | null
           faq: Json | null
           id: string
+          image_alt: string | null
           image_url: string | null
           images: string[] | null
           is_digital: boolean | null

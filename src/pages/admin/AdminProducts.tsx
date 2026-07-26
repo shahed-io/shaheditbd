@@ -128,7 +128,7 @@ const emptyForm = {
   faq: [{ q: '', a: '' }] as { q: string; a: string }[],
   tags: '' as string,
   // SEO
-  seo_title: '', seo_description: '',
+  seo_title: '', seo_description: '', image_alt: '',
   // Custom fields: customer must fill before ordering
   custom_fields: [] as CustomField[],
 };
@@ -682,8 +682,9 @@ const AdminProducts = () => {
       tags: tagList,
       what_you_get: cleanWYG.length ? cleanWYG : null,
       faq: cleanFaq.length ? cleanFaq : [],
-      seo_title: form.seo_title || null,
-      seo_description: form.seo_description || null,
+      seo_title: (form.seo_title || `${form.name} Price in Bangladesh | Shahed Store`).substring(0, 60) || null,
+      seo_description: (form.seo_description || (form.description || form.short_description || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 155)) || null,
+      image_alt: (form.image_alt || (form.name ? `${form.name} - Shahed Store BD` : '')) || null,
       variants: cleanVariants.length ? cleanVariants : [],
       attributes: finalAttrs.length ? finalAttrs : [],
       custom_fields: form.custom_fields.filter(f => f.label.trim()) || [],
@@ -879,6 +880,7 @@ const AdminProducts = () => {
       faq: (product.faq as any)?.length ? (product.faq as any) : [{ q: '', a: '' }],
       seo_title: product.seo_title || '',
       seo_description: product.seo_description || '',
+      image_alt: (product as any).image_alt || '',
       custom_fields: (() => {
         try {
           const cf = (product as any).custom_fields;
@@ -1139,12 +1141,15 @@ const AdminProducts = () => {
                       <input required value={form.name}
                         onChange={e => {
                           const n = e.target.value;
-                          // Auto-update slug only if not manually edited
+                          // Auto-fill SEO defaults only when the field is empty (user overrides win)
+                          const autoTitle = n ? `${n} Price in Bangladesh | Shahed Store`.substring(0, 60) : '';
+                          const autoAlt = n ? `${n} - Shahed Store BD` : '';
                           setForm(p => ({
                             ...p,
                             name: n,
-                            slug: generateSlug(n),
-                            seo_title: p.seo_title || n
+                            slug: p.slug && p.slug !== generateSlug(p.name) ? p.slug : generateSlug(n),
+                            seo_title: p.seo_title || autoTitle,
+                            image_alt: p.image_alt || autoAlt,
                           }));
                         }}
                         placeholder="e.g. Windows 11 Pro License Key" className={ic} />
@@ -2352,6 +2357,24 @@ const AdminProducts = () => {
                         maxLength={160} placeholder="Meta description..." className={`${ic} resize-none`} />
                       <p className="text-xs text-muted-foreground mt-1">{form.seo_description.length}/160</p>
                     </div>
+                    <div>
+                      <label className={lc}>URL Slug <span className="text-muted-foreground/60">(shahedstore.com.bd/product/...)</span></label>
+                      <div className="flex gap-2">
+                        <input value={form.slug}
+                          onChange={e => setForm(p => ({ ...p, slug: e.target.value.toLowerCase().replace(/[^\w-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') }))}
+                          placeholder="product-name-here" className={ic} />
+                        <button type="button" onClick={() => setForm(p => ({ ...p, slug: generateSlug(p.name) }))}
+                          className="text-xs px-3 rounded-xl border border-border hover:bg-muted whitespace-nowrap">↺ Regenerate</button>
+                      </div>
+                    </div>
+                    <div>
+                      <label className={lc}>Image Alt Text <span className="text-muted-foreground/60">(for accessibility & Google Images)</span></label>
+                      <input value={form.image_alt}
+                        onChange={e => setForm(p => ({ ...p, image_alt: e.target.value }))}
+                        maxLength={125}
+                        placeholder="e.g. Windows 11 Pro License Key - Shahed Store BD" className={ic} />
+                      <p className="text-xs text-muted-foreground mt-1">{form.image_alt.length}/125</p>
+                    </div>
                     {(form.seo_title || form.seo_description) && (
                       <div className="glass-card rounded-xl p-4 border border-border">
                         <p className="text-xs text-muted-foreground mb-2 font-medium">🔍 Google Preview</p>
@@ -2360,20 +2383,47 @@ const AdminProducts = () => {
                         <p className="text-muted-foreground text-xs mt-1 line-clamp-2">{form.seo_description || 'No description.'}</p>
                       </div>
                     )}
+                    {/* ── Yoast-style SEO Checklist ── */}
                     <div className="glass-card rounded-xl p-4 border border-border space-y-2">
-                      <p className="text-xs font-medium text-foreground">SEO Checklist</p>
-                      {[
-                        { ok: form.seo_title.length >= 10 && form.seo_title.length <= 60, label: 'Title between 10–60 chars' },
-                        { ok: form.seo_description.length >= 50 && form.seo_description.length <= 160, label: 'Description 50–160 chars' },
-                        { ok: !!form.image_url, label: 'Featured image set' },
-                        { ok: !!form.slug, label: 'URL slug defined' },
-                        { ok: !!form.description, label: 'Full description added' },
-                      ].map(item => (
-                        <div key={item.label} className="flex items-center gap-2 text-xs">
-                          <span className={item.ok ? 'text-green-400' : 'text-muted-foreground'}>{item.ok ? '✓' : '○'}</span>
-                          <span className={item.ok ? 'text-foreground' : 'text-muted-foreground'}>{item.label}</span>
-                        </div>
-                      ))}
+                      <p className="text-xs font-bold text-foreground mb-2">✅ SEO Checklist (Yoast-style)</p>
+                      {(() => {
+                        const descText = (form.description || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+                        const wordCount = descText ? descText.split(/\s+/).length : 0;
+                        const titleTrim = form.seo_title.trim().toLowerCase();
+                        const isTitleUnique = !titleTrim || !products.some(p =>
+                          p.id !== (editingProduct?.id ?? '') &&
+                          (p.seo_title || '').trim().toLowerCase() === titleTrim
+                        );
+                        const checks = [
+                          { ok: !!form.image_url, label: 'Featured image is set' },
+                          { ok: !!(form.image_alt && form.image_alt.trim().length >= 5), label: 'Image alt text added (5+ chars)' },
+                          { ok: wordCount >= 100, label: `Description has 100+ words (currently ${wordCount})` },
+                          { ok: form.seo_title.length >= 30 && form.seo_title.length <= 60, label: 'Meta title 30–60 chars' },
+                          { ok: form.seo_description.length >= 120 && form.seo_description.length <= 160, label: 'Meta description 120–160 chars' },
+                          { ok: isTitleUnique, label: 'Meta title is unique across products' },
+                          { ok: !!form.slug && form.slug.length <= 75, label: 'URL slug is set and ≤ 75 chars' },
+                          { ok: /[a-z]/i.test(form.slug), label: 'Slug contains readable words (not just IDs)' },
+                        ];
+                        const passing = checks.filter(c => c.ok).length;
+                        const score = Math.round((passing / checks.length) * 100);
+                        const scoreColor = score >= 80 ? 'text-green-500' : score >= 50 ? 'text-amber-500' : 'text-red-500';
+                        return (
+                          <>
+                            <div className="flex items-center justify-between mb-3 pb-2 border-b border-border">
+                              <span className="text-xs text-muted-foreground">SEO Score</span>
+                              <span className={`text-lg font-bold ${scoreColor}`}>{score}%</span>
+                            </div>
+                            {checks.map(item => (
+                              <div key={item.label} className="flex items-start gap-2 text-xs">
+                                <span className={`mt-0.5 inline-flex items-center justify-center w-4 h-4 rounded-full text-[10px] font-bold ${item.ok ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
+                                  {item.ok ? '✓' : '✕'}
+                                </span>
+                                <span className={item.ok ? 'text-foreground' : 'text-muted-foreground'}>{item.label}</span>
+                              </div>
+                            ))}
+                          </>
+                        );
+                      })()}
                     </div>
                   </div>
                 )}
