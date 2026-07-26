@@ -33,12 +33,20 @@ Deno.serve(async (req) => {
     const targetCurrency = cfg.currency; // usually USD
     const srcCurrency = (order.currency || 'BDT').toUpperCase();
     if (srcCurrency !== targetCurrency) {
-      const { data: cur } = await supabase
+      const { data: cur, error: curErr } = await supabase
         .from('currencies')
-        .select('code, rate_to_bdt')
+        .select('code, rate_from_bdt')
         .in('code', [srcCurrency, targetCurrency]);
-      const rateSrc = Number(cur?.find((c: any) => c.code === srcCurrency)?.rate_to_bdt || 1);
-      const rateDst = Number(cur?.find((c: any) => c.code === targetCurrency)?.rate_to_bdt || 0);
+      if (curErr) {
+        console.error('[paypal-create-order] currency lookup failed', curErr);
+        return jsonResponse({ error: 'Currency conversion unavailable' }, 500);
+      }
+      const rateSrc = Number(cur?.find((c: any) => c.code === srcCurrency)?.rate_from_bdt || (srcCurrency === 'BDT' ? 1 : 0));
+      const rateDst = Number(cur?.find((c: any) => c.code === targetCurrency)?.rate_from_bdt || 0);
+      if (!(rateDst > 0) || !(rateSrc > 0)) {
+        console.error('[paypal-create-order] missing FX rate', { srcCurrency, targetCurrency, rateSrc, rateDst });
+        return jsonResponse({ error: `Missing FX rate for ${targetCurrency}` }, 500);
+      }
       if (rateDst > 0) {
         // amount(src) → BDT → target
         const bdt = srcCurrency === 'BDT' ? amount : amount * rateSrc;
