@@ -561,7 +561,7 @@ const Checkout = () => {
       return;
     }
 
-    if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online' && paymentMethod !== 'paypal' && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
+    if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online' && paymentMethod !== 'paypal' && paymentMethod !== 'uddoktapay' && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
     if (items.length === 0) { setSubmitError('Cart empty'); return; }
 
     // Guest checkout is allowed for all payment methods except wallet
@@ -624,6 +624,7 @@ const Checkout = () => {
           paymentMethod === 'wallet' ? `WALLET-${orderNum}` :
           paymentMethod === 'bkash_online' ? `BKASH-PENDING-${orderNum}` :
           paymentMethod === 'paypal' ? `PAYPAL-PENDING-${orderNum}` :
+          paymentMethod === 'uddoktapay' ? `UDDOKTAPAY-PENDING-${orderNum}` :
           transactionId.trim(),
         coupon_code: coupon.isApplied ? coupon.code : null,
         coupon_id: couponId,
