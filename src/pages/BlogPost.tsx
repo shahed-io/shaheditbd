@@ -274,8 +274,16 @@ const BlogPost = () => {
         title={post.seo_title || post.title}
         description={post.seo_description || post.excerpt || ''}
         ogImage={post.featured_image || undefined}
+        ogImageAlt={post.title}
         ogType="article"
+        canonical={`https://shahedstore.com.bd/blog/${post.slug}`}
         schema={seoSchemas}
+        article={{
+          publishedTime: post.published_at || post.created_at,
+          modifiedTime: post.updated_at,
+          author: post.author_name,
+          section: post.blog_categories?.name,
+        }}
       />
       <Navbar />
 

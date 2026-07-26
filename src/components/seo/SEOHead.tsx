@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { supabase } from '@/integrations/supabase/client';
 
 interface SEOHeadProps {
@@ -102,7 +103,6 @@ const SEOHead = ({
   const TRACKING_PARAMS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'fbclid', 'gclid', 'msclkid', 'ref', 'ref_src', 'mc_cid', 'mc_eid', 'yclid', '_ga'];
   const params = new URLSearchParams(search);
   const hasTrackingParams = TRACKING_PARAMS.some(k => params.has(k));
-  // Pagination / filter params keep index but still canonical points to clean URL
   const shouldNoIndex = noIndex || hasTrackingParams;
 
   const truncate = (value: string, max: number) => value.length > max ? `${value.slice(0, max - 1).trimEnd()}…` : value;
@@ -111,10 +111,14 @@ const SEOHead = ({
   const metaDescription = truncate(description, 160);
   const canonicalUrl = canonical || `${SITE_URL}${cleanPath}`;
   const ogImageFull = normalizeSeoAssetUrl(ogImage);
+  const extraOgImages = (ogImages || []).filter(img => img && img !== ogImage).map(normalizeSeoAssetUrl);
   const gaInjected = useRef(false);
+  const robotsContent = shouldNoIndex
+    ? 'noindex,follow'
+    : 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1';
+  const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
 
-
-  // Fetch GA & GSC settings once
+  // Fetch GA & GSC settings once (side-effect scripts — kept out of Helmet)
   useEffect(() => {
     if (_seoCache.loaded) {
       injectGA(_seoCache.ga);
@@ -140,6 +144,13 @@ const SEOHead = ({
         injectClarity(_seoCache.clarity);
         if (_seoCache.verification) injectVerificationTags(_seoCache.verification);
       });
+  }, []);
+
+  // Keep <html lang="bn"> — critical for BD search ranking (see seo-critical-rules memory).
+  useEffect(() => {
+    if (document.documentElement.lang !== 'bn') {
+      document.documentElement.lang = 'bn';
+    }
   }, []);
 
   function injectGA(gaId?: string) {
@@ -173,165 +184,85 @@ const SEOHead = ({
     document.head.appendChild(s);
   }
 
-  useEffect(() => {
-    // Title
-    document.title = fullTitle;
+  return (
+    <Helmet prioritizeSeoTags>
+      <title>{fullTitle}</title>
 
-    // Lang — keep Bengali primary (matches site content); critical for BD search ranking.
-    // Previously hardcoded to 'en' which prevented Google from ranking Bengali queries.
-    if (document.documentElement.lang !== 'bn') {
-      document.documentElement.lang = 'bn';
-    }
+      {/* Basic meta */}
+      <meta name="description" content={metaDescription} />
+      <meta name="robots" content={robotsContent} />
+      <meta name="googlebot" content={robotsContent} />
+      <meta name="keywords" content={keywords || DEFAULT_KEYWORDS} />
+      <meta name="author" content="Shahed Store" />
+      <meta name="geo.region" content="BD" />
+      <meta name="geo.placename" content="Bangladesh" />
+      <meta name="geo.position" content="23.8103;90.4125" />
+      <meta name="ICBM" content="23.8103, 90.4125" />
 
-    const setMeta = (sel: string, content: string) => {
-      let el = document.querySelector(sel) as HTMLMetaElement | null;
-      if (!el) {
-        el = document.createElement('meta');
-        const attr = sel.includes('[name') ? 'name' : 'property';
-        const val = sel.match(/["']([^"']+)["']/)?.[1] || '';
-        el.setAttribute(attr, val);
-        document.head.appendChild(el);
-      }
-      el.setAttribute('content', content);
-    };
+      {/* Canonical + hreflang */}
+      <link rel="canonical" href={canonicalUrl} />
+      <link rel="alternate" hrefLang="bn-BD" href={canonicalUrl} />
+      <link rel="alternate" hrefLang="en" href={canonicalUrl} />
+      <link rel="alternate" hrefLang="x-default" href={canonicalUrl} />
 
-    const setLink = (rel: string, href: string) => {
-      let el = document.querySelector(`link[rel="${rel}"]`) as HTMLLinkElement | null;
-      if (!el) {
-        el = document.createElement('link');
-        el.setAttribute('rel', rel);
-        document.head.appendChild(el);
-      }
-      el.setAttribute('href', href);
-    };
+      {/* Open Graph */}
+      <meta property="og:title" content={fullTitle} />
+      <meta property="og:description" content={metaDescription} />
+      <meta property="og:type" content={ogType} />
+      <meta property="og:url" content={canonicalUrl} />
+      <meta property="og:image" content={ogImageFull} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      {ogImageAlt && <meta property="og:image:alt" content={ogImageAlt} />}
+      <meta property="og:site_name" content={SITE_NAME} />
+      <meta property="og:locale" content="bn_BD" />
+      {extraOgImages.map(img => (
+        <meta key={img} property="og:image" content={img} />
+      ))}
 
-    // Basic meta
-    setMeta('meta[name="description"]', metaDescription);
-    setMeta('meta[name="robots"]', shouldNoIndex ? 'noindex,follow' : 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1');
-    setMeta('meta[name="googlebot"]', shouldNoIndex ? 'noindex,follow' : 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1');
-    setMeta('meta[name="keywords"]', keywords || DEFAULT_KEYWORDS);
-    setMeta('meta[name="author"]', 'Shahed Store');
-    setMeta('meta[name="geo.region"]', 'BD');
-    setMeta('meta[name="geo.placename"]', 'Bangladesh');
-    setMeta('meta[name="geo.position"]', '23.8103;90.4125');
-    setMeta('meta[name="ICBM"]', '23.8103, 90.4125');
+      {/* Twitter Card */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={fullTitle} />
+      <meta name="twitter:description" content={metaDescription} />
+      <meta name="twitter:image" content={ogImageFull} />
+      {ogImageAlt && <meta name="twitter:image:alt" content={ogImageAlt} />}
 
-    // hreflang for Bangladesh bilingual SEO
-    const setHreflang = (lang: string, href: string) => {
-      let el = document.querySelector(`link[hreflang="${lang}"]`) as HTMLLinkElement | null;
-      if (!el) {
-        el = document.createElement('link');
-        el.setAttribute('rel', 'alternate');
-        el.setAttribute('hreflang', lang);
-        document.head.appendChild(el);
-      }
-      el.setAttribute('href', href);
-    };
-    setHreflang('bn-BD', canonicalUrl);
-    setHreflang('en', canonicalUrl);
-    setHreflang('x-default', canonicalUrl);
+      {/* AI-search hints */}
+      <meta name="ai-content-declaration" content="human-authored, may-be-cited-with-attribution" />
+      <meta name="rating" content="general" />
+      <meta name="distribution" content="global" />
+      <meta name="referrer" content="no-referrer-when-downgrade" />
+      <meta name="format-detection" content="telephone=yes" />
 
-    // Open Graph
-    setMeta('meta[property="og:title"]', fullTitle);
-    setMeta('meta[property="og:description"]', metaDescription);
-    setMeta('meta[property="og:type"]', ogType);
-    setMeta('meta[property="og:url"]', canonicalUrl);
-    setMeta('meta[property="og:image"]', ogImageFull);
-    setMeta('meta[property="og:image:width"]', '1200');
-    setMeta('meta[property="og:image:height"]', '630');
-    setMeta('meta[property="og:site_name"]', SITE_NAME);
-    setMeta('meta[property="og:locale"]', 'bn_BD');
+      {/* Pagination */}
+      {prevUrl && <link rel="prev" href={prevUrl} />}
+      {nextUrl && <link rel="next" href={nextUrl} />}
 
-    // Additional og:image tags for gallery images
-    document.querySelectorAll('meta[data-extra-og-image]').forEach(el => el.remove());
-    if (ogImages && ogImages.length > 0) {
-      ogImages.forEach(img => {
-        if (img && img !== ogImage) {
-          const imgUrl = normalizeSeoAssetUrl(img);
-          const el = document.createElement('meta');
-          el.setAttribute('property', 'og:image');
-          el.setAttribute('content', imgUrl);
-          el.setAttribute('data-extra-og-image', 'true');
-          document.head.appendChild(el);
-        }
-      });
-    }
+      {/* Article-specific meta (blog posts) */}
+      {ogType === 'article' && article?.publishedTime && (
+        <meta property="article:published_time" content={article.publishedTime} />
+      )}
+      {ogType === 'article' && article?.modifiedTime && (
+        <meta property="article:modified_time" content={article.modifiedTime} />
+      )}
+      {ogType === 'article' && article?.author && (
+        <meta property="article:author" content={article.author} />
+      )}
+      {ogType === 'article' && article?.section && (
+        <meta property="article:section" content={article.section} />
+      )}
+      {ogType === 'article' && article?.tags?.map(t => (
+        <meta key={t} property="article:tag" content={t} />
+      ))}
 
-    // Twitter Card
-    setMeta('meta[name="twitter:card"]', 'summary_large_image');
-    setMeta('meta[name="twitter:title"]', fullTitle);
-    setMeta('meta[name="twitter:description"]', metaDescription);
-    setMeta('meta[name="twitter:image"]', ogImageFull);
-    if (ogImageAlt) setMeta('meta[name="twitter:image:alt"]', ogImageAlt);
-    if (ogImageAlt) setMeta('meta[property="og:image:alt"]', ogImageAlt);
-
-    // AI-search hints (Google AI Overviews / Perplexity / ChatGPT Search)
-    setMeta('meta[name="ai-content-declaration"]', 'human-authored, may-be-cited-with-attribution');
-    setMeta('meta[name="rating"]', 'general');
-    setMeta('meta[name="distribution"]', 'global');
-    setMeta('meta[name="referrer"]', 'no-referrer-when-downgrade');
-    setMeta('meta[name="format-detection"]', 'telephone=yes');
-
-    // Canonical
-    setLink('canonical', canonicalUrl);
-
-    // Pagination (rel=prev/next) — kept for Bing/Yandex; Google ignores but harmless
-    document.querySelectorAll('link[rel="prev"], link[rel="next"]').forEach(el => el.remove());
-    if (prevUrl) {
-      const l = document.createElement('link');
-      l.setAttribute('rel', 'prev');
-      l.setAttribute('href', prevUrl);
-      document.head.appendChild(l);
-    }
-    if (nextUrl) {
-      const l = document.createElement('link');
-      l.setAttribute('rel', 'next');
-      l.setAttribute('href', nextUrl);
-      document.head.appendChild(l);
-    }
-
-    // Article meta (Open Graph article namespace) — only for blog posts
-    document.querySelectorAll('meta[data-article-meta]').forEach(el => el.remove());
-    if (ogType === 'article' && article) {
-      const addArt = (prop: string, content?: string) => {
-        if (!content) return;
-        const m = document.createElement('meta');
-        m.setAttribute('property', prop);
-        m.setAttribute('content', content);
-        m.setAttribute('data-article-meta', 'true');
-        document.head.appendChild(m);
-      };
-      addArt('article:published_time', article.publishedTime);
-      addArt('article:modified_time', article.modifiedTime);
-      addArt('article:author', article.author);
-      addArt('article:section', article.section);
-      article.tags?.forEach(t => addArt('article:tag', t));
-    }
-
-    // JSON-LD Schema
-    const existingScripts = document.querySelectorAll('script[data-seo-schema]');
-    existingScripts.forEach(s => s.remove());
-
-    if (schema) {
-      const schemas = Array.isArray(schema) ? schema : [schema];
-      schemas.forEach(s => {
-        const script = document.createElement('script');
-        script.type = 'application/ld+json';
-        script.setAttribute('data-seo-schema', 'true');
-        script.textContent = JSON.stringify(s);
-        document.head.appendChild(script);
-      });
-    }
-
-    return () => {
-      document.querySelectorAll('script[data-seo-schema]').forEach(s => s.remove());
-      document.querySelectorAll('meta[data-extra-og-image]').forEach(el => el.remove());
-      document.querySelectorAll('meta[data-article-meta]').forEach(el => el.remove());
-      document.querySelectorAll('link[rel="prev"], link[rel="next"]').forEach(el => el.remove());
-    };
-  }, [fullTitle, metaDescription, ogType, canonicalUrl, ogImageFull, shouldNoIndex, schema, keywords, ogImages, ogImageAlt, prevUrl, nextUrl, article]);
-
-  return null;
+      {/* JSON-LD schemas */}
+      {schemas.map((s, i) => (
+        <script key={i} type="application/ld+json">
+          {JSON.stringify(s)}
+        </script>
+      ))}
+    </Helmet>
+  );
 };
 
 export default SEOHead;

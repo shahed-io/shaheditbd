@@ -299,19 +299,67 @@ const Shop = () => {
 
   const activeCategory = categories.find(c => c.slug === activeCatSlug);
 
+  // Per-category SEO copy targeting "buy {category} in Bangladesh"
+  const CATEGORY_SEO: Record<string, { title: string; desc: string; keywords: string }> = {
+    'windows': {
+      title: 'Buy Windows 10 & 11 License Keys in Bangladesh | Shahed Store',
+      desc: 'Buy genuine Windows 10 & Windows 11 Pro/Home license keys in Bangladesh at the lowest price. 100% original activation, instant email delivery, bKash accepted.',
+      keywords: 'buy windows in bangladesh, windows 11 pro key bd, windows 10 license bangladesh, windows key price bd, shahed store',
+    },
+    'microsoft-office': {
+      title: 'Buy Microsoft Office 365 in Bangladesh | Genuine License',
+      desc: 'Buy Microsoft Office 365 and Office 2021 in Bangladesh at best price. Original license, 1 to 5 users, instant activation, lifetime plans available. Shahed Store BD.',
+      keywords: 'buy microsoft office in bangladesh, office 365 bd price, ms office 2021 bangladesh, office 365 subscription bd, shahed store',
+    },
+    'office': {
+      title: 'Buy Microsoft Office 365 in Bangladesh | Genuine License',
+      desc: 'Buy Microsoft Office 365 and Office 2021 in Bangladesh at best price. Original license, 1 to 5 users, instant activation, lifetime plans available. Shahed Store BD.',
+      keywords: 'buy microsoft office in bangladesh, office 365 bd price, ms office 2021 bangladesh, office 365 subscription bd, shahed store',
+    },
+    'adobe': {
+      title: 'Buy Adobe Creative Cloud in Bangladesh | All Apps',
+      desc: 'Buy Adobe Creative Cloud, Photoshop, Illustrator, Premiere Pro in Bangladesh at cheapest price. Genuine subscription, monthly/yearly plans, instant delivery.',
+      keywords: 'buy adobe in bangladesh, adobe creative cloud bd, photoshop subscription bangladesh, adobe cc price bd, shahed store',
+    },
+    'antivirus': {
+      title: 'Buy Antivirus Software in Bangladesh | ESET, Bitdefender, Kaspersky',
+      desc: 'Buy genuine antivirus software in Bangladesh — ESET, Bitdefender, Kaspersky, Norton at the lowest price. 1-3 year licenses, instant activation, 100% original.',
+      keywords: 'buy antivirus in bangladesh, eset bd price, bitdefender bangladesh, kaspersky bd, antivirus cheap bd, shahed store',
+    },
+    'vpn': {
+      title: 'Buy VPN in Bangladesh | NordVPN, ExpressVPN, Surfshark',
+      desc: 'Buy premium VPN subscriptions in Bangladesh — NordVPN, ExpressVPN, Surfshark at the best price. Fast servers, secure browsing, instant delivery. Shahed Store.',
+      keywords: 'buy vpn in bangladesh, nordvpn bd price, expressvpn bangladesh, surfshark bd, vpn subscription bangladesh, shahed store',
+    },
+    'streaming': {
+      title: 'Buy Streaming Subscriptions in Bangladesh | Netflix, Spotify, YouTube',
+      desc: 'Buy Netflix Premium, Spotify Premium, YouTube Premium and Disney+ subscriptions in Bangladesh at cheapest price. Instant delivery, verified accounts.',
+      keywords: 'buy streaming in bangladesh, netflix bd price, spotify premium bd, youtube premium bangladesh, shahed store',
+    },
+    'ai-tools': {
+      title: 'Buy AI Tools in Bangladesh | ChatGPT Plus, Claude, Midjourney',
+      desc: 'Buy premium AI tool subscriptions in Bangladesh — ChatGPT Plus, Claude Pro, Midjourney, Perplexity at the lowest price. Instant activation, genuine access.',
+      keywords: 'buy ai tools in bangladesh, chatgpt plus bd, claude pro bangladesh, midjourney bd, ai subscription bangladesh, shahed store',
+    },
+  };
+  const catSeo = activeCategory ? CATEGORY_SEO[activeCategory.slug] : undefined;
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SEOHead
-        title={activeCategory
-          ? `${activeCategory.name} কিনুন বাংলাদেশ | Best Price – Shahed Store`
-          : 'Buy Digital Software, License Keys & Subscriptions – Best Price in Bangladesh'}
-        description={activeCategory
-          ? `Buy original ${activeCategory.name} at the best price in Bangladesh. ১০০% genuine license key. Instant delivery. Shahed Store – Bangladesh's most trusted digital software shop.`
-          : 'Shop Windows 11, Office 365, Adobe CC, Netflix, Spotify, Antivirus, VPN & all digital software at the lowest price in Bangladesh. ১০০% genuine. Instant delivery. BKash/Nagad payment.'}
+        title={catSeo?.title
+          ?? (activeCategory
+            ? `Buy ${activeCategory.name} in Bangladesh | Best Price – Shahed Store`
+            : 'Buy Digital Software, License Keys & Subscriptions – Best Price in Bangladesh')}
+        description={catSeo?.desc
+          ?? (activeCategory
+            ? `Buy original ${activeCategory.name} at the best price in Bangladesh. 100% genuine license, instant email delivery, bKash/Nagad accepted. Shahed Store BD.`
+            : 'Shop Windows 11, Office 365, Adobe CC, Netflix, Spotify, Antivirus, VPN & all digital software at the lowest price in Bangladesh. 100% genuine, instant delivery.')}
         canonical={activeCatSlug ? `https://shahedstore.com.bd/shop?category=${activeCatSlug}` : 'https://shahedstore.com.bd/shop'}
-        keywords={activeCategory
-          ? `${activeCategory.name} price in bangladesh, ${activeCategory.name} কিনুন, buy ${activeCategory.name} bangladesh, ${activeCategory.name} bd, shahed store`
-          : 'digital software bangladesh, license key bangladesh, windows 11 key, office 365 bangladesh, adobe bangladesh, netflix subscription bd, shahed store'}
+        keywords={catSeo?.keywords
+          ?? (activeCategory
+            ? `buy ${activeCategory.name} in bangladesh, ${activeCategory.name} price bd, ${activeCategory.name} bangladesh, shahed store`
+            : 'digital software bangladesh, license key bangladesh, windows 11 key, office 365 bangladesh, adobe bangladesh, netflix subscription bd, shahed store')}
         schema={[
           ...(products.length > 0 ? [itemListSchema(products.map(p => ({ name: p.name, slug: p.slug, image: p.image_url, price: p.price })))] : []),
           breadcrumbSchema([
@@ -321,6 +369,7 @@ const Shop = () => {
           ]),
         ]}
       />
+
       <Navbar />
 
       <div className="container-fluid py-10">
