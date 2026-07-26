@@ -794,7 +794,53 @@ const Checkout = () => {
         }
       }
 
-      // ── bKash Online (PGW) — redirect to bKash hosted checkout ──
+      // ── Uddoktapay (aggregator) — redirect to Uddoktapay hosted checkout ──
+      if (paymentMethod === 'uddoktapay') {
+        try {
+          try {
+            await supabase.rpc('mark_abandoned_checkout_converted', {
+              p_session_token: sessionTokenRef.current,
+              p_order_id: order.id,
+            });
+          } catch { /* silent */ }
+          if (!user) {
+            try {
+              await supabase.functions.invoke('guest-order-finalize', {
+                body: {
+                  orderId: order.id,
+                  email: form.email,
+                  name: form.name,
+                  redirectTo: `${window.location.origin}/reset-password`,
+                },
+              });
+            } catch (e) { console.warn('[Checkout] guest finalize (uddoktapay) failed:', e); }
+          }
+          const { data: upData, error: upErr } = await supabase.functions.invoke('uddoktapay-create', {
+            body: { orderId: order.id },
+          });
+          if (upErr || !(upData as any)?.payment_url) {
+            console.error('[Checkout] uddoktapay-create error:', upErr, upData);
+            setSubmitError('Uddoktapay পেমেন্ট শুরু করা যায়নি। আবার চেষ্টা করুন।');
+            setLoading(false);
+            submittingRef.current = false;
+            return;
+          }
+          try {
+            const newTok = 'cs_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 10);
+            localStorage.setItem('checkout_session_token', newTok);
+            sessionTokenRef.current = newTok;
+          } catch {}
+          window.location.href = (upData as any).payment_url;
+          return;
+        } catch (e) {
+          console.error('[Checkout] uddoktapay invoke failed:', e);
+          setSubmitError('Uddoktapay গেটওয়ে কানেক্ট হয়নি। আবার চেষ্টা করুন।');
+          setLoading(false);
+          submittingRef.current = false;
+          return;
+        }
+      }
+
       if (paymentMethod === 'bkash_online') {
         try {
           // Mark abandoned checkout as converted BEFORE redirect, otherwise
