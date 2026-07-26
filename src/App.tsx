@@ -98,6 +98,7 @@ const Unsubscribe           = lazy(() => import("./pages/Unsubscribe"));
 const AdminMetaTags         = lazy(() => import("./pages/admin/seo/AdminMetaTags"));
 const AdminSitemap          = lazy(() => import("./pages/admin/seo/AdminSitemap"));
 const AdminGoogleFeed       = lazy(() => import("./pages/admin/AdminGoogleFeed"));
+const AdminGoogleIndexing   = lazy(() => import("./pages/admin/AdminGoogleIndexing"));
 const AdminRobots           = lazy(() => import("./pages/admin/seo/AdminRobots"));
 const AdminSchema           = lazy(() => import("./pages/admin/seo/AdminSchema"));
 const AdminKeywords         = lazy(() => import("./pages/admin/seo/AdminKeywords"));
