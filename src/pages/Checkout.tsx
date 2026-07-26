@@ -18,6 +18,7 @@ import { gTrackBeginCheckout, gTrackPurchase } from '@/components/store/GoogleTr
 import SEOHead from '@/components/seo/SEOHead';
 import { useBkashPgwContent } from '@/hooks/useBkashPgwContent';
 import { usePayPalPgwConfig } from '@/hooks/usePayPalPgwConfig';
+import { useUddoktapayPgwConfig } from '@/hooks/useUddoktapayPgwConfig';
 import { getPaymentLogo } from '@/lib/paymentLogos';
 import PayPalButton from '@/components/store/PayPalButton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
