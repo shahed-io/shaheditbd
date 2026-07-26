@@ -120,7 +120,8 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
               <div className="w-48 flex-shrink-0 relative overflow-hidden">
                 <img
                   src={product.image}
-                  alt={product.name}
+                  alt={`${product.name} - Buy at ৳${product.price.toLocaleString()} in Bangladesh`}
+                  title={`${product.name} - Shahed Store Bangladesh`}
                   className="w-full h-full object-cover"
                   style={{ minHeight: '280px' }}
                   onError={e => { (e.target as HTMLImageElement).src = 'https://placehold.co/300x300/13131f/a855f7?text=Product'; }}
