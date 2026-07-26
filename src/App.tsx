@@ -325,6 +325,7 @@ const AppContent = () => {
             <Route path="seo/meta-tags" element={<AdminSuspense><AdminMetaTags /></AdminSuspense>} />
             <Route path="seo/sitemap" element={<AdminSuspense><AdminSitemap /></AdminSuspense>} />
             <Route path="google-feed" element={<AdminSuspense><AdminGoogleFeed /></AdminSuspense>} />
+            <Route path="google-indexing" element={<AdminSuspense><AdminGoogleIndexing /></AdminSuspense>} />
             <Route path="seo/robots" element={<AdminSuspense><AdminRobots /></AdminSuspense>} />
             <Route path="seo/schema" element={<AdminSuspense><AdminSchema /></AdminSuspense>} />
             <Route path="seo/keywords" element={<AdminSuspense><AdminKeywords /></AdminSuspense>} />
