@@ -148,7 +148,7 @@ const ProductDetail = () => {
       try {
         const { data, error } = await supabase
           .from('products')
-          .select('id,name,slug,description,short_description,price,original_price,discount_percent,sku,stock_quantity,status,category_id,image_url,images,tags,is_featured,is_digital,download_link,sort_order,total_sales,total_views,created_at,updated_at,delivery_time,what_you_get,faq,seo_title,seo_description,variants,brand,video_url,product_type,badge,demo_url,warranty_note,refund_note,delivery_type,attributes,subcategory_id,custom_fields, category:category_id(name, slug)')
+          .select('id,name,slug,description,short_description,price,original_price,discount_percent,sku,stock_quantity,status,category_id,image_url,image_alt,images,tags,is_featured,is_digital,download_link,sort_order,total_sales,total_views,created_at,updated_at,delivery_time,what_you_get,faq,seo_title,seo_description,variants,brand,video_url,product_type,badge,demo_url,warranty_note,refund_note,delivery_type,attributes,subcategory_id,custom_fields, category:category_id(name, slug)')
           .eq('slug', slug)
           .eq('status', 'active')
           .limit(1);
