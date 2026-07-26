@@ -432,10 +432,10 @@ const ProductDetail = () => {
   const dbSeoTitle = normalizeBrandNameText((product as any).seo_title || '');
   const dbSeoDesc = normalizeBrandNameText((product as any).seo_description || '');
 
-  // Title format: "{Product Name} Price in Bangladesh | Shahed Store" (English, per SEO spec)
+  // Title format: "{Product Name} – ৳{Price} in BD | Shahed Store"
   const seoTitle = dbSeoTitle
     ? dbSeoTitle
-    : `${productDisplayName} Price in Bangladesh | Shahed Store`;
+    : `${productDisplayName} – ৳${displayPrice.toLocaleString()} in BD | Shahed Store`;
 
   const seoDescription = (() => {
     if (dbSeoDesc) return dbSeoDesc.substring(0, 160);

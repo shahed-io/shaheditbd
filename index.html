@@ -18,7 +18,11 @@
     <meta name="geo.placename" content="Dhaka, Bangladesh" />
     <meta name="language" content="bn" />
     <meta name="revisit-after" content="3 days" />
-    <link rel="canonical" href="https://shahedstore.com.bd/" />
+    <!-- Per-route canonical is emitted by SEOHead (react-helmet-async).
+         Static canonical intentionally omitted here — <link rel="canonical">
+         does not dedupe in Helmet, so a static one would ship alongside the
+         per-route one and point every page at the homepage. -->
+
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
