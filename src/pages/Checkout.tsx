@@ -28,7 +28,7 @@ const checkoutSchema = z.object({
   phone: z.string().trim().regex(/^(\+880|0)[0-9]{10}$/, 'সঠিক বাংলাদেশি নম্বর দিন (01XXXXXXXXX)').max(20),
 });
 
-type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 'bank_transfer' | 'wallet' | 'bkash_online' | 'paypal';
+type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 'bank_transfer' | 'wallet' | 'bkash_online' | 'paypal' | 'uddoktapay';
 
 const Checkout = () => {
   const {
@@ -59,6 +59,7 @@ const Checkout = () => {
   const { configs: paymentConfigs } = usePaymentSettings();
   const bkashContent = useBkashPgwContent();
   const paypalCfg = usePayPalPgwConfig();
+  const uddoktapayCfg = useUddoktapayPgwConfig();
   const bkashLogoSrc = getPaymentLogo('bkash_online', '', bkashContent.logo_url);
 
   // Build dynamic payment methods from DB config
@@ -66,6 +67,9 @@ const Checkout = () => {
     { id: 'bkash_online' as PaymentMethod, label: 'bKash (Online)', color: 'from-pink-600 to-rose-700', number: '', type: 'bKash PGW', logo: bkashLogoSrc },
     ...(paypalCfg.is_active && paypalCfg.client_id ? [
       { id: 'paypal' as PaymentMethod, label: 'PayPal', color: 'from-blue-600 to-indigo-700', number: '', type: 'PayPal Checkout', logo: 'https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg' },
+    ] : []),
+    ...(uddoktapayCfg.is_active && uddoktapayCfg.api_key ? [
+      { id: 'uddoktapay' as PaymentMethod, label: 'Uddoktapay (bKash/Nagad/Card)', color: 'from-emerald-600 to-teal-700', number: '', type: 'Uddoktapay Aggregator', logo: 'https://uddoktapay.com/assets/img/logo.png' },
     ] : []),
     ...paymentConfigs
       .filter(c => c.isActive)
