@@ -562,8 +562,13 @@ const ProductDetail = () => {
                 <img
                   key={images[activeImg]}
                   src={images[activeImg]}
-                  alt={`Buy ${productDisplayName} at best price in Bangladesh - Shahed Store`}
+                  alt={`${productDisplayName} price in Bangladesh - Shahed Store`}
                   title={`${productDisplayName} - ৳${displayPrice.toLocaleString()} | Shahed Store Bangladesh`}
+                  width={800}
+                  height={800}
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
                   onLoad={() => setImgLoaded(true)}
                   onError={e => { (e.target as HTMLImageElement).src = PLACEHOLDER; }}
                   className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
@@ -628,7 +633,7 @@ const ProductDetail = () => {
                   {images.map((img, i) => (
                     <button key={i} onClick={() => { setActiveImg(i); setImgLoaded(false); }}
                       className={`flex-shrink-0 w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all hover:scale-105 ${activeImg === i ? 'border-primary shadow-[0_0_16px_hsla(271,91%,65%,0.5)]' : 'border-border hover:border-primary/50'}`}>
-                      <img src={img} alt={`${productDisplayName} — Product Image ${i + 1} | Buy in Bangladesh`} title={`${productDisplayName} gallery image ${i + 1}`} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+                      <img src={img} alt={`${productDisplayName} price in Bangladesh - Shahed Store`} title={`${productDisplayName} gallery image ${i + 1}`} width={160} height={160} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                     </button>
                   ))}
                 </div>
@@ -1586,8 +1591,11 @@ const RelatedProducts = ({ categoryId, currentProductId }: { categoryId: string 
                   <div className="relative aspect-square overflow-hidden rounded-lg border border-border bg-muted/30 group-hover:border-primary/40 transition-colors">
                     <img
                       src={p.image_url || PLACEHOLDER}
-                      alt={p.name}
+                      alt={`${p.name} price in Bangladesh - Shahed Store`}
+                      width={300}
+                      height={300}
                       loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       onError={e => { (e.target as HTMLImageElement).src = PLACEHOLDER; }}
                     />
