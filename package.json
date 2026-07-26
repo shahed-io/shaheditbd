@@ -12,7 +12,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "predev": "bunx tsx scripts/generate-sitemap.ts",
-    "prebuild": "bunx tsx scripts/generate-sitemap.ts"
+    "prebuild": "bunx tsx scripts/generate-sitemap.ts",
+    "postbuild": "bunx tsx scripts/prerender.ts"
   },
   "dependencies": {
     "@fontsource/arvo": "^5.2.7",
