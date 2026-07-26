@@ -156,6 +156,7 @@ const MENU_SECTIONS: MenuSection[] = [
       { icon: TrendingUp, label: 'Semrush Rankings', path: '/ceo/semrush', badge: 'new' },
       { icon: Search, label: 'Search Console', path: '/ceo/seo/search-console' },
       { icon: ShoppingBag, label: 'Google Feed', path: '/ceo/google-feed', badge: 'new' },
+      { icon: Search, label: 'Google Indexing', path: '/ceo/google-indexing', badge: 'new' },
       { icon: ShieldCheck, label: 'Site Verification', path: '/ceo/site-verification' },
     ],
   },

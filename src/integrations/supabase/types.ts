@@ -1446,6 +1446,83 @@ export type Database = {
         }
         Relationships: []
       }
+      google_indexing_config: {
+        Row: {
+          id: number
+          last_test_message: string | null
+          last_test_ok: boolean | null
+          last_tested_at: string | null
+          project_id: string | null
+          service_account_email: string | null
+          service_account_json: string | null
+          updated_at: string
+        }
+        Insert: {
+          id?: number
+          last_test_message?: string | null
+          last_test_ok?: boolean | null
+          last_tested_at?: string | null
+          project_id?: string | null
+          service_account_email?: string | null
+          service_account_json?: string | null
+          updated_at?: string
+        }
+        Update: {
+          id?: number
+          last_test_message?: string | null
+          last_test_ok?: boolean | null
+          last_tested_at?: string | null
+          project_id?: string | null
+          service_account_email?: string | null
+          service_account_json?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      google_indexing_log: {
+        Row: {
+          error: string | null
+          id: string
+          notification_type: string
+          ok: boolean
+          product_id: string | null
+          response_body: string | null
+          status_code: number | null
+          submitted_at: string
+          url: string
+        }
+        Insert: {
+          error?: string | null
+          id?: string
+          notification_type?: string
+          ok?: boolean
+          product_id?: string | null
+          response_body?: string | null
+          status_code?: number | null
+          submitted_at?: string
+          url: string
+        }
+        Update: {
+          error?: string | null
+          id?: string
+          notification_type?: string
+          ok?: boolean
+          product_id?: string | null
+          response_body?: string | null
+          status_code?: number | null
+          submitted_at?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "google_indexing_log_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       help_articles: {
         Row: {
           category: string

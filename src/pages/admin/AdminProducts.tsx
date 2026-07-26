@@ -719,6 +719,13 @@ const AdminProducts = () => {
         );
       }
 
+      // Fire-and-forget: notify Google Indexing API. Errors are swallowed
+      // so a broken/absent key never blocks the product save. Sitemap is
+      // already live (served from an edge function reading the DB).
+      supabase.functions
+        .invoke('google-indexing', { body: { action: 'submit', product_ids: [productId] } })
+        .catch((e) => console.warn('[google-indexing] skipped:', e?.message || e));
+
       setShowForm(false);
       fetchProducts();
     } catch (err: any) {
