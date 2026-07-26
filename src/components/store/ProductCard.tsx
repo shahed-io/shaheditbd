@@ -230,6 +230,17 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
         onTouchStart={() => prefetchRoute(`/product/${product.slug || product.id}`)}
         onMouseLeave={() => setIsHovered(false)}
       >
+        {/* SEO: real crawlable anchor so Google can discover product pages */}
+        <a
+          href={`/product/${product.slug || product.id}`}
+          className="sr-only"
+          aria-hidden="true"
+          tabIndex={-1}
+          onClick={(e) => e.preventDefault()}
+        >
+          {product.name}
+        </a>
+
         {/* ── Rotating orbit light beam on click ── */}
         {orbitActive && (
           <span className="pointer-events-none absolute inset-0 z-[60] rounded-[inherit] overflow-hidden">
