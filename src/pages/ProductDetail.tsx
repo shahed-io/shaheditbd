@@ -562,8 +562,13 @@ const ProductDetail = () => {
                 <img
                   key={images[activeImg]}
                   src={images[activeImg]}
-                  alt={`Buy ${productDisplayName} at best price in Bangladesh - Shahed Store`}
+                  alt={`${productDisplayName} price in Bangladesh - Shahed Store`}
                   title={`${productDisplayName} - ৳${displayPrice.toLocaleString()} | Shahed Store Bangladesh`}
+                  width={800}
+                  height={800}
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
                   onLoad={() => setImgLoaded(true)}
                   onError={e => { (e.target as HTMLImageElement).src = PLACEHOLDER; }}
                   className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
