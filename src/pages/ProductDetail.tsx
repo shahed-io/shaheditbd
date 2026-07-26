@@ -1591,8 +1591,11 @@ const RelatedProducts = ({ categoryId, currentProductId }: { categoryId: string 
                   <div className="relative aspect-square overflow-hidden rounded-lg border border-border bg-muted/30 group-hover:border-primary/40 transition-colors">
                     <img
                       src={p.image_url || PLACEHOLDER}
-                      alt={p.name}
+                      alt={`${p.name} price in Bangladesh - Shahed Store`}
+                      width={300}
+                      height={300}
                       loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       onError={e => { (e.target as HTMLImageElement).src = PLACEHOLDER; }}
                     />
