@@ -202,6 +202,12 @@ Deno.serve(async (req) => {
     }
 
     for (let i = 0; i < messages.length; i++) {
+      if (Date.now() - startedAt > MAX_WALL_MS) {
+        return new Response(
+          JSON.stringify({ processed: totalProcessed, stopped: 'deadline' }),
+          { headers: { 'Content-Type': 'application/json' } }
+        )
+      }
       const msg = messages[i]
       const payload = msg.message
       const failedAttempts =
