@@ -63,3 +63,9 @@ verify_jwt = false
     verify_jwt = false
   [functions.paypal-refund]
     verify_jwt = false
+  [functions.uddoktapay-webhook]
+    verify_jwt = false
+  [functions.uddoktapay-create]
+    verify_jwt = false
+  [functions.uddoktapay-verify]
+    verify_jwt = false
