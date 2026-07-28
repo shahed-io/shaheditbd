@@ -83,17 +83,22 @@ function mapUpstreamError(rawText: string): MappedError | null {
 }
 
 // ─── Provider call: GetCID.app ─────────────────────────────────────────
+// Hard timeout so the edge function always responds within budget even when
+// upstream hangs (otherwise the browser sees "Failed to fetch").
+const UPSTREAM_TIMEOUT_MS = 25_000;
+
 async function callGetCID(token: string, iid: string): Promise<{ ok: boolean; cid?: string; error?: string; raw?: string }> {
   const normalizedIid = normalizeInstallationId(iid);
   const url = `${GETCID_API_URL}?token=${encodeURIComponent(token)}&iid=${encodeURIComponent(normalizedIid)}`;
+  const ctrl = new AbortController();
+  const to = setTimeout(() => ctrl.abort(), UPSTREAM_TIMEOUT_MS);
   try {
-    const res = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/json' } });
+    const res = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/json' }, signal: ctrl.signal });
     const text = await res.text();
     let data: Record<string, unknown> = {};
     try { data = JSON.parse(text); } catch {
       return { ok: false, error: 'Invalid JSON from GetCID', raw: text };
     }
-    // Provider docs show { cid: "..." }; some responses use confirmationid/confirmation_id.
     const cidVal = readStringField(data, ['cid', 'confirmationid', 'confirmation_id', 'confirmationId', 'confirmationID']);
     if (cidVal) return { ok: true, cid: cidVal };
 
@@ -101,7 +106,10 @@ async function callGetCID(token: string, iid: string): Promise<{ ok: boolean; ci
     console.log(`[getcid] iid=${normalizedIid.slice(0,12)}... result=${errMsg} raw=${text.slice(0,200)}`);
     return { ok: false, error: errMsg, raw: text };
   } catch (e) {
-    return { ok: false, error: `GetCID network error: ${String(e)}` };
+    const aborted = (e as Error)?.name === 'AbortError';
+    return { ok: false, error: aborted ? 'GetCID timeout after 25s' : `GetCID network error: ${String(e)}` };
+  } finally {
+    clearTimeout(to);
   }
 }
 
