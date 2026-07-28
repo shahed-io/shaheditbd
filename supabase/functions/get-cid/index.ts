@@ -172,6 +172,8 @@ async function callGetCIDBalance(token: string, userId?: string): Promise<{ ok: 
 
 // ─── Provider call: Grahok.io (BACKUP) ─────────────────────────────────
 async function callGrahok(token: string, apiUrl: string, iid: string): Promise<{ ok: boolean; cid?: string; error?: string; raw?: string }> {
+  const ctrl = new AbortController();
+  const to = setTimeout(() => ctrl.abort(), UPSTREAM_TIMEOUT_MS);
   try {
     const formData = new FormData();
     formData.append('token', token);
@@ -181,6 +183,7 @@ async function callGrahok(token: string, apiUrl: string, iid: string): Promise<{
       method: 'POST',
       headers: { 'Accept': 'application/json', 'X-API-TOKEN': token },
       body: formData,
+      signal: ctrl.signal,
     });
     const text = await res.text();
     let data: Record<string, unknown> = {};
@@ -191,7 +194,10 @@ async function callGrahok(token: string, apiUrl: string, iid: string): Promise<{
     const errMsg = (data['error'] as string) || (data['result'] as string) || (data['message'] as string) || 'No CID returned';
     return { ok: false, error: String(errMsg), raw: text };
   } catch (e) {
-    return { ok: false, error: `Grahok network error: ${String(e)}` };
+    const aborted = (e as Error)?.name === 'AbortError';
+    return { ok: false, error: aborted ? 'Grahok timeout after 25s' : `Grahok network error: ${String(e)}` };
+  } finally {
+    clearTimeout(to);
   }
 }
 
