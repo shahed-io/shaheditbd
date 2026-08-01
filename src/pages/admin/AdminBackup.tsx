@@ -91,6 +91,13 @@ const AdminBackup = () => {
   const [restoreLog, setRestoreLog] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const fullFileInputRef = useRef<HTMLInputElement>(null);
+  const zipInputRef = useRef<HTMLInputElement>(null);
+  const [zipPreview, setZipPreview] = useState<{
+    name: string;
+    tables: Record<string, any[]>;
+    files: { bucket: string; path: string; entry: any }[];
+  } | null>(null);
+  const [confirmZip, setConfirmZip] = useState(false);
 
   useEffect(() => {
     fetchStats();
