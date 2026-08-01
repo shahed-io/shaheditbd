@@ -480,14 +480,13 @@ Restore:
   };
 
   // ─── Restore Full (ordered for FK) ────────────────────────────────
-  const restoreFull = async () => {
-    if (!importPreview) return;
+  const restoreFull = async (tablesOverride?: Record<string, any[]>, opts?: { keepRestoring?: boolean; weight?: number }) => {
+    if (!tablesOverride && !importPreview) return { added: 0, skipped: 0, failed: 0 };
     setRestoring(true);
-    setRestoreLog([]);
+    if (!opts?.keepRestoring) setRestoreLog([]);
     setProgress(0);
     setProgressLabel('Preparing restore…');
-    const backup = JSON.parse(importPreview.file);
-    const tables: Record<string, any[]> = backup.tables;
+    const tables: Record<string, any[]> = tablesOverride || JSON.parse(importPreview!.file).tables;
     const log: string[] = [];
 
     // Restore in TABLES order (parents first). Include any extra tables in the file at the end.
