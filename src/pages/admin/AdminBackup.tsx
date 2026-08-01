@@ -91,6 +91,13 @@ const AdminBackup = () => {
   const [restoreLog, setRestoreLog] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const fullFileInputRef = useRef<HTMLInputElement>(null);
+  const zipInputRef = useRef<HTMLInputElement>(null);
+  const [zipPreview, setZipPreview] = useState<{
+    name: string;
+    tables: Record<string, any[]>;
+    files: { bucket: string; path: string; entry: any }[];
+  } | null>(null);
+  const [confirmZip, setConfirmZip] = useState(false);
 
   useEffect(() => {
     fetchStats();
@@ -304,34 +311,65 @@ Restore:
     setExporting(null);
   };
 
-  // ─── Import: read file ────────────────────────────────────────────
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>, mode: 'single' | 'full') => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      try {
-        const parsed = JSON.parse(ev.target?.result as string);
-        if (mode === 'full') {
-          if (!parsed.tables) throw new Error('Invalid full backup format — missing "tables" key');
-          const totalRecords = Object.values(parsed.tables as Record<string, any[]>).reduce((s, v) => s + v.length, 0);
-          setImportPreview({ table: '__full__', data: Object.keys(parsed.tables).map(t => ({ table: t, count: (parsed.tables[t] as any[]).length })), file: JSON.stringify(parsed) });
-          toast.info(`Full backup loaded: ${Object.keys(parsed.tables).length} tables, ${totalRecords} records`);
-        } else {
-          if (!Array.isArray(parsed)) throw new Error('Invalid backup format — expected JSON array');
-          const guess = TABLES.find(t => file.name.startsWith(t.table))?.table || '';
-          setImportPreview({ table: guess, data: parsed, file: JSON.stringify(parsed) });
-          toast.info(`${parsed.length} রেকর্ড লোড হয়েছে`);
-        }
-        setConfirmRestore(false);
-        setRestoreLog([]);
-      } catch (err: any) {
-        toast.error('Invalid JSON file: ' + err.message);
-      }
-    };
-    reader.readAsText(file);
-    e.target.value = '';
+  // ─── Import: read file(s) ─────────────────────────────────────────
+  const readText = (file: File) => new Promise<string>((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result as string);
+    r.onerror = () => rej(new Error('File read error'));
+    r.readAsText(file);
+  });
+
+  // Guess table name from a backup filename like `products_backup_2026-08-01.json`
+  const guessTable = (filename: string) => {
+    const base = filename.replace(/\.json$/i, '');
+    const matches = TABLES.filter(t => base === t.table || base.startsWith(`${t.table}_`) || base.startsWith(`${t.table}.`));
+    // Longest match wins (product_categories vs products)
+    return matches.sort((a, b) => b.table.length - a.table.length)[0]?.table || '';
   };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>, mode: 'single' | 'full') => {
+    const files = Array.from(e.target.files || []);
+    e.target.value = '';
+    if (!files.length) return;
+    try {
+      if (mode === 'full') {
+        const parsed = JSON.parse(await readText(files[0]));
+        if (!parsed.tables) throw new Error('Invalid full backup format — missing "tables" key');
+        const totalRecords = Object.values(parsed.tables as Record<string, any[]>).reduce((s: number, v: any) => s + v.length, 0);
+        setImportPreview({ table: '__full__', data: Object.keys(parsed.tables).map(t => ({ table: t, count: (parsed.tables[t] as any[]).length })), file: JSON.stringify(parsed) });
+        toast.info(`Full backup loaded: ${Object.keys(parsed.tables).length} tables, ${totalRecords} records`);
+      } else if (files.length === 1) {
+        const parsed = JSON.parse(await readText(files[0]));
+        if (!Array.isArray(parsed)) throw new Error('Invalid backup format — expected JSON array');
+        setImportPreview({ table: guessTable(files[0].name), data: parsed, file: JSON.stringify(parsed) });
+        toast.info(`${parsed.length} রেকর্ড লোড হয়েছে`);
+      } else {
+        // Multiple table JSON files at once → build a manifest and restore in FK-safe order
+        const tables: Record<string, any[]> = {};
+        const unknown: string[] = [];
+        for (const f of files) {
+          const parsed = JSON.parse(await readText(f));
+          if (!Array.isArray(parsed)) continue;
+          const t = guessTable(f.name);
+          if (!t) { unknown.push(f.name); continue; }
+          tables[t] = [...(tables[t] || []), ...parsed];
+        }
+        if (!Object.keys(tables).length) throw new Error('কোনো টেবিল শনাক্ত করা যায়নি — ফাইলের নাম টেবিলের নামে শুরু হতে হবে');
+        if (unknown.length) toast.warning(`${unknown.length}টি ফাইল শনাক্ত হয়নি: ${unknown.slice(0, 3).join(', ')}`);
+        setImportPreview({
+          table: '__multi__',
+          data: Object.keys(tables).map(t => ({ table: t, count: tables[t].length })),
+          file: JSON.stringify({ tables }),
+        });
+        toast.info(`${Object.keys(tables).length}টি টেবিল লোড হয়েছে`);
+      }
+      setConfirmRestore(false);
+      setRestoreLog([]);
+    } catch (err: any) {
+      toast.error('Invalid JSON file: ' + err.message);
+    }
+  };
+
 
   // Natural conflict keys per table — used to de-duplicate on import.
   // If a row already exists (by this key), it is SKIPPED (never overwritten).
@@ -406,7 +444,7 @@ Restore:
   // ─── Restore Single Table ─────────────────────────────────────────
   const restoreTable = async () => {
     if (!importPreview || !confirmRestore) return;
-    if (!importPreview.table || importPreview.table === '__full__') {
+    if (!importPreview.table || importPreview.table === '__full__' || importPreview.table === '__multi__') {
       await restoreFull();
       return;
     }
@@ -442,14 +480,13 @@ Restore:
   };
 
   // ─── Restore Full (ordered for FK) ────────────────────────────────
-  const restoreFull = async () => {
-    if (!importPreview) return;
+  const restoreFull = async (tablesOverride?: Record<string, any[]>, opts?: { keepRestoring?: boolean; weight?: number }) => {
+    if (!tablesOverride && !importPreview) return { added: 0, skipped: 0, failed: 0 };
     setRestoring(true);
-    setRestoreLog([]);
+    if (!opts?.keepRestoring) setRestoreLog([]);
     setProgress(0);
     setProgressLabel('Preparing restore…');
-    const backup = JSON.parse(importPreview.file);
-    const tables: Record<string, any[]> = backup.tables;
+    const tables: Record<string, any[]> = tablesOverride || JSON.parse(importPreview!.file).tables;
     const log: string[] = [];
 
     // Restore in TABLES order (parents first). Include any extra tables in the file at the end.
@@ -486,17 +523,126 @@ Restore:
       setRestoreLog([...log]);
     }
 
-    addHistory({
-      label: 'Full Restore',
-      tableName: 'all',
-      date: new Date().toISOString(),
-      records: totalAdded,
-      type: 'import',
-      status: totalFailed === 0 ? 'success' : 'error',
-      error: totalFailed ? `${totalFailed} rows failed` : undefined,
+    if (!opts?.keepRestoring) {
+      addHistory({
+        label: 'Full Restore',
+        tableName: 'all',
+        date: new Date().toISOString(),
+        records: totalAdded,
+        type: 'import',
+        status: totalFailed === 0 ? 'success' : 'error',
+        error: totalFailed ? `${totalFailed} rows failed` : undefined,
+      });
+      if (totalFailed === 0) toast.success(`✅ Full Restore সম্পন্ন! ✨ ${totalAdded} নতুন যোগ, ⏭️ ${totalSkipped} আগেই ছিল।`);
+      else toast.warning(`Restore শেষ — ✨ ${totalAdded} added, ⏭️ ${totalSkipped} skipped, ❌ ${totalFailed} failed। বিস্তারিত log দেখুন।`);
+      setProgress(100);
+      setTimeout(() => { setProgress(0); setProgressLabel(''); }, 1500);
+      setRestoring(false);
+    }
+    fetchStats();
+    return { added: totalAdded, skipped: totalSkipped, failed: totalFailed, log };
+  };
+
+  // ─── Complete ZIP Restore: Database + Storage in one click ────────
+  const handleZipSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    try {
+      setProgressLabel('ZIP পড়া হচ্ছে…');
+      const zip = await JSZip.loadAsync(file);
+      const tables: Record<string, any[]> = {};
+
+      const manifestEntry = zip.file('full_backup.json');
+      if (manifestEntry) {
+        const parsed = JSON.parse(await manifestEntry.async('string'));
+        if (parsed?.tables) Object.assign(tables, parsed.tables);
+      }
+      // Also merge any /database/*.json files (in case manifest is missing)
+      const dbEntries = zip.file(/^database\/.+\.json$/);
+      for (const entry of dbEntries) {
+        const name = entry.name.split('/').pop() || '';
+        const t = guessTable(name);
+        if (!t || tables[t]) continue;
+        try {
+          const parsed = JSON.parse(await entry.async('string'));
+          if (Array.isArray(parsed)) tables[t] = parsed;
+        } catch { /* skip */ }
+      }
+
+      const files: { bucket: string; path: string; entry: any }[] = [];
+      zip.folder('storage')?.forEach((relPath, entry) => {
+        if (entry.dir) return;
+        const idx = relPath.indexOf('/');
+        if (idx <= 0) return;
+        files.push({ bucket: relPath.slice(0, idx), path: relPath.slice(idx + 1), entry });
+      });
+
+      if (!Object.keys(tables).length && !files.length)
+        throw new Error('ZIP-এ কোনো database বা storage ডেটা পাওয়া যায়নি');
+
+      setZipPreview({ name: file.name, tables, files });
+      setConfirmZip(false);
+      setRestoreLog([]);
+      setProgressLabel('');
+      toast.info(`ZIP লোড: ${Object.keys(tables).length} টেবিল, ${files.length} ফাইল`);
+    } catch (err: any) {
+      setProgressLabel('');
+      toast.error('ZIP পড়া যায়নি: ' + err.message);
+    }
+  };
+
+  const restoreZip = async () => {
+    if (!zipPreview || !confirmZip) return;
+    setRestoring(true);
+    setRestoreLog([]);
+    const log: string[] = [];
+
+    // 1) Database (duplicate-safe, FK-ordered)
+    let dbRes = { added: 0, skipped: 0, failed: 0, log: [] as string[] };
+    if (Object.keys(zipPreview.tables).length) {
+      dbRes = await restoreFull(zipPreview.tables, { keepRestoring: true }) as any;
+      log.push(...(dbRes.log || []));
+      setRestoreLog([...log]);
+      setRestoring(true);
+    }
+
+    // 2) Storage files — upsert:false so existing files are never overwritten
+    let uploaded = 0, skippedFiles = 0, failedFiles = 0;
+    const total = zipPreview.files.length || 1;
+    let done = 0;
+    setProgress(0);
+    await runPool(zipPreview.files, 6, async ({ bucket, path, entry }) => {
+      try {
+        const blob = await entry.async('blob');
+        const { error } = await supabase.storage.from(bucket).upload(path, blob, { upsert: false });
+        if (error) {
+          if (/exists|duplicate/i.test(error.message)) skippedFiles++;
+          else failedFiles++;
+        } else uploaded++;
+      } catch { failedFiles++; }
+      finally {
+        done++;
+        setProgress(Math.round((done / total) * 100));
+        if (done % 5 === 0 || done === total) setProgressLabel(`Storage: ${done}/${zipPreview.files.length} ফাইল`);
+      }
     });
-    if (totalFailed === 0) toast.success(`✅ Full Restore সম্পন্ন! ✨ ${totalAdded} নতুন যোগ, ⏭️ ${totalSkipped} আগেই ছিল।`);
-    else toast.warning(`Restore শেষ — ✨ ${totalAdded} added, ⏭️ ${totalSkipped} skipped, ❌ ${totalFailed} failed। বিস্তারিত log দেখুন।`);
+
+    if (zipPreview.files.length) {
+      log.push(`Storage: ✨ ${uploaded} নতুন আপলোড, ⏭️ ${skippedFiles} আগেই ছিল${failedFiles ? `, ❌ ${failedFiles} failed` : ''}`);
+      setRestoreLog([...log]);
+    }
+
+    addHistory({
+      label: 'Complete ZIP Restore',
+      tableName: 'zip',
+      date: new Date().toISOString(),
+      records: dbRes.added + uploaded,
+      type: 'import',
+      status: dbRes.failed + failedFiles === 0 ? 'success' : 'error',
+      error: dbRes.failed + failedFiles ? `${dbRes.failed} rows / ${failedFiles} files failed` : undefined,
+    });
+    toast.success(`✅ ZIP রিস্টোর সম্পন্ন — ✨ ${dbRes.added} রেকর্ড + ${uploaded} ফাইল যোগ, ⏭️ ${dbRes.skipped + skippedFiles} আগেই ছিল।`);
     fetchStats();
     setProgress(100);
     setTimeout(() => { setProgress(0); setProgressLabel(''); }, 1500);
@@ -670,7 +816,7 @@ Restore:
                 </div>
                 <div>
                   <h3 className="font-bold text-foreground text-sm">একটি টেবিল রিস্টোর</h3>
-                  <p className="text-[10px] text-muted-foreground">একক JSON ব্যাকআপ ফাইল আপলোড করুন</p>
+                  <p className="text-[10px] text-muted-foreground">এক বা একাধিক JSON ব্যাকআপ ফাইল আপলোড করুন</p>
                 </div>
               </div>
 
@@ -679,12 +825,47 @@ Restore:
                 <div className="w-10 h-10 rounded-xl bg-muted/30 group-hover:bg-primary/10 flex items-center justify-center transition-colors">
                   <Upload size={18} className="group-hover:text-primary transition-colors" />
                 </div>
-                <span className="font-medium">JSON ফাইল আপলোড করুন</span>
-                <span className="text-[10px] text-muted-foreground/70">products_backup.json, orders_backup.json ইত্যাদি</span>
+                <span className="font-medium">JSON ফাইল আপলোড করুন (একাধিক নির্বাচন করা যাবে)</span>
+                <span className="text-[10px] text-muted-foreground/70">products.json, orders.json … একসাথে সব সিলেক্ট করুন</span>
               </button>
-              <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={e => handleFileSelect(e, 'single')} />
+              <input ref={fileInputRef} type="file" accept=".json" multiple className="hidden" onChange={e => handleFileSelect(e, 'single')} />
 
-              {importPreview && importPreview.table !== '__full__' && (
+              {importPreview && importPreview.table === '__multi__' && (
+                <div className="space-y-3">
+                  <div className="glass-card rounded-xl p-4 space-y-3 border border-primary/20">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-foreground">📋 {importPreview.data.length}টি টেবিল লোড হয়েছে</span>
+                      <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-semibold">
+                        {(importPreview.data as any[]).reduce((s: number, r: any) => s + r.count, 0)} রেকর্ড
+                      </span>
+                    </div>
+                    <div className="divide-y divide-border/30 max-h-40 overflow-y-auto rounded-lg bg-muted/10">
+                      {(importPreview.data as any[]).map((row: any) => (
+                        <div key={row.table} className="flex items-center justify-between px-3 py-2 text-xs">
+                          <span className="text-muted-foreground font-mono">{TABLES.find(t => t.table === row.table)?.label || row.table}</span>
+                          <span className="text-foreground font-semibold">{row.count} rows</span>
+                        </div>
+                      ))}
+                    </div>
+                    <label className="flex items-start gap-2 cursor-pointer p-2 rounded-lg bg-amber-500/5 border border-amber-500/20">
+                      <input type="checkbox" checked={confirmRestore} onChange={e => setConfirmRestore(e.target.checked)} className="w-4 h-4 accent-primary mt-0.5" />
+                      <span className="text-xs text-foreground">সব ফাইল রিস্টোর করব — duplicate গুলো skip হবে</span>
+                    </label>
+                  </div>
+                  <div className="flex gap-2">
+                    <button onClick={restoreTable} disabled={!confirmRestore || restoring}
+                      className="flex-1 py-2.5 rounded-xl btn-glow text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                      {restoring ? <><Loader2 size={14} className="animate-spin" /> রিস্টোর হচ্ছে...</> : <><RotateCcw size={14} /> সব রিস্টোর করুন</>}
+                    </button>
+                    <button onClick={() => { setImportPreview(null); setConfirmRestore(false); setRestoreLog([]); }}
+                      className="px-4 py-2.5 rounded-xl glass-card text-sm text-muted-foreground hover:text-destructive transition-colors">
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {importPreview && importPreview.table !== '__full__' && importPreview.table !== '__multi__' && (
                 <div className="space-y-3">
                   <div className="glass-card rounded-xl p-4 space-y-3 border border-primary/20">
                     <div className="flex items-center justify-between">
@@ -788,6 +969,70 @@ Restore:
               )}
             </div>
           </div>
+
+          {/* Complete ZIP Restore — Database + Storage in one click */}
+          <div className="glass-card rounded-2xl p-5 space-y-4 border border-purple-500/25">
+            <div className="flex items-center gap-2 pb-3 border-b border-border/40">
+              <div className="w-8 h-8 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                <Archive size={14} className="text-purple-400" />
+              </div>
+              <div>
+                <h3 className="font-bold text-foreground text-sm">Complete ZIP রিস্টোর</h3>
+                <p className="text-[10px] text-muted-foreground">Database + Storage (সব ছবি/ফাইল) — এক ক্লিকে</p>
+              </div>
+            </div>
+
+            <button onClick={() => zipInputRef.current?.click()}
+              className="w-full py-4 rounded-xl border-2 border-dashed border-border hover:border-purple-400/50 text-sm text-muted-foreground hover:text-foreground transition-all flex flex-col items-center justify-center gap-2 group">
+              <div className="w-10 h-10 rounded-xl bg-muted/30 group-hover:bg-purple-500/10 flex items-center justify-center transition-colors">
+                <Upload size={18} className="group-hover:text-purple-400 transition-colors" />
+              </div>
+              <span className="font-medium">Complete Backup ZIP আপলোড</span>
+              <span className="text-[10px] text-muted-foreground/70">shahed_store_complete_XXXX.zip</span>
+            </button>
+            <input ref={zipInputRef} type="file" accept=".zip" className="hidden" onChange={handleZipSelect} />
+
+            {zipPreview && (
+              <div className="space-y-3">
+                <div className="glass-card rounded-xl p-4 space-y-3 border border-purple-500/20">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <span className="text-xs font-bold text-foreground truncate">📦 {zipPreview.name}</span>
+                    <div className="flex gap-2">
+                      <span className="text-[10px] bg-purple-500/10 text-purple-400 px-2 py-0.5 rounded-full font-semibold">
+                        {Object.keys(zipPreview.tables).length} টেবিল
+                      </span>
+                      <span className="text-[10px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded-full font-semibold">
+                        {zipPreview.files.length} ফাইল
+                      </span>
+                    </div>
+                  </div>
+                  <div className="divide-y divide-border/30 max-h-40 overflow-y-auto rounded-lg bg-muted/10">
+                    {Object.keys(zipPreview.tables).map(t => (
+                      <div key={t} className="flex items-center justify-between px-3 py-2 text-xs">
+                        <span className="text-muted-foreground font-mono">{TABLES.find(x => x.table === t)?.label || t}</span>
+                        <span className="text-foreground font-semibold">{zipPreview.tables[t].length} rows</span>
+                      </div>
+                    ))}
+                  </div>
+                  <label className="flex items-start gap-2 cursor-pointer p-2 rounded-lg bg-amber-500/5 border border-amber-500/20">
+                    <input type="checkbox" checked={confirmZip} onChange={e => setConfirmZip(e.target.checked)} className="w-4 h-4 accent-primary mt-0.5" />
+                    <span className="text-xs text-foreground">সম্পূর্ণ ZIP রিস্টোর করব — যা আগে থেকেই আছে সেগুলো skip হবে</span>
+                  </label>
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={restoreZip} disabled={!confirmZip || restoring}
+                    className="flex-1 py-2.5 rounded-xl bg-purple-500/20 border border-purple-500/40 text-purple-300 hover:bg-purple-500/30 text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                    {restoring ? <><Loader2 size={14} className="animate-spin" /> রিস্টোর হচ্ছে...</> : <><Archive size={14} /> সম্পূর্ণ রিস্টোর করুন</>}
+                  </button>
+                  <button onClick={() => { setZipPreview(null); setConfirmZip(false); setRestoreLog([]); }}
+                    className="px-4 py-2.5 rounded-xl glass-card text-sm text-muted-foreground hover:text-destructive transition-colors">
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
 
           {/* Restore Log */}
           {restoreLog.length > 0 && (
