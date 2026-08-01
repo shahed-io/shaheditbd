@@ -523,17 +523,126 @@ Restore:
       setRestoreLog([...log]);
     }
 
-    addHistory({
-      label: 'Full Restore',
-      tableName: 'all',
-      date: new Date().toISOString(),
-      records: totalAdded,
-      type: 'import',
-      status: totalFailed === 0 ? 'success' : 'error',
-      error: totalFailed ? `${totalFailed} rows failed` : undefined,
+    if (!opts?.keepRestoring) {
+      addHistory({
+        label: 'Full Restore',
+        tableName: 'all',
+        date: new Date().toISOString(),
+        records: totalAdded,
+        type: 'import',
+        status: totalFailed === 0 ? 'success' : 'error',
+        error: totalFailed ? `${totalFailed} rows failed` : undefined,
+      });
+      if (totalFailed === 0) toast.success(`✅ Full Restore সম্পন্ন! ✨ ${totalAdded} নতুন যোগ, ⏭️ ${totalSkipped} আগেই ছিল।`);
+      else toast.warning(`Restore শেষ — ✨ ${totalAdded} added, ⏭️ ${totalSkipped} skipped, ❌ ${totalFailed} failed। বিস্তারিত log দেখুন।`);
+      setProgress(100);
+      setTimeout(() => { setProgress(0); setProgressLabel(''); }, 1500);
+      setRestoring(false);
+    }
+    fetchStats();
+    return { added: totalAdded, skipped: totalSkipped, failed: totalFailed, log };
+  };
+
+  // ─── Complete ZIP Restore: Database + Storage in one click ────────
+  const handleZipSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    try {
+      setProgressLabel('ZIP পড়া হচ্ছে…');
+      const zip = await JSZip.loadAsync(file);
+      const tables: Record<string, any[]> = {};
+
+      const manifestEntry = zip.file('full_backup.json');
+      if (manifestEntry) {
+        const parsed = JSON.parse(await manifestEntry.async('string'));
+        if (parsed?.tables) Object.assign(tables, parsed.tables);
+      }
+      // Also merge any /database/*.json files (in case manifest is missing)
+      const dbEntries = zip.file(/^database\/.+\.json$/);
+      for (const entry of dbEntries) {
+        const name = entry.name.split('/').pop() || '';
+        const t = guessTable(name);
+        if (!t || tables[t]) continue;
+        try {
+          const parsed = JSON.parse(await entry.async('string'));
+          if (Array.isArray(parsed)) tables[t] = parsed;
+        } catch { /* skip */ }
+      }
+
+      const files: { bucket: string; path: string; entry: any }[] = [];
+      zip.folder('storage')?.forEach((relPath, entry) => {
+        if (entry.dir) return;
+        const idx = relPath.indexOf('/');
+        if (idx <= 0) return;
+        files.push({ bucket: relPath.slice(0, idx), path: relPath.slice(idx + 1), entry });
+      });
+
+      if (!Object.keys(tables).length && !files.length)
+        throw new Error('ZIP-এ কোনো database বা storage ডেটা পাওয়া যায়নি');
+
+      setZipPreview({ name: file.name, tables, files });
+      setConfirmZip(false);
+      setRestoreLog([]);
+      setProgressLabel('');
+      toast.info(`ZIP লোড: ${Object.keys(tables).length} টেবিল, ${files.length} ফাইল`);
+    } catch (err: any) {
+      setProgressLabel('');
+      toast.error('ZIP পড়া যায়নি: ' + err.message);
+    }
+  };
+
+  const restoreZip = async () => {
+    if (!zipPreview || !confirmZip) return;
+    setRestoring(true);
+    setRestoreLog([]);
+    const log: string[] = [];
+
+    // 1) Database (duplicate-safe, FK-ordered)
+    let dbRes = { added: 0, skipped: 0, failed: 0, log: [] as string[] };
+    if (Object.keys(zipPreview.tables).length) {
+      dbRes = await restoreFull(zipPreview.tables, { keepRestoring: true }) as any;
+      log.push(...(dbRes.log || []));
+      setRestoreLog([...log]);
+      setRestoring(true);
+    }
+
+    // 2) Storage files — upsert:false so existing files are never overwritten
+    let uploaded = 0, skippedFiles = 0, failedFiles = 0;
+    const total = zipPreview.files.length || 1;
+    let done = 0;
+    setProgress(0);
+    await runPool(zipPreview.files, 6, async ({ bucket, path, entry }) => {
+      try {
+        const blob = await entry.async('blob');
+        const { error } = await supabase.storage.from(bucket).upload(path, blob, { upsert: false });
+        if (error) {
+          if (/exists|duplicate/i.test(error.message)) skippedFiles++;
+          else failedFiles++;
+        } else uploaded++;
+      } catch { failedFiles++; }
+      finally {
+        done++;
+        setProgress(Math.round((done / total) * 100));
+        if (done % 5 === 0 || done === total) setProgressLabel(`Storage: ${done}/${zipPreview.files.length} ফাইল`);
+      }
     });
-    if (totalFailed === 0) toast.success(`✅ Full Restore সম্পন্ন! ✨ ${totalAdded} নতুন যোগ, ⏭️ ${totalSkipped} আগেই ছিল।`);
-    else toast.warning(`Restore শেষ — ✨ ${totalAdded} added, ⏭️ ${totalSkipped} skipped, ❌ ${totalFailed} failed। বিস্তারিত log দেখুন।`);
+
+    if (zipPreview.files.length) {
+      log.push(`Storage: ✨ ${uploaded} নতুন আপলোড, ⏭️ ${skippedFiles} আগেই ছিল${failedFiles ? `, ❌ ${failedFiles} failed` : ''}`);
+      setRestoreLog([...log]);
+    }
+
+    addHistory({
+      label: 'Complete ZIP Restore',
+      tableName: 'zip',
+      date: new Date().toISOString(),
+      records: dbRes.added + uploaded,
+      type: 'import',
+      status: dbRes.failed + failedFiles === 0 ? 'success' : 'error',
+      error: dbRes.failed + failedFiles ? `${dbRes.failed} rows / ${failedFiles} files failed` : undefined,
+    });
+    toast.success(`✅ ZIP রিস্টোর সম্পন্ন — ✨ ${dbRes.added} রেকর্ড + ${uploaded} ফাইল যোগ, ⏭️ ${dbRes.skipped + skippedFiles} আগেই ছিল।`);
     fetchStats();
     setProgress(100);
     setTimeout(() => { setProgress(0); setProgressLabel(''); }, 1500);
