@@ -444,7 +444,7 @@ Restore:
   // ─── Restore Single Table ─────────────────────────────────────────
   const restoreTable = async () => {
     if (!importPreview || !confirmRestore) return;
-    if (!importPreview.table || importPreview.table === '__full__') {
+    if (!importPreview.table || importPreview.table === '__full__' || importPreview.table === '__multi__') {
       await restoreFull();
       return;
     }
