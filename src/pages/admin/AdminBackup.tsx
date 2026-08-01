@@ -970,6 +970,70 @@ Restore:
             </div>
           </div>
 
+          {/* Complete ZIP Restore — Database + Storage in one click */}
+          <div className="glass-card rounded-2xl p-5 space-y-4 border border-purple-500/25">
+            <div className="flex items-center gap-2 pb-3 border-b border-border/40">
+              <div className="w-8 h-8 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                <Archive size={14} className="text-purple-400" />
+              </div>
+              <div>
+                <h3 className="font-bold text-foreground text-sm">Complete ZIP রিস্টোর</h3>
+                <p className="text-[10px] text-muted-foreground">Database + Storage (সব ছবি/ফাইল) — এক ক্লিকে</p>
+              </div>
+            </div>
+
+            <button onClick={() => zipInputRef.current?.click()}
+              className="w-full py-4 rounded-xl border-2 border-dashed border-border hover:border-purple-400/50 text-sm text-muted-foreground hover:text-foreground transition-all flex flex-col items-center justify-center gap-2 group">
+              <div className="w-10 h-10 rounded-xl bg-muted/30 group-hover:bg-purple-500/10 flex items-center justify-center transition-colors">
+                <Upload size={18} className="group-hover:text-purple-400 transition-colors" />
+              </div>
+              <span className="font-medium">Complete Backup ZIP আপলোড</span>
+              <span className="text-[10px] text-muted-foreground/70">shahed_store_complete_XXXX.zip</span>
+            </button>
+            <input ref={zipInputRef} type="file" accept=".zip" className="hidden" onChange={handleZipSelect} />
+
+            {zipPreview && (
+              <div className="space-y-3">
+                <div className="glass-card rounded-xl p-4 space-y-3 border border-purple-500/20">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <span className="text-xs font-bold text-foreground truncate">📦 {zipPreview.name}</span>
+                    <div className="flex gap-2">
+                      <span className="text-[10px] bg-purple-500/10 text-purple-400 px-2 py-0.5 rounded-full font-semibold">
+                        {Object.keys(zipPreview.tables).length} টেবিল
+                      </span>
+                      <span className="text-[10px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded-full font-semibold">
+                        {zipPreview.files.length} ফাইল
+                      </span>
+                    </div>
+                  </div>
+                  <div className="divide-y divide-border/30 max-h-40 overflow-y-auto rounded-lg bg-muted/10">
+                    {Object.keys(zipPreview.tables).map(t => (
+                      <div key={t} className="flex items-center justify-between px-3 py-2 text-xs">
+                        <span className="text-muted-foreground font-mono">{TABLES.find(x => x.table === t)?.label || t}</span>
+                        <span className="text-foreground font-semibold">{zipPreview.tables[t].length} rows</span>
+                      </div>
+                    ))}
+                  </div>
+                  <label className="flex items-start gap-2 cursor-pointer p-2 rounded-lg bg-amber-500/5 border border-amber-500/20">
+                    <input type="checkbox" checked={confirmZip} onChange={e => setConfirmZip(e.target.checked)} className="w-4 h-4 accent-primary mt-0.5" />
+                    <span className="text-xs text-foreground">সম্পূর্ণ ZIP রিস্টোর করব — যা আগে থেকেই আছে সেগুলো skip হবে</span>
+                  </label>
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={restoreZip} disabled={!confirmZip || restoring}
+                    className="flex-1 py-2.5 rounded-xl bg-purple-500/20 border border-purple-500/40 text-purple-300 hover:bg-purple-500/30 text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                    {restoring ? <><Loader2 size={14} className="animate-spin" /> রিস্টোর হচ্ছে...</> : <><Archive size={14} /> সম্পূর্ণ রিস্টোর করুন</>}
+                  </button>
+                  <button onClick={() => { setZipPreview(null); setConfirmZip(false); setRestoreLog([]); }}
+                    className="px-4 py-2.5 rounded-xl glass-card text-sm text-muted-foreground hover:text-destructive transition-colors">
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+
           {/* Restore Log */}
           {restoreLog.length > 0 && (
             <div className="glass-card rounded-2xl p-5 border border-border/40">
