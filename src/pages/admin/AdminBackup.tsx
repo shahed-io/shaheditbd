@@ -816,7 +816,7 @@ Restore:
                 </div>
                 <div>
                   <h3 className="font-bold text-foreground text-sm">একটি টেবিল রিস্টোর</h3>
-                  <p className="text-[10px] text-muted-foreground">একক JSON ব্যাকআপ ফাইল আপলোড করুন</p>
+                  <p className="text-[10px] text-muted-foreground">এক বা একাধিক JSON ব্যাকআপ ফাইল আপলোড করুন</p>
                 </div>
               </div>
 
@@ -825,12 +825,47 @@ Restore:
                 <div className="w-10 h-10 rounded-xl bg-muted/30 group-hover:bg-primary/10 flex items-center justify-center transition-colors">
                   <Upload size={18} className="group-hover:text-primary transition-colors" />
                 </div>
-                <span className="font-medium">JSON ফাইল আপলোড করুন</span>
-                <span className="text-[10px] text-muted-foreground/70">products_backup.json, orders_backup.json ইত্যাদি</span>
+                <span className="font-medium">JSON ফাইল আপলোড করুন (একাধিক নির্বাচন করা যাবে)</span>
+                <span className="text-[10px] text-muted-foreground/70">products.json, orders.json … একসাথে সব সিলেক্ট করুন</span>
               </button>
-              <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={e => handleFileSelect(e, 'single')} />
+              <input ref={fileInputRef} type="file" accept=".json" multiple className="hidden" onChange={e => handleFileSelect(e, 'single')} />
 
-              {importPreview && importPreview.table !== '__full__' && (
+              {importPreview && importPreview.table === '__multi__' && (
+                <div className="space-y-3">
+                  <div className="glass-card rounded-xl p-4 space-y-3 border border-primary/20">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-foreground">📋 {importPreview.data.length}টি টেবিল লোড হয়েছে</span>
+                      <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-semibold">
+                        {(importPreview.data as any[]).reduce((s: number, r: any) => s + r.count, 0)} রেকর্ড
+                      </span>
+                    </div>
+                    <div className="divide-y divide-border/30 max-h-40 overflow-y-auto rounded-lg bg-muted/10">
+                      {(importPreview.data as any[]).map((row: any) => (
+                        <div key={row.table} className="flex items-center justify-between px-3 py-2 text-xs">
+                          <span className="text-muted-foreground font-mono">{TABLES.find(t => t.table === row.table)?.label || row.table}</span>
+                          <span className="text-foreground font-semibold">{row.count} rows</span>
+                        </div>
+                      ))}
+                    </div>
+                    <label className="flex items-start gap-2 cursor-pointer p-2 rounded-lg bg-amber-500/5 border border-amber-500/20">
+                      <input type="checkbox" checked={confirmRestore} onChange={e => setConfirmRestore(e.target.checked)} className="w-4 h-4 accent-primary mt-0.5" />
+                      <span className="text-xs text-foreground">সব ফাইল রিস্টোর করব — duplicate গুলো skip হবে</span>
+                    </label>
+                  </div>
+                  <div className="flex gap-2">
+                    <button onClick={restoreTable} disabled={!confirmRestore || restoring}
+                      className="flex-1 py-2.5 rounded-xl btn-glow text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                      {restoring ? <><Loader2 size={14} className="animate-spin" /> রিস্টোর হচ্ছে...</> : <><RotateCcw size={14} /> সব রিস্টোর করুন</>}
+                    </button>
+                    <button onClick={() => { setImportPreview(null); setConfirmRestore(false); setRestoreLog([]); }}
+                      className="px-4 py-2.5 rounded-xl glass-card text-sm text-muted-foreground hover:text-destructive transition-colors">
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {importPreview && importPreview.table !== '__full__' && importPreview.table !== '__multi__' && (
                 <div className="space-y-3">
                   <div className="glass-card rounded-xl p-4 space-y-3 border border-primary/20">
                     <div className="flex items-center justify-between">
