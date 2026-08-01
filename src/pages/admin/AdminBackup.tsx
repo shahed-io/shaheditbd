@@ -311,34 +311,65 @@ Restore:
     setExporting(null);
   };
 
-  // ─── Import: read file ────────────────────────────────────────────
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>, mode: 'single' | 'full') => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      try {
-        const parsed = JSON.parse(ev.target?.result as string);
-        if (mode === 'full') {
-          if (!parsed.tables) throw new Error('Invalid full backup format — missing "tables" key');
-          const totalRecords = Object.values(parsed.tables as Record<string, any[]>).reduce((s, v) => s + v.length, 0);
-          setImportPreview({ table: '__full__', data: Object.keys(parsed.tables).map(t => ({ table: t, count: (parsed.tables[t] as any[]).length })), file: JSON.stringify(parsed) });
-          toast.info(`Full backup loaded: ${Object.keys(parsed.tables).length} tables, ${totalRecords} records`);
-        } else {
-          if (!Array.isArray(parsed)) throw new Error('Invalid backup format — expected JSON array');
-          const guess = TABLES.find(t => file.name.startsWith(t.table))?.table || '';
-          setImportPreview({ table: guess, data: parsed, file: JSON.stringify(parsed) });
-          toast.info(`${parsed.length} রেকর্ড লোড হয়েছে`);
-        }
-        setConfirmRestore(false);
-        setRestoreLog([]);
-      } catch (err: any) {
-        toast.error('Invalid JSON file: ' + err.message);
-      }
-    };
-    reader.readAsText(file);
-    e.target.value = '';
+  // ─── Import: read file(s) ─────────────────────────────────────────
+  const readText = (file: File) => new Promise<string>((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result as string);
+    r.onerror = () => rej(new Error('File read error'));
+    r.readAsText(file);
+  });
+
+  // Guess table name from a backup filename like `products_backup_2026-08-01.json`
+  const guessTable = (filename: string) => {
+    const base = filename.replace(/\.json$/i, '');
+    const matches = TABLES.filter(t => base === t.table || base.startsWith(`${t.table}_`) || base.startsWith(`${t.table}.`));
+    // Longest match wins (product_categories vs products)
+    return matches.sort((a, b) => b.table.length - a.table.length)[0]?.table || '';
   };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>, mode: 'single' | 'full') => {
+    const files = Array.from(e.target.files || []);
+    e.target.value = '';
+    if (!files.length) return;
+    try {
+      if (mode === 'full') {
+        const parsed = JSON.parse(await readText(files[0]));
+        if (!parsed.tables) throw new Error('Invalid full backup format — missing "tables" key');
+        const totalRecords = Object.values(parsed.tables as Record<string, any[]>).reduce((s: number, v: any) => s + v.length, 0);
+        setImportPreview({ table: '__full__', data: Object.keys(parsed.tables).map(t => ({ table: t, count: (parsed.tables[t] as any[]).length })), file: JSON.stringify(parsed) });
+        toast.info(`Full backup loaded: ${Object.keys(parsed.tables).length} tables, ${totalRecords} records`);
+      } else if (files.length === 1) {
+        const parsed = JSON.parse(await readText(files[0]));
+        if (!Array.isArray(parsed)) throw new Error('Invalid backup format — expected JSON array');
+        setImportPreview({ table: guessTable(files[0].name), data: parsed, file: JSON.stringify(parsed) });
+        toast.info(`${parsed.length} রেকর্ড লোড হয়েছে`);
+      } else {
+        // Multiple table JSON files at once → build a manifest and restore in FK-safe order
+        const tables: Record<string, any[]> = {};
+        const unknown: string[] = [];
+        for (const f of files) {
+          const parsed = JSON.parse(await readText(f));
+          if (!Array.isArray(parsed)) continue;
+          const t = guessTable(f.name);
+          if (!t) { unknown.push(f.name); continue; }
+          tables[t] = [...(tables[t] || []), ...parsed];
+        }
+        if (!Object.keys(tables).length) throw new Error('কোনো টেবিল শনাক্ত করা যায়নি — ফাইলের নাম টেবিলের নামে শুরু হতে হবে');
+        if (unknown.length) toast.warning(`${unknown.length}টি ফাইল শনাক্ত হয়নি: ${unknown.slice(0, 3).join(', ')}`);
+        setImportPreview({
+          table: '__multi__',
+          data: Object.keys(tables).map(t => ({ table: t, count: tables[t].length })),
+          file: JSON.stringify({ tables }),
+        });
+        toast.info(`${Object.keys(tables).length}টি টেবিল লোড হয়েছে`);
+      }
+      setConfirmRestore(false);
+      setRestoreLog([]);
+    } catch (err: any) {
+      toast.error('Invalid JSON file: ' + err.message);
+    }
+  };
+
 
   // Natural conflict keys per table — used to de-duplicate on import.
   // If a row already exists (by this key), it is SKIPPED (never overwritten).
