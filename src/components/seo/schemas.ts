@@ -276,8 +276,9 @@ export const websiteSchema = () => ({
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: SITE_NAME,
-  alternateName: 'Shahed Store BD',
+  alternateName: ['Shahed Store BD', 'ShahedStore', 'শাহেদ স্টোর', 'shahedstore.com.bd'],
   url: SITE_URL,
+  publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
   inLanguage: ['bn-BD', 'en'],
   potentialAction: {
     '@type': 'SearchAction',
