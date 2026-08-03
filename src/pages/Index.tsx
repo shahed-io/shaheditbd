@@ -69,6 +69,9 @@ const Index = () => {
       {/* Critical above-fold content — eager */}
       <Navbar />
       <main>
+        <h1 className="sr-only">
+          Shahed Store (ShahedStore / Shahed Store BD / শাহেদ স্টোর) — Bangladesh's trusted digital software shop
+        </h1>
         <HeroBanner />
         <TickerBanner />
         <TopProducts />

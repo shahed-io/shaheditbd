@@ -229,7 +229,6 @@ export const organizationSchema = () => ({
     'https://wa.me/8801840099853',
     'https://www.instagram.com/shahedstore',
     'https://www.youtube.com/@shahedstore',
-    'https://twitter.com/shahedstore',
     'https://www.linkedin.com/company/shahedstore',
     'https://www.tiktok.com/@shahedstore',
     'https://t.me/shahedstore',

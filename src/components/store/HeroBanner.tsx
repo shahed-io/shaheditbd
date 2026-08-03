@@ -198,7 +198,7 @@ const HeroBanner = () => {
 
               {/* Headline */}
               <div>
-                <h1
+                <h2
                   className="font-sora font-black leading-[1.05] tracking-tight"
                   style={{
                     fontSize: 'clamp(1.35rem, 4.2vw, 3.2rem)',
@@ -217,7 +217,7 @@ const HeroBanner = () => {
                   >
                     {slide.titleAccent}
                   </span>
-                </h1>
+                </h2>
                 <p
                   className="text-[11px] sm:text-[13px] lg:text-[14px] font-semibold mt-1 sm:mt-2 line-clamp-2"
                   style={{ color: 'hsl(226,22%,40%)' }}
