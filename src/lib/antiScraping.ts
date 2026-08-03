@@ -43,6 +43,8 @@ const ALLOWED_BOT_SIGNATURES = [
   'linkedinbot', 'whatsapp', 'telegrambot',
   'slackbot', 'discordbot', 'pinterest', 'pinterestbot',
   'redditbot', 'embedly', 'quora link preview', 'tumblr',
+  // Our own prerenderer (build-time static HTML generation)
+  'shahedstoreprerender',
   // Monitoring / uptime — harmless
   'uptimerobot', 'pingdom', 'statuscake',
 ];
