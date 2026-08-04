@@ -47,10 +47,10 @@ Deno.serve(async (req) => {
         console.error('[paypal-create-order] missing FX rate', { srcCurrency, targetCurrency, rateSrc, rateDst });
         return jsonResponse({ error: `Missing FX rate for ${targetCurrency}` }, 500);
       }
-      // rate_from_bdt = units of that currency per 1 BDT.
-      // src → BDT: divide by rateSrc. BDT → target: multiply by rateDst.
-      const bdt = srcCurrency === 'BDT' ? amount : amount / rateSrc;
-      amount = targetCurrency === 'BDT' ? bdt : bdt * rateDst;
+      // rate_from_bdt = how many BDT equal 1 unit of that currency.
+      // src → BDT: multiply by rateSrc. BDT → target: divide by rateDst.
+      const bdt = srcCurrency === 'BDT' ? amount : amount * rateSrc;
+      amount = targetCurrency === 'BDT' ? bdt : bdt / rateDst;
     }
     amount = Math.round(amount * 100) / 100;
     if (!(amount > 0)) return jsonResponse({ error: 'Invalid order total' }, 400);
