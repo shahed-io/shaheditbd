@@ -5,7 +5,8 @@ import HeroBanner from '@/components/store/HeroBanner';
 import TopProducts from '@/components/store/TopProducts';
 import { TickerBanner, FloatingButtons } from '@/components/store/Extras';
 import SEOHead from '@/components/seo/SEOHead';
-import { organizationSchema, websiteSchema, localBusinessSchema, siteNavigationSchema, speakableSchema } from '@/components/seo/schemas';
+import { organizationSchema, websiteSchema, webPageSchema, localBusinessSchema, siteNavigationSchema, speakableSchema } from '@/components/seo/schemas';
+import AboutBrand from '@/components/store/AboutBrand';
 import AuthModal from '@/components/store/AuthModal';
 
 // Below-fold sections — lazy loaded after hero renders
@@ -44,13 +45,19 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SEOHead
-        title="Shahed Store – Digital Software Shop BD"
-        description="Buy genuine Windows, Office, Adobe, antivirus, VPN and digital subscriptions in Bangladesh with instant delivery from Shahed Store."
+        title="Shahed Store | Digital Software Shop in Bangladesh"
+        description="Shahed Store is a digital software store in Bangladesh offering Windows, Microsoft Office, Adobe, VPN and other digital subscriptions with fast delivery and customer support."
         ogType="website"
         canonical="https://shahedstore.com.bd/"
         schema={[
           organizationSchema(),
           websiteSchema(),
+          webPageSchema({
+            name: 'Shahed Store | Digital Software Shop in Bangladesh',
+            description:
+              'Shahed Store is a digital software store in Bangladesh offering Windows, Microsoft Office, Adobe, VPN and other digital subscriptions with fast delivery and customer support.',
+            url: 'https://shahedstore.com.bd/',
+          }),
           localBusinessSchema(),
           speakableSchema(['h1', '.lead', '.hero-title']),
           siteNavigationSchema([
@@ -69,9 +76,6 @@ const Index = () => {
       {/* Critical above-fold content — eager */}
       <Navbar />
       <main>
-        <h1 className="sr-only">
-          Shahed Store (ShahedStore / Shahed Store BD / শাহেদ স্টোর) — Bangladesh's trusted digital software shop
-        </h1>
         <HeroBanner />
         <TickerBanner />
         <TopProducts />
@@ -86,6 +90,7 @@ const Index = () => {
         <Suspense fallback={<div className="py-12" />}>
           <Testimonials />
         </Suspense>
+        <AboutBrand />
       </main>
       <Suspense fallback={<div className="py-8" />}>
         <Footer />
