@@ -31,7 +31,7 @@ const SITE_NAME = 'Shahed Store';
 const SITE_URL = 'https://shahedstore.com.bd';
 const SUPABASE_STORAGE_ORIGIN = 'https://dpvdavjwqyviredzoorj.supabase.co';
 const SUPABASE_STORAGE_PUBLIC_PATH = '/storage/v1/object/public/';
-const DEFAULT_DESC = 'Buy genuine Windows, Office, Adobe, antivirus, VPN and digital subscriptions in Bangladesh with instant delivery from Shahed Store.';
+const DEFAULT_DESC = 'Shahed Store is a digital software store in Bangladesh offering Windows, Microsoft Office, Adobe, VPN and other digital subscriptions with fast delivery and customer support.';
 const DEFAULT_OG = '/og-image.jpg';
 const DEFAULT_KEYWORDS = 'windows 11 key bangladesh, microsoft office 365 bangladesh, adobe creative cloud bangladesh, antivirus cheap, buy digital software bangladesh, digital license key, Shahed Store';
 
@@ -106,7 +106,7 @@ const SEOHead = ({
   const shouldNoIndex = noIndex || hasTrackingParams;
 
   const truncate = (value: string, max: number) => value.length > max ? `${value.slice(0, max - 1).trimEnd()}…` : value;
-  const pageTitle = title || `${SITE_NAME} – Digital Software Shop BD`;
+  const pageTitle = title || `${SITE_NAME} | Digital Software Shop in Bangladesh`;
   const fullTitle = truncate(pageTitle.includes(SITE_NAME) ? pageTitle : `${pageTitle} | ${SITE_NAME}`, 60);
   const metaDescription = truncate(description, 160);
   const canonicalUrl = canonical || `${SITE_URL}${cleanPath}`;
@@ -153,6 +153,24 @@ const SEOHead = ({
     }
   }, []);
 
+  // Drop the static fallback social/description tags from index.html once Helmet
+  // has taken over, so JS-executing crawlers never see two og:title / og:url /
+  // canonical values. Non-JS crawlers still get the static tags.
+  useEffect(() => {
+    const selectors = [
+      'meta[name="description"]',
+      'meta[property^="og:"]',
+      'meta[name^="twitter:"]',
+      'link[rel="canonical"]',
+    ];
+    document.head
+      .querySelectorAll<HTMLElement>(selectors.join(','))
+      .forEach(el => {
+        if (!el.hasAttribute('data-rh')) el.remove();
+      });
+  });
+
+
   function injectGA(gaId?: string) {
     if (!gaId || gaInjected.current) return;
     if (document.querySelector(`script[src*="gtag/js?id=${gaId}"]`)) { gaInjected.current = true; return; }
@@ -196,8 +214,6 @@ const SEOHead = ({
       <meta name="author" content="Shahed Store" />
       <meta name="geo.region" content="BD" />
       <meta name="geo.placename" content="Bangladesh" />
-      <meta name="geo.position" content="23.8103;90.4125" />
-      <meta name="ICBM" content="23.8103, 90.4125" />
 
       {/* Canonical + hreflang */}
       <link rel="canonical" href={canonicalUrl} />

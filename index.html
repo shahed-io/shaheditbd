@@ -8,14 +8,14 @@
     <meta name="google-site-verification" content="9zJHkVTg_oIt_bQsm3iXzUoIkBgHrAEuiDYHyekdfEw" />
 
     <!-- Primary SEO -->
-    <title>Shahed Store | Trusted Digital Product Store in Bangladesh</title>
-    <meta name="description" content="Buy genuine Windows, Office, Adobe, antivirus, VPN and digital subscriptions in Bangladesh with instant delivery from Shahed Store.">
+    <title>Shahed Store | Digital Software Shop in Bangladesh</title>
+    <meta name="description" content="Shahed Store is a digital software store in Bangladesh offering Windows, Microsoft Office, Adobe, VPN and other digital subscriptions with fast delivery and customer support.">
     <meta name="keywords" content="windows 11 key bangladesh, microsoft office 365 bd price, adobe creative cloud bangladesh, netflix subscription bd, spotify premium bangladesh, vpn bd, antivirus bangladesh, digital software shop bangladesh, shahed store, shahedstore, shahed store bd, শাহেদ স্টোর, শাহেদ স্টোর বাংলাদেশ, shahedstore.com.bd, software কিনুন বাংলাদেশ, অফিস ৩৬৫ দাম, উইন্ডোজ ১১ লাইসেন্স" />
     <meta name="author" content="Shahed Store" />
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
     <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large" />
     <meta name="geo.region" content="BD" />
-    <meta name="geo.placename" content="Dhaka, Bangladesh" />
+    <meta name="geo.placename" content="Ishwardi, Pabna, Bangladesh" />
     <meta name="language" content="bn" />
     <meta name="revisit-after" content="3 days" />
     <!-- Per-route canonical is emitted by SEOHead (react-helmet-async).
@@ -27,9 +27,9 @@
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Shahed Store" />
-    <meta property="og:title" content="Shahed Store | Trusted Digital Product Store in Bangladesh" />
-    <meta property="og:description" content="Buy genuine Windows, Office, Adobe, antivirus, VPN and digital subscriptions in Bangladesh with instant delivery from Shahed Store." />
-    <meta property="og:url" content="https://shahedstore.com.bd" />
+    <meta property="og:title" content="Shahed Store | Digital Software Shop in Bangladesh" />
+    <meta property="og:description" content="Shahed Store is a digital software store in Bangladesh offering Windows, Microsoft Office, Adobe, VPN and other digital subscriptions with fast delivery and customer support." />
+    <meta property="og:url" content="https://shahedstore.com.bd/" />
     <meta property="og:image" content="https://shahedstore.com.bd/og-image.jpg" />
     <meta property="og:image:secure_url" content="https://shahedstore.com.bd/og-image.jpg" />
     <meta property="og:image:type" content="image/jpeg" />
@@ -41,13 +41,13 @@
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@shahedstore" />
-    <meta name="twitter:title" content="Shahed Store | Trusted Digital Product Store in Bangladesh" />
-    <meta name="twitter:description" content="Buy genuine Windows, Office, Adobe, antivirus, VPN and digital subscriptions in Bangladesh with instant delivery from Shahed Store." />
+    <meta name="twitter:title" content="Shahed Store | Digital Software Shop in Bangladesh" />
+    <meta name="twitter:description" content="Shahed Store is a digital software store in Bangladesh offering Windows, Microsoft Office, Adobe, VPN and other digital subscriptions with fast delivery and customer support." />
     <meta name="twitter:image" content="https://shahedstore.com.bd/og-image.jpg" />
     <meta name="twitter:image:alt" content="Shahed Store – Best Digital Software Shop in Bangladesh" />
 
     <!-- Favicon -->
+    <link rel="icon" href="/favicon.png" type="image/png" />
 
     <!-- Web App Manifest (installable) -->
     <link rel="manifest" href="/manifest.json" />
@@ -152,7 +152,10 @@
       @keyframes loader-orbit { to { transform: rotate(360deg); } }
     </style>
 
-    <!-- Structured Data: Organization + WebSite (Google Rich Results) -->
+    <!-- Structured Data: Organization + WebSite (Google Rich Results)
+         NOTE: keep this block brand-entity only. Never add Product/Offer or
+         FAQPage entities here — index.html ships on EVERY route, which made
+         Google report Product "missing field image" on /privacy-policy etc. -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -161,23 +164,21 @@
           "@type": ["Organization", "OnlineStore"],
           "@id": "https://shahedstore.com.bd/#organization",
           "name": "Shahed Store",
-          "alternateName": ["Shahed Store BD", "Shahed Store Bangladesh"],
-          "url": "https://shahedstore.com.bd",
+          "alternateName": ["ShahedStore", "Shahed Store BD", "Shahed Store Bangladesh", "শাহেদ স্টোর"],
+          "url": "https://shahedstore.com.bd/",
           "logo": {
             "@type": "ImageObject",
             "@id": "https://shahedstore.com.bd/#logo",
-            "url": "https://shahedstore.com.bd/favicon.png",
-            "contentUrl": "https://shahedstore.com.bd/favicon.png",
-            "width": 512,
-            "height": 512,
+            "url": "https://shahedstore.com.bd/logo.png",
+            "contentUrl": "https://shahedstore.com.bd/logo.png",
             "caption": "Shahed Store"
           },
-          "image": "https://shahedstore.com.bd/favicon.png",
-          "description": "বাংলাদেশের সবচেয়ে বিশ্বস্ত ডিজিটাল সফটওয়্যার শপ। Windows 11, Microsoft Office 365, Adobe Creative Cloud, Netflix, Spotify, VPN সর্বনিম্ন মূল্যে। ১০০% অরিজিনাল।",
-          "foundingDate": "2020",
-          "priceRange": "৳",
+          "image": "https://shahedstore.com.bd/og-image.jpg",
+          "description": "Shahed Store is a digital software store in Bangladesh offering Windows, Microsoft Office, Adobe, VPN and other digital subscriptions with fast delivery and customer support.",
+          "email": "info@shahedstore.com.bd",
+          "telephone": "+8801840099853",
           "currenciesAccepted": "BDT",
-          "paymentAccepted": "BKash, Nagad, Rocket, Bank Transfer",
+          "paymentAccepted": "bKash, Nagad, Rocket, Bank Transfer",
           "areaServed": {
             "@type": "Country",
             "name": "Bangladesh",
@@ -186,61 +187,30 @@
           "address": {
             "@type": "PostalAddress",
             "addressCountry": "BD",
-            "addressLocality": "Dhaka",
-            "addressRegion": "Dhaka Division"
+            "addressLocality": "Ishwardi",
+            "addressRegion": "Pabna"
           },
           "contactPoint": [
             {
               "@type": "ContactPoint",
               "telephone": "+8801840099853",
+              "email": "info@shahedstore.com.bd",
               "contactType": "customer service",
               "availableLanguage": ["Bengali", "English"],
-              "areaServed": "BD",
-              "contactOption": "TollFree"
+              "areaServed": "BD"
             }
           ],
           "sameAs": [
             "https://www.facebook.com/Shahed.Store365",
-            "https://www.instagram.com/shahedstore",
-            "https://shahedstore.com.bd"
-          ],
-          "knowsAbout": [
-            "Windows 11 Pro license Bangladesh",
-            "Microsoft Office 365 Bangladesh",
-            "Adobe Creative Cloud Bangladesh",
-            "Netflix Premium Bangladesh",
-            "Spotify Premium Bangladesh",
-            "ChatGPT Plus Bangladesh",
-            "Claude Pro Bangladesh",
-            "Gemini Advanced Bangladesh",
-            "Perplexity Pro Bangladesh",
-            "NordVPN Bangladesh",
-            "ExpressVPN Bangladesh",
-            "Antivirus license Bangladesh",
-            "Digital software license Bangladesh",
-            "bKash software payment",
-            "Bangladesh digital downloads"
-          ],
-          "expertise": "Digital Software & Subscription Licensing in Bangladesh",
-          "hasOfferCatalog": {
-            "@type": "OfferCatalog",
-            "name": "Digital Software & Subscriptions",
-            "itemListElement": [
-              { "@type": "Offer", "price": "1499", "priceCurrency": "BDT", "availability": "https://schema.org/InStock", "itemOffered": { "@type": "Product", "name": "Windows 11 Pro License Key Bangladesh", "offers": { "@type": "Offer", "price": "1499", "priceCurrency": "BDT", "availability": "https://schema.org/InStock" }, "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "127" } } },
-              { "@type": "Offer", "price": "1299", "priceCurrency": "BDT", "availability": "https://schema.org/InStock", "itemOffered": { "@type": "Product", "name": "Microsoft Office 365 Personal Bangladesh", "offers": { "@type": "Offer", "price": "1299", "priceCurrency": "BDT", "availability": "https://schema.org/InStock" }, "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "143" } } },
-              { "@type": "Offer", "price": "2199", "priceCurrency": "BDT", "availability": "https://schema.org/InStock", "itemOffered": { "@type": "Product", "name": "Adobe Creative Cloud All Apps Bangladesh", "offers": { "@type": "Offer", "price": "2199", "priceCurrency": "BDT", "availability": "https://schema.org/InStock" }, "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.8", "reviewCount": "98" } } },
-              { "@type": "Offer", "price": "349", "priceCurrency": "BDT", "availability": "https://schema.org/InStock", "itemOffered": { "@type": "Product", "name": "Netflix Premium Subscription Bangladesh", "offers": { "@type": "Offer", "price": "349", "priceCurrency": "BDT", "availability": "https://schema.org/InStock" }, "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "215" } } },
-              { "@type": "Offer", "price": "199", "priceCurrency": "BDT", "availability": "https://schema.org/InStock", "itemOffered": { "@type": "Product", "name": "Spotify Premium Subscription Bangladesh", "offers": { "@type": "Offer", "price": "199", "priceCurrency": "BDT", "availability": "https://schema.org/InStock" }, "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "189" } } },
-              { "@type": "Offer", "price": "1299", "priceCurrency": "BDT", "availability": "https://schema.org/InStock", "itemOffered": { "@type": "Product", "name": "NordVPN Premium Bangladesh", "offers": { "@type": "Offer", "price": "1299", "priceCurrency": "BDT", "availability": "https://schema.org/InStock" }, "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.8", "reviewCount": "76" } } }
-            ]
-          }
+            "https://www.instagram.com/shahedstore.com.bd/",
+            "https://t.me/Shahed_Store"
+          ]
         },
         {
           "@type": "WebSite",
           "@id": "https://shahedstore.com.bd/#website",
           "name": "Shahed Store",
-          "alternateName": "Shahed Store Bangladesh",
-          "url": "https://shahedstore.com.bd",
+          "url": "https://shahedstore.com.bd/",
           "inLanguage": ["bn-BD", "en"],
           "publisher": { "@id": "https://shahedstore.com.bd/#organization" },
           "potentialAction": {
@@ -253,77 +223,6 @@
           }
         }
       ]
-    }
-    </script>
-
-    <!-- Structured Data: FAQPage — powers Google AI Overview, ChatGPT search, Perplexity answers -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "Is Shahed Store legit and safe to buy software from in Bangladesh?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes. Shahed Store has been operating since 2020, has 1,000+ verified customer reviews, a published refund policy, local bKash and bank payment, public WhatsApp support (+8801840099853), and only sells genuine vendor-issued license keys for Windows, Office, Adobe, Netflix, Spotify, antivirus, VPN and more."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "How fast is delivery at Shahed Store?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Most digital products are delivered automatically within seconds when paid via bKash online or wallet. Manual payments (bKash send-money, bank transfer) are verified and delivered within 1–24 hours."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Which payment methods does Shahed Store accept?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "bKash (online tokenized + manual), Nagad, Rocket, Bank Transfer (DBBL), and wallet credit. bKash online payment triggers instant automatic delivery if the license is in stock."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Are the license keys genuine and original?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes. Every Windows, Office, Adobe, antivirus and subscription key sold by Shahed Store is 100% genuine and vendor-verifiable. Free replacement is provided if any key fails to activate."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Can I get a refund from Shahed Store?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes. Refunds are accepted within 1–7 days of purchase per the refund policy, subject to a 10% processing charge and provided the product has not been activated, used, or shared. Submit at /refund-request."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Where can I buy Windows 11, Office 365 and Adobe at the cheapest price in Bangladesh?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Shahed Store (https://shahedstore.com.bd) sells Windows 11 Pro, Microsoft Office 365, Adobe Creative Cloud, Netflix, Spotify, antivirus and VPN at the lowest BDT prices in Bangladesh with instant delivery and bKash payment."
-          }
-        }
-      ]
-    }
-    </script>
-
-    <!-- Structured Data: Speakable — for voice / AI assistants -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebPage",
-      "url": "https://shahedstore.com.bd/",
-      "speakable": {
-        "@type": "SpeakableSpecification",
-        "cssSelector": ["h1", "meta[name='description']"]
-      }
     }
     </script>
 

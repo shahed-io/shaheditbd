@@ -1,6 +1,13 @@
 import { SITE_URL, SITE_NAME } from './SEOHead';
 
 const PHONE = '+8801840099853';
+const EMAIL = 'info@shahedstore.com.bd';
+/** Official Shahed Store profiles — keep in sync with footer settings & contact page */
+const SAME_AS = [
+  'https://www.facebook.com/Shahed.Store365',
+  'https://www.instagram.com/shahedstore.com.bd/',
+  'https://t.me/Shahed_Store',
+];
 const BD_AREA_CODE = 'BD';
 const SUPABASE_STORAGE_ORIGIN = 'https://dpvdavjwqyviredzoorj.supabase.co';
 const SUPABASE_STORAGE_PUBLIC_PATH = '/storage/v1/object/public/';
@@ -40,7 +47,8 @@ export const productSchema = (p: {
       if (normalized && !allImages.includes(normalized)) allImages.push(normalized);
     }
   }
-  if (allImages.length === 0) allImages.push(`${SITE_URL}/favicon.png`);
+  // NOTE: never fall back to the logo/placeholder — Google flags a logo used as
+  // a product image. If a product genuinely has no image, we omit the field.
 
   // Use ImageObject entries with captions — significantly boosts Google Images ranking
   const imageObjects = allImages.map((url) => ({
@@ -51,9 +59,8 @@ export const productSchema = (p: {
     representativeOfPage: true,
   }));
 
-  // Synthetic baseline rating to ensure rich snippet eligibility (overridden by real reviews)
-  const rating = p.rating ?? 4.9;
-  const reviewCount = p.reviewCount ?? 127;
+  // Only emit aggregateRating when REAL review data exists (Google forbids invented ratings)
+  const hasRealRating = typeof p.rating === 'number' && typeof p.reviewCount === 'number' && p.reviewCount > 0;
 
   return ({
   '@context': 'https://schema.org',
@@ -61,7 +68,7 @@ export const productSchema = (p: {
   '@id': `${SITE_URL}/product/${p.slug}#product`,
   name: p.name,
   description: p.description || `${p.name} - Buy at the best price in Bangladesh from ${SITE_NAME}. 100% genuine. Instant delivery.`,
-  image: imageObjects,
+  ...(imageObjects.length ? { image: imageObjects } : {}),
   url: `${SITE_URL}/product/${p.slug}`,
   sku: p.sku || p.slug,
   mpn: p.sku || p.slug,
@@ -110,13 +117,15 @@ export const productSchema = (p: {
       },
     } : {}),
   },
-  aggregateRating: {
-    '@type': 'AggregateRating',
-    ratingValue: rating,
-    reviewCount: reviewCount,
-    bestRating: 5,
-    worstRating: 1,
-  },
+  ...(hasRealRating ? {
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: p.rating,
+      reviewCount: p.reviewCount,
+      bestRating: 5,
+      worstRating: 1,
+    },
+  } : {}),
 });
 };
 
@@ -180,28 +189,26 @@ export const faqSchema = (faqs: { q: string; a: string }[]) => ({
 export const organizationSchema = () => ({
   '@context': 'https://schema.org',
   '@type': ['Organization', 'OnlineStore'],
+  '@id': `${SITE_URL}/#organization`,
   name: SITE_NAME,
-  legalName: 'Shahed Store',
-  alternateName: [
-    'Shahed Store BD',
-    'Shahed Store',
-    'ShahedStore',
-    'Shahed Store Bangladesh',
-    'shahedstore.com.bd',
-    'শাহেদ স্টোর',
-    'শাহেদ স্টোর বাংলাদেশ',
-  ],
+  legalName: SITE_NAME,
+  alternateName: ['ShahedStore', 'Shahed Store BD', 'Shahed Store Bangladesh', 'শাহেদ স্টোর'],
   brand: { '@type': 'Brand', name: SITE_NAME },
-  url: SITE_URL,
+  url: `${SITE_URL}/`,
   logo: {
     '@type': 'ImageObject',
-    url: `${SITE_URL}/favicon.png`,
-    width: 512,
-    height: 512,
+    '@id': `${SITE_URL}/#logo`,
+    url: `${SITE_URL}/logo.png`,
+    contentUrl: `${SITE_URL}/logo.png`,
+    caption: SITE_NAME,
   },
-  image: `${SITE_URL}/favicon.png`,
-  description: "Bangladesh's most trusted digital software shop. Buy Windows 11, Microsoft Office 365, Adobe Creative Cloud, Antivirus, VPN at the lowest price. 100% genuine. Instant delivery.",
-  foundingDate: '2020',
+  image: `${SITE_URL}/og-image.jpg`,
+  description:
+    'Shahed Store is a digital software store in Bangladesh offering Windows, Microsoft Office, Adobe, VPN and other digital subscriptions with fast delivery and customer support.',
+  email: EMAIL,
+  telephone: PHONE,
+  currenciesAccepted: 'BDT',
+  paymentAccepted: 'bKash, Nagad, Rocket, Bank Transfer',
   areaServed: {
     '@type': 'Country',
     name: 'Bangladesh',
@@ -209,83 +216,57 @@ export const organizationSchema = () => ({
   },
   address: {
     '@type': 'PostalAddress',
-    addressCountry: 'BD',
-    addressLocality: 'Dhaka',
-    addressRegion: 'Dhaka',
+    addressCountry: BD_AREA_CODE,
+    addressLocality: 'Ishwardi',
+    addressRegion: 'Pabna',
   },
   contactPoint: [
     {
       '@type': 'ContactPoint',
-      telephone: '+8801840099853',
+      telephone: PHONE,
+      email: EMAIL,
       contactType: 'customer service',
-      contactOption: 'TollFree',
       availableLanguage: ['Bengali', 'English'],
-      areaServed: 'BD',
+      areaServed: BD_AREA_CODE,
     },
   ],
-  sameAs: [
-    'https://www.facebook.com/Shahed.Store365',
-    'https://www.facebook.com/shahedstore',
-    'https://wa.me/8801840099853',
-    'https://www.instagram.com/shahedstore',
-    'https://www.youtube.com/@shahedstore',
-    'https://www.linkedin.com/company/shahedstore',
-    'https://www.tiktok.com/@shahedstore',
-    'https://t.me/shahedstore',
-  ],
-  hasOfferCatalog: {
-    '@type': 'OfferCatalog',
-    name: 'Digital Software Products',
-    itemListElement: [
-      {
-        '@type': 'Offer',
-        priceCurrency: 'BDT',
-        itemOffered: {
-          '@type': 'Product',
-          name: 'Windows 11 License Key Bangladesh',
-          image: `${SITE_URL}/favicon.png`,
-          url: `${SITE_URL}/shop?category=windows`,
-        },
-      },
-      {
-        '@type': 'Offer',
-        priceCurrency: 'BDT',
-        itemOffered: {
-          '@type': 'Product',
-          name: 'Microsoft Office 365 Bangladesh',
-          image: `${SITE_URL}/favicon.png`,
-          url: `${SITE_URL}/shop?category=office`,
-        },
-      },
-      {
-        '@type': 'Offer',
-        priceCurrency: 'BDT',
-        itemOffered: {
-          '@type': 'Product',
-          name: 'Adobe Creative Cloud Bangladesh',
-          image: `${SITE_URL}/favicon.png`,
-          url: `${SITE_URL}/shop?category=adobe`,
-        },
-      },
-    ],
-  },
+  // Only profiles that genuinely belong to Shahed Store (mirrors footer/contact page)
+  sameAs: SAME_AS,
 });
 
 export const websiteSchema = () => ({
   '@context': 'https://schema.org',
   '@type': 'WebSite',
+  '@id': `${SITE_URL}/#website`,
   name: SITE_NAME,
-  alternateName: ['Shahed Store BD', 'ShahedStore', 'শাহেদ স্টোর', 'shahedstore.com.bd'],
-  url: SITE_URL,
-  publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+  alternateName: ['ShahedStore', 'Shahed Store BD', 'শাহেদ স্টোর'],
+  url: `${SITE_URL}/`,
+  publisher: { '@id': `${SITE_URL}/#organization` },
   inLanguage: ['bn-BD', 'en'],
   potentialAction: {
     '@type': 'SearchAction',
     target: {
       '@type': 'EntryPoint',
-      urlTemplate: `${SITE_URL}/?search={search_term_string}`,
+      urlTemplate: `${SITE_URL}/shop?q={search_term_string}`,
     },
     'query-input': 'required name=search_term_string',
+  },
+});
+
+/** WebPage schema — describes the current page and ties it to the brand entity */
+export const webPageSchema = (page: { name: string; description?: string; url: string }) => ({
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': `${page.url}#webpage`,
+  name: page.name,
+  ...(page.description ? { description: page.description } : {}),
+  url: page.url,
+  isPartOf: { '@id': `${SITE_URL}/#website` },
+  about: { '@id': `${SITE_URL}/#organization` },
+  inLanguage: 'bn-BD',
+  speakable: {
+    '@type': 'SpeakableSpecification',
+    cssSelector: ['h1', '.lead'],
   },
 });
 
@@ -344,8 +325,8 @@ export const localBusinessSchema = () => ({
   '@type': 'OnlineStore',
   '@id': `${SITE_URL}/#localbusiness`,
   name: SITE_NAME,
-  image: `${SITE_URL}/favicon.png`,
-  url: SITE_URL,
+  image: `${SITE_URL}/og-image.jpg`,
+  url: `${SITE_URL}/`,
   telephone: PHONE,
   priceRange: '৳৳',
   currenciesAccepted: 'BDT',
@@ -357,16 +338,13 @@ export const localBusinessSchema = () => ({
   }],
   address: {
     '@type': 'PostalAddress',
-    streetAddress: 'Dhaka',
-    addressLocality: 'Dhaka',
-    addressRegion: 'Dhaka Division',
-    postalCode: '1200',
+    addressLocality: 'Ishwardi',
+    addressRegion: 'Pabna',
     addressCountry: 'BD',
   },
-  geo: { '@type': 'GeoCoordinates', latitude: 23.8103, longitude: 90.4125 },
+  email: EMAIL,
   areaServed: { '@type': 'Country', name: 'Bangladesh' },
-  sameAs: ['https://www.facebook.com/Shahed.Store365'],
-  hasMap: 'https://maps.google.com/?q=Dhaka+Bangladesh',
+  sameAs: SAME_AS,
 });
 
 /** SiteNavigationElement — helps Google build sitelinks */
@@ -407,13 +385,15 @@ export const softwareApplicationSchema = (p: {
     availability: 'https://schema.org/InStock',
     url: `${SITE_URL}/product/${p.slug}`,
   },
-  aggregateRating: {
-    '@type': 'AggregateRating',
-    ratingValue: p.rating ?? 4.9,
-    reviewCount: p.reviewCount ?? 127,
-    bestRating: 5,
-    worstRating: 1,
-  },
+  ...(typeof p.rating === 'number' && typeof p.reviewCount === 'number' && p.reviewCount > 0 ? {
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: p.rating,
+      reviewCount: p.reviewCount,
+      bestRating: 5,
+      worstRating: 1,
+    },
+  } : {}),
 });
 
 /** HowTo — for tutorial pages (huge ranking boost in how-to queries) */
