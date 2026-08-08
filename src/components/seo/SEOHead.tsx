@@ -153,6 +153,24 @@ const SEOHead = ({
     }
   }, []);
 
+  // Drop the static fallback social/description tags from index.html once Helmet
+  // has taken over, so JS-executing crawlers never see two og:title / og:url /
+  // canonical values. Non-JS crawlers still get the static tags.
+  useEffect(() => {
+    const selectors = [
+      'meta[name="description"]',
+      'meta[property^="og:"]',
+      'meta[name^="twitter:"]',
+      'link[rel="canonical"]',
+    ];
+    document.head
+      .querySelectorAll<HTMLElement>(selectors.join(','))
+      .forEach(el => {
+        if (!el.hasAttribute('data-rh')) el.remove();
+      });
+  });
+
+
   function injectGA(gaId?: string) {
     if (!gaId || gaInjected.current) return;
     if (document.querySelector(`script[src*="gtag/js?id=${gaId}"]`)) { gaInjected.current = true; return; }
