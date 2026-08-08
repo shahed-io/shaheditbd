@@ -5,7 +5,7 @@ import HeroBanner from '@/components/store/HeroBanner';
 import TopProducts from '@/components/store/TopProducts';
 import { TickerBanner, FloatingButtons } from '@/components/store/Extras';
 import SEOHead from '@/components/seo/SEOHead';
-import { organizationSchema, websiteSchema, webPageSchema, localBusinessSchema, siteNavigationSchema, speakableSchema } from '@/components/seo/schemas';
+import { webPageSchema, siteNavigationSchema } from '@/components/seo/schemas';
 import AboutBrand from '@/components/store/AboutBrand';
 import AuthModal from '@/components/store/AuthModal';
 
@@ -49,17 +49,15 @@ const Index = () => {
         description="Shahed Store is a digital software store in Bangladesh offering Windows, Microsoft Office, Adobe, VPN and other digital subscriptions with fast delivery and customer support."
         ogType="website"
         canonical="https://shahedstore.com.bd/"
+        /* Organization + WebSite live in index.html (static HTML, no JS needed).
+           Only page-level schema is emitted here to avoid duplicate entities. */
         schema={[
-          organizationSchema(),
-          websiteSchema(),
           webPageSchema({
             name: 'Shahed Store | Digital Software Shop in Bangladesh',
             description:
               'Shahed Store is a digital software store in Bangladesh offering Windows, Microsoft Office, Adobe, VPN and other digital subscriptions with fast delivery and customer support.',
             url: 'https://shahedstore.com.bd/',
           }),
-          localBusinessSchema(),
-          speakableSchema(['h1', '.lead', '.hero-title']),
           siteNavigationSchema([
             { name: 'Home', url: '/' },
             { name: 'Shop', url: '/shop' },

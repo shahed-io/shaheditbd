@@ -264,6 +264,10 @@ export const webPageSchema = (page: { name: string; description?: string; url: s
   isPartOf: { '@id': `${SITE_URL}/#website` },
   about: { '@id': `${SITE_URL}/#organization` },
   inLanguage: 'bn-BD',
+  speakable: {
+    '@type': 'SpeakableSpecification',
+    cssSelector: ['h1', '.lead'],
+  },
 });
 
 /** ItemList schema for shop/category pages — helps Google show product grid in search */
