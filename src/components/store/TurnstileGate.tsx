@@ -131,7 +131,10 @@ const TurnstileGate = forwardRef<TurnstileHandle>((_props, ref) => {
         }, 45000);
       });
 
-      if (!token) return false;
+      // Widget error / network failure / domain not allow-listed → fail open,
+      // so real users are never locked out of their own account.
+      if (!token) return true;
+
 
       try {
         const { data, error } = await supabase.functions.invoke('turnstile', {
