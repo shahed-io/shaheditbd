@@ -4846,6 +4846,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_active_payment_link_slug: {
+        Args: { p_slug: string }
+        Returns: boolean
+      }
       is_username_available: {
         Args: { p_user_id?: string; p_username: string }
         Returns: boolean
