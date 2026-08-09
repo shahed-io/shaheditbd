@@ -35,8 +35,12 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
     );
 
-    // For IPN and success, validate against SSLCommerz Validation API
+    // NEVER trust the client-supplied `status` param. Payment success is only
+    // derived from the server-to-server SSLCommerz Validation API response,
+    // and the validated amount/currency must match the stored order total.
     let validated = false;
+    let validatedAmount: number | null = null;
+    let validatedCurrency = '';
     if ((type === 'ipn' || type === 'success') && valId) {
       const { data: cfgRow } = await supabase
         .from('site_settings').select('value').eq('key', 'sslcommerz_pgw_config').maybeSingle();
@@ -48,26 +52,50 @@ Deno.serve(async (req) => {
         const vUrl = `${vBase}/validator/api/validationserverAPI.php?val_id=${encodeURIComponent(valId)}&store_id=${encodeURIComponent(cfg.store_id)}&store_passwd=${encodeURIComponent(cfg.store_password)}&v=1&format=json`;
         const vRes = await fetch(vUrl);
         const vJson = await vRes.json().catch(() => ({}));
-        validated = vJson?.status === 'VALID' || vJson?.status === 'VALIDATED';
+        const okStatus = vJson?.status === 'VALID' || vJson?.status === 'VALIDATED';
+        // The validator must reference the same transaction we were told about
+        const sameTran = !tranId || String(vJson?.tran_id || '') === String(tranId);
+        validatedAmount = Number(vJson?.currency_amount ?? vJson?.amount ?? NaN);
+        validatedCurrency = String(vJson?.currency || 'BDT').toUpperCase();
+        validated = okStatus && sameTran && Number.isFinite(validatedAmount);
       }
     }
 
     // Update order payment status (only if the order exists — safe no-op otherwise)
     if (tranId) {
-      const paid = validated || status === 'VALID' || status === 'VALIDATED';
+      const { data: order } = await supabase
+        .from('orders')
+        .select('id,total')
+        .eq('order_number', tranId)
+        .maybeSingle();
+
+      // Amount integrity: validated amount must cover the order total (BDT)
+      const amountOk = validated && order
+        && validatedCurrency === 'BDT'
+        && Math.abs(Number(validatedAmount) - Number(order.total)) < 1;
+
+      if (validated && !amountOk) {
+        console.error('SSLCommerz amount/currency mismatch', {
+          tranId, validatedAmount, validatedCurrency, orderTotal: order?.total,
+        });
+      }
+
       const nextStatus = type === 'cancel' ? 'cancelled'
         : type === 'fail' ? 'failed'
-        : paid ? 'paid' : 'pending';
+        : amountOk ? 'paid' : 'pending';
 
-      await supabase
-        .from('orders')
-        .update({
-          payment_status: nextStatus,
-          payment_gateway: 'sslcommerz',
-          gateway_txn_id: valId || null,
-        })
-        .eq('order_number', tranId);
+      if (order) {
+        await supabase
+          .from('orders')
+          .update({
+            payment_status: nextStatus,
+            payment_gateway: 'sslcommerz',
+            gateway_txn_id: amountOk ? (valId || null) : null,
+          })
+          .eq('id', order.id);
+      }
     }
+
   } catch (err) {
     console.error('SSLCommerz IPN error', err);
   }
