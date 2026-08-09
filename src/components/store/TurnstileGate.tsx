@@ -143,8 +143,10 @@ const TurnstileGate = forwardRef<TurnstileHandle>((_props, ref) => {
         if (error) return false;
         return Boolean((data as { success?: boolean })?.success);
       } catch {
-        return false;
+        // Backend unreachable → do not block a legitimate login attempt.
+        return true;
       }
+
     },
   }), [siteKey]);
 
