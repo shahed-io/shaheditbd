@@ -617,7 +617,11 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
                 </label>
               )}
 
+              {/* Invisible Cloudflare bot verification (shows only if challenged) */}
+              <TurnstileGate ref={turnstileRef} />
+
               <button type="submit" disabled={!canSubmit}
+
                 className="relative w-full py-3.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 overflow-hidden group"
                 style={{
                   background: 'linear-gradient(135deg, hsl(258,78%,55%) 0%, hsl(290,70%,55%) 50%, hsl(190,75%,50%) 100%)',
