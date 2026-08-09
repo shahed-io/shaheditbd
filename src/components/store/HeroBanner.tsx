@@ -156,7 +156,7 @@ const HeroBanner = () => {
             className="absolute inset-0 pointer-events-none"
             style={{
               background:
-                'linear-gradient(90deg, rgba(255,253,245,0.42) 0%, rgba(255,253,245,0.20) 30%, rgba(255,253,245,0) 55%)',
+                'linear-gradient(90deg, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0.20) 30%, rgba(255,255,255,0) 55%)',
             }}
           />
 
