@@ -79,6 +79,14 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
     if (!canSubmit) return;
     setLoading(true);
     try {
+      // Cloudflare Turnstile bot verification (invisible for real users)
+      const humanVerified = await (turnstileRef.current?.execute(mode) ?? Promise.resolve(true));
+      if (!humanVerified) {
+        toast.error('বট যাচাই সম্পন্ন হয়নি। অনুগ্রহ করে আবার চেষ্টা করুন।');
+        setLoading(false);
+        return;
+      }
+
       if (mode === 'forgot') {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
           redirectTo: `${window.location.origin}/reset-password`,
