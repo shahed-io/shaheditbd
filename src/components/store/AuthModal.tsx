@@ -6,6 +6,8 @@ import { toast } from 'sonner';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import BrandLogo from '@/components/store/BrandLogo';
 import { sendWelcomeEmail } from '@/lib/loginNotifier';
+import TurnstileGate, { type TurnstileHandle } from '@/components/store/TurnstileGate';
+
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -31,6 +33,8 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
   const [agreeTerms, setAgreeTerms] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const turnstileRef = useRef<TurnstileHandle>(null);
+
 
   // Validations
   const emailValid = useMemo(() => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim()), [email]);
@@ -75,6 +79,14 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
     if (!canSubmit) return;
     setLoading(true);
     try {
+      // Cloudflare Turnstile bot verification (invisible for real users)
+      const humanVerified = await (turnstileRef.current?.execute(mode) ?? Promise.resolve(true));
+      if (!humanVerified) {
+        toast.error('বট যাচাই সম্পন্ন হয়নি। অনুগ্রহ করে আবার চেষ্টা করুন।');
+        setLoading(false);
+        return;
+      }
+
       if (mode === 'forgot') {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
           redirectTo: `${window.location.origin}/reset-password`,
@@ -605,7 +617,11 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
                 </label>
               )}
 
+              {/* Invisible Cloudflare bot verification (shows only if challenged) */}
+              <TurnstileGate ref={turnstileRef} />
+
               <button type="submit" disabled={!canSubmit}
+
                 className="relative w-full py-3.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 overflow-hidden group"
                 style={{
                   background: 'linear-gradient(135deg, hsl(258,78%,55%) 0%, hsl(290,70%,55%) 50%, hsl(190,75%,50%) 100%)',
