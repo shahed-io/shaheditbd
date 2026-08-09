@@ -328,8 +328,18 @@ Deno.serve(async (req) => {
   // ----- Incoming Messages (POST) -----
   if (req.method === "POST") {
     try {
-      const body = await req.json();
+      const rawBody = await req.text();
+      const okSig = await verifyMetaSignature(rawBody, req.headers.get("x-hub-signature-256"));
+      if (!okSig) {
+        console.error("Invalid WhatsApp webhook signature — rejected");
+        return new Response(JSON.stringify({ error: "Invalid signature" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const body = JSON.parse(rawBody);
       const entries = body.entry || [];
+
       for (const entry of entries) {
         const changes = entry.changes || [];
         for (const change of changes) {
