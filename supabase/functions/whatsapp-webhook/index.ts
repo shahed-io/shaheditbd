@@ -8,12 +8,41 @@ const corsHeaders = {
 const ACCESS_TOKEN = Deno.env.get("WHATSAPP_ACCESS_TOKEN")!;
 const PHONE_NUMBER_ID = Deno.env.get("WHATSAPP_PHONE_NUMBER_ID")!;
 const VERIFY_TOKEN = Deno.env.get("WHATSAPP_VERIFY_TOKEN")!;
+const APP_SECRET = Deno.env.get("WHATSAPP_APP_SECRET") || "";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const SITE_URL = "https://shahedstore.com.bd";
 
 const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
+
+// ---------- Meta signature verification (X-Hub-Signature-256) ----------
+function hex(buf: ArrayBuffer) {
+  return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+async function verifyMetaSignature(rawBody: string, header: string | null): Promise<boolean> {
+  if (!APP_SECRET) {
+    console.error("WHATSAPP_APP_SECRET not configured — rejecting webhook");
+    return false;
+  }
+  if (!header || !header.startsWith("sha256=")) return false;
+  const provided = header.slice("sha256=".length).trim().toLowerCase();
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(APP_SECRET),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(rawBody));
+  const expected = hex(sig);
+  if (expected.length !== provided.length) return false;
+  let diff = 0;
+  for (let i = 0; i < expected.length; i++) diff |= expected.charCodeAt(i) ^ provided.charCodeAt(i);
+  return diff === 0;
+}
+
 
 // ---------- WhatsApp Send Helpers ----------
 async function sendText(to: string, body: string) {
