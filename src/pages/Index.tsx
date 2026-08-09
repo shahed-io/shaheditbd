@@ -80,15 +80,6 @@ const Index = () => {
         <TopProducts />
 
         {/* Below-fold — lazy loaded */}
-        <Suspense fallback={<SectionSkeleton />}>
-          <FlashSale />
-        </Suspense>
-        <Suspense fallback={<SectionSkeleton />}>
-          <WhyChooseUs />
-        </Suspense>
-        <Suspense fallback={<div className="py-12" />}>
-          <Testimonials />
-        </Suspense>
         <AboutBrand />
       </main>
       <Suspense fallback={<div className="py-8" />}>
