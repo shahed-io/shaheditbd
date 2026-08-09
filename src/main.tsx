@@ -111,21 +111,28 @@ class RootErrorBoundary extends React.Component<
 // (see index.css). Prevents laggy scrolling on desktop.
 // ══════════════════════════════════════════════════════════════
 if (typeof window !== 'undefined') {
-  let scrollTimer: number | undefined;
-  let ticking = false;
-  const root = document.documentElement;
-  const onScroll = () => {
-    if (!ticking) {
-      root.classList.add('is-scrolling');
-      ticking = true;
-    }
-    if (scrollTimer) window.clearTimeout(scrollTimer);
-    scrollTimer = window.setTimeout(() => {
-      root.classList.remove('is-scrolling');
-      ticking = false;
-    }, 140);
-  };
-  window.addEventListener('scroll', onScroll, { passive: true });
+  // On touch/mobile devices blur effects are permanently disabled via CSS
+  // (see index.css mobile block), so the per-scroll class toggle would only
+  // add style recalculation cost. Desktop keeps the dynamic behaviour.
+  const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches
+    || window.innerWidth < 768;
+  if (!isTouch) {
+    let scrollTimer: number | undefined;
+    let ticking = false;
+    const root = document.documentElement;
+    const onScroll = () => {
+      if (!ticking) {
+        root.classList.add('is-scrolling');
+        ticking = true;
+      }
+      if (scrollTimer) window.clearTimeout(scrollTimer);
+      scrollTimer = window.setTimeout(() => {
+        root.classList.remove('is-scrolling');
+        ticking = false;
+      }, 140);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
 }
 
 createRoot(document.getElementById("root")!).render(
