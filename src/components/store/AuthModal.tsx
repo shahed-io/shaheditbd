@@ -33,6 +33,8 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
   const [agreeTerms, setAgreeTerms] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const turnstileRef = useRef<TurnstileHandle>(null);
+
 
   // Validations
   const emailValid = useMemo(() => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim()), [email]);
