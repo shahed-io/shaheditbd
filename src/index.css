@@ -3003,3 +3003,48 @@ main > div > section {
   contain-intrinsic-size: 1px 800px;
 }
 
+
+/* ══════════════════════════════════════════════════════════════
+   MOBILE SCROLL PERFORMANCE (phones / touch devices)
+   backdrop-filter + always-on decorative animations are the main
+   cause of scroll jank on mobile GPUs. We disable them there while
+   keeping the same colors/layout (translucent backgrounds stay).
+   ══════════════════════════════════════════════════════════════ */
+@media (max-width: 767px), (hover: none) and (pointer: coarse) {
+  *,
+  *::before,
+  *::after {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Decorative glow/float loops — purely cosmetic, off on mobile */
+  .product-card-new,
+  .product-card-new::before,
+  .product-card-new::after,
+  .neon-pulse,
+  .neon-pulse-cyan,
+  [aria-hidden="true"] {
+    animation: none !important;
+  }
+
+  /* Blur filters on decorative (non-interactive) layers */
+  [aria-hidden="true"] {
+    filter: none !important;
+  }
+
+  /* Avoid needless compositor layers that eat mobile GPU memory */
+  .admin-hero-blob,
+  .admin-hero-decor-1,
+  .admin-hero-decor-2,
+  .admin-hero-decor-3 {
+    display: none !important;
+  }
+
+  /* Cheaper offscreen painting for long product/content lists */
+  main section,
+  main > div > section {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 600px;
+  }
+}
