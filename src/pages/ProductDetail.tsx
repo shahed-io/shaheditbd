@@ -1629,15 +1629,15 @@ const RelatedProducts = ({ categoryId, currentProductId }: { categoryId: string 
                       {p.original_price && p.original_price > p.price ? (
                         <>
                           <span className="text-xs line-through text-muted-foreground">
-                            {p.original_price.toLocaleString()}৳
+                            {fmtPrice(p.original_price)}
                           </span>
                           <span className="text-sm font-bold" style={{ color: 'hsl(35,100%,45%)' }}>
-                            – {p.price.toLocaleString()}৳
+                            – {fmtPrice(p.price)}
                           </span>
                         </>
                       ) : (
                         <span className="text-sm font-bold" style={{ color: 'hsl(35,100%,45%)' }}>
-                          {p.price.toLocaleString()}৳
+                          {fmtPrice(p.price)}
                         </span>
                       )}
                     </div>
