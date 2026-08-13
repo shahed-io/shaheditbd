@@ -303,7 +303,7 @@ const AppContent = () => {
           <Route path="/pay/:slug" element={<PaymentLink />} />
           <Route path="/pay/track/:id" element={<PaymentLinkTrack />} />
           <Route path="/uddoktapay/return" element={<Suspense fallback={<PageLoader />}><UddoktapayReturn /></Suspense>} />
-          <Route path="/__maintenance-preview" element={<MaintenanceScreen settings={{ enabled: true, title: 'সাইট রক্ষণাবেক্ষণ চলছে', message: 'আমরা আমাদের ওয়েবসাইট আরও দ্রুত ও নিরাপদ করতে কাজ করছি। কিছুক্ষণের মধ্যেই আবার ফিরে আসছি।', eta: 'আমরা ২ ঘণ্টার মধ্যে ফিরে আসছি', showContact: true, whatsapp: '8801XXXXXXXXX', email: 'support@shahedstore.com.bd' }} />} />
+          
           <Route path="/ceo/login" element={<AdminLogin />} />
           <Route path="/ceo" element={<AdminLayout />}>
             <Route index element={<AdminSuspense><AdminDashboard /></AdminSuspense>} />
