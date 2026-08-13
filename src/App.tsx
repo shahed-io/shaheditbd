@@ -257,8 +257,18 @@ const AppContent = () => {
     }
   }, [location.pathname]);
 
+  const isAdminArea = location.pathname.startsWith('/ceo');
+  if (!maintenanceLoading && maintenance.enabled && !isAdminArea && !isAdmin) {
+    return (
+      <Suspense fallback={null}>
+        <MaintenanceScreen settings={maintenance} />
+      </Suspense>
+    );
+  }
+
   return (
     <>
+
       {deferReady && (
         <Suspense fallback={null}>
           <AdminNotificationListener />
