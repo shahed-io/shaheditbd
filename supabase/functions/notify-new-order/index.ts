@@ -74,7 +74,7 @@ Deno.serve(async (req) => {
 
     if (orderErr || !order) {
       console.error('Order fetch error:', orderErr);
-      return new Response(JSON.stringify({ error: 'Order not found', detail: orderErr }), {
+      return new Response(JSON.stringify({ error: 'Order not found' }), {
         status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
