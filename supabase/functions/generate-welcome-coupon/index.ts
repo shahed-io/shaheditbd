@@ -164,13 +164,9 @@ serve(async (req) => {
 
     // ─── action: 'spin' — pick a prize and create coupon ───
     // Prevent double-spin
-    const { data: existingSpin } = await supabase
-      .from('welcome_coupons')
-      .select('id, code, discount_percent, discount_type, discount_amount, prize_label, expires_at, is_used')
-      .eq('visitor_id', visitorId)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single();
+    const existingSpin = await findExisting(
+      'id, code, discount_percent, discount_type, discount_amount, prize_label, expires_at, is_used',
+    );
 
     if (existingSpin) {
       if (!existingSpin.is_used && new Date(existingSpin.expires_at) > new Date()) {
