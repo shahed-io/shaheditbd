@@ -100,12 +100,28 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
           navigate('/dashboard');
         }
       } else {
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { data: { display_name: name }, emailRedirectTo: window.location.origin },
+        // Bot-protected signup: honeypot + timing + captcha + IP rate limit (server-side)
+        const { data: guard, error: guardErr } = await supabase.functions.invoke('secure-signup', {
+          body: {
+            email: email.trim(),
+            password,
+            name: name.trim(),
+            company: honeypot,                    // hidden field — bots fill it
+            elapsedMs: Date.now() - formOpenedAt.current,
+            captchaToken,
+          },
         });
-        if (error) throw error;
+        const guardError = (guard as any)?.error;
+        if (guardErr || guardError) {
+          setCaptchaToken('');
+          try { (window as any).turnstile?.reset?.(); } catch { /* ignore */ }
+          throw new Error(guardError || 'অ্যাকাউন্ট তৈরি করা যায়নি। আবার চেষ্টা করুন।');
+        }
+
+        const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
+        if (signInErr) throw signInErr;
+        const data = { user: { id: (guard as any)?.user_id as string | null } };
+
 
         toast.success('অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!');
 
