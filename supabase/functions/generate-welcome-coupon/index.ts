@@ -72,10 +72,39 @@ serve(async (req) => {
       });
     }
 
+    // ─── Server-verifiable identity: hashed client IP ────────────────────────
+    // The visitorId is client-supplied and trivially spoofable, so the one-spin
+    // rule is additionally bound to a salted hash of the caller's IP address.
+    const rawIp =
+      (req.headers.get('x-forwarded-for') || '').split(',')[0].trim() ||
+      req.headers.get('cf-connecting-ip') ||
+      req.headers.get('x-real-ip') ||
+      'unknown';
+    const salt = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || 'welcome-spin';
+    const digest = await crypto.subtle.digest(
+      'SHA-256',
+      new TextEncoder().encode(`${salt}:${rawIp}`),
+    );
+    const ipHash = Array.from(new Uint8Array(digest))
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
     );
+
+    // Latest coupon for this visitor OR this IP (whichever exists)
+    const findExisting = async (cols: string) => {
+      const { data } = await supabase
+        .from('welcome_coupons')
+        .select(cols)
+        .or(`visitor_id.eq.${visitorId},ip_hash.eq.${ipHash}`)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      return data as any;
+    };
 
     // Fetch admin settings (spin wheel config)
     const { data: settingsRow } = await supabase
