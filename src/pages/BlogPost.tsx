@@ -90,8 +90,22 @@ const CommentSection = ({ postId }: { postId: string }) => {
       toast.error('নাম ও মন্তব্য দিন'); return;
     }
     setSubmitting(true);
+
+    // Email is only stored when it belongs to the signed-in user (anti-spoofing
+    // rule enforced by the database). Otherwise it is omitted, so anonymous and
+    // logged-in readers can always comment.
+    const { data: { user } } = await supabase.auth.getUser();
+    const typedEmail = form.author_email.trim().toLowerCase();
+    const ownEmail = (user?.email || '').toLowerCase();
+    const safeEmail = user && typedEmail && typedEmail === ownEmail ? ownEmail : null;
+
     const { error } = await supabase.from('blog_comments').insert({
-      post_id: postId, ...form, status: 'pending',
+      post_id: postId,
+      author_name: form.author_name.trim().slice(0, 200),
+      author_email: safeEmail,
+      content: form.content.trim().slice(0, 5000),
+      user_id: user?.id ?? null,
+      status: 'pending',
     });
     setSubmitting(false);
     if (error) { toast.error('মন্তব্য পাঠানো সম্ভব হয়নি'); return; }
@@ -99,6 +113,7 @@ const CommentSection = ({ postId }: { postId: string }) => {
     setForm({ author_name: '', author_email: '', content: '' });
     toast.success('✅ মন্তব্য পাঠানো হয়েছে! অনুমোদনের পর দেখা যাবে।');
   };
+
 
   const inputCls = "w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors";
 
