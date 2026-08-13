@@ -165,20 +165,22 @@ Deno.serve(async (req) => {
     }
 
     // ─── WhatsApp link ────────────────────────────────────────────────────────
-    let whatsappLink: string | null = null;
-    const waNum = settings['admin_whatsapp'];
-    if (waNum) {
-      const phone = waNum.replace(/\D/g, '').replace(/^0/, '880');
-      const items = order.order_items || [];
-      const itemSummary = items.map((i: any) => `• ${i.product_name}`).join('\n');
-      const waMsg = encodeURIComponent(
-        `🛒 নতুন অর্ডার!\n\nঅর্ডার: #${order.order_number}\nগ্রাহক: ${order.customer_name}\n\n${itemSummary}\n\nমোট: ৳${Number(order.total).toLocaleString()}`
-      );
-      whatsappLink = `https://wa.me/${phone}?text=${waMsg}`;
-    }
-    results.whatsappLink = whatsappLink;
+    // NOTE: the WhatsApp deep link embeds customer name, items and total.
+    // This endpoint is unauthenticated (invoked by the DB trigger right after
+    // checkout), so the link is NEVER returned to the caller — only a flag.
+    results.whatsappConfigured = !!settings['admin_whatsapp'];
 
-    return new Response(JSON.stringify({ success: true, results }), {
+    // Response intentionally contains no customer or order details.
+    return new Response(JSON.stringify({
+      success: true,
+      results: {
+        telegram: results.telegram?.skipped
+          ? { skipped: true }
+          : { success: !!results.telegram?.success },
+        email: { success: !!results.email?.success },
+        whatsappConfigured: results.whatsappConfigured,
+      },
+    }), {
       status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (err) {
