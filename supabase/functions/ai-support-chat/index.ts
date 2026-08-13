@@ -297,7 +297,8 @@ serve(async (req) => {
 
   try {
     const { messages, pageContext, language: rawLanguage } = await req.json();
-    const language: "bn" | "en" = rawLanguage === "en" ? "en" : "bn";
+    let language: "bn" | "en" = rawLanguage === "en" ? "en" : "bn";
+
 
 
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
@@ -310,6 +311,35 @@ serve(async (req) => {
       }
       return "";
     })();
+
+    // ============ AUTO LANGUAGE DETECTION ============
+    // Bengali script OR "Banglish" (romanized Bengali) => reply in Bengali.
+    // Clean/proper English => reply in English.
+    const detectLanguage = (text: string): "bn" | "en" | null => {
+      const t = (text || "").trim();
+      if (t.length < 2) return null;
+      if (/[\u0980-\u09FF]/.test(t)) return "bn"; // Bengali script
+      const lower = t.toLowerCase();
+      const banglish = [
+        "ami","amar","amake","apni","apnar","tumi","koto","kto","kivabe","kibhabe","kemne","kemon",
+        "ki","kina","dam","taka","tk","korte","korbo","korben","kore","lagbe","lage","valo","bhalo",
+        "bhai","vai","hobe","hoibo","ache","achhe","chai","chaii","kobe","kothay","kothai","nai",
+        "tahole","janan","janaben","den","dibo","diben","ekta","kono","onek","jonno","niye","hoy",
+        "hoyni","pabo","paben","order","boli","bolte","please bolen","obosto","thik","thake","na",
+      ];
+      const words = lower.replace(/[^a-z\s']/g, " ").split(/\s+/).filter(Boolean);
+      if (!words.length) return null;
+      const hits = words.filter((w) => banglish.includes(w)).length;
+      if (hits >= 1 && hits / words.length >= 0.15) return "bn";
+      // Mostly latin alphabet with normal English structure
+      const latinRatio = (t.match(/[a-zA-Z]/g)?.length || 0) / t.replace(/\s/g, "").length;
+      if (latinRatio > 0.7) return "en";
+      return null;
+    };
+    const detected = detectLanguage(lastUserMsg);
+    if (detected) language = detected;
+
+
 
     // ============ 1) CURRENTLY VIEWED PRODUCT (from pageContext) ============
     let viewedProductBlock = "";
@@ -445,8 +475,8 @@ serve(async (req) => {
     }
 
     const languageDirective = language === "en"
-      ? `\n\n🌐 LANGUAGE LOCK: The customer has explicitly selected **English**. Reply **only in clear, natural English** for the entire conversation — never switch to Bengali/Bangla, even if internal notes below are in Bengali. Translate any Bengali product info into English before answering.`
-      : `\n\n🌐 LANGUAGE LOCK: গ্রাহক **বাংলা** ভাষা বেছে নিয়েছেন। পুরো কথোপকথনে **শুধু সাবলীল, সঠিক বাংলায়** উত্তর দিন — ইংরেজি বাক্যে switch করবেন না (technical term ছাড়া)।`;
+      ? `\n\n🌐 LANGUAGE MIRROR: The customer's latest message is in proper English. Reply **only in clear, natural English** — never switch to Bengali/Bangla, even if internal notes below are in Bengali. Translate any Bengali product info into English. If the customer later writes in Bengali or Banglish, switch to Bengali for that reply.`
+      : `\n\n🌐 LANGUAGE MIRROR: গ্রাহকের শেষ মেসেজ বাংলা বা Banglish (রোমান হরফে বাংলা) — তাই **শুধু সাবলীল, সঠিক বাংলায়** উত্তর দিন (technical term ছাড়া ইংরেজি বাক্য নয়)। গ্রাহক পরে সম্পূর্ণ ইংরেজিতে লিখলে সেই উত্তরটি ইংরেজিতে দিন।`;
 
     const systemPrompt = `আপনি Shahed Store-এর অফিসিয়াল AI সহকারী "Shahed AI"। বাংলা ও ইংরেজি উভয় ভাষায় কথা বলতে পারেন — গ্রাহক যে ভাষায় লিখবেন, সেই ভাষায় ও সেই টোনে উত্তর দিন।${languageDirective}
 
