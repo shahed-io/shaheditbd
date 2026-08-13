@@ -1173,6 +1173,19 @@ body.admin-page main > * {
   animation: admin-content-in 0.35s ease-out;
 }
 
+/* Every top-level admin page block must match the hero header width
+   (responsive on all devices — phone, tablet, desktop). */
+body.admin-page main > *,
+body.admin-page main > * > .space-y-6,
+body.admin-page .admin-hero-header {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box;
+}
+
+
 
 /* ══════════════════════════════════════════════════════════════
    PREMIUM GRADIENT GLOW — Keyframes (admin-only animations)
