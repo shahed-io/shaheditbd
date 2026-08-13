@@ -1519,6 +1519,7 @@ const ITEMS_PER_PAGE = 4;
 
 const RelatedProducts = ({ categoryId, currentProductId }: { categoryId: string | null; currentProductId: string }) => {
   const navigate = useNavigate();
+  const { format: fmtPrice } = useCurrency();
   const [products, setProducts] = useState<RelatedProduct[]>([]);
   const [loading, setLoading]   = useState(true);
   const [page, setPage] = useState(0);
