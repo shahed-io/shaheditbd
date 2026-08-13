@@ -75,7 +75,15 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
     } catch { /* ignore */ }
   }, [isOpen, searchParams]);
 
+  // Reset bot-protection timers/state whenever the modal opens or the mode changes
+  useEffect(() => {
+    formOpenedAt.current = Date.now();
+    setHoneypot('');
+    setCaptchaToken('');
+  }, [isOpen, mode]);
+
   if (!isOpen) return null;
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
