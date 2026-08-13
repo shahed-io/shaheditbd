@@ -20,7 +20,9 @@ import {
   ImageIcon, ImageOff, ArrowLeftRight, Wallet, Sliders, Flame, Mail, Facebook, Layers, ShieldCheck, MessageCircle, Brain, AlertTriangle, Palette, Sparkles, Activity, Network, Trophy,
   ShoppingCart as ShopIcon, CreditCard as CreditIcon,
   ShoppingBag,
+  Wrench,
 } from 'lucide-react';
+
 
 interface AdminNotif {
   id: string;
@@ -123,6 +125,8 @@ const MENU_SECTIONS: MenuSection[] = [
       { icon: FileText, label: 'Text Manager', path: '/ceo/text-manager' },
       { icon: Palette, label: 'Themes', path: '/ceo/themes' },
       { icon: Star, label: 'Customer Reviews', path: '/ceo/customer-reviews', badge: 'new' },
+      { icon: Wrench, label: 'Maintenance Mode', path: '/ceo/maintenance', badge: 'new' },
+
     ],
   },
   {

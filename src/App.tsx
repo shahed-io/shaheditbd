@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-route
 import { useEffect, lazy, Suspense, useState } from "react";
 import { useTheme } from "@/hooks/useTheme";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
+import { useMaintenanceMode } from "@/hooks/useMaintenanceMode";
+
 import { CartProvider } from "@/hooks/useCart";
 import { WishlistProvider } from "@/hooks/useWishlist";
 import { CurrencyProvider } from "@/hooks/useCurrency";
@@ -132,6 +134,9 @@ const AdminSubscriptionReminders = lazy(() => import("./pages/admin/AdminSubscri
 const AdminEmailDashboard        = lazy(() => import("./pages/admin/AdminEmailDashboard"));
 const AdminQuickSale             = lazy(() => import("./pages/admin/AdminQuickSale"));
 const AdminPopupBanner           = lazy(() => import("./pages/admin/AdminPopupBanner"));
+const AdminMaintenance           = lazy(() => import("./pages/admin/AdminMaintenance"));
+const MaintenanceScreen          = lazy(() => import("./components/store/MaintenanceScreen"));
+
 const AdminInvoiceGenerator      = lazy(() => import("./pages/admin/AdminInvoiceGenerator"));
 const AdminInvoiceDesign         = lazy(() => import("./pages/admin/AdminInvoiceDesign"));
 const AdminNotices               = lazy(() => import("./pages/admin/AdminNotices"));
@@ -219,8 +224,11 @@ const AppContent = () => {
   useTheme(); // Apply saved theme on load
   useAffiliateTracking(); // Capture ?ref=CODE on every navigation
   const { subtotal } = useCart();
+  const { isAdmin } = useAuth();
+  const { settings: maintenance, loading: maintenanceLoading } = useMaintenanceMode();
   useCustomAudiences({ cartValue: subtotal }); // Fire FB custom-audience events on route changes
   useMarketingPixelsPageView(); // Fire PageView on TikTok/Snap/Pin/LinkedIn/X on every route change
+
 
   useEffect(() => {
     // Defer non-critical components until after first paint (~20ms)
@@ -254,8 +262,18 @@ const AppContent = () => {
     }
   }, [location.pathname]);
 
+  const isAdminArea = location.pathname.startsWith('/ceo');
+  if (!maintenanceLoading && maintenance.enabled && !isAdminArea && !isAdmin) {
+    return (
+      <Suspense fallback={null}>
+        <MaintenanceScreen settings={maintenance} />
+      </Suspense>
+    );
+  }
+
   return (
     <>
+
       {deferReady && (
         <Suspense fallback={null}>
           <AdminNotificationListener />
@@ -363,6 +381,8 @@ const AppContent = () => {
             <Route path="quick-sale" element={<AdminSuspense><AdminQuickSale /></AdminSuspense>} />
             <Route path="payment-links" element={<AdminSuspense><AdminPaymentLinks /></AdminSuspense>} />
             <Route path="popup-banner" element={<AdminSuspense><AdminPopupBanner /></AdminSuspense>} />
+            <Route path="maintenance" element={<AdminSuspense><AdminMaintenance /></AdminSuspense>} />
+
             <Route path="invoices" element={<AdminSuspense><AdminInvoiceGenerator /></AdminSuspense>} />
             <Route path="invoice-design" element={<AdminSuspense><AdminInvoiceDesign /></AdminSuspense>} />
             <Route path="footer-settings" element={<AdminSuspense><AdminFooterSettings /></AdminSuspense>} />
