@@ -12,6 +12,7 @@ import { usePaymentSettings } from '@/hooks/usePaymentSettings';
 import type { CustomField } from '@/pages/admin/AdminProducts';
 import { useBkashPgwContent } from '@/hooks/useBkashPgwContent';
 import { getPaymentLogo } from '@/lib/paymentLogos';
+import PhoneInput from '@/components/store/PhoneInput';
 
 interface Product {
   id: string | number;
@@ -32,7 +33,7 @@ interface QuickOrderModalProps {
 const schema = z.object({
   name: z.string().trim().min(2, 'নাম কমপক্ষে ২ অক্ষর'),
   email: z.string().trim().email('সঠিক ইমেইল দিন'),
-  phone: z.string().trim().regex(/^(\+880|0)[0-9]{10}$/, 'সঠিক বাংলাদেশি নম্বর (01XXXXXXXXX)'),
+  phone: z.string().trim().regex(/^\+[1-9][0-9]{6,17}$/, 'Country code সহ সঠিক নম্বর দিন (যেমন +8801XXXXXXXXX)'),
 });
 
 type PaymentMethod = PMId | 'wallet';
@@ -532,7 +533,6 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
                 {[
                   { field: 'name', label: 'পুরো নাম', type: 'text', placeholder: 'আপনার নাম' },
                   { field: 'email', label: 'ইমেইল', type: 'email', placeholder: 'example@email.com' },
-                  { field: 'phone', label: 'ফোন নম্বর', type: 'tel', placeholder: '01XXXXXXXXX' },
                 ].map(({ field, label, type, placeholder }) => (
                   <div key={field}>
                     <label className="text-xs text-muted-foreground mb-1 block">{label}</label>
@@ -546,6 +546,15 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
                     {errors[field] && <p className="text-destructive text-xs mt-1">{errors[field]}</p>}
                   </div>
                 ))}
+                <div>
+                  <label className="text-xs text-muted-foreground mb-1 block">ফোন নম্বর (Country code সহ)</label>
+                  <PhoneInput
+                    value={form.phone}
+                    onChange={v => setForm(p => ({ ...p, phone: v }))}
+                    placeholder="1XXXXXXXXX"
+                  />
+                  {errors.phone && <p className="text-destructive text-xs mt-1">{errors.phone}</p>}
+                </div>
               </div>
 
               {/* ── Custom Fields ── */}

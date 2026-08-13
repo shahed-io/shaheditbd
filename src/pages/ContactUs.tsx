@@ -7,6 +7,7 @@ import { FloatingButtons } from '@/components/store/Extras';
 import { GlassCard, SectionCard } from '@/components/store/PolicyLayout';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import PhoneInput from '@/components/store/PhoneInput';
 
 const A = 'hsl(258,78%,55%)';
 const B = 'hsl(200,90%,45%)';
@@ -232,14 +233,10 @@ export default function ContactUs() {
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-[12px] font-bold mb-1.5" style={{ color: 'hsl(226,35%,30%)' }}>ফোন নম্বর</label>
-                        <input
-                          name="phone" value={form.phone} onChange={handleChange}
-                          placeholder="01XXXXXXXXX"
-                          maxLength={20}
-                          className="w-full px-4 py-2.5 rounded-xl text-[13px] outline-none transition-all"
-                          style={{ background: 'rgba(255,255,255,0.70)', border: '1px solid hsla(258,78%,75%,0.25)', color: 'hsl(226,35%,18%)' }}
-                          onFocus={e => e.currentTarget.style.borderColor = `${A}60`}
-                          onBlur={e => e.currentTarget.style.borderColor = 'hsla(258,78%,75%,0.25)'}
+                        <PhoneInput
+                          value={form.phone}
+                          onChange={v => handleChange({ target: { name: 'phone', value: v } } as any)}
+                          placeholder="1XXXXXXXXX"
                         />
                       </div>
                       <div>

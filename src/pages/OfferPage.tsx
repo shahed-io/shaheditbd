@@ -15,6 +15,7 @@ import SEOHead from '@/components/seo/SEOHead';
 import { useAuth } from '@/hooks/useAuth';
 import ReactMarkdown from 'react-markdown';
 import { parsePrizeItems } from '@/lib/offerPrizes';
+import PhoneInput from '@/components/store/PhoneInput';
 
 interface Offer {
   id: string;
@@ -253,7 +254,7 @@ export default function OfferPage() {
       case 'email':
         return <Input type="email" value={v || ''} onChange={(e) => set(e.target.value)} placeholder={f.placeholder || ''} required={f.required} />;
       case 'phone':
-        return <Input type="tel" value={v || ''} onChange={(e) => set(e.target.value)} placeholder={f.placeholder || ''} required={f.required} />;
+        return <PhoneInput value={v || ''} onChange={(val) => set(val)} placeholder={f.placeholder || '1XXXXXXXXX'} required={f.required} />;
       default:
         return <Input value={v || ''} onChange={(e) => set(e.target.value)} placeholder={f.placeholder || ''} required={f.required} />;
     }

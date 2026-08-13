@@ -22,11 +22,12 @@ import { useUddoktapayPgwConfig } from '@/hooks/useUddoktapayPgwConfig';
 import { getPaymentLogo } from '@/lib/paymentLogos';
 import PayPalButton from '@/components/store/PayPalButton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import PhoneInput from '@/components/store/PhoneInput';
 
 const checkoutSchema = z.object({
   name: z.string().trim().min(2, 'নাম কমপক্ষে ২ অক্ষরের হতে হবে').max(100),
   email: z.string().trim().email('সঠিক ইমেইল দিন').max(255),
-  phone: z.string().trim().regex(/^(\+880|0)[0-9]{10}$/, 'সঠিক বাংলাদেশি নম্বর দিন (01XXXXXXXXX)').max(20),
+  phone: z.string().trim().regex(/^\+[1-9][0-9]{6,17}$/, 'Country code সহ সঠিক নম্বর দিন (যেমন +8801XXXXXXXXX)').max(20),
 });
 
 type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 'bank_transfer' | 'wallet' | 'bkash_online' | 'paypal' | 'uddoktapay';
@@ -1259,7 +1260,6 @@ const Checkout = () => {
             {[
               { key: 'name', label: 'পুরো নাম *', type: 'text', placeholder: 'আপনার নাম' },
               { key: 'email', label: 'ইমেইল *', type: 'email', placeholder: 'example@email.com' },
-              { key: 'phone', label: 'ফোন নম্বর *', type: 'tel', placeholder: '01XXXXXXXXX' },
             ].map(({ key, label, type, placeholder }) => (
               <div key={key}>
                 <label className="text-sm text-muted-foreground mb-1 block">{label}</label>
@@ -1273,6 +1273,16 @@ const Checkout = () => {
                 {errors[key] && <p className="text-destructive text-xs mt-1">{errors[key]}</p>}
               </div>
             ))}
+            <div>
+              <label className="text-sm text-muted-foreground mb-1 block">ফোন নম্বর * (Country code সহ)</label>
+              <PhoneInput
+                value={form.phone}
+                onChange={v => setForm(prev => ({ ...prev, phone: v }))}
+                placeholder="1XXXXXXXXX"
+                inputClassName="py-3"
+              />
+              {errors.phone && <p className="text-destructive text-xs mt-1">{errors.phone}</p>}
+            </div>
           </div>
 
           {/* Payment Method */}

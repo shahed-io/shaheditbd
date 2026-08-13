@@ -19,6 +19,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import Navbar from '@/components/store/Navbar';
 import Footer from '@/components/store/Footer';
 import SEOHead from '@/components/seo/SEOHead';
+import PhoneInput from '@/components/store/PhoneInput';
 
 interface Account {
   id: string;
@@ -363,7 +364,7 @@ const Affiliate = () => {
                   <Input type="email" value={form.applicant_email} onChange={e => setForm({ ...form, applicant_email: e.target.value })} placeholder="you@example.com" />
                 </Field>
                 <Field label="ফোন নম্বর" required icon={Phone}>
-                  <Input type="tel" value={form.applicant_phone} onChange={e => setForm({ ...form, applicant_phone: e.target.value })} placeholder="01XXXXXXXXX" />
+                  <PhoneInput value={form.applicant_phone} onChange={v => setForm({ ...form, applicant_phone: v })} placeholder="1XXXXXXXXX" />
                 </Field>
               </div>
             </Section>
