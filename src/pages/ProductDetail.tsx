@@ -969,10 +969,10 @@ const ProductDetail = () => {
                           {/* Right: price — always one line */}
                           <div className="flex items-center gap-1.5 text-right flex-shrink-0 whitespace-nowrap">
                             {planOriginal && planOriginal > planPrice && (
-                              <span className="text-[11px] sm:text-xs line-through" style={{ color: 'hsl(226,25%,65%)' }}>৳{planOriginal.toLocaleString()}</span>
+                              <span className="text-[11px] sm:text-xs line-through" style={{ color: 'hsl(226,25%,65%)' }}>{fmtPrice(planOriginal)}</span>
                             )}
                             <span className="font-black text-sm sm:text-base font-sora" style={{ color: 'hsl(258,78%,42%)' }}>
-                              ৳{planPrice.toLocaleString()}
+                              {fmtPrice(planPrice)}
                             </span>
                             {planDiscount > 0 && (
                               <span className="text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-full"
