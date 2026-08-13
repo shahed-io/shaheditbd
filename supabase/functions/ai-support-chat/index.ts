@@ -475,7 +475,7 @@ serve(async (req) => {
     }
 
     const languageDirective = language === "en"
-      ? `\n\n🌐 LANGUAGE LOCK: The customer has explicitly selected **English**. Reply **only in clear, natural English** for the entire conversation — never switch to Bengali/Bangla, even if internal notes below are in Bengali. Translate any Bengali product info into English before answering.`
+      ? `\n\n🌐 LANGUAGE MIRROR: The customer's latest message is in proper English. Reply **only in clear, natural English** — never switch to Bengali/Bangla, even if internal notes below are in Bengali. Translate any Bengali product info into English. If the customer later writes in Bengali or Banglish, switch to Bengali for that reply.`
       : `\n\n🌐 LANGUAGE LOCK: গ্রাহক **বাংলা** ভাষা বেছে নিয়েছেন। পুরো কথোপকথনে **শুধু সাবলীল, সঠিক বাংলায়** উত্তর দিন — ইংরেজি বাক্যে switch করবেন না (technical term ছাড়া)।`;
 
     const systemPrompt = `আপনি Shahed Store-এর অফিসিয়াল AI সহকারী "Shahed AI"। বাংলা ও ইংরেজি উভয় ভাষায় কথা বলতে পারেন — গ্রাহক যে ভাষায় লিখবেন, সেই ভাষায় ও সেই টোনে উত্তর দিন।${languageDirective}
