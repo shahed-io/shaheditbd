@@ -22,9 +22,13 @@ export const useReveal = (options: UseRevealOptions = {}) => {
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el) {
+      // If no ref is attached, we must still be visible eventually
+      const t = setTimeout(() => setVisible(true), 100);
+      return () => clearTimeout(t);
+    }
 
-    // Fallback: reveal after 600ms even if IO doesn't fire (low-end mobile)
+    // Fallback: reveal after 600ms even if IO doesn't fire (low-end mobile or content-visibility: auto issues)
     const fallback = setTimeout(() => setVisible(true), 600);
 
     const observer = new IntersectionObserver(

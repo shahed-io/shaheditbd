@@ -2999,8 +2999,8 @@ html.is-scrolling [aria-hidden="true"] {
    painting them until they're near the viewport. */
 main > section,
 main > div > section {
-  content-visibility: auto;
-  contain-intrinsic-size: 1px 800px;
+  /* content-visibility: auto is disabled temporarily to fix blank page issues where 
+     IntersectionObserver fails to trigger for hidden sections. */
 }
 
 
@@ -3044,7 +3044,6 @@ main > div > section {
   /* Cheaper offscreen painting for long product/content lists */
   main section,
   main > div > section {
-    content-visibility: auto;
-    contain-intrinsic-size: 1px 600px;
+    /* content-visibility: auto is disabled temporarily to fix blank page issues on mobile. */
   }
 }
