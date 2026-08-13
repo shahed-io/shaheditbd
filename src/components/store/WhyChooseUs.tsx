@@ -118,46 +118,48 @@ const SectionHeader = ({ badge, from, to, title, subtitle }: { badge: string; fr
 
 /* ─── Feature Card ─── */
 const FeatureCard = ({ feature: f, index }: { feature: typeof FEATURES[0]; index: number }) => (
-  <div
-    className="rise-up"
-    style={{ animationDelay: `${(index % 3) * 80}ms` }}
-  >
-    <GlassCard from={f.from} to={f.to} className="h-full">
-      <div className="relative p-6 sm:p-7">
-        {/* Icon with gradient bg */}
-        <div className="relative mb-5 inline-flex">
-          <div
-            className="w-14 h-14 rounded-2xl flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3"
-            style={{
-              background: `linear-gradient(135deg, hsl(${f.from}), hsl(${f.to}))`,
-              boxShadow: `0 8px 24px hsla(${f.from},0.4), inset 0 1px 0 hsla(0,0%,100%,0.4)`,
-            }}
-          >
-            <f.Icon size={26} strokeWidth={2.2} className="text-white" />
-          </div>
-          {/* Soft glow */}
-          <div
-            className="absolute inset-0 rounded-2xl opacity-50 -z-10"
-            style={{ background: `linear-gradient(135deg, hsl(${f.from}), hsl(${f.to}))`, filter: 'blur(18px)' }}
-          />
-        </div>
+  <div className="rise-up h-full" style={{ animationDelay: `${(index % 3) * 80}ms` }}>
+    <div
+      className="group relative h-full rounded-3xl p-7 sm:p-8 transition-all duration-300 hover:-translate-y-1"
+      style={{
+        background: 'hsla(0,0%,100%,0.7)',
+        border: '1px solid hsla(220,20%,80%,0.45)',
+        boxShadow: '0 1px 2px hsla(243,40%,30%,0.05)',
+      }}
+      onMouseEnter={(e) => { e.currentTarget.style.boxShadow = `0 20px 40px -12px hsla(${f.from},0.28)`; }}
+      onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 1px 2px hsla(243,40%,30%,0.05)'; }}
+    >
+      {/* Top hairline accent on hover */}
+      <div
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+        style={{ background: `linear-gradient(90deg, transparent, hsl(${f.from}), transparent)` }}
+      />
 
-        <h3 className="font-sora font-bold text-[16px] mb-2 text-foreground tracking-tight">
-          {f.title}
-        </h3>
-        <p className="text-[13.5px] leading-relaxed text-muted-foreground">
-          {f.desc}
-        </p>
-
-        {/* Bottom gradient line */}
-        <div
-          className="absolute bottom-0 left-6 right-6 h-[2px] rounded-full opacity-30 group-hover:opacity-100 transition-opacity duration-500"
-          style={{ background: `linear-gradient(90deg, transparent, hsl(${f.from}), hsl(${f.to}), transparent)` }}
+      {/* Icon tile: tinted → solid on hover */}
+      <div
+        className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-colors duration-300"
+        style={{ background: `hsla(${f.from},0.1)` }}
+        onMouseEnter={(e) => { e.currentTarget.style.background = `hsl(${f.from})`; }}
+        onMouseLeave={(e) => { e.currentTarget.style.background = `hsla(${f.from},0.1)`; }}
+      >
+        <f.Icon
+          size={26}
+          strokeWidth={2}
+          className="transition-colors duration-300 group-hover:text-white"
+          style={{ color: `hsl(${f.from})` }}
         />
       </div>
-    </GlassCard>
+
+      <h3 className="font-sora font-bold text-[18px] mb-3 text-foreground tracking-tight">
+        {f.title}
+      </h3>
+      <p className="text-[14px] leading-relaxed text-muted-foreground">
+        {f.desc}
+      </p>
+    </div>
   </div>
 );
+
 
 /* ─── Step Card ─── */
 const StepCard = ({ step, index }: { step: typeof STEPS[0]; index: number }) => (
