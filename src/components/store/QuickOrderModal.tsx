@@ -33,7 +33,7 @@ interface QuickOrderModalProps {
 const schema = z.object({
   name: z.string().trim().min(2, 'নাম কমপক্ষে ২ অক্ষর'),
   email: z.string().trim().email('সঠিক ইমেইল দিন'),
-  phone: z.string().trim().regex(/^(\+880|0)[0-9]{10}$/, 'সঠিক বাংলাদেশি নম্বর (01XXXXXXXXX)'),
+  phone: z.string().trim().regex(/^\+[1-9][0-9]{6,17}$/, 'Country code সহ সঠিক নম্বর দিন (যেমন +8801XXXXXXXXX)'),
 });
 
 type PaymentMethod = PMId | 'wallet';
