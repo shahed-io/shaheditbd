@@ -4052,6 +4052,7 @@ export type Database = {
           discount_type: string
           expires_at: string
           id: string
+          ip_hash: string | null
           is_used: boolean
           prize_label: string | null
           used_at: string | null
@@ -4066,6 +4067,7 @@ export type Database = {
           discount_type?: string
           expires_at: string
           id?: string
+          ip_hash?: string | null
           is_used?: boolean
           prize_label?: string | null
           used_at?: string | null
@@ -4080,6 +4082,7 @@ export type Database = {
           discount_type?: string
           expires_at?: string
           id?: string
+          ip_hash?: string | null
           is_used?: boolean
           prize_label?: string | null
           used_at?: string | null
