@@ -3047,3 +3047,17 @@ main > div > section {
     /* content-visibility: auto is disabled temporarily to fix blank page issues on mobile. */
   }
 }
+
+/* ──────────────────────────────────────────────────────────────
+   Admin tables always fill their card (no shrink-to-content),
+   while still allowing horizontal scroll when columns overflow.
+   ────────────────────────────────────────────────────────────── */
+body.admin-page table {
+  width: 100% !important;
+  min-width: max-content;
+}
+body.admin-page table > thead > tr,
+body.admin-page table > tbody > tr,
+body.admin-page table > tfoot > tr {
+  width: 100%;
+}
