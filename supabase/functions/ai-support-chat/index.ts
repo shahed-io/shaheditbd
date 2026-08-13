@@ -297,7 +297,8 @@ serve(async (req) => {
 
   try {
     const { messages, pageContext, language: rawLanguage } = await req.json();
-    const language: "bn" | "en" = rawLanguage === "en" ? "en" : "bn";
+    let language: "bn" | "en" = rawLanguage === "en" ? "en" : "bn";
+
 
 
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
