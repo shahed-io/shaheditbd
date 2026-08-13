@@ -446,7 +446,36 @@ const AdminSettings = () => {
             </div>
           </div>
 
+          {/* Bot Signup Protection */}
+          <div className="glass-card rounded-2xl p-6 border border-sky-500/20">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-9 h-9 rounded-xl bg-sky-500/20 flex items-center justify-center">
+                <Shield size={18} className="text-sky-500" />
+              </div>
+              <div>
+                <h3 className="font-bold text-foreground">🤖 Bot Signup Protection</h3>
+                <p className="text-xs text-muted-foreground">Cloudflare Turnstile + honeypot + timing + IP rate limit on account creation</p>
+              </div>
+            </div>
+
+            <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Cloudflare Turnstile Site Key (public)</label>
+            <input
+              type="text"
+              value={settings['turnstile_site_key'] || ''}
+              onChange={(e) => setSettings({ ...settings, turnstile_site_key: e.target.value.trim() })}
+              placeholder="0x4AAAAAAA..."
+              className="w-full px-4 py-2.5 rounded-xl bg-muted/20 border border-border text-sm text-foreground outline-none focus:border-sky-500"
+            />
+            <ul className="text-xs text-muted-foreground space-y-1 mt-4">
+              <li>✅ Honeypot field + form submit-timing check (always on)</li>
+              <li>✅ Disposable/temporary email blocking (always on)</li>
+              <li>✅ IP rate limit: max 5 signups per hour, 15 per day</li>
+              <li>ℹ️ Turnstile widget shows only after the Site Key is saved here, and the Secret Key is added as a backend secret (TURNSTILE_SECRET_KEY)</li>
+            </ul>
+          </div>
+
           {/* Copy Protection Toggle */}
+
           <div className="glass-card rounded-2xl p-6 border border-amber-500/20">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-9 h-9 rounded-xl bg-amber-500/20 flex items-center justify-center">
