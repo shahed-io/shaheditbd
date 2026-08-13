@@ -1064,7 +1064,7 @@ const ProductDetail = () => {
                               </div>
                               <span className="text-sm font-semibold text-foreground flex-1">{v.label}</span>
                               {v.price_adjustment > 0 && (
-                                <span className="text-xs font-semibold text-muted-foreground">+৳{v.price_adjustment.toLocaleString()}</span>
+                                <span className="text-xs font-semibold text-muted-foreground">+{fmtPrice(v.price_adjustment)}</span>
                               )}
                             </label>
                           );
