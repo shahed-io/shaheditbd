@@ -229,6 +229,7 @@ serve(async (req) => {
       prize_label: prize.label,
       expires_at: expiresAt,
       visitor_id: visitorId,
+      ip_hash: ipHash,
     };
 
     const { error: insertError } = await supabase
