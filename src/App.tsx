@@ -219,8 +219,11 @@ const AppContent = () => {
   useTheme(); // Apply saved theme on load
   useAffiliateTracking(); // Capture ?ref=CODE on every navigation
   const { subtotal } = useCart();
+  const { isAdmin } = useAuth();
+  const { settings: maintenance, loading: maintenanceLoading } = useMaintenanceMode();
   useCustomAudiences({ cartValue: subtotal }); // Fire FB custom-audience events on route changes
   useMarketingPixelsPageView(); // Fire PageView on TikTok/Snap/Pin/LinkedIn/X on every route change
+
 
   useEffect(() => {
     // Defer non-critical components until after first paint (~20ms)
