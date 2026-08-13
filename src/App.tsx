@@ -134,6 +134,9 @@ const AdminSubscriptionReminders = lazy(() => import("./pages/admin/AdminSubscri
 const AdminEmailDashboard        = lazy(() => import("./pages/admin/AdminEmailDashboard"));
 const AdminQuickSale             = lazy(() => import("./pages/admin/AdminQuickSale"));
 const AdminPopupBanner           = lazy(() => import("./pages/admin/AdminPopupBanner"));
+const AdminMaintenance           = lazy(() => import("./pages/admin/AdminMaintenance"));
+const MaintenanceScreen          = lazy(() => import("./components/store/MaintenanceScreen"));
+
 const AdminInvoiceGenerator      = lazy(() => import("./pages/admin/AdminInvoiceGenerator"));
 const AdminInvoiceDesign         = lazy(() => import("./pages/admin/AdminInvoiceDesign"));
 const AdminNotices               = lazy(() => import("./pages/admin/AdminNotices"));
