@@ -29,10 +29,10 @@ const CurrencySwitcher = ({ className }: Props) => {
           title="Change currency"
           className={`group relative flex items-center gap-2 h-10 pl-1.5 pr-3 rounded-full bg-background border border-primary/25 hover:border-primary/60 hover:bg-primary/[0.04] transition-all duration-300 cursor-pointer shadow-sm hover:shadow-[0_4px_14px_-4px_hsl(var(--primary)/0.35)] active:scale-[0.97] ${className || ""}`}
         >
-          {/* Currency symbol badge (the universal money signal) */}
+          {/* Currency symbol badge (brand primary violet) */}
           <span
-            className="flex items-center justify-center w-7 h-7 rounded-full text-[17px] leading-none font-extrabold text-[#3b1f04] shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_0_10px_rgba(251,191,36,0.4)]"
-            style={{ background: "linear-gradient(135deg, #fde68a 0%, #fbbf24 55%, #d97706 100%)", fontFamily: "'Noto Sans Bengali', 'Hind Siliguri', system-ui, sans-serif" }}
+            className="flex items-center justify-center w-7 h-7 rounded-full text-[17px] leading-none font-extrabold text-primary-foreground shadow-[inset_0_1px_0_hsl(var(--primary-foreground)/0.35),0_0_10px_hsl(var(--primary)/0.35)]"
+            style={{ background: "linear-gradient(135deg, hsl(var(--primary)/0.85) 0%, hsl(var(--primary)) 55%, hsl(var(--primary)/0.75) 100%)", fontFamily: "'Noto Sans Bengali', 'Hind Siliguri', system-ui, sans-serif" }}
           >
             <span className="translate-y-[-1px]">{active.symbol || "¤"}</span>
           </span>
