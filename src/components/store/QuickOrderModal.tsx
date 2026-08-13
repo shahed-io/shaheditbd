@@ -532,7 +532,6 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
                 {[
                   { field: 'name', label: 'পুরো নাম', type: 'text', placeholder: 'আপনার নাম' },
                   { field: 'email', label: 'ইমেইল', type: 'email', placeholder: 'example@email.com' },
-                  { field: 'phone', label: 'ফোন নম্বর', type: 'tel', placeholder: '01XXXXXXXXX' },
                 ].map(({ field, label, type, placeholder }) => (
                   <div key={field}>
                     <label className="text-xs text-muted-foreground mb-1 block">{label}</label>
@@ -546,6 +545,15 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
                     {errors[field] && <p className="text-destructive text-xs mt-1">{errors[field]}</p>}
                   </div>
                 ))}
+                <div>
+                  <label className="text-xs text-muted-foreground mb-1 block">ফোন নম্বর (Country code সহ)</label>
+                  <PhoneInput
+                    value={form.phone}
+                    onChange={v => setForm(p => ({ ...p, phone: v }))}
+                    placeholder="1XXXXXXXXX"
+                  />
+                  {errors.phone && <p className="text-destructive text-xs mt-1">{errors.phone}</p>}
+                </div>
               </div>
 
               {/* ── Custom Fields ── */}
