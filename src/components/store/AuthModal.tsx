@@ -6,6 +6,8 @@ import { toast } from 'sonner';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import BrandLogo from '@/components/store/BrandLogo';
 import { sendWelcomeEmail } from '@/lib/loginNotifier';
+import TurnstileWidget, { useTurnstileSiteKey } from '@/components/store/TurnstileWidget';
+
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -29,6 +31,12 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
   const [rememberMe, setRememberMe] = useState(true);
   const [capsLockOn, setCapsLockOn] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
+  // --- Bot protection ---
+  const [honeypot, setHoneypot] = useState('');            // hidden field, humans never fill it
+  const [captchaToken, setCaptchaToken] = useState('');
+  const formOpenedAt = useRef<number>(Date.now());
+  const turnstileSiteKey = useTurnstileSiteKey();
+
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -44,7 +52,7 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
   const canSubmit = !loading && (
     mode === 'forgot' ? emailValid :
     mode === 'login' ? emailValid && pwLen >= 1 :
-    emailValid && passwordValid && nameValid && agreeTerms
+    emailValid && passwordValid && nameValid && agreeTerms && (!turnstileSiteKey || !!captchaToken)
   );
 
   // Auto-fill referral code from URL (?ref=CODE) and switch to signup
@@ -67,7 +75,15 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
     } catch { /* ignore */ }
   }, [isOpen, searchParams]);
 
+  // Reset bot-protection timers/state whenever the modal opens or the mode changes
+  useEffect(() => {
+    formOpenedAt.current = Date.now();
+    setHoneypot('');
+    setCaptchaToken('');
+  }, [isOpen, mode]);
+
   if (!isOpen) return null;
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,12 +116,28 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
           navigate('/dashboard');
         }
       } else {
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { data: { display_name: name }, emailRedirectTo: window.location.origin },
+        // Bot-protected signup: honeypot + timing + captcha + IP rate limit (server-side)
+        const { data: guard, error: guardErr } = await supabase.functions.invoke('secure-signup', {
+          body: {
+            email: email.trim(),
+            password,
+            name: name.trim(),
+            company: honeypot,                    // hidden field — bots fill it
+            elapsedMs: Date.now() - formOpenedAt.current,
+            captchaToken,
+          },
         });
-        if (error) throw error;
+        const guardError = (guard as any)?.error;
+        if (guardErr || guardError) {
+          setCaptchaToken('');
+          try { (window as any).turnstile?.reset?.(); } catch { /* ignore */ }
+          throw new Error(guardError || 'অ্যাকাউন্ট তৈরি করা যায়নি। আবার চেষ্টা করুন।');
+        }
+
+        const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
+        if (signInErr) throw signInErr;
+        const data = { user: { id: (guard as any)?.user_id as string | null } };
+
 
         toast.success('অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!');
 
@@ -572,8 +604,32 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
                 </div>
               )}
 
+              {/* Honeypot — hidden from humans, bots fill it and get rejected */}
+              {mode === 'signup' && (
+                <div aria-hidden="true" className="absolute opacity-0 pointer-events-none -z-10 h-0 overflow-hidden">
+                  <input
+                    type="text"
+                    name="company"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={honeypot}
+                    onChange={(e) => setHoneypot(e.target.value)}
+                  />
+                </div>
+              )}
+
+              {/* Cloudflare human verification — renders only when a site key is configured */}
+              {mode === 'signup' && turnstileSiteKey && (
+                <TurnstileWidget
+                  siteKey={turnstileSiteKey}
+                  onVerify={(t) => setCaptchaToken(t)}
+                  onExpire={() => setCaptchaToken('')}
+                />
+              )}
+
               {/* Terms checkbox - signup only */}
               {mode === 'signup' && (
+
                 <label className="flex items-start gap-2 cursor-pointer">
                   <span className="relative inline-flex mt-0.5">
                     <input
