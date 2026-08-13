@@ -29,6 +29,12 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
   const [rememberMe, setRememberMe] = useState(true);
   const [capsLockOn, setCapsLockOn] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
+  // --- Bot protection ---
+  const [honeypot, setHoneypot] = useState('');            // hidden field, humans never fill it
+  const [captchaToken, setCaptchaToken] = useState('');
+  const formOpenedAt = useRef<number>(Date.now());
+  const turnstileSiteKey = useTurnstileSiteKey();
+
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
