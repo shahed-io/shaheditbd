@@ -3,7 +3,7 @@ export type Country = { name: string; code: string; dial: string; flag: string }
 /** All world countries with international dialing codes. */
 export const COUNTRIES: Country[] = [
   { name: 'Afghanistan', code: 'AF', dial: '+93', flag: '🇦🇫' },
-  { name: 'Åland Islands', code: 'AX', dial: '+3', flag: '🇦🇽' },
+  { name: 'Åland Islands', code: 'AX', dial: '+35818', flag: '🇦🇽' },
   { name: 'Albania', code: 'AL', dial: '+355', flag: '🇦🇱' },
   { name: 'Algeria', code: 'DZ', dial: '+213', flag: '🇩🇿' },
   { name: 'American Samoa', code: 'AS', dial: '+1684', flag: '🇦🇸' },
