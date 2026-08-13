@@ -969,10 +969,10 @@ const ProductDetail = () => {
                           {/* Right: price — always one line */}
                           <div className="flex items-center gap-1.5 text-right flex-shrink-0 whitespace-nowrap">
                             {planOriginal && planOriginal > planPrice && (
-                              <span className="text-[11px] sm:text-xs line-through" style={{ color: 'hsl(226,25%,65%)' }}>৳{planOriginal.toLocaleString()}</span>
+                              <span className="text-[11px] sm:text-xs line-through" style={{ color: 'hsl(226,25%,65%)' }}>{fmtPrice(planOriginal)}</span>
                             )}
                             <span className="font-black text-sm sm:text-base font-sora" style={{ color: 'hsl(258,78%,42%)' }}>
-                              ৳{planPrice.toLocaleString()}
+                              {fmtPrice(planPrice)}
                             </span>
                             {planDiscount > 0 && (
                               <span className="text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-full"
@@ -1036,7 +1036,7 @@ const ProductDetail = () => {
                       >
                         {group.values.map(v => (
                           <option key={v.id} value={v.id}>
-                            {v.label}{v.price_adjustment > 0 ? ` — ৳${v.price_adjustment.toLocaleString()}` : ''}
+                            {v.label}{v.price_adjustment > 0 ? ` — ${fmtPrice(v.price_adjustment)}` : ''}
                           </option>
                         ))}
                       </select>
@@ -1064,7 +1064,7 @@ const ProductDetail = () => {
                               </div>
                               <span className="text-sm font-semibold text-foreground flex-1">{v.label}</span>
                               {v.price_adjustment > 0 && (
-                                <span className="text-xs font-semibold text-muted-foreground">+৳{v.price_adjustment.toLocaleString()}</span>
+                                <span className="text-xs font-semibold text-muted-foreground">+{fmtPrice(v.price_adjustment)}</span>
                               )}
                             </label>
                           );
@@ -1090,7 +1090,7 @@ const ProductDetail = () => {
                               {isMulti && isSel && <Check size={13} strokeWidth={3} />}
                               <span>{v.label}</span>
                               {v.price_adjustment > 0 && (
-                                <span className="text-[11px] font-bold opacity-80">+৳{v.price_adjustment.toLocaleString()}</span>
+                                <span className="text-[11px] font-bold opacity-80">+{fmtPrice(v.price_adjustment)}</span>
                               )}
                             </button>
                           );
@@ -1519,6 +1519,7 @@ const ITEMS_PER_PAGE = 4;
 
 const RelatedProducts = ({ categoryId, currentProductId }: { categoryId: string | null; currentProductId: string }) => {
   const navigate = useNavigate();
+  const { format: fmtPrice } = useCurrency();
   const [products, setProducts] = useState<RelatedProduct[]>([]);
   const [loading, setLoading]   = useState(true);
   const [page, setPage] = useState(0);
@@ -1628,15 +1629,15 @@ const RelatedProducts = ({ categoryId, currentProductId }: { categoryId: string 
                       {p.original_price && p.original_price > p.price ? (
                         <>
                           <span className="text-xs line-through text-muted-foreground">
-                            {p.original_price.toLocaleString()}৳
+                            {fmtPrice(p.original_price)}
                           </span>
                           <span className="text-sm font-bold" style={{ color: 'hsl(35,100%,45%)' }}>
-                            – {p.price.toLocaleString()}৳
+                            – {fmtPrice(p.price)}
                           </span>
                         </>
                       ) : (
                         <span className="text-sm font-bold" style={{ color: 'hsl(35,100%,45%)' }}>
-                          {p.price.toLocaleString()}৳
+                          {fmtPrice(p.price)}
                         </span>
                       )}
                     </div>
