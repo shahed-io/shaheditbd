@@ -133,13 +133,9 @@ serve(async (req) => {
 
     // ─── action: 'check' returns existing coupon or settings only (no spin) ───
     if (action === 'check') {
-      const { data: existing } = await supabase
-        .from('welcome_coupons')
-        .select('code, discount_percent, discount_type, discount_amount, prize_label, expires_at, is_used')
-        .eq('visitor_id', visitorId)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
+      const existing = await findExisting(
+        'code, discount_percent, discount_type, discount_amount, prize_label, expires_at, is_used',
+      );
 
       if (existing && !existing.is_used && new Date(existing.expires_at) > new Date()) {
         return new Response(JSON.stringify({
