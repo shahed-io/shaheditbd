@@ -52,7 +52,7 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
   const canSubmit = !loading && (
     mode === 'forgot' ? emailValid :
     mode === 'login' ? emailValid && pwLen >= 1 :
-    emailValid && passwordValid && nameValid && agreeTerms
+    emailValid && passwordValid && nameValid && agreeTerms && (!turnstileSiteKey || !!captchaToken)
   );
 
   // Auto-fill referral code from URL (?ref=CODE) and switch to signup
