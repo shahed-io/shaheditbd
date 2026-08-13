@@ -9,6 +9,7 @@ import { FloatingButtons } from '@/components/store/Extras';
 import { GlassCard, SectionCard, Bullet } from '@/components/store/PolicyLayout';
 import { useAuth } from '@/hooks/useAuth';
 import AuthModal from '@/components/store/AuthModal';
+import PhoneInput from '@/components/store/PhoneInput';
 
 const A = 'hsl(258,78%,55%)';
 const B = 'hsl(200,90%,45%)';

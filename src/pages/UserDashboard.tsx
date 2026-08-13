@@ -25,6 +25,7 @@ import VerifiedBadge from '@/components/store/VerifiedBadge';
 import CustomerNoticesWidget from '@/components/store/CustomerNoticesWidget';
 import { LANGUAGES, LangCode, getStoredLang, setStoredLang, t, translateDbText, getLangLocale } from '@/lib/translations';
 import { downloadInvoicePdf, type InvoiceData } from '@/lib/invoicePdf';
+import PhoneInput from '@/components/store/PhoneInput';
 
 interface Profile {
   display_name: string | null;

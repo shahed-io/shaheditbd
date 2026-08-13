@@ -7,6 +7,7 @@ import { FloatingButtons } from '@/components/store/Extras';
 import { GlassCard, SectionCard } from '@/components/store/PolicyLayout';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import PhoneInput from '@/components/store/PhoneInput';
 
 const A = 'hsl(258,78%,55%)';
 const B = 'hsl(200,90%,45%)';

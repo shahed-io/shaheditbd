@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Ticket, Loader2, CheckCircle2 } from 'lucide-react';
 import { z } from 'zod';
+import PhoneInput from '@/components/store/PhoneInput';
 
 const schema = z.object({
   customer_name: z.string().trim().min(2).max(100),

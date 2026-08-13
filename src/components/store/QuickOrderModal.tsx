@@ -12,6 +12,7 @@ import { usePaymentSettings } from '@/hooks/usePaymentSettings';
 import type { CustomField } from '@/pages/admin/AdminProducts';
 import { useBkashPgwContent } from '@/hooks/useBkashPgwContent';
 import { getPaymentLogo } from '@/lib/paymentLogos';
+import PhoneInput from '@/components/store/PhoneInput';
 
 interface Product {
   id: string | number;
