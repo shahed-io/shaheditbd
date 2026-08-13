@@ -1488,7 +1488,7 @@ const UserDashboard = () => {
                     {editing ? (
                       <div className="relative">
                         <Phone size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                        <input type="tel" value={profile.phone || ''} onChange={e => setProfile(p => ({ ...p, phone: e.target.value }))} className={inputCls} placeholder="01XXXXXXXXX" />
+                        <PhoneInput value={profile.phone || ''} onChange={v => setProfile(p => ({ ...p, phone: v }))} placeholder="1XXXXXXXXX" />
                       </div>
                     ) : (
                       <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(258,78%,75%,0.2)' }}>

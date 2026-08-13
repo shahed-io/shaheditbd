@@ -474,8 +474,7 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
                   </div>
                   <div>
                     <label className={labelCls} style={{ color: 'hsl(226,35%,28%)' }}>ফোন নম্বর</label>
-                    <input value={form.customer_phone} onChange={e => set('customer_phone', e.target.value)}
-                      placeholder="01XXXXXXXXX" className={inputCls} maxLength={20} />
+                    <PhoneInput value={form.customer_phone} onChange={v => set('customer_phone', v)} placeholder="1XXXXXXXXX" />
                   </div>
                   <div>
                     <label className={labelCls} style={{ color: 'hsl(226,35%,28%)' }}>অর্ডার নম্বর *</label>

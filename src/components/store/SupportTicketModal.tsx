@@ -125,7 +125,7 @@ export const SupportTicketModal = ({ open, onClose }: Props) => {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-xs font-medium text-muted-foreground mb-1 block">ফোন</label>
-                <Input placeholder="01XXXXXXXXX" value={form.customer_phone} onChange={e => set('customer_phone', e.target.value)} />
+                <PhoneInput value={form.customer_phone} onChange={v => set('customer_phone', v)} placeholder="1XXXXXXXXX" />
               </div>
               <div>
                 <label className="text-xs font-medium text-muted-foreground mb-1 block">অর্ডার নম্বর</label>

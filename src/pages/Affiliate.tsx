@@ -364,7 +364,7 @@ const Affiliate = () => {
                   <Input type="email" value={form.applicant_email} onChange={e => setForm({ ...form, applicant_email: e.target.value })} placeholder="you@example.com" />
                 </Field>
                 <Field label="ফোন নম্বর" required icon={Phone}>
-                  <Input type="tel" value={form.applicant_phone} onChange={e => setForm({ ...form, applicant_phone: e.target.value })} placeholder="01XXXXXXXXX" />
+                  <PhoneInput value={form.applicant_phone} onChange={v => setForm({ ...form, applicant_phone: v })} placeholder="1XXXXXXXXX" />
                 </Field>
               </div>
             </Section>
