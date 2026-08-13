@@ -1036,7 +1036,7 @@ const ProductDetail = () => {
                       >
                         {group.values.map(v => (
                           <option key={v.id} value={v.id}>
-                            {v.label}{v.price_adjustment > 0 ? ` — ৳${v.price_adjustment.toLocaleString()}` : ''}
+                            {v.label}{v.price_adjustment > 0 ? ` — ${fmtPrice(v.price_adjustment)}` : ''}
                           </option>
                         ))}
                       </select>
