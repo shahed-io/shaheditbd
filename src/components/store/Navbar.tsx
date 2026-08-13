@@ -635,6 +635,22 @@ const Navbar = () => {
                 <Search size={18} />
               </button>
 
+              {/* Tablet / iPad Search Button — sm to md range where desktop search bar is hidden */}
+              <button
+                onClick={() => { setMobileSearch(v => !v); setMobileOpen(false); }}
+                className="hidden sm:flex md:hidden items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all hover:scale-[1.03] active:scale-[0.97]"
+                style={{
+                  background: mobileSearch
+                    ? 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))'
+                    : 'hsla(258,78%,55%,0.10)',
+                  color: mobileSearch ? 'hsl(0,0%,100%)' : 'hsl(258,78%,50%)',
+                  border: '1px solid hsla(258,78%,60%,0.20)',
+                }}
+                aria-label="Search products">
+                <Search size={18} />
+                <span>Search</span>
+              </button>
+
               {/* Currency Switcher — desktop */}
               <div className="hidden md:block">
                 <CurrencySwitcher />
