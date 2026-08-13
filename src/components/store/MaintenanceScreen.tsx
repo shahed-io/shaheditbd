@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Clock, Mail, ShieldCheck, Sparkles } from 'lucide-react';
+import { Clock, Mail, Phone, MapPin, Globe, ShieldCheck, Sparkles, Facebook } from 'lucide-react';
 import type { MaintenanceSettings } from '@/hooks/useMaintenanceMode';
 import mascot from '@/assets/maintenance-mascot.png';
 
@@ -18,8 +18,16 @@ const MaintenanceScreen = ({ settings }: { settings: MaintenanceSettings }) => {
   }, []);
 
   const waHref = settings.whatsapp
-    ? `https://wa.me/${settings.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('আসসালামু আলাইকুম, আমি Shahed Store-এ সাপোর্ট চাই।')}`
+    ? `https://wa.me/${settings.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
+        settings.whatsappMessage || 'Hello, I need support from Shahed Store.'
+      )}`
     : '';
+
+  const chipStyle = {
+    background: 'hsla(226,40%,96%,0.9)',
+    border: '1px solid hsla(226,30%,82%,0.8)',
+    color: 'hsl(226,25%,35%)',
+  } as const;
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center px-5 py-14 relative overflow-hidden bg-[hsl(220,40%,98%)]">
@@ -74,29 +82,30 @@ const MaintenanceScreen = ({ settings }: { settings: MaintenanceSettings }) => {
             className="relative w-full h-auto maint-float select-none pointer-events-none"
             draggable={false}
           />
-          {/* Sparkles */}
           <Sparkles size={18} className="absolute top-2 -left-1 text-[hsl(42,96%,55%)] maint-twinkle" />
           <Sparkles size={14} className="absolute top-10 -right-1 text-[hsl(258,80%,68%)] maint-twinkle maint-delay-1" />
           <Sparkles size={12} className="absolute bottom-14 -left-3 text-[hsl(186,80%,50%)] maint-twinkle maint-delay-2" />
         </div>
 
-        <div
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] font-bold tracking-[0.18em] uppercase mb-5"
-          style={{
-            background: 'hsla(258,85%,66%,0.10)',
-            border: '1px solid hsla(258,85%,66%,0.28)',
-            color: 'hsl(258,70%,52%)',
-          }}
-        >
-          <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: 'hsl(258,85%,62%)' }} />
-          Maintenance
-        </div>
+        {settings.badge && (
+          <div
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] font-bold tracking-[0.18em] uppercase mb-5"
+            style={{
+              background: 'hsla(258,85%,66%,0.10)',
+              border: '1px solid hsla(258,85%,66%,0.28)',
+              color: 'hsl(258,70%,52%)',
+            }}
+          >
+            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: 'hsl(258,85%,62%)' }} />
+            {settings.badge}
+          </div>
+        )}
 
         <h1 className="text-[24px] sm:text-[34px] font-extrabold leading-tight mb-3 text-[hsl(226,40%,16%)]">
           {settings.title}
         </h1>
 
-        <p className="text-[15px] leading-relaxed max-w-[460px] mx-auto text-[hsl(226,18%,45%)]">
+        <p className="text-[15px] leading-relaxed max-w-[470px] mx-auto text-[hsl(226,18%,45%)] whitespace-pre-line">
           {settings.message}
         </p>
 
@@ -114,58 +123,95 @@ const MaintenanceScreen = ({ settings }: { settings: MaintenanceSettings }) => {
           </div>
         )}
 
-        {/* Progress shimmer */}
-        <div className="mt-8 h-[6px] w-full rounded-full overflow-hidden" style={{ background: 'hsla(226,30%,88%,0.9)' }}>
-          <div
-            className="h-full w-1/3 rounded-full"
-            style={{
-              background: 'linear-gradient(90deg, transparent, hsl(258,85%,66%), hsl(186,85%,55%), transparent)',
-              animation: 'maintenance-sweep 2.2s ease-in-out infinite',
-            }}
-          />
-        </div>
-        <div className="mt-3 text-[12px] tracking-wide text-[hsl(226,15%,58%)]">কাজ চলছে{dots}</div>
-
-        {settings.showContact && settings.whatsapp && (
-          <div className="mt-9">
-            <p className="text-[14px] font-semibold text-[hsl(226,30%,25%)]">
-              জরুরি প্রয়োজনে সরাসরি আমাদের WhatsApp নম্বরে যোগাযোগ করুন
-            </p>
-            <p className="mt-1 text-[13px] text-[hsl(226,18%,50%)]">
-              অর্ডার, ডেলিভারি বা যেকোনো সহায়তার জন্য আমরা সবসময় প্রস্তুত।
-            </p>
-            <a
-              href={waHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-5 inline-flex items-center gap-3 px-7 py-4 rounded-2xl text-[15px] font-bold text-white transition-transform hover:-translate-y-0.5 maint-cta"
-              style={{
-                background: 'linear-gradient(135deg, hsl(142,70%,42%), hsl(152,68%,36%))',
-                boxShadow: '0 16px 34px -14px hsla(142,70%,35%,0.75)',
-              }}
-            >
-              <WhatsAppIcon size={20} />
-              WhatsApp-এ যোগাযোগ করুন
-            </a>
-            <div className="mt-2 text-[13px] font-semibold tracking-wide text-[hsl(142,55%,32%)]">
-              {settings.whatsapp}
+        {settings.showProgress && (
+          <>
+            <div className="mt-8 h-[6px] w-full rounded-full overflow-hidden" style={{ background: 'hsla(226,30%,88%,0.9)' }}>
+              <div
+                className="h-full w-1/3 rounded-full"
+                style={{
+                  background: 'linear-gradient(90deg, transparent, hsl(258,85%,66%), hsl(186,85%,55%), transparent)',
+                  animation: 'maintenance-sweep 2.2s ease-in-out infinite',
+                }}
+              />
             </div>
-          </div>
+            {settings.progressText && (
+              <div className="mt-3 text-[12px] tracking-wide text-[hsl(226,15%,58%)]">
+                {settings.progressText}{dots}
+              </div>
+            )}
+          </>
         )}
 
-        {settings.showContact && settings.email && (
-          <div className="mt-5">
-            <a
-              href={`mailto:${settings.email}`}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-semibold transition-colors"
-              style={{
-                background: 'hsla(226,40%,96%,0.9)',
-                border: '1px solid hsla(226,30%,82%,0.8)',
-                color: 'hsl(226,25%,35%)',
-              }}
-            >
-              <Mail size={15} /> {settings.email}
-            </a>
+        {settings.showContact && (
+          <div className="mt-9">
+            {settings.whatsapp && (
+              <>
+                {settings.contactHeading && (
+                  <p className="text-[14px] font-semibold text-[hsl(226,30%,25%)]">{settings.contactHeading}</p>
+                )}
+                {settings.contactSubtext && (
+                  <p className="mt-1 text-[13px] text-[hsl(226,18%,50%)]">{settings.contactSubtext}</p>
+                )}
+                <a
+                  href={waHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-5 inline-flex items-center gap-3 px-7 py-4 rounded-2xl text-[15px] font-bold text-white transition-transform hover:-translate-y-0.5 maint-cta"
+                  style={{
+                    background: 'linear-gradient(135deg, hsl(142,70%,42%), hsl(152,68%,36%))',
+                    boxShadow: '0 16px 34px -14px hsla(142,70%,35%,0.75)',
+                  }}
+                >
+                  <WhatsAppIcon size={20} />
+                  {settings.whatsappLabel || 'Chat on WhatsApp'}
+                </a>
+                <div className="mt-2 text-[13px] font-semibold tracking-wide text-[hsl(142,55%,32%)]">
+                  {settings.whatsapp}
+                </div>
+              </>
+            )}
+
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5">
+              {settings.phone && (
+                <a
+                  href={`tel:${settings.phone.replace(/[^0-9+]/g, '')}`}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-semibold"
+                  style={chipStyle}
+                >
+                  <Phone size={14} /> {settings.phone}
+                </a>
+              )}
+              {settings.email && (
+                <a
+                  href={`mailto:${settings.email}`}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-semibold"
+                  style={chipStyle}
+                >
+                  <Mail size={14} /> {settings.email}
+                </a>
+              )}
+              {settings.website && (
+                <span className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-semibold" style={chipStyle}>
+                  <Globe size={14} /> {settings.website}
+                </span>
+              )}
+              {settings.address && (
+                <span className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-semibold" style={chipStyle}>
+                  <MapPin size={14} /> {settings.address}
+                </span>
+              )}
+              {settings.showSocial && settings.facebook && (
+                <a
+                  href={settings.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-semibold"
+                  style={chipStyle}
+                >
+                  <Facebook size={14} /> Facebook
+                </a>
+              )}
+            </div>
           </div>
         )}
 
@@ -173,7 +219,7 @@ const MaintenanceScreen = ({ settings }: { settings: MaintenanceSettings }) => {
           className="mt-9 pt-6 flex items-center justify-center gap-2 text-[11px] font-semibold tracking-[0.14em] uppercase"
           style={{ borderTop: '1px solid hsla(226,30%,88%,0.9)', color: 'hsl(226,15%,58%)' }}
         >
-          <ShieldCheck size={13} /> Shahed Store
+          <ShieldCheck size={13} /> {settings.footerText || 'Shahed Store'}
         </div>
       </div>
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Save, Wrench, ToggleLeft, ToggleRight, Eye, AlertTriangle } from 'lucide-react';
+import { Save, Wrench, ToggleLeft, ToggleRight, Eye, AlertTriangle, RotateCcw } from 'lucide-react';
 import MaintenanceScreen from '@/components/store/MaintenanceScreen';
 import {
   MAINTENANCE_KEY,
@@ -32,7 +32,7 @@ const AdminMaintenance = () => {
     setSaving(false);
     if (error) { toast.error('Save failed: ' + error.message); return; }
     try { new BroadcastChannel('maintenance-mode').postMessage(next); } catch {}
-    toast.success(next.enabled ? 'Maintenance mode is ON' : 'Maintenance mode is OFF');
+    toast.success('Maintenance settings saved');
   };
 
   const toggle = async () => {
@@ -41,8 +41,30 @@ const AdminMaintenance = () => {
     await save(next);
   };
 
+  const set = <K extends keyof MaintenanceSettings>(key: K, value: MaintenanceSettings[K]) =>
+    setSettings(p => ({ ...p, [key]: value }));
+
   const inputCls =
     'w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors';
+
+  const Field = ({ label, children }: { label: string; children: React.ReactNode }) => (
+    <div>
+      <label className="text-xs text-muted-foreground mb-1.5 block">{label}</label>
+      {children}
+    </div>
+  );
+
+  const Switch = ({ on, onClick, labels }: { on: boolean; onClick: () => void; labels: [string, string] }) => (
+    <button
+      onClick={onClick}
+      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+        on ? 'bg-primary/20 text-primary border border-primary/30' : 'glass-card text-muted-foreground'
+      }`}
+    >
+      {on ? <ToggleRight size={18} /> : <ToggleLeft size={18} />}
+      {on ? labels[0] : labels[1]}
+    </button>
+  );
 
   if (loading) return <div className="space-y-4">{[1, 2, 3].map(i => <div key={i} className="h-24 glass-card rounded-2xl animate-pulse" />)}</div>;
 
@@ -66,9 +88,15 @@ const AdminMaintenance = () => {
           <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
             Maintenance <span className="gradient-text">Mode</span>
           </h1>
-          <p className="text-muted-foreground text-sm">Take the storefront offline with a premium maintenance page</p>
+          <p className="text-muted-foreground text-sm">Full control of the maintenance page — content, contact info and visibility</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
+          <button
+            onClick={() => { setSettings(p => ({ ...MAINTENANCE_DEFAULT, enabled: p.enabled })); toast.info('Reset to defaults — click Save to apply'); }}
+            className="glass-card px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold text-foreground"
+          >
+            <RotateCcw size={16} /> Reset
+          </button>
           <button onClick={() => setPreview(true)} className="glass-card px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold text-foreground">
             <Eye size={16} /> Preview
           </button>
@@ -115,43 +143,85 @@ const AdminMaintenance = () => {
       {/* Content */}
       <div className="glass-card rounded-2xl p-6 space-y-4">
         <h3 className="font-bold text-foreground">Page Content</h3>
-        <div>
-          <label className="text-xs text-muted-foreground mb-1.5 block">Title</label>
-          <input value={settings.title} onChange={e => setSettings(p => ({ ...p, title: e.target.value }))} className={inputCls} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Field label="Badge text (top pill)">
+            <input value={settings.badge} onChange={e => set('badge', e.target.value)} placeholder="Maintenance" className={inputCls} />
+          </Field>
+          <Field label="Title">
+            <input value={settings.title} onChange={e => set('title', e.target.value)} className={inputCls} />
+          </Field>
         </div>
-        <div>
-          <label className="text-xs text-muted-foreground mb-1.5 block">Message</label>
-          <textarea rows={3} value={settings.message} onChange={e => setSettings(p => ({ ...p, message: e.target.value }))} className={inputCls} />
+        <Field label="Message (Bangla / English mix supported)">
+          <textarea rows={4} value={settings.message} onChange={e => set('message', e.target.value)} className={inputCls} />
+        </Field>
+        <Field label="ETA / Back-online note (optional)">
+          <input value={settings.eta} onChange={e => set('eta', e.target.value)} placeholder="Expected back online: ১-২ ঘণ্টার মধ্যে" className={inputCls} />
+        </Field>
+      </div>
+
+      {/* Progress */}
+      <div className="glass-card rounded-2xl p-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="font-bold text-foreground">Progress Bar</h3>
+          <Switch on={settings.showProgress} onClick={() => set('showProgress', !settings.showProgress)} labels={['Shown', 'Hidden']} />
         </div>
-        <div>
-          <label className="text-xs text-muted-foreground mb-1.5 block">ETA / Back-online note (optional)</label>
-          <input value={settings.eta} onChange={e => setSettings(p => ({ ...p, eta: e.target.value }))} placeholder="আমরা ২ ঘণ্টার মধ্যে ফিরে আসছি" className={inputCls} />
-        </div>
+        <Field label="Progress caption (animated dots are added automatically)">
+          <input value={settings.progressText} onChange={e => set('progressText', e.target.value)} placeholder="কাজ চলছে" className={inputCls} />
+        </Field>
       </div>
 
       {/* Contact */}
       <div className="glass-card rounded-2xl p-6 space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="font-bold text-foreground">Contact Buttons</h3>
-          <button
-            onClick={() => setSettings(p => ({ ...p, showContact: !p.showContact }))}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
-              settings.showContact ? 'bg-primary/20 text-primary border border-primary/30' : 'glass-card text-muted-foreground'
-            }`}
-          >
-            {settings.showContact ? <ToggleRight size={18} /> : <ToggleLeft size={18} />}
-            {settings.showContact ? 'Shown' : 'Hidden'}
-          </button>
+          <h3 className="font-bold text-foreground">Contact & Support</h3>
+          <Switch on={settings.showContact} onClick={() => set('showContact', !settings.showContact)} labels={['Shown', 'Hidden']} />
+        </div>
+        <Field label="Contact heading">
+          <input value={settings.contactHeading} onChange={e => set('contactHeading', e.target.value)} className={inputCls} />
+        </Field>
+        <Field label="Contact subtext">
+          <input value={settings.contactSubtext} onChange={e => set('contactSubtext', e.target.value)} className={inputCls} />
+        </Field>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Field label="WhatsApp number (with country code)">
+            <input value={settings.whatsapp} onChange={e => set('whatsapp', e.target.value)} placeholder="8801840099853" className={inputCls} />
+          </Field>
+          <Field label="WhatsApp button label">
+            <input value={settings.whatsappLabel} onChange={e => set('whatsappLabel', e.target.value)} placeholder="Chat on WhatsApp" className={inputCls} />
+          </Field>
+        </div>
+        <Field label="Pre-filled WhatsApp message">
+          <input value={settings.whatsappMessage} onChange={e => set('whatsappMessage', e.target.value)} className={inputCls} />
+        </Field>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Field label="Support email">
+            <input value={settings.email} onChange={e => set('email', e.target.value)} placeholder="info@shahedstore.com.bd" className={inputCls} />
+          </Field>
+          <Field label="Hotline / phone">
+            <input value={settings.phone} onChange={e => set('phone', e.target.value)} placeholder="01840-099853" className={inputCls} />
+          </Field>
+          <Field label="Website">
+            <input value={settings.website} onChange={e => set('website', e.target.value)} placeholder="www.shahedstore.com.bd" className={inputCls} />
+          </Field>
+          <Field label="Address">
+            <input value={settings.address} onChange={e => set('address', e.target.value)} placeholder="Dhaka, Bangladesh" className={inputCls} />
+          </Field>
+        </div>
+      </div>
+
+      {/* Social + footer */}
+      <div className="glass-card rounded-2xl p-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="font-bold text-foreground">Social & Footer</h3>
+          <Switch on={settings.showSocial} onClick={() => set('showSocial', !settings.showSocial)} labels={['Shown', 'Hidden']} />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="text-xs text-muted-foreground mb-1.5 block">WhatsApp number</label>
-            <input value={settings.whatsapp} onChange={e => setSettings(p => ({ ...p, whatsapp: e.target.value }))} placeholder="8801XXXXXXXXX" className={inputCls} />
-          </div>
-          <div>
-            <label className="text-xs text-muted-foreground mb-1.5 block">Support email</label>
-            <input value={settings.email} onChange={e => setSettings(p => ({ ...p, email: e.target.value }))} placeholder="support@shahedstore.com.bd" className={inputCls} />
-          </div>
+          <Field label="Facebook page URL">
+            <input value={settings.facebook} onChange={e => set('facebook', e.target.value)} placeholder="https://facebook.com/..." className={inputCls} />
+          </Field>
+          <Field label="Footer text">
+            <input value={settings.footerText} onChange={e => set('footerText', e.target.value)} className={inputCls} />
+          </Field>
         </div>
       </div>
     </div>
