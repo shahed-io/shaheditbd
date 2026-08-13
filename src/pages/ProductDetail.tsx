@@ -1090,7 +1090,7 @@ const ProductDetail = () => {
                               {isMulti && isSel && <Check size={13} strokeWidth={3} />}
                               <span>{v.label}</span>
                               {v.price_adjustment > 0 && (
-                                <span className="text-[11px] font-bold opacity-80">+৳{v.price_adjustment.toLocaleString()}</span>
+                                <span className="text-[11px] font-bold opacity-80">+{fmtPrice(v.price_adjustment)}</span>
                               )}
                             </button>
                           );
