@@ -23,13 +23,22 @@ export const useReveal = (options: UseRevealOptions = {}) => {
   useEffect(() => {
     const el = ref.current;
     if (!el) {
-      // If no ref is attached, we must still be visible eventually
-      const t = setTimeout(() => setVisible(true), 100);
-      return () => clearTimeout(t);
+      // If no ref is attached, we must be visible
+      setVisible(true);
+      return;
     }
 
-    // Fallback: reveal after 600ms even if IO doesn't fire (low-end mobile or content-visibility: auto issues)
-    const fallback = setTimeout(() => setVisible(true), 600);
+    // Direct check in case it's already in view or IO is buggy
+    try {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        setVisible(true);
+        return;
+      }
+    } catch {}
+
+    // Fallback: reveal after 400ms even if IO doesn't fire
+    const fallback = setTimeout(() => setVisible(true), 400);
 
     const observer = new IntersectionObserver(
       ([entry]) => {
