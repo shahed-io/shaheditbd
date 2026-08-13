@@ -312,6 +312,35 @@ serve(async (req) => {
       return "";
     })();
 
+    // ============ AUTO LANGUAGE DETECTION ============
+    // Bengali script OR "Banglish" (romanized Bengali) => reply in Bengali.
+    // Clean/proper English => reply in English.
+    const detectLanguage = (text: string): "bn" | "en" | null => {
+      const t = (text || "").trim();
+      if (t.length < 2) return null;
+      if (/[\u0980-\u09FF]/.test(t)) return "bn"; // Bengali script
+      const lower = t.toLowerCase();
+      const banglish = [
+        "ami","amar","amake","apni","apnar","tumi","koto","kto","kivabe","kibhabe","kemne","kemon",
+        "ki","kina","dam","taka","tk","korte","korbo","korben","kore","lagbe","lage","valo","bhalo",
+        "bhai","vai","hobe","hoibo","ache","achhe","chai","chaii","kobe","kothay","kothai","nai",
+        "tahole","janan","janaben","den","dibo","diben","ekta","kono","onek","jonno","niye","hoy",
+        "hoyni","pabo","paben","order","boli","bolte","please bolen","obosto","thik","thake","na",
+      ];
+      const words = lower.replace(/[^a-z\s']/g, " ").split(/\s+/).filter(Boolean);
+      if (!words.length) return null;
+      const hits = words.filter((w) => banglish.includes(w)).length;
+      if (hits >= 1 && hits / words.length >= 0.15) return "bn";
+      // Mostly latin alphabet with normal English structure
+      const latinRatio = (t.match(/[a-zA-Z]/g)?.length || 0) / t.replace(/\s/g, "").length;
+      if (latinRatio > 0.7) return "en";
+      return null;
+    };
+    const detected = detectLanguage(lastUserMsg);
+    if (detected) language = detected;
+
+
+
     // ============ 1) CURRENTLY VIEWED PRODUCT (from pageContext) ============
     let viewedProductBlock = "";
     const productSlug: string | null = pageContext?.productSlug || null;
