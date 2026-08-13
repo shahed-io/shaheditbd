@@ -6,6 +6,8 @@ import { toast } from 'sonner';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import BrandLogo from '@/components/store/BrandLogo';
 import { sendWelcomeEmail } from '@/lib/loginNotifier';
+import TurnstileWidget, { useTurnstileSiteKey } from '@/components/store/TurnstileWidget';
+
 
 interface AuthModalProps {
   isOpen: boolean;
