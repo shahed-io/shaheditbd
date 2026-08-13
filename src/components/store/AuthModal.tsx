@@ -596,8 +596,32 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
                 </div>
               )}
 
+              {/* Honeypot — hidden from humans, bots fill it and get rejected */}
+              {mode === 'signup' && (
+                <div aria-hidden="true" className="absolute opacity-0 pointer-events-none -z-10 h-0 overflow-hidden">
+                  <input
+                    type="text"
+                    name="company"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={honeypot}
+                    onChange={(e) => setHoneypot(e.target.value)}
+                  />
+                </div>
+              )}
+
+              {/* Cloudflare human verification — renders only when a site key is configured */}
+              {mode === 'signup' && turnstileSiteKey && (
+                <TurnstileWidget
+                  siteKey={turnstileSiteKey}
+                  onVerify={(t) => setCaptchaToken(t)}
+                  onExpire={() => setCaptchaToken('')}
+                />
+              )}
+
               {/* Terms checkbox - signup only */}
               {mode === 'signup' && (
+
                 <label className="flex items-start gap-2 cursor-pointer">
                   <span className="relative inline-flex mt-0.5">
                     <input
