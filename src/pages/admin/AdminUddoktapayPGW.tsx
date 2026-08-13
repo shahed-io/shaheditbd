@@ -89,7 +89,7 @@ export default function AdminUddoktapayPGW() {
   const willShowAtCheckout = form.is_active && form.api_key.trim().length > 0;
 
   return (
-    <div className="space-y-6 p-4 md:p-6 w-full">
+    <div className="space-y-6 w-full max-w-none">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
