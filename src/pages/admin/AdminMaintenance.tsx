@@ -5,6 +5,7 @@ import { Save, Wrench, ToggleLeft, ToggleRight, Eye, AlertTriangle, RotateCcw } 
 import MaintenanceScreen from '@/components/store/MaintenanceScreen';
 import {
   MAINTENANCE_KEY,
+  MAINTENANCE_AREAS,
   MAINTENANCE_DEFAULT,
   parseMaintenance,
   type MaintenanceSettings,
