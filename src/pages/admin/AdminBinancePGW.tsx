@@ -10,7 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from 'sonner';
-import { Eye, EyeOff, Save, ShieldCheck, AlertTriangle, Loader2, ExternalLink, Copy, Bitcoin } from 'lucide-react';
+import { Eye, EyeOff, Save, ShieldCheck, AlertTriangle, Loader2, ExternalLink, Copy, Bitcoin, FlaskConical } from 'lucide-react';
 
 const KEY = 'binance_pgw_config';
 
@@ -22,6 +22,8 @@ const cfgSchema = z.object({
   bdt_rate: z.number().positive().max(100000),
   label: z.string().trim().min(2).max(60),
   is_active: z.boolean(),
+  sandbox: z.boolean(),
+  sandbox_base_url: z.string().trim().url().max(300),
 });
 type BinanceCfg = z.infer<typeof cfgSchema>;
 
@@ -33,6 +35,8 @@ const DEFAULT_CFG: BinanceCfg = {
   bdt_rate: 120,
   label: 'Binance Pay (Crypto)',
   is_active: false,
+  sandbox: false,
+  sandbox_base_url: 'https://bpay.binanceapi.com',
 };
 
 export default function AdminBinancePGW() {
@@ -90,7 +94,9 @@ export default function AdminBinancePGW() {
     return <div className="flex items-center justify-center p-8"><Loader2 className="w-6 h-6 animate-spin" /></div>;
   }
 
-  const willShowAtCheckout = form.is_active && form.api_key.trim().length > 0 && form.api_secret.trim().length > 0;
+  const hasCreds = form.api_key.trim().length > 0 && form.api_secret.trim().length > 0;
+  const willShowAtCheckout = form.is_active && (form.sandbox || hasCreds);
+  const demoMode = form.sandbox && !hasCreds;
   const sampleBdt = 1000;
 
   return (
@@ -104,10 +110,26 @@ export default function AdminBinancePGW() {
             Automatic crypto payments (USDT / BUSD / BTC) via Binance Pay. Checkout syncs instantly when enabled.
           </p>
         </div>
-        <Badge variant={willShowAtCheckout ? 'default' : 'secondary'}>
-          {willShowAtCheckout ? 'ACTIVE · SHOWING AT CHECKOUT' : 'DISABLED · HIDDEN AT CHECKOUT'}
-        </Badge>
+        <div className="flex items-center gap-2">
+          {form.sandbox && <Badge variant="outline" className="border-amber-500 text-amber-600">SANDBOX / TEST MODE</Badge>}
+          <Badge variant={willShowAtCheckout ? 'default' : 'secondary'}>
+            {willShowAtCheckout ? 'ACTIVE · SHOWING AT CHECKOUT' : 'DISABLED · HIDDEN AT CHECKOUT'}
+          </Badge>
+        </div>
       </div>
+
+      {form.sandbox && (
+        <Alert className="border-amber-500/50 bg-amber-500/10">
+          <FlaskConical className="h-4 w-4 text-amber-600" />
+          <AlertDescription>
+            Test mode is ON — no real crypto is charged.{' '}
+            {demoMode
+              ? 'No API credentials set, so checkout runs a fully simulated demo transaction (order becomes paid + processing after you confirm on the return page).'
+              : 'Requests are sent to the sandbox API host below using your test credentials.'}
+            {' '}Turn this off before going live.
+          </AlertDescription>
+        </Alert>
+      )}
 
       {form.is_active && !willShowAtCheckout && (
         <Alert className="border-amber-500/50 bg-amber-500/10">
@@ -154,6 +176,30 @@ export default function AdminBinancePGW() {
             </div>
             <Switch checked={form.is_active} onCheckedChange={(v) => setForm({ ...form, is_active: v })} />
           </div>
+
+          <div className="flex items-center justify-between rounded-lg border border-amber-500/40 bg-amber-500/5 p-3">
+            <div>
+              <Label className="flex items-center gap-2"><FlaskConical className="w-4 h-4 text-amber-600" /> Sandbox / Test Mode</Label>
+              <p className="text-xs text-muted-foreground">
+                Run demo transactions to verify the end-to-end flow. No real payment is taken.
+              </p>
+            </div>
+            <Switch checked={form.sandbox} onCheckedChange={(v) => setForm({ ...form, sandbox: v })} />
+          </div>
+
+          {form.sandbox && (
+            <div>
+              <Label>Sandbox API Base URL</Label>
+              <Input
+                value={form.sandbox_base_url}
+                onChange={(e) => setForm({ ...form, sandbox_base_url: e.target.value.trim() })}
+                placeholder="https://bpay.binanceapi.com"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Used only when test API credentials are filled in. Leave the credentials empty for a fully simulated demo checkout.
+              </p>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
