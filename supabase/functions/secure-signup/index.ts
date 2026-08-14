@@ -86,13 +86,9 @@ serve(async (req) => {
       return json({ error: 'অস্থায়ী (temporary) ইমেইল দিয়ে অ্যাকাউন্ট খোলা যাবে না।' }, 400);
     }
 
-    // --- 5. Cloudflare Turnstile ---
+    // --- 5. Cloudflare Turnstile (optional — only verified when the client sends a token) ---
     const secret = Deno.env.get('TURNSTILE_SECRET_KEY');
-    if (secret) {
-      if (!captchaToken) {
-        await log(email, false, 'captcha_missing');
-        return json({ error: 'অনুগ্রহ করে human verification সম্পন্ন করুন।' }, 400);
-      }
+    if (secret && captchaToken) {
       const form = new URLSearchParams();
       form.set('secret', secret);
       form.set('response', captchaToken);
