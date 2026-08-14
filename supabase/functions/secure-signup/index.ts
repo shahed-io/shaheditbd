@@ -89,7 +89,6 @@ serve(async (req) => {
     // --- 5. Cloudflare Turnstile (optional — only verified when the client sends a token) ---
     const secret = Deno.env.get('TURNSTILE_SECRET_KEY');
     if (secret && captchaToken) {
-      {
       const form = new URLSearchParams();
       form.set('secret', secret);
       form.set('response', captchaToken);
