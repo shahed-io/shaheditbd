@@ -259,17 +259,45 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           price: Number(r.price) || 0,
           originalPrice: r.original_price != null ? Number(r.original_price) : undefined,
           quantity: r.quantity || 1,
+          _touchedAt: r.updated_at || r.created_at,
         }));
-        const dbItems = sanitizeItems(rawDbItems);
 
-        // Clean up any invalid rows lingering in the DB so the phantom count
-        // (e.g. "Cart 6" with no real items) can never come back on next login.
+        // Rows the user never touched recently are considered stale — they are the
+        // reason old products kept "re-appearing" in the cart after login.
+        const staleRows = rawDbItems.filter((it: any) => {
+          const t = new Date(it._touchedAt || 0).getTime();
+          return !Number.isFinite(t) || Date.now() - t > CART_DB_TTL_MS;
+        });
         const invalidRows = rawDbItems.filter((it: any) => !isValidCartItem(it));
-        if (invalidRows.length > 0) {
-          await dbDeleteItems(userId, invalidRows.map((r: any) => ({
+
+        // Drop rows whose product no longer exists / is not purchasable.
+        const freshRows = rawDbItems.filter(
+          (it: any) => !staleRows.includes(it) && isValidCartItem(it)
+        );
+        let missingRows: any[] = [];
+        if (freshRows.length > 0) {
+          const ids = Array.from(new Set(freshRows.map((r: any) => String(r.id))))
+            .filter(id => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id));
+          if (ids.length > 0) {
+            const { data: prods } = await supabase
+              .from('products')
+              .select('id')
+              .in('id', ids);
+            const alive = new Set((prods || []).map((p: any) => String(p.id)));
+            missingRows = freshRows.filter((r: any) => !alive.has(String(r.id)));
+          }
+        }
+
+        const dropRows = [...new Set([...staleRows, ...invalidRows, ...missingRows])];
+        if (dropRows.length > 0) {
+          await dbDeleteItems(userId, dropRows.map((r: any) => ({
             product_id: String(r.id), variant: r.variant || '',
           })));
         }
+
+        const dbItems = sanitizeItems(
+          freshRows.filter((r: any) => !missingRows.includes(r)).map(({ _touchedAt, ...rest }: any) => rest)
+        );
 
         // DB is the source of truth. Only merge local items when the user was
         // a guest (DB empty) — otherwise stale local entries would re-appear
@@ -280,6 +308,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       } catch (e) { console.warn('[cart] sync ex:', e); }
     })();
   }, [userId]); // eslint-disable-line react-hooks/exhaustive-deps
+
 
   // Abandoned cart (unchanged)
   const saveAbandonedCart = useCallback(async (email: string) => {
