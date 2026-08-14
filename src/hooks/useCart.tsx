@@ -149,22 +149,37 @@ const writeBackup = (items: CartItem[]) => {
   } catch { /* ignore */ }
 };
 
+// One-time cleanup: carts saved before the TTL system existed have no
+// timestamps and were the reason old products kept re-appearing by themselves.
+const needsOneTimeReset = (): boolean => {
+  try {
+    if (localStorage.getItem(CART_RESET_FLAG)) return false;
+    localStorage.setItem(CART_RESET_FLAG, new Date().toISOString());
+    localStorage.removeItem(CART_KEY);
+    localStorage.removeItem(CART_BACKUP_KEY);
+    return true;
+  } catch { return false; }
+};
+
+const loadInitialItems = (): CartItem[] => {
+  try {
+    if (needsOneTimeReset()) return [];
+    const rawPrimary = localStorage.getItem(CART_KEY);
+    const primary = pruneStale(sanitizeItems(JSON.parse(rawPrimary || '[]')));
+    if (primary.length > 0) return primary;
+    // Only fall back to backup when the primary cart key has never been written
+    // (storage was wiped mid-checkout). If the user intentionally emptied their
+    // cart, CART_KEY exists as '[]' and we must respect that empty state.
+    if (rawPrimary === null) return pruneStale(readBackup());
+    return [];
+  } catch { return []; }
+};
+
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
   const userId = user?.id;
 
-  const [items, setItems] = useState<CartItem[]>(() => {
-    try {
-      const rawPrimary = localStorage.getItem(CART_KEY);
-      const primary = sanitizeItems(JSON.parse(rawPrimary || '[]'));
-      if (primary.length > 0) return primary;
-      // Only fall back to backup when the primary cart key has never been written
-      // (storage was wiped mid-checkout). If the user intentionally emptied their
-      // cart, CART_KEY exists as '[]' and we must respect that empty state.
-      if (rawPrimary === null) return readBackup();
-      return [];
-    } catch { return []; }
-  });
+  const [items, setItems] = useState<CartItem[]>(() => loadInitialItems());
   const [wishlist, setWishlist] = useState<CartItem[]>(() => {
     try { return sanitizeItems(JSON.parse(localStorage.getItem('wishlist') || '[]')); } catch { return []; }
   });
