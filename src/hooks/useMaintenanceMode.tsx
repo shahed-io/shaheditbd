@@ -27,6 +27,27 @@ export type MaintenanceSettings = {
   facebook: string;
   website: string;
   footerText: string;
+  /* ---- Custom theme (optional) ---- */
+  customEnabled: boolean;
+  /** 'theme' = visual builder, 'html' = fully custom HTML/CSS */
+  customMode: 'theme' | 'html';
+  customBgFrom: string;
+  customBgTo: string;
+  customCardBg: string;
+  customTextColor: string;
+  customMutedColor: string;
+  customAccent: string;
+  customFont: string;
+  customRadius: number;
+  customLogo: string;
+  customShowLogo: boolean;
+  customHeadline: string;
+  customBody: string;
+  customButtonLabel: string;
+  customButtonUrl: string;
+  customFooter: string;
+  customCss: string;
+  customHtml: string;
 };
 
 export const MAINTENANCE_AREAS: { key: string; label: string; hint: string; prefixes: string[] }[] = [
@@ -79,6 +100,25 @@ export const MAINTENANCE_DEFAULT: MaintenanceSettings = {
   facebook: 'https://facebook.com/shahedstorebd',
   website: 'www.shahedstore.com.bd',
   footerText: 'Shahed Store — Genuine Software & Digital Licenses',
+  customEnabled: false,
+  customMode: 'theme',
+  customBgFrom: '#0b1020',
+  customBgTo: '#1b1035',
+  customCardBg: 'rgba(255,255,255,0.06)',
+  customTextColor: '#ffffff',
+  customMutedColor: 'rgba(255,255,255,0.72)',
+  customAccent: '#8b5cf6',
+  customFont: "'Inter', system-ui, sans-serif",
+  customRadius: 28,
+  customLogo: '',
+  customShowLogo: true,
+  customHeadline: 'We are upgrading',
+  customBody: 'আমাদের ওয়েবসাইটে কিছু improvement চলছে। খুব শীঘ্রই আবার চালু হবে — ধন্যবাদ আপনার ধৈর্যের জন্য।',
+  customButtonLabel: 'Contact on WhatsApp',
+  customButtonUrl: '',
+  customFooter: 'Shahed Store',
+  customCss: '',
+  customHtml: '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:system-ui;background:#0b1020;color:#fff">\n  <div style="text-align:center;max-width:560px;padding:40px">\n    <h1 style="font-size:34px;margin:0 0 12px">We\u2019ll be back soon</h1>\n    <p style="opacity:.75;line-height:1.7">Write anything you want here \u2014 full HTML &amp; CSS supported.</p>\n  </div>\n</div>',
 };
 
 export const parseMaintenance = (raw?: string | null): MaintenanceSettings => {
