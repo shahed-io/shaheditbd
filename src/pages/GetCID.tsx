@@ -198,11 +198,19 @@ const GetCID = () => {
       const data = await resp.json();
       if (data.ok && data.installation_id) {
         setInstallationId(data.installation_id);
-        toast.success('Installation ID detected from screenshot ✨');
+        setInlineError(null);
+        toast.success('Installation ID detected ✨ — Confirmation ID তৈরি হচ্ছে...');
+        setParsing(false);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        // Auto-generate the Confirmation ID right away
+        await handleGenerate(data.installation_id);
+        return;
       } else {
+        setInlineError({ message: data.error || 'Could not read Installation ID' });
         toast.error(data.error || 'Could not read Installation ID');
       }
     } catch (e) {
+      setInlineError({ message: `OCR error: ${String(e)}` });
       toast.error(`OCR error: ${String(e)}`);
     } finally {
       setParsing(false);
