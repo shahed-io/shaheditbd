@@ -10,6 +10,8 @@ export type BinancePgwConfig = {
   bdt_rate: number;   // how many BDT equal 1 unit of `currency`
   label: string;      // checkout label
   is_active: boolean;
+  sandbox: boolean;          // test mode (demo transactions, no real money)
+  sandbox_base_url: string;  // sandbox API host when real test credentials are used
 };
 
 export const DEFAULT_BINANCE_CFG: BinancePgwConfig = {
@@ -20,7 +22,10 @@ export const DEFAULT_BINANCE_CFG: BinancePgwConfig = {
   bdt_rate: 120,
   label: 'Binance Pay (Crypto)',
   is_active: false,
+  sandbox: false,
+  sandbox_base_url: 'https://bpay.binanceapi.com',
 };
+
 
 export const BINANCE_PGW_KEY = 'binance_pgw_config';
 
