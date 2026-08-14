@@ -258,15 +258,15 @@ const MobileBottomNav = () => {
                         {(item as any).isCurrency ? (
                           <span
                             aria-hidden
-                            className={`flex items-center justify-center rounded-full leading-none font-extrabold text-[#3b1f04] transition-all duration-300 ${
+                            className={`flex items-center justify-center rounded-full leading-none font-extrabold text-primary-foreground transition-all duration-300 ${
                               isActive ? 'w-7 h-7 text-[17px] scale-110' : 'w-[22px] h-[22px] text-[14px]'
                             }`}
                             style={{
                               background:
-                                'linear-gradient(135deg, #fde68a 0%, #fbbf24 55%, #d97706 100%)',
+                                'linear-gradient(135deg, hsl(var(--primary)/0.85) 0%, hsl(var(--primary)) 55%, hsl(var(--primary)/0.75) 100%)',
                               boxShadow: isActive
-                                ? 'inset 0 1px 0 rgba(255,255,255,0.8), 0 0 0 1.5px rgba(255,255,255,0.9), 0 2px 8px rgba(217,119,6,0.55)'
-                                : 'inset 0 1px 0 rgba(255,255,255,0.7), 0 0 6px rgba(251,191,36,0.35)',
+                                ? 'inset 0 1px 0 hsl(var(--primary-foreground)/0.35), 0 0 0 1.5px rgba(255,255,255,0.9), 0 2px 8px hsl(var(--primary)/0.55)'
+                                : 'inset 0 1px 0 hsl(var(--primary-foreground)/0.35), 0 0 10px hsl(var(--primary)/0.35)',
                               fontFamily:
                                 "'Noto Sans Bengali', 'Hind Siliguri', system-ui, sans-serif",
                             }}
