@@ -12,7 +12,7 @@ async function sign(payload: string, secret: string): Promise<string> {
 }
 
 async function queryTrade(cfg: any, merchantTradeNo: string) {
-  const base = String(cfg.base_url || 'https://bpay.binanceapi.com').replace(/\/+$/, '');
+  const base = String((cfg.sandbox === true ? (cfg.sandbox_base_url || cfg.base_url) : cfg.base_url) || 'https://bpay.binanceapi.com').replace(/\/+$/, '');
   const body = JSON.stringify({ merchantTradeNo });
   const timestamp = Date.now().toString();
   const nonce = Array.from(crypto.getRandomValues(new Uint8Array(16)))

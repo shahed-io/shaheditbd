@@ -40,7 +40,9 @@ Deno.serve(async (req) => {
     let cfg: any;
     try { cfg = JSON.parse(cfgRow.value); } catch { return json({ error: 'Invalid config' }, 500); }
     if (!cfg.is_active) return json({ error: 'Binance Pay disabled' }, 400);
-    if (!cfg.api_key || !cfg.api_secret) return json({ error: 'Binance Pay credentials missing' }, 400);
+    const sandbox = cfg.sandbox === true;
+    const hasCreds = !!cfg.api_key && !!cfg.api_secret;
+    if (!sandbox && !hasCreds) return json({ error: 'Binance Pay credentials missing' }, 400);
 
     const { data: order, error: oErr } = await supabase
       .from('orders')
@@ -57,7 +59,20 @@ Deno.serve(async (req) => {
 
     const mtn = `${String(order.order_number).replace(/[^a-zA-Z0-9]/g, '')}${Date.now().toString(36).toUpperCase()}`.slice(0, 32);
     const origin = req.headers.get('origin') || 'https://shahedstore.com.bd';
-    const base = String(cfg.base_url || 'https://bpay.binanceapi.com').replace(/\/+$/, '');
+    const base = String((sandbox ? (cfg.sandbox_base_url || cfg.base_url) : cfg.base_url) || 'https://bpay.binanceapi.com').replace(/\/+$/, '');
+
+    // Sandbox without real test credentials → fully simulated demo transaction.
+    if (sandbox && !hasCreds) {
+      const demoMtn = `DEMO${mtn}`.slice(0, 32);
+      await supabase.from('orders').update({ transaction_id: `BINANCE-${demoMtn}` }).eq('id', order.id);
+      return json({
+        payment_url: `${origin}/binance/return?order_id=${order.id}&mtn=${demoMtn}&demo=1`,
+        merchant_trade_no: demoMtn,
+        prepay_id: null,
+        sandbox: true,
+        amount, currency,
+      });
+    }
 
     const body = JSON.stringify({
       env: { terminalType: 'WEB' },
