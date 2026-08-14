@@ -11,6 +11,7 @@ export interface CartItem {
   image: string;
   quantity: number;
   variant?: string; // selected variant label
+  addedAt?: string; // ISO timestamp – used to expire forgotten cart items
 }
 
 export interface CouponState {
@@ -56,6 +57,21 @@ const sanitizeItems = (arr: any): CartItem[] => {
   }
   return out;
 };
+
+// Local cart items expire after this long — a cart the user forgot about weeks
+// ago must not silently re-appear (and re-sync to the server) on a later visit.
+const CART_LOCAL_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+const CART_RESET_FLAG = 'cart_reset_v2'; // one-time cleanup of pre-TTL carts
+
+const stamp = (i: CartItem): CartItem => ({ ...i, addedAt: i.addedAt || new Date().toISOString() });
+
+const isFresh = (i: CartItem) => {
+  const t = new Date(i.addedAt || 0).getTime();
+  return Number.isFinite(t) && t > 0 && Date.now() - t <= CART_LOCAL_TTL_MS;
+};
+
+// Drop items that have no timestamp (legacy rows) or that expired.
+const pruneStale = (arr: CartItem[]): CartItem[] => arr.filter(isFresh);
 
 interface CartContextType {
   items: CartItem[];
@@ -133,22 +149,37 @@ const writeBackup = (items: CartItem[]) => {
   } catch { /* ignore */ }
 };
 
+// One-time cleanup: carts saved before the TTL system existed have no
+// timestamps and were the reason old products kept re-appearing by themselves.
+const needsOneTimeReset = (): boolean => {
+  try {
+    if (localStorage.getItem(CART_RESET_FLAG)) return false;
+    localStorage.setItem(CART_RESET_FLAG, new Date().toISOString());
+    localStorage.removeItem(CART_KEY);
+    localStorage.removeItem(CART_BACKUP_KEY);
+    return true;
+  } catch { return false; }
+};
+
+const loadInitialItems = (): CartItem[] => {
+  try {
+    if (needsOneTimeReset()) return [];
+    const rawPrimary = localStorage.getItem(CART_KEY);
+    const primary = pruneStale(sanitizeItems(JSON.parse(rawPrimary || '[]')));
+    if (primary.length > 0) return primary;
+    // Only fall back to backup when the primary cart key has never been written
+    // (storage was wiped mid-checkout). If the user intentionally emptied their
+    // cart, CART_KEY exists as '[]' and we must respect that empty state.
+    if (rawPrimary === null) return pruneStale(readBackup());
+    return [];
+  } catch { return []; }
+};
+
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
   const userId = user?.id;
 
-  const [items, setItems] = useState<CartItem[]>(() => {
-    try {
-      const rawPrimary = localStorage.getItem(CART_KEY);
-      const primary = sanitizeItems(JSON.parse(rawPrimary || '[]'));
-      if (primary.length > 0) return primary;
-      // Only fall back to backup when the primary cart key has never been written
-      // (storage was wiped mid-checkout). If the user intentionally emptied their
-      // cart, CART_KEY exists as '[]' and we must respect that empty state.
-      if (rawPrimary === null) return readBackup();
-      return [];
-    } catch { return []; }
-  });
+  const [items, setItems] = useState<CartItem[]>(() => loadInitialItems());
   const [wishlist, setWishlist] = useState<CartItem[]>(() => {
     try { return sanitizeItems(JSON.parse(localStorage.getItem('wishlist') || '[]')); } catch { return []; }
   });
@@ -160,14 +191,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [orderNotes, setOrderNotes] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [serviceFee] = useState(DEFAULT_SERVICE_FEE);
-  const [selectedKeys, setSelectedKeys] = useState<string[]>(() => {
-    try {
-      const rawPrimary = localStorage.getItem(CART_KEY);
-      const stored = sanitizeItems(JSON.parse(rawPrimary || '[]'));
-      const base = stored.length > 0 ? stored : (rawPrimary === null ? readBackup() : []);
-      return base.map(i => `${i.id}__${i.variant || ''}`);
-    } catch { return []; }
-  });
+  const [selectedKeys, setSelectedKeys] = useState<string[]>(() =>
+    loadInitialItems().map(i => `${i.id}__${i.variant || ''}`)
+  );
 
   // Track which user we've synced for, to avoid duplicate syncs
   const syncedUserRef = useRef<string | null>(null);
@@ -228,7 +254,15 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
     (async () => {
       try {
-        const local = items;
+        // One-time server-side cleanup for carts saved before the TTL system.
+        try {
+          if (!localStorage.getItem('cart_db_reset_v2')) {
+            localStorage.setItem('cart_db_reset_v2', new Date().toISOString());
+            await supabase.from('user_cart_items').delete().eq('user_id', userId);
+          }
+        } catch { /* ignore */ }
+
+        const local = pruneStale(items);
         if (local.length > 0) {
           const { error: upErr } = await supabase.from('user_cart_items').upsert(
             local.map(it => ({
@@ -262,7 +296,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           price: Number(r.price) || 0,
           originalPrice: r.original_price != null ? Number(r.original_price) : undefined,
           quantity: r.quantity || 1,
-          _touchedAt: r.updated_at || r.created_at,
+          // Age is measured from creation, not from updated_at: a login merge
+          // refreshes updated_at and would keep ancient rows alive forever.
+          addedAt: r.created_at,
+          _touchedAt: r.created_at,
         }));
 
         // Rows the user never touched recently are considered stale — they are the
@@ -333,7 +370,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       if (existing) {
         next = prev.map(i => (i.id === item.id && i.variant === item.variant) ? { ...i, quantity: i.quantity + qty } : i);
       } else {
-        next = [...prev, { ...item, quantity: qty }];
+        next = [...prev, stamp({ ...item, quantity: qty })];
       }
       nextItem = next.find(i => i.id === item.id && i.variant === item.variant) || null;
       return next;
@@ -366,7 +403,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   // Buy now: clear cart, add single item, go to checkout
   const buyNow = (item: Omit<CartItem, 'quantity'>, qty: number = 1) => {
-    const single: CartItem = { ...item, quantity: qty };
+    const single: CartItem = stamp({ ...item, quantity: qty });
     const previous = items;
     setItems([single]);
     setSelectedKeys([itemKey(single)]);
