@@ -503,10 +503,10 @@ const Navbar = () => {
               <BrandLogo size="md" />
             </a>
 
-            {/* Desktop Search Trigger */}
+            {/* Desktop Search Trigger — lg+ only (below lg it collapses into an empty pill) */}
             <button
               onClick={() => setDesktopSearch(true)}
-              className="hidden md:flex flex-1 min-w-0 max-w-[460px] items-center gap-2 rounded-xl border px-3 py-1.5 text-left transition-all hover:border-primary/50 hover:shadow-[0_0_0_3px_hsl(var(--primary)/0.08)] group overflow-hidden"
+              className="hidden lg:flex flex-1 min-w-0 max-w-[460px] items-center gap-2 rounded-xl border px-3 py-1.5 text-left transition-all hover:border-primary/50 hover:shadow-[0_0_0_3px_hsl(var(--primary)/0.08)] group overflow-hidden"
               style={{ borderColor: 'hsla(258,78%,60%,0.20)', background: 'hsla(258,78%,55%,0.04)' }}
             >
               <Search size={14} className="text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
@@ -518,7 +518,8 @@ const Navbar = () => {
 
             {/* Desktop Links */}
             {/* Desktop Links — footer chip style */}
-            <div className="hidden md:flex items-center gap-1.5 lg:gap-2">
+            <div className="hidden md:flex items-center gap-1 lg:gap-2 min-w-0 flex-shrink">
+
               {NAV_LINKS.map(link => {
                 const isActive = typeof window !== 'undefined' && window.location.pathname === link.href;
                 return (
