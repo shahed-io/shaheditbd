@@ -296,7 +296,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           price: Number(r.price) || 0,
           originalPrice: r.original_price != null ? Number(r.original_price) : undefined,
           quantity: r.quantity || 1,
-          _touchedAt: r.updated_at || r.created_at,
+          // Age is measured from creation, not from updated_at: a login merge
+          // refreshes updated_at and would keep ancient rows alive forever.
+          addedAt: r.created_at,
+          _touchedAt: r.created_at,
         }));
 
         // Rows the user never touched recently are considered stale — they are the
