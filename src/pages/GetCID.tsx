@@ -410,7 +410,7 @@ const GetCID = () => {
             </div>
 
             <button
-              onClick={handleGenerate}
+              onClick={() => handleGenerate()}
               disabled={generating || parsing || authLoading}
               className="w-full mt-4 flex items-center justify-center gap-2 py-3.5 rounded-xl text-white font-bold text-sm transition-transform active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
               style={{
