@@ -186,7 +186,7 @@ serve(async (req) => {
 
     const fullName = productName || "Product";
     const name = extractShortName(fullName);
-    const selectedStyle = STYLES[cardStyle as keyof typeof STYLES] || STYLES.dark_neon;
+    const selectedStyle = STYLES[cardStyle as keyof typeof STYLES] || STYLES.auto_smart;
     const promptText = selectedStyle.prompt(name, brand || name, price || "", category || "");
 
     const userContent: any[] = [{ type: "text", text: promptText }];
