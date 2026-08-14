@@ -54,6 +54,8 @@ const AdminPayPalPGW        = lazy(() => import("./pages/admin/AdminPayPalPGW"))
 const AdminPayPalTransactions = lazy(() => import("./pages/admin/AdminPayPalTransactions"));
 const AdminUddoktapayPGW    = lazy(() => import("./pages/admin/AdminUddoktapayPGW"));
 const UddoktapayReturn      = lazy(() => import("./pages/UddoktapayReturn"));
+const AdminBinancePGW       = lazy(() => import("./pages/admin/AdminBinancePGW"));
+const BinanceReturn         = lazy(() => import("./pages/BinanceReturn"));
 const AdminSSLCommerzPGW    = lazy(() => import("./pages/admin/AdminSSLCommerzPGW"));
 const AdminEpsGateway       = lazy(() => import("./pages/admin/AdminEpsGateway"));
 const AdminBkashTransactions = lazy(() => import("./pages/admin/AdminBkashTransactions"));
@@ -302,6 +304,7 @@ const AppContent = () => {
           <Route path="/.lovable/oauth/consent" element={<Suspense fallback={<PageLoader />}><OAuthConsent /></Suspense>} />
           <Route path="/pay/:slug" element={<PaymentLink />} />
           <Route path="/pay/track/:id" element={<PaymentLinkTrack />} />
+          <Route path="/binance/return" element={<Suspense fallback={<PageLoader />}><BinanceReturn /></Suspense>} />
           <Route path="/uddoktapay/return" element={<Suspense fallback={<PageLoader />}><UddoktapayReturn /></Suspense>} />
           
           <Route path="/ceo/login" element={<AdminLogin />} />
@@ -328,6 +331,7 @@ const AppContent = () => {
             <Route path="paypal-pgw" element={<AdminSuspense><AdminPayPalPGW /></AdminSuspense>} />
             <Route path="paypal-transactions" element={<AdminSuspense><AdminPayPalTransactions /></AdminSuspense>} />
             <Route path="uddoktapay-pgw" element={<AdminSuspense><AdminUddoktapayPGW /></AdminSuspense>} />
+            <Route path="binance-pgw" element={<AdminSuspense><AdminBinancePGW /></AdminSuspense>} />
             <Route path="tickets" element={<AdminSuspense><AdminTickets /></AdminSuspense>} />
             <Route path="reports" element={<AdminSuspense><AdminReports /></AdminSuspense>} />
             <Route path="marketing" element={<AdminSuspense><AdminMarketing /></AdminSuspense>} />
