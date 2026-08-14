@@ -225,20 +225,17 @@ const AdminLogin = () => {
 
         {stage === '2fa' && (
           <form onSubmit={handleVerify2FA} className="space-y-4">
-            <p className="text-sm text-center text-muted-foreground whitespace-normal break-words leading-relaxed">
-              Enter your <strong>Google Authenticator</strong> 6-digit code, a backup code,
-              or request a code by email below.
-            </p>
-
             <div className="relative">
               <KeyRound size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <input
                 type="text"
                 inputMode="text"
                 autoFocus
+                autoComplete="off"
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
-                placeholder="123456 / backup / email code"
+                placeholder=""
+                aria-label="Code"
                 required
                 className="w-full bg-muted/40 border border-border rounded-xl pl-10 pr-4 py-3 text-base tracking-[0.3em] text-center font-mono focus:outline-none focus:border-primary"
               />
@@ -248,9 +245,6 @@ const AdminLogin = () => {
             )}
             {error && <div className="bg-destructive/10 border border-destructive/30 rounded-xl px-4 py-3 text-destructive text-sm">{error}</div>}
 
-            <div className="bg-muted/30 border border-border rounded-xl px-3 py-2.5 text-xs text-muted-foreground text-center">
-              🔒 প্রতিবার Admin Panel এ ঢোকার সময় Authenticator code দিয়ে verify করতে হবে।
-            </div>
 
 
             <button type="submit" disabled={verifying} className="w-full btn-glow py-3.5 rounded-xl font-semibold flex items-center justify-center gap-2">
