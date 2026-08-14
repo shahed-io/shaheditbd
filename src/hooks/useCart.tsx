@@ -370,7 +370,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       if (existing) {
         next = prev.map(i => (i.id === item.id && i.variant === item.variant) ? { ...i, quantity: i.quantity + qty } : i);
       } else {
-        next = [...prev, { ...item, quantity: qty }];
+        next = [...prev, stamp({ ...item, quantity: qty })];
       }
       nextItem = next.find(i => i.id === item.id && i.variant === item.variant) || null;
       return next;
