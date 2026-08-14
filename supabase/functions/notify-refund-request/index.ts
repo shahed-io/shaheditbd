@@ -99,19 +99,22 @@ Deno.serve(async (req) => {
     const storeName = esc(settingRows?.find(r => r.key === 'store_name')?.value || 'Shahed Store');
 
 
-    // Build screenshot HTML
-    const screenshotHtml = screenshotUrls.length > 0
+    // Build screenshot HTML (only https URLs, escaped)
+    const safeShots: string[] = (Array.isArray(screenshotUrls) ? screenshotUrls : [])
+      .map(safeUrl).filter(Boolean).slice(0, 10);
+    const screenshotHtml = safeShots.length > 0
       ? `<tr><td style="padding:10px 24px;font-size:13px;color:#555;border-bottom:1px solid #eee;">
-          <strong>📸 স্ক্রিনশট (${screenshotUrls.length}টি):</strong><br/>
-          ${screenshotUrls.map((u: string, i: number) => `<a href="${u}" target="_blank" style="color:#7c3aed;display:block;margin-top:4px;">${i + 1}. স্ক্রিনশট দেখুন →</a>`).join('')}
+          <strong>📸 স্ক্রিনশট (${safeShots.length}টি):</strong><br/>
+          ${safeShots.map((u, i) => `<a href="${u}" target="_blank" style="color:#7c3aed;display:block;margin-top:4px;">${i + 1}. স্ক্রিনশট দেখুন →</a>`).join('')}
         </td></tr>`
       : '';
 
     const deductionHtml = isChangeOfMind
       ? `<tr><td style="padding:10px 24px;background:#fff3cd;border-bottom:1px solid #eee;">
-          <span style="color:#856404;font-size:13px;font-weight:600;">⚠️ মন পরিবর্তন — ১০% কেটে ৳${refundAmount} রিফান্ড হবে</span>
+          <span style="color:#856404;font-size:13px;font-weight:600;">⚠️ মন পরিবর্তন — ১০% কেটে ৳${esc(refundAmount)} রিফান্ড হবে</span>
         </td></tr>`
       : '';
+
 
     const emailHtml = `
 <!DOCTYPE html>
