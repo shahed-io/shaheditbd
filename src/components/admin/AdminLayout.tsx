@@ -64,6 +64,7 @@ const MENU_SECTIONS: MenuSection[] = [
     title: 'Overview',
     items: [
       { icon: LayoutDashboard, label: 'Dashboard', path: '/ceo' },
+      { icon: Wrench, label: 'Maintenance Mode', path: '/ceo/maintenance', badge: 'live' },
     ],
   },
   {
@@ -125,8 +126,6 @@ const MENU_SECTIONS: MenuSection[] = [
       { icon: FileText, label: 'Text Manager', path: '/ceo/text-manager' },
       { icon: Palette, label: 'Themes', path: '/ceo/themes' },
       { icon: Star, label: 'Customer Reviews', path: '/ceo/customer-reviews', badge: 'new' },
-      { icon: Wrench, label: 'Maintenance Mode', path: '/ceo/maintenance', badge: 'new' },
-
     ],
   },
   {

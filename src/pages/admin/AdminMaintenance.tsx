@@ -5,6 +5,7 @@ import { Save, Wrench, ToggleLeft, ToggleRight, Eye, AlertTriangle, RotateCcw } 
 import MaintenanceScreen from '@/components/store/MaintenanceScreen';
 import {
   MAINTENANCE_KEY,
+  MAINTENANCE_AREAS,
   MAINTENANCE_DEFAULT,
   parseMaintenance,
   type MaintenanceSettings,
@@ -135,10 +136,82 @@ const AdminMaintenance = () => {
         <div className="rounded-2xl p-4 flex items-start gap-3 border border-orange-400/30 bg-orange-400/10">
           <AlertTriangle size={16} className="text-orange-400 mt-0.5 flex-shrink-0" />
           <div className="text-sm text-foreground">
-            Visitors currently see the maintenance page. Admin panel (<span className="font-mono text-xs">/ceo</span>) and logged-in admins are not affected.
+            {settings.scope === 'all'
+              ? 'The ENTIRE website is offline for visitors.'
+              : `Only ${settings.areas.length} selected area(s) are offline for visitors.`}{' '}
+            Admin panel (<span className="font-mono text-xs">/ceo</span>) and logged-in admins are not affected.
           </div>
         </div>
       )}
+
+      {/* Scope */}
+      <div className="glass-card rounded-2xl p-6 space-y-4">
+        <div>
+          <h3 className="font-bold text-foreground">Coverage</h3>
+          <p className="text-xs text-muted-foreground mt-1">Put the whole website in maintenance, or only selected areas.</p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {(['all', 'selected'] as const).map(opt => (
+            <button
+              key={opt}
+              onClick={() => set('scope', opt)}
+              className={`text-left rounded-xl p-4 border transition-all ${
+                settings.scope === opt ? 'border-primary bg-primary/10' : 'border-border bg-muted/20'
+              }`}
+            >
+              <div className="font-semibold text-sm text-foreground">
+                {opt === 'all' ? 'Entire website' : 'Selected areas only'}
+              </div>
+              <div className="text-xs text-muted-foreground mt-1">
+                {opt === 'all' ? 'Every public page shows the maintenance screen.' : 'Pick exactly which sections go offline.'}
+              </div>
+            </button>
+          ))}
+        </div>
+
+        {settings.scope === 'selected' && (
+          <div className="space-y-3 pt-2">
+            <div className="flex gap-2 flex-wrap">
+              <button
+                onClick={() => set('areas', MAINTENANCE_AREAS.map(a => a.key))}
+                className="glass-card px-4 py-2 rounded-xl text-xs font-semibold text-foreground"
+              >
+                Select all
+              </button>
+              <button onClick={() => set('areas', [])} className="glass-card px-4 py-2 rounded-xl text-xs font-semibold text-foreground">
+                Clear all
+              </button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {MAINTENANCE_AREAS.map(area => {
+                const checked = settings.areas.includes(area.key);
+                return (
+                  <label
+                    key={area.key}
+                    className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
+                      checked ? 'border-primary/50 bg-primary/10' : 'border-border bg-muted/20'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={e =>
+                        set('areas', e.target.checked ? [...settings.areas, area.key] : settings.areas.filter(k => k !== area.key))
+                      }
+                      className="mt-0.5 h-4 w-4 rounded border-border accent-primary"
+                    />
+                    <div>
+                      <div className="text-sm font-semibold text-foreground">{area.label}</div>
+                      <div className="text-[11px] text-muted-foreground font-mono">{area.hint}</div>
+                    </div>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+
 
       {/* Content */}
       <div className="glass-card rounded-2xl p-6 space-y-4">

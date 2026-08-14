@@ -5,6 +5,9 @@ export const MAINTENANCE_KEY = 'maintenance_mode';
 
 export type MaintenanceSettings = {
   enabled: boolean;
+  /** 'all' = whole website, 'selected' = only the areas listed below */
+  scope: 'all' | 'selected';
+  areas: string[];
   badge: string;
   title: string;
   message: string;
@@ -26,8 +29,36 @@ export type MaintenanceSettings = {
   footerText: string;
 };
 
+export const MAINTENANCE_AREAS: { key: string; label: string; hint: string; prefixes: string[] }[] = [
+  { key: 'home', label: 'Homepage', hint: '/', prefixes: ['/'] },
+  { key: 'shop', label: 'Shop & Products', hint: '/shop, /product/...', prefixes: ['/shop', '/product'] },
+  { key: 'checkout', label: 'Cart & Checkout', hint: '/checkout, /cart', prefixes: ['/checkout', '/cart'] },
+  { key: 'dashboard', label: 'Customer Dashboard', hint: '/dashboard', prefixes: ['/dashboard'] },
+  { key: 'blog', label: 'Blog', hint: '/blog', prefixes: ['/blog'] },
+  { key: 'tools', label: 'Free Tools & CID', hint: '/free-tools, /get-cid, /check-key', prefixes: ['/free-tools', '/get-cid', '/check-key'] },
+  { key: 'offers', label: 'Offers & Winners', hint: '/offers, /winners', prefixes: ['/offer', '/winners'] },
+  { key: 'affiliate', label: 'Affiliate Portal', hint: '/affiliate', prefixes: ['/affiliate'] },
+  { key: 'support', label: 'Support & Contact', hint: '/contact, /help, /refund-request', prefixes: ['/contact', '/help', '/refund-request'] },
+  { key: 'pages', label: 'Info & Policy Pages', hint: '/about, /faqs, /privacy...', prefixes: ['/about', '/faqs', '/privacy', '/terms', '/refund-policy', '/return-policy', '/order-policy', '/delivery'] },
+  { key: 'payments', label: 'Payment Links', hint: '/pay/...', prefixes: ['/pay', '/payment'] },
+];
+
+/** Should this path show the maintenance screen? */
+export const isPathUnderMaintenance = (s: MaintenanceSettings, pathname: string) => {
+  if (!s.enabled) return false;
+  if (s.scope !== 'selected') return true;
+  const path = pathname.replace(/\/+$/, '') || '/';
+  return (s.areas || []).some((key) => {
+    const area = MAINTENANCE_AREAS.find(a => a.key === key);
+    if (!area) return false;
+    return area.prefixes.some(pre => (pre === '/' ? path === '/' : path === pre || path.startsWith(pre + '/')));
+  });
+};
+
 export const MAINTENANCE_DEFAULT: MaintenanceSettings = {
   enabled: false,
+  scope: 'all',
+  areas: [],
   badge: 'Maintenance',
   title: 'We’ll be back very soon',
   message:
