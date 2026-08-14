@@ -19,6 +19,7 @@ import SEOHead from '@/components/seo/SEOHead';
 import { useBkashPgwContent } from '@/hooks/useBkashPgwContent';
 import { usePayPalPgwConfig } from '@/hooks/usePayPalPgwConfig';
 import { useUddoktapayPgwConfig } from '@/hooks/useUddoktapayPgwConfig';
+import { useBinancePgwConfig } from '@/hooks/useBinancePgwConfig';
 import { getPaymentLogo } from '@/lib/paymentLogos';
 import PayPalButton from '@/components/store/PayPalButton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -30,7 +31,7 @@ const checkoutSchema = z.object({
   phone: z.string().trim().regex(/^\+[1-9][0-9]{6,17}$/, 'Country code সহ সঠিক নম্বর দিন (যেমন +8801XXXXXXXXX)').max(20),
 });
 
-type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 'bank_transfer' | 'wallet' | 'bkash_online' | 'paypal' | 'uddoktapay';
+type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 'bank_transfer' | 'wallet' | 'bkash_online' | 'paypal' | 'uddoktapay' | 'binance';
 
 const Checkout = () => {
   const {
@@ -62,6 +63,7 @@ const Checkout = () => {
   const bkashContent = useBkashPgwContent();
   const paypalCfg = usePayPalPgwConfig();
   const uddoktapayCfg = useUddoktapayPgwConfig();
+  const binanceCfg = useBinancePgwConfig();
   const bkashLogoSrc = getPaymentLogo('bkash_online', '', bkashContent.logo_url);
 
   // Build dynamic payment methods from DB config
@@ -72,6 +74,9 @@ const Checkout = () => {
     ] : []),
     ...(uddoktapayCfg.is_active && uddoktapayCfg.api_key ? [
       { id: 'uddoktapay' as PaymentMethod, label: 'Uddoktapay (bKash/Nagad/Card)', color: 'from-emerald-600 to-teal-700', number: '', type: 'Uddoktapay Aggregator', logo: 'https://uddoktapay.com/assets/img/logo.png' },
+    ] : []),
+    ...(binanceCfg.is_active && binanceCfg.api_key && binanceCfg.api_secret ? [
+      { id: 'binance' as PaymentMethod, label: binanceCfg.label || 'Binance Pay (Crypto)', color: 'from-amber-500 to-yellow-600', number: '', type: `Binance Pay · ${binanceCfg.currency}`, logo: 'https://public.bnbstatic.com/static/images/common/favicon.ico' },
     ] : []),
     ...paymentConfigs
       .filter(c => c.isActive)
@@ -562,7 +567,7 @@ const Checkout = () => {
       return;
     }
 
-    if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online' && paymentMethod !== 'paypal' && paymentMethod !== 'uddoktapay' && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
+    if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online' && paymentMethod !== 'paypal' && paymentMethod !== 'uddoktapay' && paymentMethod !== 'binance' && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
     if (items.length === 0) { setSubmitError('Cart empty'); return; }
 
     // Guest checkout is allowed for all payment methods except wallet
@@ -626,6 +631,7 @@ const Checkout = () => {
           paymentMethod === 'bkash_online' ? `BKASH-PENDING-${orderNum}` :
           paymentMethod === 'paypal' ? `PAYPAL-PENDING-${orderNum}` :
           paymentMethod === 'uddoktapay' ? `UDDOKTAPAY-PENDING-${orderNum}` :
+          paymentMethod === 'binance' ? `BINANCE-PENDING-${orderNum}` :
           transactionId.trim(),
         coupon_code: coupon.isApplied ? coupon.code : null,
         coupon_id: couponId,
@@ -789,6 +795,53 @@ const Checkout = () => {
         } catch (e) {
           console.error('[Checkout] paypal invoke failed:', e);
           setSubmitError('PayPal শুরু করা যায়নি। আবার চেষ্টা করুন।');
+          setLoading(false);
+          submittingRef.current = false;
+          return;
+        }
+      }
+
+      // ── Binance Pay (crypto auto payment) — redirect to Binance hosted checkout ──
+      if (paymentMethod === 'binance') {
+        try {
+          try {
+            await supabase.rpc('mark_abandoned_checkout_converted', {
+              p_session_token: sessionTokenRef.current,
+              p_order_id: order.id,
+            });
+          } catch { /* silent */ }
+          if (!user) {
+            try {
+              await supabase.functions.invoke('guest-order-finalize', {
+                body: {
+                  orderId: order.id,
+                  email: form.email,
+                  name: form.name,
+                  redirectTo: `${window.location.origin}/reset-password`,
+                },
+              });
+            } catch (e) { console.warn('[Checkout] guest finalize (binance) failed:', e); }
+          }
+          const { data: bnData, error: bnErr } = await supabase.functions.invoke('binance-create', {
+            body: { orderId: order.id },
+          });
+          if (bnErr || !(bnData as any)?.payment_url) {
+            console.error('[Checkout] binance-create error:', bnErr, bnData);
+            setSubmitError('Binance Pay শুরু করা যায়নি। আবার চেষ্টা করুন।');
+            setLoading(false);
+            submittingRef.current = false;
+            return;
+          }
+          try {
+            const newTok = 'cs_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 10);
+            localStorage.setItem('checkout_session_token', newTok);
+            sessionTokenRef.current = newTok;
+          } catch {}
+          window.location.href = (bnData as any).payment_url;
+          return;
+        } catch (e) {
+          console.error('[Checkout] binance invoke failed:', e);
+          setSubmitError('Binance গেটওয়ে কানেক্ট হয়নি। আবার চেষ্টা করুন।');
           setLoading(false);
           submittingRef.current = false;
           return;
