@@ -41,9 +41,26 @@ Deno.serve(async (req) => {
     });
     const vJson = await vRes.json().catch(() => ({}));
     const status = String(vJson?.status || '').toUpperCase();
-    const paid = status === 'COMPLETED' || status === 'PAID' || vJson?.status === 'COMPLETED';
+    const paid = status === 'COMPLETED' || status === 'PAID';
 
     if (paid && order_id) {
+      // Trust only the invoice's own metadata — never the client-supplied order_id alone
+      const invoiceOrderId = vJson?.metadata?.order_id;
+      if (!invoiceOrderId || String(invoiceOrderId) !== String(order_id)) {
+        console.warn('[uddoktapay-verify] order_id mismatch for invoice');
+        return json({ paid: false, error: 'Invoice does not belong to this order' }, 403);
+      }
+
+      const { data: order } = await supabase
+        .from('orders').select('id, total, payment_status').eq('id', order_id).maybeSingle();
+      if (!order) return json({ paid: false, error: 'Order not found' }, 404);
+
+      const verifiedAmount = Number(vJson?.amount ?? NaN);
+      if (!Number.isFinite(verifiedAmount) || verifiedAmount + 0.01 < Number(order.total)) {
+        console.warn('[uddoktapay-verify] amount mismatch');
+        return json({ paid: false, error: 'Paid amount does not match order total' }, 403);
+      }
+
       await supabase.from('orders').update({
         payment_status: 'paid',
         status: 'processing',
@@ -51,7 +68,8 @@ Deno.serve(async (req) => {
       }).eq('id', order_id);
     }
 
-    return json({ paid, raw: vJson });
+    return json({ paid });
+
   } catch (e: any) {
     console.error('[uddoktapay-verify] error', e);
     return json({ error: e?.message || 'Internal error' }, 500);
