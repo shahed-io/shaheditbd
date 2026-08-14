@@ -367,10 +367,20 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   // Buy now: clear cart, add single item, go to checkout
   const buyNow = (item: Omit<CartItem, 'quantity'>, qty: number = 1) => {
     const single: CartItem = { ...item, quantity: qty };
+    const previous = items;
     setItems([single]);
     setSelectedKeys([itemKey(single)]);
-    if (userId) dbUpsertItem(userId, single);
+    if (userId) {
+      // Remove the replaced rows from the server too, otherwise they come back
+      // on the next login and look like items the user never added.
+      const stale = previous.filter(i => itemKey(i) !== itemKey(single));
+      if (stale.length) {
+        dbDeleteItems(userId, stale.map(i => ({ product_id: String(i.id), variant: i.variant || null })));
+      }
+      dbUpsertItem(userId, single);
+    }
   };
+
 
   const removeFromCart = (id: number | string, variant?: string) => {
     setItems(prev => prev.filter(i => !(i.id === id && (i.variant || '') === (variant || ''))));
