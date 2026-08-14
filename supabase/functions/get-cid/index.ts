@@ -398,41 +398,27 @@ Deno.serve(async (req) => {
         let rawB64 = imageBase64;
         const m = imageBase64.match(/^data:([^;]+);base64,(.*)$/);
         if (m) { mime = m[1]; rawB64 = m[2]; }
+        if (!/^image\/(png|jpe?g|webp|gif|bmp)$/i.test(mime)) mime = 'image/png';
 
-        const { geminiVisionExtract } = await import('../_shared/gemini-vision.ts');
-        const result = await geminiVisionExtract({
-          imageBase64: rawB64,
-          mimeType: mime,
-          systemPrompt:
-            'You are an OCR engine. Extract the Microsoft Installation ID from the screenshot. ' +
-            'It appears under labels like "Installation ID", "ইনস্টলেশন আইডি", "ステップ 2" and is a long number split into 9 numbered blocks (labelled 1 to 9, A to I, or shown as rows). ' +
-            'Each block contains 6 OR 7 digits (so the full ID is 54 or 63 digits). ' +
-            'Read every visible digit carefully, including faint or low-contrast ones. ' +
-            'Return ONLY the digits joined by dashes in 9 groups (e.g. 123456-789012-... or 1234567-1234567-...). ' +
-            'If you cannot find an Installation ID in the image, return exactly: NONE',
-          userPrompt: 'Extract the Installation ID. Output only the 9 dash-separated numeric groups, or NONE.',
-          models: ['gemini-2.5-flash', 'gemini-2.5-pro'],
-        });
+        const { extractInstallationId } = await import('../_shared/iid-ocr.ts');
+        const result = await extractInstallationId({ imageBase64: rawB64, mimeType: mime });
+        console.log(`parse_screenshot engine=${result.engine} digits=${result.digits.length} attempts=${result.attempts.join(' | ')}`);
 
-        const raw = result.text.trim();
-        console.log(`parse_screenshot (${result.model}) raw:`, raw);
-
-        if (/^none$/i.test(raw)) {
-          return json({ ok: false, error: 'No Installation ID found in screenshot. Please upload a clearer image showing all 9 numbered groups.' }, 422);
-        }
-
-        const digits = raw.replace(/[^0-9]/g, '');
-        let groupSize = 0;
-        if (digits.length >= 62 && digits.length <= 64) groupSize = 7;
-        else if (digits.length >= 53 && digits.length <= 55) groupSize = 6;
-        else if (digits.length >= 50) {
-          groupSize = Math.abs(digits.length - 63) < Math.abs(digits.length - 54) ? 7 : 6;
-        } else {
+        const digits = result.digits;
+        if (!digits || digits.length < 50) {
           return json({
             ok: false,
-            error: `Only ${digits.length} digits detected. Installation ID needs 54 or 63 digits. Please upload a clearer, full screenshot.`,
+            error: digits.length === 0
+              ? 'Screenshot থেকে Installation ID পড়া যায়নি। পুরো ৯টি গ্রুপ স্পষ্টভাবে দেখা যায় এমন ছবি আপলোড করুন।'
+              : `শুধু ${digits.length} digit পড়া গেছে (দরকার ৫৪ বা ৬৩)। আরও স্পষ্ট/সম্পূর্ণ screenshot দিন।`,
+            debug: result.attempts,
           }, 422);
         }
+
+        let groupSize: number;
+        if (digits.length >= 62 && digits.length <= 64) groupSize = 7;
+        else if (digits.length >= 53 && digits.length <= 55) groupSize = 6;
+        else groupSize = Math.abs(digits.length - 63) < Math.abs(digits.length - 54) ? 7 : 6;
 
         const target = groupSize * 9;
         const trimmed = digits.slice(0, target);
@@ -440,11 +426,11 @@ Deno.serve(async (req) => {
         for (let i = 0; i < trimmed.length; i += groupSize) {
           groups.push(trimmed.substr(i, groupSize));
         }
-        return json({ ok: true, installation_id: groups.join('-') });
+        return json({ ok: true, installation_id: groups.join('-'), engine: result.engine });
       } catch (e) {
         console.error('Vision error', e);
         const msg = String(e instanceof Error ? e.message : e);
-        return json({ ok: false, error: `Vision error: ${msg}` }, 500);
+        return json({ ok: false, error: `Screenshot পড়তে সমস্যা হয়েছে: ${msg}` }, 500);
       }
     }
 

@@ -118,9 +118,9 @@ const GetCID = () => {
     return () => clearInterval(id);
   }, [generating]);
 
-  const handleGenerate = async () => {
+  const handleGenerate = async (overrideIID?: string) => {
     if (!user) { setShowAuth(true); return; }
-    const cleanIID = installationId.replace(/\s+/g, '').trim();
+    const cleanIID = (overrideIID ?? installationId).replace(/\s+/g, '').trim();
     if (cleanIID.replace(/[^0-9]/g, '').length < 50) {
       toast.error('Installation ID খুব ছোট — সম্পূর্ণ ID লিখুন (9 groups × 7 digits)');
       return;
@@ -198,11 +198,19 @@ const GetCID = () => {
       const data = await resp.json();
       if (data.ok && data.installation_id) {
         setInstallationId(data.installation_id);
-        toast.success('Installation ID detected from screenshot ✨');
+        setInlineError(null);
+        toast.success('Installation ID detected ✨ — Confirmation ID তৈরি হচ্ছে...');
+        setParsing(false);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        // Auto-generate the Confirmation ID right away
+        await handleGenerate(data.installation_id);
+        return;
       } else {
+        setInlineError({ message: data.error || 'Could not read Installation ID' });
         toast.error(data.error || 'Could not read Installation ID');
       }
     } catch (e) {
+      setInlineError({ message: `OCR error: ${String(e)}` });
       toast.error(`OCR error: ${String(e)}`);
     } finally {
       setParsing(false);
@@ -410,7 +418,7 @@ const GetCID = () => {
             </div>
 
             <button
-              onClick={handleGenerate}
+              onClick={() => handleGenerate()}
               disabled={generating || parsing || authLoading}
               className="w-full mt-4 flex items-center justify-center gap-2 py-3.5 rounded-xl text-white font-bold text-sm transition-transform active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
               style={{
