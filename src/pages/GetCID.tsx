@@ -118,9 +118,9 @@ const GetCID = () => {
     return () => clearInterval(id);
   }, [generating]);
 
-  const handleGenerate = async () => {
+  const handleGenerate = async (overrideIID?: string) => {
     if (!user) { setShowAuth(true); return; }
-    const cleanIID = installationId.replace(/\s+/g, '').trim();
+    const cleanIID = (overrideIID ?? installationId).replace(/\s+/g, '').trim();
     if (cleanIID.replace(/[^0-9]/g, '').length < 50) {
       toast.error('Installation ID খুব ছোট — সম্পূর্ণ ID লিখুন (9 groups × 7 digits)');
       return;
