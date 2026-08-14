@@ -403,7 +403,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   // Buy now: clear cart, add single item, go to checkout
   const buyNow = (item: Omit<CartItem, 'quantity'>, qty: number = 1) => {
-    const single: CartItem = { ...item, quantity: qty };
+    const single: CartItem = stamp({ ...item, quantity: qty });
     const previous = items;
     setItems([single]);
     setSelectedKeys([itemKey(single)]);
