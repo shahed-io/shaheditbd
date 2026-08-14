@@ -14,6 +14,7 @@ import { CurrencyProvider } from "@/hooks/useCurrency";
 import { useAdminOrderNotification } from "@/hooks/useAdminOrderNotification";
 import { prefetchOnIdle } from "@/hooks/usePrefetchRoute";
 import { ViewTransitions } from "@/components/ViewTransitions";
+import { ScrollToTop } from "@/components/ScrollToTop";
 import { useAffiliateTracking } from "@/hooks/useAffiliateTracking";
 import { useCustomAudiences } from "@/hooks/useCustomAudiences";
 import { useMarketingPixelsPageView } from "@/hooks/useMarketingPixelsPageView";
@@ -289,6 +290,7 @@ const AppContent = () => {
       <Suspense fallback={null}>
         <PostLoginRedirect />
       </Suspense>
+      <ScrollToTop />
       <ViewTransitions />
       <Suspense fallback={<PageLoader />}>
         <Routes>
