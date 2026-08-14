@@ -75,9 +75,10 @@ const Checkout = () => {
     ...(uddoktapayCfg.is_active && uddoktapayCfg.api_key ? [
       { id: 'uddoktapay' as PaymentMethod, label: 'Uddoktapay (bKash/Nagad/Card)', color: 'from-emerald-600 to-teal-700', number: '', type: 'Uddoktapay Aggregator', logo: 'https://uddoktapay.com/assets/img/logo.png' },
     ] : []),
-    ...(binanceCfg.is_active && binanceCfg.api_key && binanceCfg.api_secret ? [
-      { id: 'binance' as PaymentMethod, label: binanceCfg.label || 'Binance Pay (Crypto)', color: 'from-amber-500 to-yellow-600', number: '', type: `Binance Pay · ${binanceCfg.currency}`, logo: 'https://public.bnbstatic.com/static/images/common/favicon.ico' },
+    ...(binanceCfg.is_active && (binanceCfg.sandbox || (binanceCfg.api_key && binanceCfg.api_secret)) ? [
+      { id: 'binance' as PaymentMethod, label: `${binanceCfg.label || 'Binance Pay (Crypto)'}${binanceCfg.sandbox ? ' — TEST MODE' : ''}`, color: 'from-amber-500 to-yellow-600', number: '', type: `Binance Pay · ${binanceCfg.currency}${binanceCfg.sandbox ? ' (Sandbox)' : ''}`, logo: 'https://public.bnbstatic.com/static/images/common/favicon.ico' },
     ] : []),
+
     ...paymentConfigs
       .filter(c => c.isActive)
       .sort((a, b) => a.sortOrder - b.sortOrder)
