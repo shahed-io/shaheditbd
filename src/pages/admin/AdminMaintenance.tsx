@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Save, Wrench, ToggleLeft, ToggleRight, Eye, AlertTriangle, RotateCcw } from 'lucide-react';
+import { Save, Wrench, ToggleLeft, ToggleRight, Eye, AlertTriangle, RotateCcw, Palette, Upload, Code2 } from 'lucide-react';
 import MaintenanceScreen from '@/components/store/MaintenanceScreen';
 import {
   MAINTENANCE_KEY,
@@ -16,6 +16,7 @@ const AdminMaintenance = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [preview, setPreview] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -41,6 +42,30 @@ const AdminMaintenance = () => {
     setSettings(next);
     await save(next);
   };
+
+  const uploadImage = async (file: File) => {
+    setUploading(true);
+    try {
+      const ext = file.name.split('.').pop() || 'png';
+      const path = `maintenance/${Date.now()}.${ext}`;
+      const { error } = await supabase.storage.from('product-images').upload(path, file, { upsert: true });
+      if (error) throw error;
+      const { data } = supabase.storage.from('product-images').getPublicUrl(path);
+      setSettings(p => ({ ...p, customLogo: data.publicUrl }));
+      toast.success('Image uploaded — click Save Changes to apply');
+    } catch (e: any) {
+      toast.error('Upload failed: ' + (e?.message || 'unknown error'));
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const ColorInput = ({ value, onChange }: { value: string; onChange: (v: string) => void }) => (
+    <div className="flex items-center gap-2">
+      <input type="color" value={/^#[0-9a-fA-F]{6}$/.test(value) ? value : '#000000'} onChange={e => onChange(e.target.value)} className="h-10 w-12 rounded-lg border border-border bg-transparent cursor-pointer" />
+      <input value={value} onChange={e => onChange(e.target.value)} className={inputCls} />
+    </div>
+  );
 
   const set = <K extends keyof MaintenanceSettings>(key: K, value: MaintenanceSettings[K]) =>
     setSettings(p => ({ ...p, [key]: value }));
@@ -212,6 +237,105 @@ const AdminMaintenance = () => {
         )}
       </div>
 
+
+      {/* Custom design / theme (optional) */}
+      <div className="glass-card rounded-2xl p-6 space-y-4">
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div className="flex items-center gap-3">
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${settings.customEnabled ? 'bg-primary/15' : 'bg-muted/40'}`}>
+              <Palette size={18} className={settings.customEnabled ? 'text-primary' : 'text-muted-foreground'} />
+            </div>
+            <div>
+              <h3 className="font-bold text-foreground">Custom Design / Theme</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Optional. When ON, your own design replaces the default maintenance page.
+              </p>
+            </div>
+          </div>
+          <Switch on={settings.customEnabled} onClick={() => set('customEnabled', !settings.customEnabled)} labels={['Custom design ON', 'Using default design']} />
+        </div>
+
+        {settings.customEnabled && (
+          <div className="space-y-5 pt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {([['theme', 'Theme builder', 'Pick colors, upload a logo/image and write your text.'], ['html', 'Custom HTML / CSS', 'Paste your own full-page HTML & CSS design.']] as const).map(([opt, title, desc]) => (
+                <button
+                  key={opt}
+                  onClick={() => set('customMode', opt as 'theme' | 'html')}
+                  className={`text-left rounded-xl p-4 border transition-all ${settings.customMode === opt ? 'border-primary bg-primary/10' : 'border-border bg-muted/20'}`}
+                >
+                  <div className="font-semibold text-sm text-foreground flex items-center gap-2">
+                    {opt === 'html' ? <Code2 size={14} /> : <Palette size={14} />} {title}
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">{desc}</div>
+                </button>
+              ))}
+            </div>
+
+            {settings.customMode === 'theme' ? (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <Field label="Background top"><ColorInput value={settings.customBgFrom} onChange={v => set('customBgFrom', v)} /></Field>
+                  <Field label="Background bottom"><ColorInput value={settings.customBgTo} onChange={v => set('customBgTo', v)} /></Field>
+                  <Field label="Accent color"><ColorInput value={settings.customAccent} onChange={v => set('customAccent', v)} /></Field>
+                  <Field label="Text color"><ColorInput value={settings.customTextColor} onChange={v => set('customTextColor', v)} /></Field>
+                  <Field label="Muted text color"><input value={settings.customMutedColor} onChange={e => set('customMutedColor', e.target.value)} className={inputCls} /></Field>
+                  <Field label="Card background (CSS color)"><input value={settings.customCardBg} onChange={e => set('customCardBg', e.target.value)} className={inputCls} /></Field>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Field label="Font family (CSS)"><input value={settings.customFont} onChange={e => set('customFont', e.target.value)} className={inputCls} /></Field>
+                  <Field label="Card corner radius (px)">
+                    <input type="number" value={settings.customRadius} onChange={e => set('customRadius', Number(e.target.value) || 0)} className={inputCls} />
+                  </Field>
+                </div>
+
+                <div className="flex items-center justify-between flex-wrap gap-3">
+                  <div className="text-sm font-semibold text-foreground">Logo / Image</div>
+                  <Switch on={settings.customShowLogo} onClick={() => set('customShowLogo', !settings.customShowLogo)} labels={['Shown', 'Hidden']} />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3 items-end">
+                  <Field label="Image URL (or upload)">
+                    <input value={settings.customLogo} onChange={e => set('customLogo', e.target.value)} placeholder="https://..." className={inputCls} />
+                  </Field>
+                  <label className="glass-card px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold text-foreground cursor-pointer">
+                    <Upload size={16} /> {uploading ? 'Uploading...' : 'Upload'}
+                    <input type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) uploadImage(f); e.currentTarget.value = ''; }} />
+                  </label>
+                </div>
+                {settings.customLogo && (
+                  <img src={settings.customLogo} alt="Custom maintenance preview" className="max-h-28 w-auto rounded-xl border border-border bg-muted/20 p-2" />
+                )}
+
+                <Field label="Headline"><input value={settings.customHeadline} onChange={e => set('customHeadline', e.target.value)} className={inputCls} /></Field>
+                <Field label="Body text (Bangla / English mix supported)">
+                  <textarea rows={4} value={settings.customBody} onChange={e => set('customBody', e.target.value)} className={inputCls} />
+                </Field>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Field label="Button label (leave empty to hide)"><input value={settings.customButtonLabel} onChange={e => set('customButtonLabel', e.target.value)} className={inputCls} /></Field>
+                  <Field label="Button link (empty = WhatsApp link above)"><input value={settings.customButtonUrl} onChange={e => set('customButtonUrl', e.target.value)} placeholder="https://..." className={inputCls} /></Field>
+                </div>
+                <Field label="Footer text"><input value={settings.customFooter} onChange={e => set('customFooter', e.target.value)} className={inputCls} /></Field>
+                <Field label="Extra CSS (optional)">
+                  <textarea rows={4} value={settings.customCss} onChange={e => set('customCss', e.target.value)} placeholder=".my-class { ... }" className={`${inputCls} font-mono text-xs`} />
+                </Field>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <Field label="Full page HTML">
+                  <textarea rows={16} value={settings.customHtml} onChange={e => set('customHtml', e.target.value)} className={`${inputCls} font-mono text-xs`} />
+                </Field>
+                <Field label="Extra CSS (optional)">
+                  <textarea rows={6} value={settings.customCss} onChange={e => set('customCss', e.target.value)} className={`${inputCls} font-mono text-xs`} />
+                </Field>
+                <p className="text-xs text-muted-foreground">
+                  Tip: use the <span className="font-semibold">Preview</span> button at the top to see your design before saving.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Content */}
       <div className="glass-card rounded-2xl p-6 space-y-4">

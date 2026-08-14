@@ -13,12 +13,12 @@ const WhatsAppIcon = ({ size = 20 }: { size?: number }) => (
 const MaintenanceScreen = ({ settings }: { settings: MaintenanceSettings }) => {
   const [dots, setDots] = useState('');
 
-  if (settings.customEnabled) return <CustomMaintenanceScreen settings={settings} />;
-
   useEffect(() => {
     const t = window.setInterval(() => setDots(d => (d.length >= 3 ? '' : d + '.')), 500);
     return () => window.clearInterval(t);
   }, []);
+
+  if (settings.customEnabled) return <CustomMaintenanceScreen settings={settings} />;
 
   const waHref = settings.whatsapp
     ? `https://wa.me/${settings.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
