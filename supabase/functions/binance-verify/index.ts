@@ -60,6 +60,24 @@ Deno.serve(async (req) => {
     if (!cfgRow?.value) return json({ error: 'Binance Pay not configured' }, 400);
     const cfg = JSON.parse(cfgRow.value);
 
+    // Sandbox demo trade: no upstream call, treat an explicit approval as paid.
+    if (cfg.sandbox === true && String(merchant_trade_no).startsWith('DEMO')) {
+      let targetDemo: string | null = order_id ?? null;
+      if (!targetDemo) {
+        const { data: row } = await supabase
+          .from('orders').select('id').eq('transaction_id', `BINANCE-${merchant_trade_no}`).maybeSingle();
+        targetDemo = row?.id ?? null;
+      }
+      if (targetDemo) {
+        await supabase.from('orders').update({
+          payment_status: 'paid',
+          status: 'processing',
+          transaction_id: `BINANCE-SANDBOX-${merchant_trade_no}`,
+        }).eq('id', targetDemo);
+      }
+      return json({ paid: true, status: 'PAID', sandbox: true, order_id: targetDemo });
+    }
+
     const out = await queryTrade(cfg, String(merchant_trade_no));
     const status = String(out?.data?.status || '').toUpperCase();
     const paid = out?.status === 'SUCCESS' && status === 'PAID';
