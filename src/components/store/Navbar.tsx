@@ -496,17 +496,17 @@ const Navbar = () => {
             : 'var(--glass-shadow)',
         }}>
         <div className="px-4 sm:px-6">
-          <div className="flex items-center justify-between h-[68px] gap-4">
+          <div className="flex items-center justify-between h-[68px] gap-2 lg:gap-4">
 
             {/* Logo */}
             <a href="/" className="flex items-center flex-shrink-0 group select-none">
               <BrandLogo size="md" />
             </a>
 
-            {/* Desktop Search Trigger */}
+            {/* Desktop Search Trigger — lg+ only (below lg it collapses into an empty pill) */}
             <button
               onClick={() => setDesktopSearch(true)}
-              className="hidden md:flex flex-1 min-w-0 max-w-[460px] items-center gap-2 rounded-xl border px-3 py-1.5 text-left transition-all hover:border-primary/50 hover:shadow-[0_0_0_3px_hsl(var(--primary)/0.08)] group overflow-hidden"
+              className="hidden lg:flex flex-1 min-w-0 max-w-[460px] items-center gap-2 rounded-xl border px-3 py-1.5 text-left transition-all hover:border-primary/50 hover:shadow-[0_0_0_3px_hsl(var(--primary)/0.08)] group overflow-hidden"
               style={{ borderColor: 'hsla(258,78%,60%,0.20)', background: 'hsla(258,78%,55%,0.04)' }}
             >
               <Search size={14} className="text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
@@ -518,7 +518,8 @@ const Navbar = () => {
 
             {/* Desktop Links */}
             {/* Desktop Links — footer chip style */}
-            <div className="hidden md:flex items-center gap-1.5 lg:gap-2">
+            <div className="hidden lg:flex items-center gap-1 lg:gap-2 min-w-0 flex-shrink">
+
               {NAV_LINKS.map(link => {
                 const isActive = typeof window !== 'undefined' && window.location.pathname === link.href;
                 return (
@@ -568,7 +569,8 @@ const Navbar = () => {
             </div>
 
             {/* Actions */}
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+
               {user ? (
                 <div className="hidden sm:flex items-center gap-1">
                   <button onClick={() => navigate('/dashboard')}
@@ -635,10 +637,10 @@ const Navbar = () => {
                 <Search size={18} />
               </button>
 
-              {/* Tablet / iPad Search Button — sm to md range where desktop search bar is hidden */}
+              {/* Tablet / iPad Search Button — sm up to lg, where the wide search bar is hidden */}
               <button
                 onClick={() => { setMobileSearch(v => !v); setMobileOpen(false); }}
-                className="hidden sm:flex md:hidden items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all hover:scale-[1.03] active:scale-[0.97]"
+                className="hidden sm:flex lg:hidden items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all hover:scale-[1.03] active:scale-[0.97] flex-shrink-0"
                 style={{
                   background: mobileSearch
                     ? 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))'
@@ -648,13 +650,14 @@ const Navbar = () => {
                 }}
                 aria-label="Search products">
                 <Search size={18} />
-                <span>Search</span>
+                <span className="hidden sm:inline">Search</span>
               </button>
 
-              {/* Currency Switcher — desktop */}
-              <div className="hidden md:block">
+              {/* Currency Switcher — tablet & desktop */}
+              <div className="hidden md:block flex-shrink-0">
                 <CurrencySwitcher />
               </div>
+
 
               {/* Cart Button — hidden on mobile, visible on sm+ */}
               <button onClick={() => setCartOpen(true)}
@@ -674,7 +677,7 @@ const Navbar = () => {
                 )}
               </button>
 
-              <button className="md:hidden p-2.5 rounded-xl transition-colors"
+              <button className="lg:hidden p-2.5 rounded-xl transition-colors"
                 style={{ color: 'hsl(226,35%,30%)' }}
                 aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
                 aria-expanded={mobileOpen}
@@ -694,7 +697,7 @@ const Navbar = () => {
 
         {/* Mobile Menu — Next-Gen Bento Design */}
         <div
-          className={`md:hidden overflow-hidden transition-all duration-500 ease-out ${mobileOpen ? 'overflow-y-auto overscroll-contain' : ''}`}
+          className={`lg:hidden overflow-hidden transition-all duration-500 ease-out ${mobileOpen ? 'overflow-y-auto overscroll-contain' : ''}`}
           style={{
             WebkitOverflowScrolling: 'touch',
             touchAction: mobileOpen ? 'pan-y' : 'auto',
