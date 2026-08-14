@@ -69,3 +69,9 @@ verify_jwt = false
     verify_jwt = false
   [functions.uddoktapay-verify]
     verify_jwt = false
+  [functions.binance-create]
+    verify_jwt = false
+  [functions.binance-verify]
+    verify_jwt = false
+  [functions.binance-webhook]
+    verify_jwt = false

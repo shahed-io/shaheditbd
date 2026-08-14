@@ -83,6 +83,7 @@ const MENU_SECTIONS: MenuSection[] = [
       { icon: CreditCard, label: 'PayPal PGW', path: '/ceo/paypal-pgw', badge: 'new' },
       { icon: Receipt, label: 'PayPal Transactions', path: '/ceo/paypal-transactions', badge: 'new' },
       { icon: CreditCard, label: 'Uddoktapay PGW', path: '/ceo/uddoktapay-pgw', badge: 'new' },
+      { icon: CreditCard, label: 'Binance Pay PGW', path: '/ceo/binance-pgw', badge: 'new' },
       { icon: KeyRound, label: 'License Manager', path: '/ceo/licenses' },
       { icon: KeyRound, label: 'Customer Licenses', path: '/ceo/customer-licenses', badge: 'new' },
     ],
