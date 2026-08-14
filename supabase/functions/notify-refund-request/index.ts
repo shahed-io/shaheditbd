@@ -5,16 +5,27 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Escape any user-supplied value before it is interpolated into HTML
+const esc = (v: unknown) =>
+  String(v ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+const safeUrl = (u: unknown) => {
+  const s = String(u ?? '');
+  return /^https?:\/\//i.test(s) ? esc(s) : '';
+};
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
     const body = await req.json();
     const {
-      ticketNumber, customerName, customerEmail, customerPhone,
-      orderNumber, productName, reason, reasonDetail,
-      subscriptionPeriod, daysUsed, daysRemaining,
-      paymentAmount, paymentMethod, additionalInfo,
+      ticketNumber: rawTicketNumber,
       screenshotUrls = [], isChangeOfMind, refundAmount,
     } = body;
 
@@ -23,6 +34,61 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
+    // ── Auth: caller must be signed in ──────────────────────────────────
+    const token = (req.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
+    if (!token) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const { data: userData, error: userErr } = await supabase.auth.getUser(token);
+    const caller = userData?.user;
+    if (userErr || !caller) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // ── The ticket must exist and belong to the caller ──────────────────
+    const { data: ticket } = await supabase
+      .from('support_tickets')
+      .select('ticket_number, user_id, customer_name, customer_email, customer_phone, order_number')
+      .eq('ticket_number', String(rawTicketNumber || ''))
+      .maybeSingle();
+
+    if (!ticket) {
+      return new Response(JSON.stringify({ error: 'Ticket not found' }), {
+        status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const callerEmail = (caller.email || '').toLowerCase();
+    const ownsTicket =
+      (ticket.user_id && ticket.user_id === caller.id) ||
+      (!!ticket.customer_email && ticket.customer_email.toLowerCase() === callerEmail);
+    if (!ownsTicket) {
+      return new Response(JSON.stringify({ error: 'Forbidden' }), {
+        status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Identity fields come from the stored ticket, not the request body
+    const ticketNumber = esc(ticket.ticket_number);
+    const customerName = esc(ticket.customer_name);
+    const customerEmail = esc(ticket.customer_email);
+    const customerPhone = esc(ticket.customer_phone);
+    const orderNumber = esc(ticket.order_number);
+
+    const productName = esc(body.productName);
+    const reason = esc(body.reason);
+    const reasonDetail = esc(body.reasonDetail);
+    const subscriptionPeriod = esc(body.subscriptionPeriod);
+    const daysUsed = esc(body.daysUsed);
+    const daysRemaining = esc(body.daysRemaining);
+    const paymentAmount = esc(body.paymentAmount);
+    const paymentMethod = esc(body.paymentMethod);
+    const additionalInfo = esc(body.additionalInfo);
+
     // Get admin email from site_settings
     const { data: settingRows } = await supabase
       .from('site_settings')
@@ -30,21 +96,25 @@ Deno.serve(async (req) => {
       .in('key', ['admin_email', 'store_name']);
 
     const adminEmail = settingRows?.find(r => r.key === 'admin_email')?.value || 'admin@shahedstore.com.bd';
-    const storeName = settingRows?.find(r => r.key === 'store_name')?.value || 'Shahed Store';
+    const storeName = esc(settingRows?.find(r => r.key === 'store_name')?.value || 'Shahed Store');
 
-    // Build screenshot HTML
-    const screenshotHtml = screenshotUrls.length > 0
+
+    // Build screenshot HTML (only https URLs, escaped)
+    const safeShots: string[] = (Array.isArray(screenshotUrls) ? screenshotUrls : [])
+      .map(safeUrl).filter(Boolean).slice(0, 10);
+    const screenshotHtml = safeShots.length > 0
       ? `<tr><td style="padding:10px 24px;font-size:13px;color:#555;border-bottom:1px solid #eee;">
-          <strong>📸 স্ক্রিনশট (${screenshotUrls.length}টি):</strong><br/>
-          ${screenshotUrls.map((u: string, i: number) => `<a href="${u}" target="_blank" style="color:#7c3aed;display:block;margin-top:4px;">${i + 1}. স্ক্রিনশট দেখুন →</a>`).join('')}
+          <strong>📸 স্ক্রিনশট (${safeShots.length}টি):</strong><br/>
+          ${safeShots.map((u, i) => `<a href="${u}" target="_blank" style="color:#7c3aed;display:block;margin-top:4px;">${i + 1}. স্ক্রিনশট দেখুন →</a>`).join('')}
         </td></tr>`
       : '';
 
     const deductionHtml = isChangeOfMind
       ? `<tr><td style="padding:10px 24px;background:#fff3cd;border-bottom:1px solid #eee;">
-          <span style="color:#856404;font-size:13px;font-weight:600;">⚠️ মন পরিবর্তন — ১০% কেটে ৳${refundAmount} রিফান্ড হবে</span>
+          <span style="color:#856404;font-size:13px;font-weight:600;">⚠️ মন পরিবর্তন — ১০% কেটে ৳${esc(refundAmount)} রিফান্ড হবে</span>
         </td></tr>`
       : '';
+
 
     const emailHtml = `
 <!DOCTYPE html>
