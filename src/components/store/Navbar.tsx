@@ -518,7 +518,7 @@ const Navbar = () => {
 
             {/* Desktop Links */}
             {/* Desktop Links — footer chip style */}
-            <div className="hidden md:flex items-center gap-1 lg:gap-2 min-w-0 flex-shrink">
+            <div className="hidden lg:flex items-center gap-1 lg:gap-2 min-w-0 flex-shrink">
 
               {NAV_LINKS.map(link => {
                 const isActive = typeof window !== 'undefined' && window.location.pathname === link.href;
@@ -650,7 +650,7 @@ const Navbar = () => {
                 }}
                 aria-label="Search products">
                 <Search size={18} />
-                <span className="hidden sm:inline md:hidden">Search</span>
+                <span className="hidden sm:inline">Search</span>
               </button>
 
               {/* Currency Switcher — tablet & desktop */}
@@ -677,7 +677,7 @@ const Navbar = () => {
                 )}
               </button>
 
-              <button className="md:hidden p-2.5 rounded-xl transition-colors"
+              <button className="lg:hidden p-2.5 rounded-xl transition-colors"
                 style={{ color: 'hsl(226,35%,30%)' }}
                 aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
                 aria-expanded={mobileOpen}
@@ -697,7 +697,7 @@ const Navbar = () => {
 
         {/* Mobile Menu — Next-Gen Bento Design */}
         <div
-          className={`md:hidden overflow-hidden transition-all duration-500 ease-out ${mobileOpen ? 'overflow-y-auto overscroll-contain' : ''}`}
+          className={`lg:hidden overflow-hidden transition-all duration-500 ease-out ${mobileOpen ? 'overflow-y-auto overscroll-contain' : ''}`}
           style={{
             WebkitOverflowScrolling: 'touch',
             touchAction: mobileOpen ? 'pan-y' : 'auto',
