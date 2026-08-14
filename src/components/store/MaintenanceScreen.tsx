@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Clock, Mail, Phone, MapPin, Globe, ShieldCheck, Sparkles, Facebook } from 'lucide-react';
 import type { MaintenanceSettings } from '@/hooks/useMaintenanceMode';
 import mascot from '@/assets/maintenance-mascot.png';
+import CustomMaintenanceScreen from './CustomMaintenanceScreen';
 
 const WhatsAppIcon = ({ size = 20 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -11,6 +12,8 @@ const WhatsAppIcon = ({ size = 20 }: { size?: number }) => (
 
 const MaintenanceScreen = ({ settings }: { settings: MaintenanceSettings }) => {
   const [dots, setDots] = useState('');
+
+  if (settings.customEnabled) return <CustomMaintenanceScreen settings={settings} />;
 
   useEffect(() => {
     const t = window.setInterval(() => setDots(d => (d.length >= 3 ? '' : d + '.')), 500);
