@@ -92,14 +92,32 @@ Deno.serve(async (req) => {
       });
     }
 
-    // ─── LEGACY: Manual call with orderId ──────────────────────────────────
+    // ─── LEGACY: Manual call with orderId (auth + ownership required) ──────
     const { orderId, channel } = body;
     if (!orderId) return new Response(JSON.stringify({ error: 'orderId required' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
     const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
 
+    // Authenticate the caller
+    const authHeader = req.headers.get('Authorization') || '';
+    const token = authHeader.replace(/^Bearer\s+/i, '');
+    if (!token) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+
+    const { data: userData, error: userErr } = await supabase.auth.getUser(token);
+    const caller = userData?.user;
+    if (userErr || !caller) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+
+    const { data: isAdmin } = await supabase.rpc('has_role', { _user_id: caller.id, _role: 'admin' });
+    const { data: isManager } = await supabase.rpc('has_role', { _user_id: caller.id, _role: 'manager' });
+
     const { data: order, error } = await supabase.from('orders').select('*, order_items(*)').eq('id', orderId).single();
     if (error || !order) return new Response(JSON.stringify({ error: 'Order not found' }), { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+
+    const isOwner = !!order.user_id && order.user_id === caller.id;
+    if (!isAdmin && !isManager && !isOwner) {
+      return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+
 
     const statusLabel = STATUS_LABELS[order.status] || order.status;
     const statusEmoji = STATUS_EMOJI[order.status] || '📦';
