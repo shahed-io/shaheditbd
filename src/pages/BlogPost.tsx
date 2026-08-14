@@ -90,8 +90,21 @@ const CommentSection = ({ postId }: { postId: string }) => {
       toast.error('নাম ও মন্তব্য দিন'); return;
     }
     setSubmitting(true);
+
+    // Only persist the email when it belongs to the signed-in user —
+    // the database rule rejects any other address.
+    const { data: { user } } = await supabase.auth.getUser();
+    const typedEmail = form.author_email.trim().toLowerCase();
+    const ownEmail = user?.email?.toLowerCase() ?? null;
+    const author_email = typedEmail && ownEmail && typedEmail === ownEmail ? typedEmail : null;
+
     const { error } = await supabase.from('blog_comments').insert({
-      post_id: postId, ...form, status: 'pending',
+      post_id: postId,
+      author_name: form.author_name.trim().slice(0, 200),
+      author_email,
+      content: form.content.trim().slice(0, 5000),
+      user_id: user?.id ?? null,
+      status: 'pending',
     });
     setSubmitting(false);
     if (error) { toast.error('মন্তব্য পাঠানো সম্ভব হয়নি'); return; }
