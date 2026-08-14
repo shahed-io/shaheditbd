@@ -200,7 +200,7 @@ const AdminProducts = () => {
   const [aiLoading, setAiLoading] = useState<string | null>(null);
   const [aiCardLoading, setAiCardLoading] = useState(false);
   const [aiCardPreview, setAiCardPreview] = useState<string | null>(null);
-  const [cardStyle, setCardStyle] = useState<'dark_neon' | 'light_glass' | 'clean_light' | 'vibrant_promo' | 'glass_gradient' | 'glassmorphism_ui'>('dark_neon');
+  const [cardStyle, setCardStyle] = useState<'auto_smart' | 'ice_bokeh' | 'sky_spheres' | 'pastel_aurora'>('auto_smart');
   const [demoDescription, setDemoDescription] = useState('');
   const [showDemoPanel, setShowDemoPanel] = useState(false);
   const [shortDescOptions, setShortDescOptions] = useState<string[]>([]);
@@ -476,13 +476,12 @@ const AdminProducts = () => {
   };
 
   const CARD_STYLES = [
-    { value: 'dark_neon', label: 'Dark Neon', icon: '🌌', desc: 'গাঢ় ব্যাকগ্রাউন্ড, নিয়ন গ্লোয়িং বর্ডার', preview: 'linear-gradient(135deg,#0a0d1f 0%,#14132e 50%,#0a0d1f 100%)', accent: '#5ee7ff' },
-    { value: 'light_glass', label: 'Light Glass', icon: '🌸', desc: 'পাস্টেল গ্রেডিয়েন্ট, ফ্রস্টেড গ্লাস', preview: 'linear-gradient(135deg,#e8eef5 0%,#cfe0f3 100%)', accent: '#a8c5e8' },
-    { value: 'clean_light', label: 'Clean Light', icon: '🩵', desc: 'ক্লিন হোয়াইট, বোকে এফেক্ট', preview: 'linear-gradient(135deg,#ffffff 0%,#f0f4f8 100%)', accent: '#e63946' },
-    { value: 'vibrant_promo', label: 'Soft Aurora', icon: '🌈', desc: 'সফট অরোরা গ্রেডিয়েন্ট, লাইট প্রিমিয়াম', preview: 'linear-gradient(135deg,#a8e6cf 0%,#dcedc1 50%,#ffd3b6 100%)', accent: '#ff8b94' },
-    { value: 'glass_gradient', label: 'Glass Gradient', icon: '✨', desc: 'গ্লাসমরফিজম গ্রেডিয়েন্ট বর্ডার', preview: 'linear-gradient(135deg,#1a1a2e 0%,#16213e 100%)', accent: 'linear-gradient(90deg,#ff5cf4,#5ee7ff)' },
-    { value: 'glassmorphism_ui', label: 'Glassmorphism UI', icon: '🪟', desc: 'প্রিমিয়াম হোয়াইট গ্লাস, অ্যাম্বার-ইন্ডিগো অ্যাকসেন্ট', preview: 'linear-gradient(135deg,#fef3c7 0%,#e0e7ff 100%)', accent: '#6366f1' },
+    { value: 'auto_smart', label: 'Auto (Best Match)', icon: '🤖', desc: 'AI নিজেই product অনুযায়ী সেরা background বেছে নিবে', preview: 'linear-gradient(135deg,#eef3f9 0%,#cfe0f5 50%,#f3a8c4 100%)', accent: '#6366f1' },
+    { value: 'ice_bokeh', label: 'Ice Bokeh', icon: '❄️', desc: 'আইস-হোয়াইট ব্যাকগ্রাউন্ড + বড় ব্লার করা নীল/টিল বোকে বল', preview: 'linear-gradient(135deg,#eef3f9 0%,#e2ebf6 100%)', accent: '#2f6fd0' },
+    { value: 'sky_spheres', label: 'Sky Spheres', icon: '🔵', desc: 'লাইট ব্লু ব্যাকগ্রাউন্ড + গ্লসি 3D নীল ও মিন্ট বল', preview: 'linear-gradient(135deg,#dce8f7 0%,#cfe0f5 100%)', accent: '#7fd3bd' },
+    { value: 'pastel_aurora', label: 'Pastel Aurora', icon: '🌈', desc: 'পার্পল-পিংক-পিচ-ব্লু পাস্টেল গ্রেডিয়েন্ট + গ্লাস বাবল', preview: 'linear-gradient(135deg,#b48be0 0%,#f3a8c4 40%,#f7b98f 70%,#a8c8ee 100%)', accent: '#b48be0' },
   ] as const;
+
 
   // ── AI Glassmorphism Card Generator ──────────────────────────
   const generateAiCard = async () => {
@@ -1953,12 +1952,11 @@ const AdminProducts = () => {
                           >
                             <span className="text-base leading-none mt-0.5">💡</span>
                             <span className="text-foreground/80 leading-snug">
-                              {cardStyle === 'dark_neon' && 'গাঢ় ব্যাকগ্রাউন্ড + নিয়ন গ্লোয়িং বর্ডার, Shahed Store ব্র্যান্ডিং সহ'}
-                              {cardStyle === 'light_glass' && 'পাস্টেল কালার গ্রেডিয়েন্ট + ফ্রস্টেড গ্লাস কার্ড'}
-                              {cardStyle === 'clean_light' && 'ক্লিন হোয়াইট + বোকে বলস + লাল Shahed Store ব্যাজ'}
-                              {cardStyle === 'vibrant_promo' && 'সফট অরোরা গ্রেডিয়েন্ট + হোয়াইট গ্লাস কার্ড, লাইট প্রিমিয়াম'}
-                              {cardStyle === 'glass_gradient' && 'ডার্ক ব্যাকগ্রাউন্ড + মাল্টি-কালার গ্লোয়িং গ্রেডিয়েন্ট বর্ডার'}
-                              {cardStyle === 'glassmorphism_ui' && 'প্রিমিয়াম হোয়াইট গ্লাস কার্ড + অ্যাম্বার-ইন্ডিগো অ্যাকসেন্ট'}
+                              {cardStyle === 'auto_smart' && 'AI product অনুযায়ী তিনটি অনুমোদিত background থেকে সেরাটি বেছে নিবে'}
+                              {cardStyle === 'ice_bokeh' && 'আইস-হোয়াইট ব্যাকগ্রাউন্ড + বড় ব্লার করা নীল/টিল বোকে বল, প্রিমিয়াম গ্লাস কার্ড'}
+                              {cardStyle === 'sky_spheres' && 'লাইট ব্লু ব্যাকগ্রাউন্ড + গ্লসি 3D নীল ও মিন্ট বল, ফ্রস্টেড গ্লাস কার্ড'}
+                              {cardStyle === 'pastel_aurora' && 'পার্পল-পিংক-পিচ-ব্লু পাস্টেল গ্রেডিয়েন্ট + গ্লাস বাবল, গ্লসি প্রিমিয়াম'}
+
                             </span>
                           </div>
 
