@@ -496,7 +496,7 @@ const Navbar = () => {
             : 'var(--glass-shadow)',
         }}>
         <div className="px-4 sm:px-6">
-          <div className="flex items-center justify-between h-[68px] gap-4">
+          <div className="flex items-center justify-between h-[68px] gap-2 lg:gap-4">
 
             {/* Logo */}
             <a href="/" className="flex items-center flex-shrink-0 group select-none">
