@@ -31,6 +31,29 @@ const SectionSkeleton = () => (
 const Index = () => {
   const [searchParams] = useSearchParams();
   const [authOpen, setAuthOpen] = useState(false);
+  // Below-fold sections mount only after the browser is idle (or the user
+  // scrolls / interacts) — keeps the mobile main thread free during first paint.
+  const [belowFoldReady, setBelowFoldReady] = useState(false);
+
+  useEffect(() => {
+    let done = false;
+    const activate = () => {
+      if (done) return;
+      done = true;
+      setBelowFoldReady(true);
+      window.removeEventListener('scroll', activate);
+      window.removeEventListener('touchstart', activate);
+    };
+    window.addEventListener('scroll', activate, { passive: true });
+    window.addEventListener('touchstart', activate, { passive: true });
+    const ric = (window as any).requestIdleCallback as undefined | ((cb: () => void, o?: any) => number);
+    const id = ric ? ric(activate, { timeout: 1800 }) : window.setTimeout(activate, 900);
+    return () => {
+      window.removeEventListener('scroll', activate);
+      window.removeEventListener('touchstart', activate);
+      if (!ric) clearTimeout(id as number);
+    };
+  }, []);
 
   // Auto-open signup modal when ?ref= is in URL
   useEffect(() => {
@@ -40,6 +63,7 @@ const Index = () => {
       return () => clearTimeout(timer);
     }
   }, [searchParams]);
+
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -76,29 +100,48 @@ const Index = () => {
         <TickerBanner />
         <TopProducts />
 
-        {/* Below-fold — lazy loaded */}
-        <Suspense fallback={<SectionSkeleton />}>
-          <FlashSale />
-        </Suspense>
-        <Suspense fallback={<SectionSkeleton />}>
-          <WhyChooseUs />
-        </Suspense>
-        <Suspense fallback={<div className="py-12" />}>
-          <Testimonials />
-        </Suspense>
+        {/* Below-fold — lazy loaded after first paint / idle */}
+        {belowFoldReady && (
+          <>
+            <div className="cv-block">
+              <Suspense fallback={<SectionSkeleton />}>
+                <FlashSale />
+              </Suspense>
+            </div>
+            <div className="cv-block">
+              <Suspense fallback={<SectionSkeleton />}>
+                <WhyChooseUs />
+              </Suspense>
+            </div>
+            <div className="cv-block">
+              <Suspense fallback={<div className="py-12" />}>
+                <Testimonials />
+              </Suspense>
+            </div>
+          </>
+        )}
       </main>
-      <Suspense fallback={<div className="py-8" />}>
-        <Footer />
-      </Suspense>
+      {belowFoldReady && (
+        <div className="cv-block">
+          <Suspense fallback={<div className="py-8" />}>
+            <Footer />
+          </Suspense>
+        </div>
+      )}
 
       <FloatingButtons />
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
-      <Suspense fallback={null}>
-        <PopupBanner />
-      </Suspense>
-      <Suspense fallback={null}>
-        <WelcomeDiscount />
-      </Suspense>
+      {belowFoldReady && (
+        <>
+          <Suspense fallback={null}>
+            <PopupBanner />
+          </Suspense>
+          <Suspense fallback={null}>
+            <WelcomeDiscount />
+          </Suspense>
+        </>
+      )}
+
     </div>
   );
 };

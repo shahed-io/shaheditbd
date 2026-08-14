@@ -3059,7 +3059,22 @@ main > div > section {
   main > div > section {
     /* content-visibility: auto is disabled temporarily to fix blank page issues on mobile. */
   }
+
+  /* Opt-in offscreen skipping for tall, self-contained blocks
+     (product category grids, below-fold sections). Safe because the
+     reserved intrinsic size keeps scrollbar/anchor positions stable. */
+  .cv-block {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 1200px;
+  }
+
+  /* Long lists scroll smoother when each card is its own paint/layout
+     container — avoids full-page relayout while images stream in. */
+  .product-card-new {
+    contain: layout paint style;
+  }
 }
+
 
 /* ──────────────────────────────────────────────────────────────
    Admin tables always fill their card (no shrink-to-content),

@@ -204,7 +204,10 @@ const CategoryRevealBlock = ({ children, catIdx }: { children: React.ReactNode; 
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
   const { ref, visible } = useReveal({ threshold: 0.06, rootMargin: '0px 0px -30px 0px' });
   const delay = Math.min(catIdx * 0.04, 0.2);
-  if (isMobile) return <div>{children}</div>;
+  // On mobile, let the browser skip painting offscreen category grids
+  // (content-visibility) — biggest scroll-smoothness win on long lists.
+  if (isMobile) return <div className={catIdx > 0 ? 'cv-block' : undefined}>{children}</div>;
+
   return (
     <div
       ref={ref as React.RefObject<HTMLDivElement>}

@@ -6,6 +6,23 @@ declare global {
 }
 
 let siteKeyCache: string | null | undefined;
+let siteKeyRequest: Promise<string | null> | null = null;
+
+const loadSiteKey = (): Promise<string | null> => {
+  if (siteKeyRequest) return siteKeyRequest;
+  siteKeyRequest = (async () => {
+    const { data } = await supabase
+      .from('site_settings')
+      .select('value')
+      .eq('key', 'turnstile_site_key')
+      .maybeSingle();
+    const key = ((data?.value as string) || '').trim() || null;
+    siteKeyCache = key;
+    return key;
+  })();
+  return siteKeyRequest;
+};
+
 
 /** Reads the Cloudflare Turnstile site key stored in site settings (admin-managed). */
 export const useTurnstileSiteKey = () => {
@@ -14,21 +31,13 @@ export const useTurnstileSiteKey = () => {
   useEffect(() => {
     if (siteKeyCache !== undefined) { setSiteKey(siteKeyCache); return; }
     let active = true;
-    (async () => {
-      const { data } = await supabase
-        .from('site_settings')
-        .select('value')
-        .eq('key', 'turnstile_site_key')
-        .maybeSingle();
-      const key = (data?.value || '').trim() || null;
-      siteKeyCache = key;
-      if (active) setSiteKey(key);
-    })();
+    loadSiteKey().then(key => { if (active) setSiteKey(key); });
     return () => { active = false; };
   }, []);
 
   return siteKey;
 };
+
 
 const SCRIPT_ID = 'cf-turnstile-script';
 
