@@ -11,6 +11,7 @@ export interface CartItem {
   image: string;
   quantity: number;
   variant?: string; // selected variant label
+  addedAt?: string; // ISO timestamp – used to expire forgotten cart items
 }
 
 export interface CouponState {
