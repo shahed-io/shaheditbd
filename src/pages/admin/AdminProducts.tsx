@@ -1952,12 +1952,11 @@ const AdminProducts = () => {
                           >
                             <span className="text-base leading-none mt-0.5">💡</span>
                             <span className="text-foreground/80 leading-snug">
-                              {cardStyle === 'dark_neon' && 'গাঢ় ব্যাকগ্রাউন্ড + নিয়ন গ্লোয়িং বর্ডার, Shahed Store ব্র্যান্ডিং সহ'}
-                              {cardStyle === 'light_glass' && 'পাস্টেল কালার গ্রেডিয়েন্ট + ফ্রস্টেড গ্লাস কার্ড'}
-                              {cardStyle === 'clean_light' && 'ক্লিন হোয়াইট + বোকে বলস + লাল Shahed Store ব্যাজ'}
-                              {cardStyle === 'vibrant_promo' && 'সফট অরোরা গ্রেডিয়েন্ট + হোয়াইট গ্লাস কার্ড, লাইট প্রিমিয়াম'}
-                              {cardStyle === 'glass_gradient' && 'ডার্ক ব্যাকগ্রাউন্ড + মাল্টি-কালার গ্লোয়িং গ্রেডিয়েন্ট বর্ডার'}
-                              {cardStyle === 'glassmorphism_ui' && 'প্রিমিয়াম হোয়াইট গ্লাস কার্ড + অ্যাম্বার-ইন্ডিগো অ্যাকসেন্ট'}
+                              {cardStyle === 'auto_smart' && 'AI product অনুযায়ী তিনটি অনুমোদিত background থেকে সেরাটি বেছে নিবে'}
+                              {cardStyle === 'ice_bokeh' && 'আইস-হোয়াইট ব্যাকগ্রাউন্ড + বড় ব্লার করা নীল/টিল বোকে বল, প্রিমিয়াম গ্লাস কার্ড'}
+                              {cardStyle === 'sky_spheres' && 'লাইট ব্লু ব্যাকগ্রাউন্ড + গ্লসি 3D নীল ও মিন্ট বল, ফ্রস্টেড গ্লাস কার্ড'}
+                              {cardStyle === 'pastel_aurora' && 'পার্পল-পিংক-পিচ-ব্লু পাস্টেল গ্রেডিয়েন্ট + গ্লাস বাবল, গ্লসি প্রিমিয়াম'}
+
                             </span>
                           </div>
 
