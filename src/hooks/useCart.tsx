@@ -111,6 +111,9 @@ const EMPTY_COUPON: CouponState = { code: '', discount: 0, type: 'percentage', i
 const CART_KEY = 'cart';
 const CART_BACKUP_KEY = 'cart_backup'; // { items, savedAt } — recovers cart if primary storage is wiped mid-checkout
 const CART_BACKUP_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+// Server-side cart rows older than this are considered abandoned and are purged
+// on login instead of being restored (prevents old products silently re-appearing).
+const CART_DB_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 const readBackup = (): CartItem[] => {
   try {
