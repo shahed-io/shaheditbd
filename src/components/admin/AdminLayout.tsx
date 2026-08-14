@@ -64,7 +64,6 @@ const MENU_SECTIONS: MenuSection[] = [
     title: 'Overview',
     items: [
       { icon: LayoutDashboard, label: 'Dashboard', path: '/ceo' },
-      { icon: Wrench, label: 'Maintenance Mode', path: '/ceo/maintenance', badge: 'live' },
     ],
   },
   {
@@ -198,6 +197,7 @@ const MENU_SECTIONS: MenuSection[] = [
       { icon: Database, label: 'Backup', path: '/ceo/backup' },
       { icon: Settings, label: 'General Settings', path: '/ceo/settings' },
       { icon: Globe, label: 'Multi Currency', path: '/ceo/currencies', badge: 'new' },
+      { icon: Wrench, label: 'Maintenance Mode', path: '/ceo/maintenance', badge: 'live' },
     ],
   },
 ];
