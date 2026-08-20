@@ -65,6 +65,7 @@ const AdminReports          = lazy(() => import("./pages/admin/AdminReports"));
 const AdminMarketing        = lazy(() => import("./pages/admin/AdminMarketing"));
 const AdminRoles            = lazy(() => import("./pages/admin/AdminRoles"));
 const AdminBackup           = lazy(() => import("./pages/admin/AdminBackup"));
+const AdminMirrorBackup     = lazy(() => import("./pages/admin/AdminMirrorBackup"));
 const AdminAiConfig         = lazy(() => import("./pages/admin/AdminAiConfig"));
 const AdminAiFaqGenerator   = lazy(() => import("./pages/admin/AdminAiFaqGenerator"));
 const AdminAiReviewGenerator = lazy(() => import("./pages/admin/AdminAiReviewGenerator"));
@@ -340,6 +341,8 @@ const AppContent = () => {
             <Route path="marketing" element={<AdminSuspense><AdminMarketing /></AdminSuspense>} />
             <Route path="roles" element={<AdminSuspense><AdminRoles /></AdminSuspense>} />
             <Route path="backup" element={<AdminSuspense><AdminBackup /></AdminSuspense>} />
+            <Route path="mirror-backup" element={<AdminSuspense><AdminMirrorBackup /></AdminSuspense>} />
+
             <Route path="referrals" element={<AdminSuspense><AdminReferrals /></AdminSuspense>} />
             <Route path="blog" element={<AdminSuspense><AdminBlog /></AdminSuspense>} />
             <Route path="blog/ai-topics" element={<AdminSuspense><AdminBlogTopics /></AdminSuspense>} />

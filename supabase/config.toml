@@ -75,3 +75,6 @@ verify_jwt = false
     verify_jwt = false
   [functions.binance-webhook]
     verify_jwt = false
+
+[functions.backup-sync-worker]
+verify_jwt = false

@@ -621,6 +621,84 @@ export type Database = {
           },
         ]
       }
+      backup_sync_log: {
+        Row: {
+          created_at: string
+          details: Json
+          id: number
+          kind: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          details?: Json
+          id?: number
+          kind: string
+          status: string
+        }
+        Update: {
+          created_at?: string
+          details?: Json
+          id?: number
+          kind?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      backup_sync_queue: {
+        Row: {
+          attempts: number
+          created_at: string
+          id: number
+          last_error: string | null
+          next_retry_at: string
+          op: string
+          pk_text: string
+          row_data: Json | null
+          table_name: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          id?: number
+          last_error?: string | null
+          next_retry_at?: string
+          op: string
+          pk_text: string
+          row_data?: Json | null
+          table_name: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          id?: number
+          last_error?: string | null
+          next_retry_at?: string
+          op?: string
+          pk_text?: string
+          row_data?: Json | null
+          table_name?: string
+        }
+        Relationships: []
+      }
+      backup_sync_state: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
       bkash_transactions: {
         Row: {
           amount: number
@@ -4797,6 +4875,8 @@ export type Database = {
         Returns: Json
       }
       auto_assign_licenses: { Args: { p_order_id: string }; Returns: Json }
+      backup_schema_snapshot: { Args: never; Returns: Json }
+      backup_table_counts: { Args: never; Returns: Json }
       debit_cid_balance: {
         Args: { p_amount: number; p_user_id: string }
         Returns: Json

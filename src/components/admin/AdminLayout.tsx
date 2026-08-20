@@ -196,6 +196,7 @@ const MENU_SECTIONS: MenuSection[] = [
       { icon: ShieldCheck, label: '2FA Security', path: '/ceo/security', badge: 'new' },
       { icon: Shield, label: 'Copy Protection', path: '/ceo/copy-protection', badge: 'new' },
       { icon: Database, label: 'Backup', path: '/ceo/backup' },
+      { icon: Database, label: 'Mirror Backup', path: '/ceo/mirror-backup', badge: 'new' },
       { icon: Settings, label: 'General Settings', path: '/ceo/settings' },
       { icon: Globe, label: 'Multi Currency', path: '/ceo/currencies', badge: 'new' },
       { icon: Wrench, label: 'Maintenance Mode', path: '/ceo/maintenance', badge: 'live' },
