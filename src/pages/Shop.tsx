@@ -508,6 +508,9 @@ const Shop = () => {
 
           {/* Main content */}
           <div className="flex-1 min-w-0">
+            <h2 className="sr-only">
+              {activeCategory ? `Browse ${activeCategory.name} in Bangladesh` : 'Browse Digital Software in Bangladesh'}
+            </h2>
             {/* Filter bar */}
             <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
               <div className="relative flex-1 min-w-[200px] max-w-md">
