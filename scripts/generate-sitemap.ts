@@ -48,6 +48,7 @@ const STATIC_ROUTES: Entry[] = [
   { loc: "/about", changefreq: "monthly", priority: "0.6" },
   { loc: "/contact-us", changefreq: "monthly", priority: "0.6" },
   { loc: "/faqs", changefreq: "monthly", priority: "0.7" },
+  { loc: "/antivirus-price-in-bd", changefreq: "weekly", priority: "0.8" },
   { loc: "/free-tools", changefreq: "weekly", priority: "0.7" },
   { loc: "/delivery-info", changefreq: "monthly", priority: "0.5" },
   { loc: "/refund-policy", changefreq: "monthly", priority: "0.4" },
