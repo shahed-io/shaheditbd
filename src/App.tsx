@@ -94,6 +94,7 @@ const ReturnPolicy          = lazy(() => import("./pages/ReturnPolicy"));
 const ContactUs             = lazy(() => import("./pages/ContactUs"));
 const AboutUs               = lazy(() => import("./pages/AboutUs"));
 const FAQs                  = lazy(() => import("./pages/FAQs"));
+const AntivirusBd           = lazy(() => import("./pages/AntivirusBd"));
 const FreeTools             = lazy(() => import("./pages/FreeTools"));
 const RefundRequest         = lazy(() => import("./pages/RefundRequest"));
 const InstallApp            = lazy(() => import("./pages/InstallApp"));
@@ -436,6 +437,7 @@ const AppContent = () => {
           <Route path="/contact" element={<Navigate to="/contact-us" replace />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/faqs" element={<FAQs />} />
+          <Route path="/antivirus-price-in-bd" element={<AntivirusBd />} />
           <Route path="/free-tools" element={<FreeTools />} />
           <Route path="/free-tools/:toolId" element={<FreeTools />} />
           <Route path="/refund-request" element={<RefundRequest />} />
