@@ -113,9 +113,14 @@ async function ensureSchema(sb: ReturnType<typeof admin>, sql: postgres.Sql) {
     }
   }
 
+  // resumable: only a bounded batch of tables per invocation
+  const { data: stateRow } = await sb
+    .from("backup_sync_state").select("value").eq("key", "schema_progress").maybeSingle();
+  const done = new Set<string>(((stateRow?.value as { done?: string[] } | null)?.done) ?? []);
+
   let created = 0;
-  for (const t of snap.tables) {
-    if (SKIP.has(t.name)) continue;
+  const pending = snap.tables.filter((t) => !SKIP.has(t.name) && !done.has(t.name));
+  for (const t of pending.slice(0, 12)) {
     const cols = t.columns.map((c) => `"${c.name}" ${c.type}`).join(", ");
     await sql.unsafe(`CREATE TABLE IF NOT EXISTS public."${t.name}" (${cols})`);
     for (const c of t.columns) {
@@ -135,8 +140,13 @@ async function ensureSchema(sb: ReturnType<typeof admin>, sql: postgres.Sql) {
         END IF;
       END $$;`);
     }
+    done.add(t.name);
     created++;
   }
+  await sb.from("backup_sync_state")
+    .upsert({ key: "schema_progress", value: { done: [...done] } }, { onConflict: "key" });
+  const schemaFinished = pending.length <= 12;
+
 
   // auth users mirror (metadata only, never password hashes or tokens)
   await sql.unsafe(`CREATE TABLE IF NOT EXISTS public.auth_users_backup (
