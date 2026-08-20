@@ -160,8 +160,9 @@ async function ensureSchema(sb: ReturnType<typeof admin>, sql: postgres.Sql) {
     synced_at timestamptz DEFAULT now()
   )`);
 
-  await setState(sb, "config", { ...(await getState(sb, "config")), schema_ready: true });
-  return { tables: created, enums: snap.enums.length };
+  await setState(sb, "config", { ...(await getState(sb, "config")), schema_ready: schemaFinished });
+  return { tables: created, remaining: Math.max(0, pending.length - 12), finished: schemaFinished, enums: snap.enums.length };
+
 }
 
 // ---------------------------------------------------------------- helpers
