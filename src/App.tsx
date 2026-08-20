@@ -437,6 +437,7 @@ const AppContent = () => {
           <Route path="/contact" element={<Navigate to="/contact-us" replace />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/faqs" element={<FAQs />} />
+          <Route path="/antivirus-price-in-bd" element={<AntivirusBd />} />
           <Route path="/free-tools" element={<FreeTools />} />
           <Route path="/free-tools/:toolId" element={<FreeTools />} />
           <Route path="/refund-request" element={<RefundRequest />} />
