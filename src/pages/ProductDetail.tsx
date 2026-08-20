@@ -593,12 +593,12 @@ const ProductDetail = () => {
                 {/* Nav arrows */}
                 {images.length > 1 && (
                   <>
-                    <button onClick={prevImg}
+                    <button onClick={prevImg} aria-label="Previous image"
                       className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 z-10"
                       style={{ background: 'rgba(255,255,255,0.80)', border: '1px solid hsla(258,78%,60%,0.25)', color: 'hsl(258,78%,50%)', backdropFilter: 'blur(12px)', boxShadow: '0 2px 12px hsla(258,78%,55%,0.15)' }}>
                       <ChevronLeft size={18} />
                     </button>
-                    <button onClick={nextImg}
+                    <button onClick={nextImg} aria-label="Next image"
                       className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 z-10"
                       style={{ background: 'rgba(255,255,255,0.80)', border: '1px solid hsla(258,78%,60%,0.25)', color: 'hsl(258,78%,50%)', backdropFilter: 'blur(12px)', boxShadow: '0 2px 12px hsla(258,78%,55%,0.15)' }}>
                       <ChevronRight size={18} />
@@ -608,6 +608,8 @@ const ProductDetail = () => {
 
                 {/* Wishlist */}
                 <button
+                  aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+                  aria-pressed={wishlisted}
                   onClick={() => toggleWishlist(cartItem)}
                   className="absolute top-4 right-4 w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:scale-110 z-10"
                   style={{
