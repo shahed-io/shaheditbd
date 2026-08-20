@@ -94,6 +94,7 @@ const ReturnPolicy          = lazy(() => import("./pages/ReturnPolicy"));
 const ContactUs             = lazy(() => import("./pages/ContactUs"));
 const AboutUs               = lazy(() => import("./pages/AboutUs"));
 const FAQs                  = lazy(() => import("./pages/FAQs"));
+const AntivirusBd           = lazy(() => import("./pages/AntivirusBd"));
 const FreeTools             = lazy(() => import("./pages/FreeTools"));
 const RefundRequest         = lazy(() => import("./pages/RefundRequest"));
 const InstallApp            = lazy(() => import("./pages/InstallApp"));
