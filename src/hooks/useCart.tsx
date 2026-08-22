@@ -246,13 +246,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
     (async () => {
       try {
-        // One-time server-side cleanup for carts saved before the TTL system.
-        try {
-          if (!localStorage.getItem('cart_db_reset_v2')) {
-            localStorage.setItem('cart_db_reset_v2', new Date().toISOString());
-            await supabase.from('user_cart_items').delete().eq('user_id', userId);
-          }
-        } catch { /* ignore */ }
 
         const local = pruneStale(items);
         if (local.length > 0) {
