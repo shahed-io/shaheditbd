@@ -58,20 +58,23 @@ const sanitizeItems = (arr: any): CartItem[] => {
   return out;
 };
 
-// Local cart items expire after this long — a cart the user forgot about weeks
+// Local cart items expire after this long — a cart the user forgot about months
 // ago must not silently re-appear (and re-sync to the server) on a later visit.
-const CART_LOCAL_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
-const CART_RESET_FLAG = 'cart_reset_v2'; // one-time cleanup of pre-TTL carts
+const CART_LOCAL_TTL_MS = 90 * 24 * 60 * 60 * 1000; // 90 days
+
 
 const stamp = (i: CartItem): CartItem => ({ ...i, addedAt: i.addedAt || new Date().toISOString() });
 
+// Legacy rows without a timestamp are kept (treated as just-added) — only truly
+// expired items are dropped.
 const isFresh = (i: CartItem) => {
   const t = new Date(i.addedAt || 0).getTime();
-  return Number.isFinite(t) && t > 0 && Date.now() - t <= CART_LOCAL_TTL_MS;
+  if (!Number.isFinite(t) || t <= 0) return true;
+  return Date.now() - t <= CART_LOCAL_TTL_MS;
 };
 
-// Drop items that have no timestamp (legacy rows) or that expired.
 const pruneStale = (arr: CartItem[]): CartItem[] => arr.filter(isFresh);
+
 
 interface CartContextType {
   items: CartItem[];
@@ -128,8 +131,9 @@ const CART_KEY = 'cart';
 const CART_BACKUP_KEY = 'cart_backup'; // { items, savedAt } — recovers cart if primary storage is wiped mid-checkout
 const CART_BACKUP_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 // Server-side cart rows older than this are considered abandoned and are purged
-// on login instead of being restored (prevents old products silently re-appearing).
-const CART_DB_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+// on login instead of being restored (prevents ancient products re-appearing).
+const CART_DB_TTL_MS = 90 * 24 * 60 * 60 * 1000; // 90 days
+
 
 const readBackup = (): CartItem[] => {
   try {
@@ -149,21 +153,9 @@ const writeBackup = (items: CartItem[]) => {
   } catch { /* ignore */ }
 };
 
-// One-time cleanup: carts saved before the TTL system existed have no
-// timestamps and were the reason old products kept re-appearing by themselves.
-const needsOneTimeReset = (): boolean => {
-  try {
-    if (localStorage.getItem(CART_RESET_FLAG)) return false;
-    localStorage.setItem(CART_RESET_FLAG, new Date().toISOString());
-    localStorage.removeItem(CART_KEY);
-    localStorage.removeItem(CART_BACKUP_KEY);
-    return true;
-  } catch { return false; }
-};
-
 const loadInitialItems = (): CartItem[] => {
   try {
-    if (needsOneTimeReset()) return [];
+
     const rawPrimary = localStorage.getItem(CART_KEY);
     const primary = pruneStale(sanitizeItems(JSON.parse(rawPrimary || '[]')));
     if (primary.length > 0) return primary;
@@ -254,13 +246,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
     (async () => {
       try {
-        // One-time server-side cleanup for carts saved before the TTL system.
-        try {
-          if (!localStorage.getItem('cart_db_reset_v2')) {
-            localStorage.setItem('cart_db_reset_v2', new Date().toISOString());
-            await supabase.from('user_cart_items').delete().eq('user_id', userId);
-          }
-        } catch { /* ignore */ }
 
         const local = pruneStale(items);
         if (local.length > 0) {
