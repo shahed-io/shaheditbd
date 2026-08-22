@@ -131,8 +131,9 @@ const CART_KEY = 'cart';
 const CART_BACKUP_KEY = 'cart_backup'; // { items, savedAt } — recovers cart if primary storage is wiped mid-checkout
 const CART_BACKUP_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 // Server-side cart rows older than this are considered abandoned and are purged
-// on login instead of being restored (prevents old products silently re-appearing).
-const CART_DB_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+// on login instead of being restored (prevents ancient products re-appearing).
+const CART_DB_TTL_MS = 90 * 24 * 60 * 60 * 1000; // 90 days
+
 
 const readBackup = (): CartItem[] => {
   try {
@@ -152,21 +153,9 @@ const writeBackup = (items: CartItem[]) => {
   } catch { /* ignore */ }
 };
 
-// One-time cleanup: carts saved before the TTL system existed have no
-// timestamps and were the reason old products kept re-appearing by themselves.
-const needsOneTimeReset = (): boolean => {
-  try {
-    if (localStorage.getItem(CART_RESET_FLAG)) return false;
-    localStorage.setItem(CART_RESET_FLAG, new Date().toISOString());
-    localStorage.removeItem(CART_KEY);
-    localStorage.removeItem(CART_BACKUP_KEY);
-    return true;
-  } catch { return false; }
-};
-
 const loadInitialItems = (): CartItem[] => {
   try {
-    if (needsOneTimeReset()) return [];
+
     const rawPrimary = localStorage.getItem(CART_KEY);
     const primary = pruneStale(sanitizeItems(JSON.parse(rawPrimary || '[]')));
     if (primary.length > 0) return primary;
