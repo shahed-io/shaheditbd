@@ -58,20 +58,23 @@ const sanitizeItems = (arr: any): CartItem[] => {
   return out;
 };
 
-// Local cart items expire after this long — a cart the user forgot about weeks
+// Local cart items expire after this long — a cart the user forgot about months
 // ago must not silently re-appear (and re-sync to the server) on a later visit.
-const CART_LOCAL_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
-const CART_RESET_FLAG = 'cart_reset_v2'; // one-time cleanup of pre-TTL carts
+const CART_LOCAL_TTL_MS = 90 * 24 * 60 * 60 * 1000; // 90 days
+
 
 const stamp = (i: CartItem): CartItem => ({ ...i, addedAt: i.addedAt || new Date().toISOString() });
 
+// Legacy rows without a timestamp are kept (treated as just-added) — only truly
+// expired items are dropped.
 const isFresh = (i: CartItem) => {
   const t = new Date(i.addedAt || 0).getTime();
-  return Number.isFinite(t) && t > 0 && Date.now() - t <= CART_LOCAL_TTL_MS;
+  if (!Number.isFinite(t) || t <= 0) return true;
+  return Date.now() - t <= CART_LOCAL_TTL_MS;
 };
 
-// Drop items that have no timestamp (legacy rows) or that expired.
 const pruneStale = (arr: CartItem[]): CartItem[] => arr.filter(isFresh);
+
 
 interface CartContextType {
   items: CartItem[];
