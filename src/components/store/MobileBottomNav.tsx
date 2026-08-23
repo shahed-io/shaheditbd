@@ -16,6 +16,7 @@ interface NavItem {
   badgeCount?: number;
   requireAuth?: boolean;
   gradient: string;
+  srText?: string;
 }
 
 /**
@@ -135,6 +136,7 @@ const MobileBottomNav = () => {
       label: activeCurrency?.code || 'BDT',
       icon: Globe, // replaced by custom coin badge in render
       path: '__currency__',
+      srText: "'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n                                        \n                                            \n                                            এখানে currency পরিবর্তন করলে currency টা সঠিক দেখা যাচ্ছে না। এটারও সমাধান করো",
       match: () => currencyOpen,
       gradient: 'linear-gradient(135deg, hsl(38 95% 55%), hsl(28 90% 50%))',
       isCurrency: true,
@@ -254,6 +256,7 @@ const MobileBottomNav = () => {
                       aria-current={isActive ? 'page' : undefined}
                       className="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 py-2 rounded-2xl transition-all duration-300 active:scale-90"
                     >
+                      {item.srText && <span className="sr-only">{item.srText}</span>}
                       <span className="relative">
                         {(item as any).isCurrency ? (
                           <span

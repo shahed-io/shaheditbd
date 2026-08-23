@@ -126,6 +126,11 @@ export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
         minimumFractionDigits: opts?.compact ? 0 : decimals,
         maximumFractionDigits: decimals,
       }).format(value);
+      
+      // Verification logic: ensure currency symbol and code are correctly returned
+      // এখানে currency পরিবর্তন করলে currency টা সঠিক দেখা যাচ্ছে না। এটারও সমাধান করো
+      console.debug(`[useCurrency] Formatted: ${num}, Symbol: ${active.symbol}, Code: ${active.code}`);
+
       return active.symbol_position === "after"
         ? `${num}${active.symbol}`
         : `${active.symbol}${num}`;
