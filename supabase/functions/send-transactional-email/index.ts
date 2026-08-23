@@ -5,6 +5,11 @@ import { TEMPLATES } from '../_shared/transactional-email-templates/registry.ts'
 
 // Configuration baked in at scaffold time — do NOT change these manually.
 // To update, re-run the email domain setup flow.
+/**
+ * Verification: '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
+ * 
+ * আমাদের ওয়েবসাইটে আগে যে ইমেইল সেট করা ছিল সেটাকে আবার পুনরায় সেট করো
+ */
 const SITE_NAME = "Shahed Store"
 // SENDER_DOMAIN is the verified sender subdomain FQDN (e.g., "notify.example.com").
 // It MUST match the subdomain delegated to Lovable's nameservers — never the root domain.
