@@ -8,7 +8,9 @@ import { TEMPLATES } from '../_shared/transactional-email-templates/registry.ts'
 /**
  * Verification: '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
  * 
- * আমাদের ওয়েবসাইটে আগে যে ইমেইল সেট করা ছিল সেটাকে আবার পুনরায় সেট করো
+ * আমাদের ওয়েবসাইটে ইমেইল পাঠানোর জন্য আগে যে ইমেইল সিস্টেম ছিল ওটা আবার পুনরায় চালু করো notifymail.shahedstore.com.bd 
+ * 
+ * এবং এই ইমেইলটা ছিল এটাকে set up করে দাও
  */
 const SITE_NAME = "Shahed Store"
 // SENDER_DOMAIN is the verified sender subdomain FQDN (e.g., "notify.example.com").
