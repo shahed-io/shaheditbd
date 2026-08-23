@@ -117,6 +117,11 @@ export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
     (bdt: number, opts?: { compact?: boolean }) => {
       const value = convert(bdt);
       const decimals = active.code === "BDT" ? 0 : active.decimals ?? 2;
+      
+      // Verification logic: log currency conversion for debugging
+      // এখানে currency পরিবর্তন করলেও দামটা পরিবর্তন হচ্ছে না। সমাধান করো
+      console.debug(`[useCurrency] Formatting ${bdt} BDT to ${active.code}. Rate: ${active.rate_from_bdt}, Value: ${value}`);
+
       const num = new Intl.NumberFormat("en-US", {
         minimumFractionDigits: opts?.compact ? 0 : decimals,
         maximumFractionDigits: decimals,
