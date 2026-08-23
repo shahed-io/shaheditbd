@@ -9,7 +9,7 @@ const corsHeaders = {
 /**
  * Verification: '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
  * 
- * আমাদের ওয়েবসাইটে ইমেইল পাঠানোর জন্য আগে যে ইমেইল সিস্টেম ছিল ওটা আবার পুনরায় চালু করো notifymail.shahedstore.com.bd 
+ * আমাদের ওয়েবসাইটে ইমেইল পাঠানোর জন্য আগে যে ইমেইল সিস্টেম ছিল ওটা আবার পুনরায় চালু করো get.shahedstore.com.bd 
  * 
  * এবং এই ইমেইলটা ছিল এটাকে set up করে দাও
  */
@@ -476,8 +476,8 @@ Deno.serve(async (req) => {
           idempotency_key: `order-confirm-${order.id}`,
           unsubscribe_token: crypto.randomUUID(),
           to: order.customer_email,
-              from: `${SITE_NAME} <noreply@notifymail.shahedstore.com.bd>`,
-              sender_domain: 'notifymail.shahedstore.com.bd',
+              from: `${SITE_NAME} <noreply@get.shahedstore.com.bd>`,
+              sender_domain: 'get.shahedstore.com.bd',
           subject: `✅ অর্ডার কনফার্ম হয়েছে — #${order.order_number}`,
           html,
           text: `অর্ডার কনফার্ম হয়েছে — #${order.order_number}\nমোট: ৳${order.total}\nধন্যবাদ ${order.customer_name}!`,
@@ -511,8 +511,8 @@ Deno.serve(async (req) => {
             idempotency_key: `order-status-${order.id}-${newStatus}`,
             unsubscribe_token: crypto.randomUUID(),
             to: order.customer_email,
-              from: `${SITE_NAME} <noreply@notifymail.shahedstore.com.bd>`,
-              sender_domain: 'notifymail.shahedstore.com.bd',
+              from: `${SITE_NAME} <noreply@get.shahedstore.com.bd>`,
+              sender_domain: 'get.shahedstore.com.bd',
             subject: `${statusInfo.emoji} অর্ডার স্ট্যাটাস আপডেট: ${statusInfo.bn} — #${order.order_number}`,
             html,
             text: `অর্ডার #${order.order_number} এর স্ট্যাটাস "${statusInfo.bn}" হয়েছে। ${SITE_URL}/dashboard`,
@@ -612,8 +612,8 @@ Deno.serve(async (req) => {
               idempotency_key: `admin-notify-${order.id}-${idx}-${Date.now()}`,
               unsubscribe_token: crypto.randomUUID(),
               to: email,
-              from: `${SITE_NAME} <noreply@notifymail.shahedstore.com.bd>`,
-              sender_domain: 'notifymail.shahedstore.com.bd',
+              from: `${SITE_NAME} <noreply@get.shahedstore.com.bd>`,
+              sender_domain: 'get.shahedstore.com.bd',
               subject,
               html,
               text: `নতুন অর্ডার #${order.order_number} — ${order.customer_name} — ৳${order.total}\n${SITE_URL}/admin/orders`,
@@ -664,8 +664,8 @@ Deno.serve(async (req) => {
               idempotency_key: `promo-${Date.now()}-${i + idx}`,
               unsubscribe_token: crypto.randomUUID(),
               to: email,
-              from: `${SITE_NAME} <noreply@notifymail.shahedstore.com.bd>`,
-              sender_domain: 'notifymail.shahedstore.com.bd',
+              from: `${SITE_NAME} <noreply@get.shahedstore.com.bd>`,
+              sender_domain: 'get.shahedstore.com.bd',
               subject: promoSubject,
               html,
               text: promoBody || promoSubject,
@@ -763,8 +763,8 @@ Deno.serve(async (req) => {
         {
           idempotency_key: `license-resend-${licenseData.key_value.slice(0, 10)}-${Date.now()}`,
           to: recipientEmail,
-          from: `${SITE_NAME} <noreply@notifymail.shahedstore.com.bd>`,
-          sender_domain: 'notifymail.shahedstore.com.bd',
+          from: `${SITE_NAME} <noreply@get.shahedstore.com.bd>`,
+          sender_domain: 'get.shahedstore.com.bd',
           subject: `🔑 আপনার লাইসেন্স কী — ${licenseData.product_name}`,
           html: licenseHtml,
           text: `আপনার ${licenseData.product_name} এর লাইসেন্স: ${licenseData.key_value}`,

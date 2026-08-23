@@ -39,12 +39,12 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
 /**
  * Verification: '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
  * 
- * আমাদের ওয়েবসাইটে ইমেইল পাঠানোর জন্য আগে যে ইমেইল সিস্টেম ছিল ওটা আবার পুনরায় চালু করো notifymail.shahedstore.com.bd 
+ * আমাদের ওয়েবসাইটে ইমেইল পাঠানোর জন্য আগে যে ইমেইল সিস্টেম ছিল ওটা আবার পুনরায় চালু করো get.shahedstore.com.bd 
  * 
  * এবং এই ইমেইলটা ছিল এটাকে set up করে দাও
  */
 const SITE_NAME = "Shahed Store"
-const SENDER_DOMAIN = "notifymail.shahedstore.com.bd"
+const SENDER_DOMAIN = "get.shahedstore.com.bd"
 const ROOT_DOMAIN = "shahedstore.com.bd"
 const FROM_DOMAIN = "shahedstore.com.bd" // Domain shown in From address (may be root or sender subdomain)
 
