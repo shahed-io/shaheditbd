@@ -8,7 +8,7 @@ import { TEMPLATES } from '../_shared/transactional-email-templates/registry.ts'
 /**
  * Verification: '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
  * 
- * আমাদের ওয়েবসাইটে ইমেইল পাঠানোর জন্য আগে যে ইমেইল সিস্টেম ছিল ওটা আবার পুনরায় চালু করো notifymail.shahedstore.com.bd 
+ * আমাদের ওয়েবসাইটে ইমেইল পাঠানোর জন্য আগে যে ইমেইল সিস্টেম ছিল ওটা আবার পুনরায় চালু করো get.shahedstore.com.bd 
  * 
  * এবং এই ইমেইলটা ছিল এটাকে set up করে দাও
  */
@@ -16,11 +16,11 @@ const SITE_NAME = "Shahed Store"
 // SENDER_DOMAIN is the verified sender subdomain FQDN (e.g., "notify.example.com").
 // It MUST match the subdomain delegated to Lovable's nameservers — never the root domain.
 // The email API looks up this exact domain; a mismatch causes "No email domain record found".
-const SENDER_DOMAIN = "notifymail.shahedstore.com.bd"
+const SENDER_DOMAIN = "get.shahedstore.com.bd"
 // FROM_DOMAIN is the domain shown in the From: header (e.g., "example.com").
 // When display_from_root is enabled, this can be the root domain for cleaner branding,
 // even though actual sending uses the subdomain above.
-const FROM_DOMAIN = "notifymail.shahedstore.com.bd"
+const FROM_DOMAIN = "get.shahedstore.com.bd"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
