@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useReveal } from '@/hooks/useReveal';
+import { useCurrency } from '@/hooks/useCurrency';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { Flame, Timer, ArrowRight, ShoppingCart, Zap, TrendingDown, MessageCircle } from 'lucide-react';
@@ -204,6 +205,7 @@ interface FlashCardProps {
 }
 
 const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) => {
+  const { format: fmtPrice } = useCurrency();
   const [hovered, setHovered] = useState(false);
   const savings = product.original_price ? Math.round(product.original_price - product.price) : null;
   const outOfStock = product.status === 'out_of_stock' || (typeof product.stock_quantity === 'number' && product.stock_quantity <= 0);
@@ -223,7 +225,7 @@ const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) 
 
   const handlePreOrder = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const msg = encodeURIComponent(`প্রি-অর্ডার করতে চাই (Stock Out):\n📦 ${product.name}\n💰 ৳${product.price.toLocaleString()}\n\nকখন আবার stock আসবে জানাবেন please।`);
+    const msg = encodeURIComponent(`প্রি-অর্ডার করতে চাই (Stock Out):\n📦 ${product.name}\n💰 ${fmtPrice(product.price)}\n\nকখন আবার stock আসবে জানাবেন please।`);
     window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`, '_blank');
   };
 
@@ -302,9 +304,9 @@ const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) 
           {product.name}
         </p>
         <div className="flex items-baseline gap-2 flex-wrap">
-          <span className="text-[17px] font-sora font-black text-foreground">৳{product.price.toLocaleString()}</span>
+          <span className="text-[17px] font-sora font-black text-foreground">{fmtPrice(product.price)}</span>
           {product.original_price && (
-            <span className="text-[12px] text-muted-foreground line-through">৳{product.original_price.toLocaleString()}</span>
+            <span className="text-[12px] text-muted-foreground line-through">{fmtPrice(product.original_price)}</span>
           )}
         </div>
         <div className="mt-2 min-h-[1.75rem]">
