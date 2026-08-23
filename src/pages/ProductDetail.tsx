@@ -1434,12 +1434,8 @@ const ProductDetail = () => {
           </div>
         </div>
 
-        {/* ── SEO long-form description (300+ words, mixed BN/EN, H2/H3) ── */}
-        <ProductSeoDescription
-          productName={productDisplayName}
-          categoryName={product.categories?.name || 'Digital Software'}
-          price={displayPrice}
-        />
+
+
 
         {/* ── Customer Reviews ── */}
         <ProductReviews productId={product.id} productSlug={product.slug} />
