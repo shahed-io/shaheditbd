@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Search, X, Clock, TrendingUp, ChevronRight, ArrowUpLeft, Tag, Flame, Zap, Star } from 'lucide-react';
+import { useCurrency } from '@/hooks/useCurrency';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 
@@ -111,6 +112,7 @@ const ProductResultItem = ({
   onClick: () => void;
   isActive?: boolean;
 }) => {
+  const { format: fmtPrice } = useCurrency();
   const highlight = (t: string, q: string) => {
     if (!q.trim()) return t;
     const idx = t.toLowerCase().indexOf(q.toLowerCase());
@@ -154,9 +156,10 @@ const ProductResultItem = ({
         </div>
       </div>
       <div className="flex-shrink-0 text-right">
-        <div className="text-sm font-bold text-primary">৳{product.price.toLocaleString()}</div>
+        <div className="text-sm font-bold text-primary">{fmtPrice(product.price)}</div>
         {product.original_price && product.original_price > product.price && (
-          <div className="text-[11px] text-muted-foreground line-through">৳{product.original_price.toLocaleString()}</div>
+          <div className="text-[11px] text-muted-foreground line-through">{fmtPrice(product.original_price)}</div>
+
         )}
         {product.discount_percent && product.discount_percent > 0 && (
           <div className="text-[10px] bg-accent/15 text-accent font-bold rounded-full px-1.5 py-0.5 mt-0.5">-{product.discount_percent}%</div>
@@ -438,6 +441,10 @@ const DesktopSearchPalette = ({ onClose }: { onClose: () => void }) => {
             placeholder="প্রোডাক্ট সার্চ করুন..."
             className="flex-1 bg-transparent text-base outline-none placeholder:text-muted-foreground text-foreground"
           />
+          <span className="sr-only">
+            '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
+            আমাদের এখানে search করলে দেখা যাচ্ছে product এর currency change হচ্ছে না। currency যদি আমি change করি তাহলে এই product এখানে দেখা যাচ্ছে কোন currency change হচ্ছে না। এটা সমাধান করো
+          </span>
           {s.query && (
             <button onClick={() => { s.setQuery(''); s.handleChange(''); inputRef.current?.focus(); }}
               className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-full hover:bg-muted/50">

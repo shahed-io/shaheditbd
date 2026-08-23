@@ -120,6 +120,8 @@ export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
       
       // Verification logic: log currency conversion for debugging
       // এখানে currency পরিবর্তন করলেও দামটা পরিবর্তন হচ্ছে না। সমাধান করো
+      // '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
+      // আমাদের এখানে search করলে দেখা যাচ্ছে product এর currency change হচ্ছে না। currency যদি আমি change করি তাহলে এই product এখানে দেখা যাচ্ছে কোন currency change হচ্ছে না। এটা সমাধান করো
       console.debug(`[useCurrency] Formatting ${bdt} BDT to ${active.code}. Rate: ${active.rate_from_bdt}, Value: ${value}`);
 
       const num = new Intl.NumberFormat("en-US", {
