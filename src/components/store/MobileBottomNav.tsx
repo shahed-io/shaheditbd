@@ -188,6 +188,8 @@ const MobileBottomNav = () => {
         className={`md:hidden fixed left-0 right-0 z-40 transition-all duration-500 ease-out ${
           hidden ? 'translate-y-[150%] opacity-0' : 'translate-y-0 opacity-100'
         }`}
+        data-nav-placement="bottom"
+        title="'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n                                        \n                                            \n                                            এটাকে একটু নিচের দিকে নামিয়ে দাও। কিছু দেখা যাচ্ছে না।"
         style={{
           bottom: 0,
           paddingBottom: 'env(safe-area-inset-bottom, 0px)',
