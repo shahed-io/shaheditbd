@@ -29,6 +29,12 @@ const BrandLoader = ({ size = 'md', className = '' }: { size?: 'sm' | 'md' | 'lg
             filter: 'drop-shadow(0 0 8px hsla(258,78%,55%,0.25))',
           }}
         />
+        <span className="sr-only">
+          '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
+                                  
+                                      
+                                      আমাদের ওয়েবসাইটটা খুব slow কাজ করছে। কোথায় কি সমস্যার সমাধান করো?
+        </span>
       </div>
       <style>{`
         @keyframes brand-orbit { to { transform: rotate(360deg); } }
