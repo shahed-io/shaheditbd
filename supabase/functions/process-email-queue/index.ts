@@ -74,7 +74,7 @@ async function moveToDlq(
     payload,
   })
   if (error) {
-    console.error('Failed to move message to DLQ', { queue, msg_id: msg.msg_id, reason, error })
+    console.error('Failed to move message to DLQ', { queue, msg_id: msg.msg_id, reason, code: error.code, message: error.message })
   }
 }
 
@@ -135,20 +135,8 @@ Deno.serve(async (req) => {
 
   let totalProcessed = 0
 
-  // Wall-clock deadline: return cleanly before the edge runtime kills us with
-  // a 502/503. Remaining messages stay invisible until VT expires and are
-  // retried on the next scheduled invocation.
-  const startedAt = Date.now()
-  const MAX_WALL_MS = 45_000
-
   // 2. Process auth_emails first (priority), then transactional_emails
   for (const queue of ['auth_emails', 'transactional_emails']) {
-    if (Date.now() - startedAt > MAX_WALL_MS) {
-      return new Response(
-        JSON.stringify({ processed: totalProcessed, stopped: 'deadline' }),
-        { headers: { 'Content-Type': 'application/json' } }
-      )
-    }
     const { data: messages, error: readError } = await supabase.rpc('read_email_batch', {
       queue_name: queue,
       batch_size: batchSize,
@@ -156,7 +144,7 @@ Deno.serve(async (req) => {
     })
 
     if (readError) {
-      console.error('Failed to read email batch', { queue, error: readError })
+      console.error('Failed to read email batch', { queue, code: readError.code, message: readError.message })
       continue
     }
 
@@ -187,7 +175,8 @@ Deno.serve(async (req) => {
       if (failedRowsError) {
         console.error('Failed to load failed-attempt counters', {
           queue,
-          error: failedRowsError,
+          code: failedRowsError.code,
+          message: failedRowsError.message,
         })
       } else {
         for (const row of failedRows ?? []) {
@@ -202,12 +191,6 @@ Deno.serve(async (req) => {
     }
 
     for (let i = 0; i < messages.length; i++) {
-      if (Date.now() - startedAt > MAX_WALL_MS) {
-        return new Response(
-          JSON.stringify({ processed: totalProcessed, stopped: 'deadline' }),
-          { headers: { 'Content-Type': 'application/json' } }
-        )
-      }
       const msg = messages[i]
       const payload = msg.message
       const failedAttempts =
@@ -260,7 +243,7 @@ Deno.serve(async (req) => {
             message_id: msg.msg_id,
           })
           if (dupDelError) {
-            console.error('Failed to delete duplicate message from queue', { queue, msg_id: msg.msg_id, error: dupDelError })
+            console.error('Failed to delete duplicate message from queue', { queue, msg_id: msg.msg_id, code: dupDelError.code, message: dupDelError.message })
           }
           continue
         }
@@ -302,7 +285,7 @@ Deno.serve(async (req) => {
           message_id: msg.msg_id,
         })
         if (delError) {
-          console.error('Failed to delete sent message from queue', { queue, msg_id: msg.msg_id, error: delError })
+          console.error('Failed to delete sent message from queue', { queue, msg_id: msg.msg_id, code: delError.code, message: delError.message })
         }
         totalProcessed++
       } catch (error) {
