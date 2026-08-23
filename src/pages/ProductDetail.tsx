@@ -1460,56 +1460,6 @@ const ProductDetail = () => {
   );
 };
 
-// ── SEO Long Description (300+ words, mixed BN/EN) ──────────
-const ProductSeoDescription = ({
-  productName, categoryName, price,
-}: { productName: string; categoryName: string; price: number }) => {
-  const priceStr = `৳${price.toLocaleString()}`;
-  return (
-    <section
-      className="container-fluid pt-6 pb-4"
-      aria-label={`About ${productName}`}
-      itemScope
-      itemType="https://schema.org/Article"
-    >
-      <div className="border-t border-border mb-8" />
-      <article className="prose prose-neutral dark:prose-invert max-w-none prose-headings:font-sora prose-headings:font-bold prose-p:text-[15px] prose-p:leading-[1.85] prose-li:leading-[1.85]">
-        <h2 className="text-2xl mb-4">Why buy {productName} from Shahed Store</h2>
-        <p>
-          <strong>{productName}</strong> কিনতে চাইলে বাংলাদেশে সবচেয়ে বিশ্বস্ত এবং সাশ্রয়ী ঠিকানা হলো <strong>Shahed Store</strong>। আমরা ২০২০ সাল থেকে বাংলাদেশের হাজার হাজার গ্রাহককে ১০০% জেনুইন <em>{categoryName}</em> লাইসেন্স সরবরাহ করে আসছি। প্রতিটি লাইসেন্স key সরাসরি অথরাইজড ডিস্ট্রিবিউটর এবং official partner থেকে সংগ্রহ করা হয় — তাই activation ও lifetime validity নিয়ে কোনো দুশ্চিন্তা নেই। আমাদের কাছে {productName} এর দাম মাত্র <strong>{priceStr} BDT</strong>, যা বাংলাদেশের বাজারে অন্যতম কম দাম।
-        </p>
-        <p>
-          Unlike random Facebook sellers, Shahed Store একটি registered digital software shop যেখানে আপনি পাবেন proper invoice, activation guide এবং <strong>lifetime after-sales support</strong> সম্পূর্ণ বাংলায়। কোনো activation issue হলে আমাদের support team ২৪/৭ WhatsApp, live chat এবং Telegram এ পাশে আছে। এছাড়াও আমরা <strong>7 days replacement guarantee</strong> দিই — যদি কোনো কারণে license কাজ না করে, তাহলে সাথে সাথে replacement অথবা full refund পাবেন।
-        </p>
-
-        <h3 className="text-xl mt-8 mb-3">How delivery works</h3>
-        <p>
-          Payment confirm হওয়ার সাথে সাথে আমাদের automated system আপনার <strong>{productName}</strong> license key এবং activation instructions তৈরি করে ফেলে। সাধারণত <strong>১-১৫ মিনিটের</strong> মধ্যে আপনি email এ complete delivery পেয়ে যাবেন। যদি office hour (সকাল ৯টা - রাত ১২টা) এর মধ্যে অর্ডার করেন তাহলে instant delivery নিশ্চিত। এছাড়া আপনার Shahed Store dashboard এর <strong>My Licenses</strong> section এ যেকোনো সময় license key দেখতে পারবেন এবং backup হিসেবে সংরক্ষণ করতে পারবেন।
-        </p>
-        <ul>
-          <li>💳 <strong>Payment methods:</strong> bKash, Nagad, Rocket, DBBL bank transfer, PayPal, SSLCommerz</li>
-          <li>⚡ <strong>Delivery time:</strong> Instant থেকে ২৪ ঘণ্টার মধ্যে (average ১৫ মিনিট)</li>
-          <li>📩 <strong>Delivery method:</strong> Email + Dashboard + WhatsApp notification</li>
-          <li>🔒 <strong>Genuine guarantee:</strong> ১০০% original license, officially activated</li>
-        </ul>
-
-        <h3 className="text-xl mt-8 mb-3">System requirements & compatibility</h3>
-        <p>
-          {productName} ব্যবহার করার আগে নিশ্চিত করুন আপনার device এর হার্ডওয়্যার ও operating system requirement পূরণ করছে। সাধারণ <em>{categoryName}</em> product গুলোর জন্য আপনার প্রয়োজন হবে stable internet connection, minimum 4GB RAM এবং কমপক্ষে 2GB ফ্রি storage space। কিছু software শুধু Windows 10/11 বা macOS এর নির্দিষ্ট version এ চলে — কেনার আগে <strong>Product Specifications</strong> tab এ compatibility check করে নিন। কোনো confusion থাকলে আমাদের support কে জিজ্ঞেস করুন, আমরা আপনার device অনুযায়ী best plan suggest করব।
-        </p>
-
-        <h3 className="text-xl mt-8 mb-3">Payment, warranty & after-sales support</h3>
-        <p>
-          Bangladesh এর সকল popular payment gateway আমরা সাপোর্ট করি। বিকাশ, নগদ, রকেট এর মাধ্যমে instant payment করতে পারবেন, অথবা DBBL bank transfer এর মাধ্যমেও পেমেন্ট করা যাবে। আন্তর্জাতিক গ্রাহকদের জন্য PayPal এবং card payment রয়েছে। প্রতিটি transaction SSL-encrypted এবং আমরা আপনার payment information কখনও store করি না।
-        </p>
-        <p>
-          আপনি যদি {productName} সম্পর্কে আরও জানতে চান, দাম নিয়ে আলোচনা করতে চান বা bulk quantity তে কিনতে চান — সরাসরি আমাদের WhatsApp <strong>+880 1840-099853</strong> নম্বরে message করুন। Reseller price এবং corporate deal এর জন্যও আমরা special discount দিয়ে থাকি। Shahed Store — বাংলাদেশের <strong>#1 digital software shop</strong>, genuine software কিনুন নিশ্চিন্তে।
-        </p>
-      </article>
-    </section>
-  );
-};
-
 
 interface RelatedProduct {
   id: string; name: string; slug: string; price: number;
