@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import BrandLoader from '@/components/store/BrandLoader';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/store/Navbar';
 import Footer from '@/components/store/Footer';
@@ -8,6 +8,7 @@ import SEOHead from '@/components/seo/SEOHead';
 import { itemListSchema, breadcrumbSchema } from '@/components/seo/schemas';
 import { Search, X, ShoppingCart, MessageCircle } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
+import { useCurrency } from '@/hooks/useCurrency';
 import { useHideOrphans } from '@/hooks/useHideOrphans';
 
 
@@ -57,6 +58,7 @@ const SORT_OPTIONS = [
 ];
 
 const ShopProductCard = ({ product }: { product: Product }) => {
+  const { format: fmtPrice } = useCurrency();
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const outOfStock = product.status === 'out_of_stock' || (typeof product.stock_quantity === 'number' && product.stock_quantity <= 0);
@@ -111,9 +113,9 @@ const ShopProductCard = ({ product }: { product: Product }) => {
         <div className="font-semibold text-sm text-foreground leading-snug line-clamp-2 mb-2">{product.name}</div>
         <div className="flex items-center justify-between gap-2">
           <div>
-            <div className="font-black text-base text-foreground">৳{product.price.toLocaleString()}</div>
+            <div className="font-black text-base text-foreground">{fmtPrice(product.price)}</div>
             {product.original_price && product.original_price > product.price && (
-              <div className="text-xs text-muted-foreground line-through">৳{product.original_price.toLocaleString()}</div>
+              <div className="text-xs text-muted-foreground line-through">{fmtPrice(product.original_price)}</div>
             )}
           </div>
           {outOfStock ? (
@@ -145,6 +147,8 @@ const ShopProductCard = ({ product }: { product: Product }) => {
 
 const Shop = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [products, setProducts]     = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading]       = useState(true);
@@ -162,6 +166,11 @@ const Shop = () => {
   useEffect(() => {
     setSearch(urlQ);
   }, [urlQ]);
+
+  useEffect(() => {
+    // Force a re-render when the currency changes to ensure conversion logic is fresh
+    // The key here is that the format/convert functions in useCurrency depend on the active currency state.
+  }, [location.key]);
 
   const [imgVersion, setImgVersion] = useState(() => Date.now());
 
