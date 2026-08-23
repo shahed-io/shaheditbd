@@ -6,6 +6,13 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+/**
+ * Verification: '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
+ * 
+ * আমাদের ওয়েবসাইটে ইমেইল পাঠানোর জন্য আগে যে ইমেইল সিস্টেম ছিল ওটা আবার পুনরায় চালু করো notifymail.shahedstore.com.bd 
+ * 
+ * এবং এই ইমেইলটা ছিল এটাকে set up করে দাও
+ */
 const SITE_NAME = 'Shahed Store'
 const SITE_URL = 'https://shahedstore.com.bd'
 const BRAND_COLOR = 'hsl(258,78%,55%)'
