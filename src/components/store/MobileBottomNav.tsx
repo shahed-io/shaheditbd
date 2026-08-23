@@ -16,6 +16,7 @@ interface NavItem {
   badgeCount?: number;
   requireAuth?: boolean;
   gradient: string;
+  srText?: string;
 }
 
 /**
