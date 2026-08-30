@@ -54,10 +54,6 @@ const CurrencySwitcher = ({ className }: Props) => {
             className={`w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-all duration-300 ${open ? "rotate-180" : ""}`}
             strokeWidth={2.5}
           />
-          <span className="sr-only">
-            '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
-            এখানে আমি currency পরিবর্তন করছি তারপরও টাকা হয়ে আছে কেন? এটা সমাধান করো
-          </span>
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64 max-h-[70vh] overflow-y-auto">

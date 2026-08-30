@@ -316,10 +316,6 @@ const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) 
               <TrendingDown size={10} /> Save {fmtPrice(savings)}
             </div>
           )}
-          <span className="sr-only">
-            '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
-            এখানে আমি currency পরিবর্তন করছি তারপরও টাকা হয়ে আছে কেন? এটা সমাধান করো
-          </span>
         </div>
         <div className="mt-1.5 min-h-[1rem]">
           {product.delivery_time && (

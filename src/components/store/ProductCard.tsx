@@ -439,12 +439,6 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
           <div className="flex items-baseline gap-2 mt-auto">
             <span className="text-xl font-sora font-black" style={{ color: 'hsl(271,91%,75%)' }}>
               {fmtPrice(product.price)}
-              <span className="sr-only">
-                '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
-                                        
-                                            
-                                            এখানে currency পরিবর্তন করলেও দামটা পরিবর্তন হচ্ছে না। সমাধান করো
-              </span>
             </span>
             {product.originalPrice && (
               <span className="text-xs line-through text-muted-foreground">{fmtPrice(product.originalPrice)}</span>
