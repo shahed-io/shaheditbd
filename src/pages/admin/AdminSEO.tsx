@@ -163,12 +163,6 @@ const AdminSEO = () => {
         <div>
           <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
             SEO <span className="gradient-text">সেটআপ উইজার্ড</span>
-            <span className="sr-only">
-              '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
-                                      
-                                          
-                                          আমাদের ওয়েবসাইটে আগে যে ইমেইল সেট করা ছিল সেটাকে আবার পুনরায় সেট করো
-            </span>
           </h1>
           <p className="text-muted-foreground text-sm">গুগলে র‍্যাংক করার জন্য ধাপে ধাপে সব সেটআপ করুন</p>
         </div>

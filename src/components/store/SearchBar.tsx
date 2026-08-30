@@ -441,10 +441,6 @@ const DesktopSearchPalette = ({ onClose }: { onClose: () => void }) => {
             placeholder="প্রোডাক্ট সার্চ করুন..."
             className="flex-1 bg-transparent text-base outline-none placeholder:text-muted-foreground text-foreground"
           />
-          <span className="sr-only">
-            '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
-            আমাদের এখানে search করলে দেখা যাচ্ছে product এর currency change হচ্ছে না। currency যদি আমি change করি তাহলে এই product এখানে দেখা যাচ্ছে কোন currency change হচ্ছে না। এটা সমাধান করো
-          </span>
           {s.query && (
             <button onClick={() => { s.setQuery(''); s.handleChange(''); inputRef.current?.focus(); }}
               className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-full hover:bg-muted/50">
