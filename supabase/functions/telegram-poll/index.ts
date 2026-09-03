@@ -412,6 +412,12 @@ async function handleCheckKey(botToken: string, chatId: string | number, rawInpu
       if (r.product) o += `📦 ${sanitize(r.product)}\n`;
       if (r.edition) o += `🏷️ ${sanitize(r.edition)}\n`;
       o += `💬 ${sanitize(r.meaning)}\n`;
+      if (r.status !== 'unknown' && r.activationNote) o += `🖥️ ${sanitize(r.activationNote)}\n`;
+      if (r.status === 'live' && r.licenseType === 'volume' && r.remaining !== null) {
+        o += lang === 'bn'
+          ? `🔢 অবশিষ্ট অ্যাক্টিভেশন: ${r.remaining} টি PC\n`
+          : `🔢 Remaining activations: ${r.remaining} PC(s)\n`;
+      }
       if (r.errorCode) o += `🔢 ${sanitize(r.errorCode)}\n`;
       o += '\n';
     });
