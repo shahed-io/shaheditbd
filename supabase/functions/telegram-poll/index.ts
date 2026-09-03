@@ -243,7 +243,7 @@ async function checkLicenseKey(key: string, token: string, lang: Lang) {
     const text = await res.text();
     let parsed: any = null;
     try { parsed = JSON.parse(text); } catch {
-      return { key, status: 'unknown' as const, meaning: lang === 'bn' ? 'সার্ভার সাড়া দেয়নি' : 'Provider returned invalid response', errorCode: null, product: null, edition: null };
+      return { key, status: 'unknown' as const, meaning: lang === 'bn' ? 'সার্ভার সাড়া দেয়নি' : 'Provider returned invalid response', errorCode: null, product: null, edition: null, licenseType: null, remaining: null, activationNote: null };
     }
     const errorRaw: string | null = parsed?.error ?? null;
     let cleanErrorCode: string | null = null;
@@ -262,13 +262,67 @@ async function checkLicenseKey(key: string, token: string, lang: Lang) {
       else if (low.includes('block')) { status = 'dead'; meaning = lang === 'bn' ? 'ব্লক করা কী' : 'Key is blocked'; }
       else if (low.includes('invalid') || low.includes('fake')) { status = 'dead'; meaning = lang === 'bn' ? 'অবৈধ / ফেক কী' : 'Invalid or fake key'; }
     }
+
+    // ── License type + activation-count rules ──────────────────────────────
+    // PidMS may expose these under different field names depending on key type.
+    const description: string | null = parsed?.description ?? null;
+    const edition: string | null = parsed?.edition ?? null;
+    const subTypeRaw: string | null = parsed?.sub_type ?? parsed?.subType ?? null;
+    const actTypeRaw: string | null = parsed?.act_type ?? parsed?.actType ?? parsed?.license_type ?? null;
+    const remainingRaw = parsed?.remaining_count ?? parsed?.remaining ?? parsed?.count ?? parsed?.activation_count ?? null;
+    const remaining: number | null =
+      remainingRaw === null || remainingRaw === undefined || remainingRaw === ''
+        ? null
+        : (Number.isFinite(Number(remainingRaw)) ? Number(remainingRaw) : null);
+
+    const blob = [description, edition, subTypeRaw, actTypeRaw, errorRaw].filter(Boolean).join(' ').toLowerCase();
+    let licenseType: 'volume' | 'retail' | 'oem' | 'phone' | 'other' | null = null;
+    if (/\bmak\b|volume|\bvl\b|\bgvlk\b|\bkms\b/.test(blob)) licenseType = 'volume';
+    else if (/\boem\b|dm\b|oem:dm|oem:nonslp/.test(blob)) licenseType = 'oem';
+    else if (/retail|\bfpp\b|\besd\b/.test(blob)) licenseType = 'retail';
+    else if (/phone/.test(blob)) licenseType = 'phone';
+    else if (subTypeRaw || actTypeRaw) licenseType = 'other';
+
+    // Human-readable activation rule per license type
+    let activationNote: string | null = null;
+    if (licenseType === 'volume') {
+      if (remaining !== null) {
+        activationNote = lang === 'bn'
+          ? `ভলিউম (MAK) লাইসেন্স — আরও ${remaining} টি PC-তে অ্যাক্টিভেট করা যাবে`
+          : `Volume (MAK) license — can still be activated on ${remaining} PC(s)`;
+      } else {
+        activationNote = lang === 'bn'
+          ? 'ভলিউম (MAK) লাইসেন্স — একাধিক PC-তে ব্যবহারযোগ্য (অবশিষ্ট সংখ্যা সার্ভার জানায়নি)'
+          : 'Volume (MAK) license — multi-PC key (remaining count not reported by provider)';
+      }
+    } else if (licenseType === 'retail') {
+      activationNote = lang === 'bn'
+        ? 'রিটেইল লাইসেন্স — একসাথে ১টি PC-তে ব্যবহারযোগ্য (PC পরিবর্তন করা যায়)'
+        : 'Retail license — 1 PC at a time (transferable to another PC)';
+    } else if (licenseType === 'oem') {
+      activationNote = lang === 'bn'
+        ? 'OEM লাইসেন্স — শুধুমাত্র ১টি PC-তে (মাদারবোর্ডের সাথে লক)'
+        : 'OEM license — 1 PC only (locked to the motherboard)';
+    } else if (licenseType === 'phone') {
+      activationNote = lang === 'bn'
+        ? 'ফোন অ্যাক্টিভেশন প্রয়োজন — ১টি PC'
+        : 'Requires phone activation — 1 PC';
+    } else if (remaining !== null) {
+      activationNote = lang === 'bn'
+        ? `অবশিষ্ট অ্যাক্টিভেশন: ${remaining} টি PC`
+        : `Remaining activations: ${remaining} PC(s)`;
+    }
+
     return {
       key: parsed?.key || key,
       status,
       meaning,
       errorCode: cleanErrorCode,
-      product: parsed?.description ?? null,
-      edition: parsed?.edition ?? null,
+      product: description,
+      edition: edition || subTypeRaw,
+      licenseType,
+      remaining,
+      activationNote,
     };
   } catch (e: any) {
     const timedOut = e?.name === 'AbortError';
@@ -281,11 +335,15 @@ async function checkLicenseKey(key: string, token: string, lang: Lang) {
       errorCode: null,
       product: null,
       edition: null,
+      licenseType: null,
+      remaining: null,
+      activationNote: null,
     };
   } finally {
     clearTimeout(timeout);
   }
 }
+
 
 
 async function handleCheckKey(botToken: string, chatId: string | number, rawInput: string, lang: Lang) {
@@ -354,6 +412,12 @@ async function handleCheckKey(botToken: string, chatId: string | number, rawInpu
       if (r.product) o += `📦 ${sanitize(r.product)}\n`;
       if (r.edition) o += `🏷️ ${sanitize(r.edition)}\n`;
       o += `💬 ${sanitize(r.meaning)}\n`;
+      if (r.status !== 'unknown' && r.activationNote) o += `🖥️ ${sanitize(r.activationNote)}\n`;
+      if (r.status === 'live' && r.licenseType === 'volume' && r.remaining !== null) {
+        o += lang === 'bn'
+          ? `🔢 অবশিষ্ট অ্যাক্টিভেশন: ${r.remaining} টি PC\n`
+          : `🔢 Remaining activations: ${r.remaining} PC(s)\n`;
+      }
       if (r.errorCode) o += `🔢 ${sanitize(r.errorCode)}\n`;
       o += '\n';
     });
