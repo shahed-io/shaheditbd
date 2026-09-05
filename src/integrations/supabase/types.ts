@@ -621,6 +621,57 @@ export type Database = {
           },
         ]
       }
+      backup_history: {
+        Row: {
+          action: string
+          created_at: string
+          created_by: string | null
+          error: string | null
+          files: number
+          id: string
+          label: string
+          note: string | null
+          records: number
+          reverted_at: string | null
+          snapshot: Json | null
+          snapshot_rows: number
+          status: string
+          tables: string[]
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          created_by?: string | null
+          error?: string | null
+          files?: number
+          id?: string
+          label: string
+          note?: string | null
+          records?: number
+          reverted_at?: string | null
+          snapshot?: Json | null
+          snapshot_rows?: number
+          status?: string
+          tables?: string[]
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          created_by?: string | null
+          error?: string | null
+          files?: number
+          id?: string
+          label?: string
+          note?: string | null
+          records?: number
+          reverted_at?: string | null
+          snapshot?: Json | null
+          snapshot_rows?: number
+          status?: string
+          tables?: string[]
+        }
+        Relationships: []
+      }
       backup_sync_log: {
         Row: {
           created_at: string
