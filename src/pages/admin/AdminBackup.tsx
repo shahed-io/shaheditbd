@@ -637,12 +637,17 @@ Restore:
     const { table, data } = importPreview;
     const label = TABLES.find(t => t.table === table)?.label || table;
     setProgressLabel(`Restoring ${label}…`);
+    const snap = await captureSnapshot([table]);
     try {
       const res = await upsertInBatches(table, data, (done, total) => {
         setProgress(Math.round((done / total) * 100));
       });
       const status: 'success' | 'error' = res.failed === 0 ? 'success' : 'error';
-      addHistory({ label: `Restore: ${label}`, tableName: table, date: new Date().toISOString(), records: res.added, type: 'import', status, error: res.errors.join(' | ') });
+      await logHistory({
+        action: 'restore', label: `Restore: ${label}`, tables: [table], records: res.added,
+        status, error: res.errors.join(' | ') || null,
+        note: snap.note, snapshot: snap.snapshot, snapshot_rows: snap.rows,
+      });
       setRestoreLog([
         `${label}: ✨ ${res.added} নতুন যোগ, ⏭️ ${res.skipped} আগেই আছে (skipped), ❌ ${res.failed} failed`,
         ...res.errors.map(e => `  • ${e}`)
@@ -654,7 +659,7 @@ Restore:
       else toast.error(`${label}: ${res.failed}টি রেকর্ড ব্যর্থ — ${res.errors[0]}`);
       fetchStats();
     } catch (e: any) {
-      addHistory({ label: `Restore: ${label}`, tableName: table, date: new Date().toISOString(), records: 0, type: 'import', status: 'error', error: e.message });
+      await logHistory({ action: 'restore', label: `Restore: ${label}`, tables: [table], records: 0, status: 'error', error: e.message });
       toast.error('রিস্টোর ব্যর্থ: ' + e.message);
     }
     setProgress(0);
@@ -678,6 +683,7 @@ Restore:
       ...Object.keys(tables).filter(n => !TABLES.find(t => t.table === n)),
     ];
     const totalRows = orderedNames.reduce((s, n) => s + (tables[n]?.length || 0), 0) || 1;
+    const snap = opts?.keepRestoring ? { snapshot: null, rows: 0, note: null as string | null } : await captureSnapshot(orderedNames);
     let processed = 0;
     let totalAdded = 0;
     let totalSkipped = 0;
@@ -707,14 +713,16 @@ Restore:
     }
 
     if (!opts?.keepRestoring) {
-      addHistory({
+      await logHistory({
+        action: 'restore',
         label: 'Full Restore',
-        tableName: 'all',
-        date: new Date().toISOString(),
+        tables: orderedNames,
         records: totalAdded,
-        type: 'import',
         status: totalFailed === 0 ? 'success' : 'error',
-        error: totalFailed ? `${totalFailed} rows failed` : undefined,
+        error: totalFailed ? `${totalFailed} rows failed` : null,
+        note: snap.note,
+        snapshot: snap.snapshot,
+        snapshot_rows: snap.rows,
       });
       if (totalFailed === 0) toast.success(`✅ Full Restore সম্পন্ন! ✨ ${totalAdded} নতুন যোগ, ⏭️ ${totalSkipped} আগেই ছিল।`);
       else toast.warning(`Restore শেষ — ✨ ${totalAdded} added, ⏭️ ${totalSkipped} skipped, ❌ ${totalFailed} failed। বিস্তারিত log দেখুন।`);
@@ -782,6 +790,9 @@ Restore:
     const log: string[] = [];
 
     // 1) Database (duplicate-safe, FK-ordered)
+    const zipSnap = Object.keys(zipPreview.tables).length
+      ? await captureSnapshot(Object.keys(zipPreview.tables))
+      : { snapshot: null, rows: 0, note: null as string | null };
     let dbRes = { added: 0, skipped: 0, failed: 0, log: [] as string[] };
     if (Object.keys(zipPreview.tables).length) {
       dbRes = await restoreFull(zipPreview.tables, { keepRestoring: true }) as any;
@@ -816,14 +827,17 @@ Restore:
       setRestoreLog([...log]);
     }
 
-    addHistory({
+    await logHistory({
+      action: 'restore',
       label: 'Complete ZIP Restore',
-      tableName: 'zip',
-      date: new Date().toISOString(),
-      records: dbRes.added + uploaded,
-      type: 'import',
+      tables: Object.keys(zipPreview.tables),
+      records: dbRes.added,
+      files: uploaded,
       status: dbRes.failed + failedFiles === 0 ? 'success' : 'error',
-      error: dbRes.failed + failedFiles ? `${dbRes.failed} rows / ${failedFiles} files failed` : undefined,
+      error: dbRes.failed + failedFiles ? `${dbRes.failed} rows / ${failedFiles} files failed` : null,
+      note: zipSnap.note,
+      snapshot: zipSnap.snapshot,
+      snapshot_rows: zipSnap.rows,
     });
     toast.success(`✅ ZIP রিস্টোর সম্পন্ন — ✨ ${dbRes.added} রেকর্ড + ${uploaded} ফাইল যোগ, ⏭️ ${dbRes.skipped + skippedFiles} আগেই ছিল।`);
     fetchStats();
