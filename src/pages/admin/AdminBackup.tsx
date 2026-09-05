@@ -26,6 +26,25 @@ type BackupEntry = {
   error?: string;
 };
 
+/** A persisted backup / restore / rollback event (table: public.backup_history). */
+type HistoryRow = {
+  id: string;
+  action: 'export' | 'restore' | 'rollback';
+  label: string;
+  tables: string[];
+  records: number;
+  files: number;
+  status: 'success' | 'error';
+  error: string | null;
+  note: string | null;
+  snapshot_rows: number;
+  reverted_at: string | null;
+  created_at: string;
+};
+
+/** Max rows captured as an undo snapshot before a restore. */
+const SNAPSHOT_ROW_CAP = 20000;
+
 // Ordered so parents (categories, products, profiles) restore before children (order_items, license_keys)
 const TABLES = [
   { table: 'categories',     label: 'Categories',      icon: Grid3X3,      color: 'text-violet-400',  bg: 'bg-violet-400/10' },
@@ -81,7 +100,9 @@ const AdminBackup = () => {
   const [exporting, setExporting] = useState<string | null>(null);
   const [stats, setStats] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
-  const [history, setHistory] = useState<BackupEntry[]>([]);
+  const [history, setHistory] = useState<HistoryRow[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(true);
+  const [reverting, setReverting] = useState<string | null>(null);
   const [restoreTab, setRestoreTab] = useState<'export' | 'import'>('export');
   const [importPreview, setImportPreview] = useState<{ table: string; data: any[]; file: string } | null>(null);
   const [confirmRestore, setConfirmRestore] = useState(false);
@@ -101,18 +122,180 @@ const AdminBackup = () => {
 
   useEffect(() => {
     fetchStats();
-    const saved = localStorage.getItem('admin_backup_history_v2');
-    if (saved) setHistory(JSON.parse(saved));
+    loadHistory();
   }, []);
 
-  const saveHistory = (entries: BackupEntry[]) => {
-    const trimmed = entries.slice(0, 20);
-    setHistory(trimmed);
-    localStorage.setItem('admin_backup_history_v2', JSON.stringify(trimmed));
+  // ─── Persistent history (public.backup_history) ───────────────────
+  const loadHistory = async () => {
+    setHistoryLoading(true);
+    const { data, error } = await supabase
+      .from('backup_history')
+      .select('id, action, label, tables, records, files, status, error, note, snapshot_rows, reverted_at, created_at')
+      .order('created_at', { ascending: false })
+      .limit(100);
+    if (error) console.warn('[backup] history load failed:', error.message);
+    setHistory((data || []) as HistoryRow[]);
+    setHistoryLoading(false);
   };
 
+  const logHistory = async (entry: {
+    action: HistoryRow['action'];
+    label: string;
+    tables: string[];
+    records: number;
+    files?: number;
+    status: 'success' | 'error';
+    error?: string | null;
+    note?: string | null;
+    snapshot?: Record<string, any[]> | null;
+    snapshot_rows?: number;
+  }) => {
+    const { data: auth } = await supabase.auth.getUser();
+    const { error } = await supabase.from('backup_history').insert({
+      action: entry.action,
+      label: entry.label,
+      tables: entry.tables,
+      records: entry.records,
+      files: entry.files ?? 0,
+      status: entry.status,
+      error: entry.error || null,
+      note: entry.note || null,
+      snapshot: (entry.snapshot ?? null) as any,
+      snapshot_rows: entry.snapshot_rows ?? 0,
+      created_by: auth?.user?.id ?? null,
+    });
+    if (error) console.warn('[backup] history log failed:', error.message);
+    await loadHistory();
+  };
+
+  /** Back-compat shim so existing call sites keep working, now writing to the DB. */
   const addHistory = (entry: Omit<BackupEntry, 'id'>) => {
-    saveHistory([{ ...entry, id: Date.now() }, ...history]);
+    void logHistory({
+      action: entry.type === 'export' ? 'export' : 'restore',
+      label: entry.label,
+      tables: entry.tableName === 'all' || entry.tableName === 'mega' || entry.tableName === 'zip'
+        ? TABLES.map(t => t.table)
+        : [entry.tableName],
+      records: entry.records,
+      status: entry.status,
+      error: entry.error,
+    });
+  };
+
+  /** Snapshot the current contents of the tables a restore is about to touch. */
+  const captureSnapshot = async (tableNames: string[]) => {
+    const snapshot: Record<string, any[]> = {};
+    let rows = 0;
+    try {
+      for (const t of tableNames) {
+        setProgressLabel(`Undo snapshot: ${t}`);
+        const data = await fetchAllRows(t).catch(() => []);
+        rows += data.length;
+        if (rows > SNAPSHOT_ROW_CAP) {
+          return { snapshot: null, rows: 0, note: `Undo snapshot skipped — more than ${SNAPSHOT_ROW_CAP.toLocaleString()} rows` };
+        }
+        snapshot[t] = data;
+      }
+    } catch (e: any) {
+      return { snapshot: null, rows: 0, note: `Undo snapshot failed — ${e.message}` };
+    }
+    return { snapshot, rows, note: null as string | null };
+  };
+
+  /** Roll the affected tables back to the state stored in a history entry. */
+  const revertTo = async (h: HistoryRow) => {
+    if (!h.snapshot_rows) return;
+    const ok = window.confirm(
+      `"${h.label}" এর আগের অবস্থায় ফিরে যাবেন?\n\n` +
+      `${h.tables.length} টি টেবিল ${new Date(h.created_at).toLocaleString('bn-BD')} এর ঠিক আগের অবস্থায় ফিরে যাবে। ` +
+      `এর পরে যোগ হওয়া রেকর্ডগুলো মুছে যাবে।`
+    );
+    if (!ok) return;
+
+    setReverting(h.id);
+    setRestoring(true);
+    setRestoreLog([]);
+    setProgress(0);
+    const log: string[] = [];
+    let restoredRows = 0, deletedRows = 0, failed = 0;
+
+    try {
+      const { data, error } = await supabase
+        .from('backup_history').select('snapshot').eq('id', h.id).maybeSingle();
+      if (error) throw error;
+      const snap = (data?.snapshot || null) as Record<string, any[]> | null;
+      if (!snap) throw new Error('এই এন্ট্রির কোনো snapshot সংরক্ষিত নেই');
+
+      const names = [
+        ...TABLES.map(t => t.table).filter(n => snap[n]),
+        ...Object.keys(snap).filter(n => !TABLES.find(t => t.table === n)),
+      ];
+      let idx = 0;
+      for (const table of names) {
+        const rows = snap[table] || [];
+        const label = TABLES.find(t => t.table === table)?.label || table;
+        setProgressLabel(`Rollback: ${label}`);
+        const hasId = rows.length === 0 || 'id' in rows[0];
+
+        // 1) remove rows that did not exist at snapshot time
+        if (hasId) {
+          const keep = new Set(rows.map((r: any) => String(r.id)));
+          const { data: current } = await supabase.from(table as any).select('id');
+          const extra = ((current as any[]) || []).map(r => r.id).filter(id => !keep.has(String(id)));
+          for (let i = 0; i < extra.length; i += 100) {
+            const chunk = extra.slice(i, i + 100);
+            const { error: delErr } = await supabase.from(table as any).delete().in('id', chunk as any);
+            if (delErr) { failed += chunk.length; if (log.length < 60) log.push(`${label}: ❌ delete — ${delErr.message}`); }
+            else deletedRows += chunk.length;
+          }
+        }
+
+        // 2) put the snapshot rows back, overwriting current values
+        for (let i = 0; i < rows.length; i += 100) {
+          const chunk = rows.slice(i, i + 100);
+          const conflictKey = CONFLICT_KEYS[table] || (hasId ? 'id' : undefined);
+          const opts: any = conflictKey ? { onConflict: conflictKey } : {};
+          const { error: upErr } = await supabase.from(table as any).upsert(chunk, opts);
+          if (upErr) { failed += chunk.length; if (log.length < 60) log.push(`${label}: ❌ ${upErr.message}`); }
+          else restoredRows += chunk.length;
+        }
+
+        log.push(`${label}: ♻️ ${rows.length} রেকর্ড ফেরানো হয়েছে`);
+        setRestoreLog([...log]);
+        idx++;
+        setProgress(Math.round((idx / names.length) * 100));
+      }
+
+      await supabase.from('backup_history').update({ reverted_at: new Date().toISOString() }).eq('id', h.id);
+      await logHistory({
+        action: 'rollback',
+        label: `Rollback → ${h.label}`,
+        tables: Object.keys(snap),
+        records: restoredRows,
+        status: failed === 0 ? 'success' : 'error',
+        error: failed ? `${failed} rows failed` : null,
+        note: `${new Date(h.created_at).toLocaleString('en-GB')} এর অবস্থায় ফেরানো হয়েছে • ${deletedRows} নতুন রেকর্ড মুছে ফেলা হয়েছে`,
+      });
+      if (failed === 0) toast.success(`✅ আগের অবস্থায় ফেরানো হয়েছে — ♻️ ${restoredRows} রেকর্ড, 🗑️ ${deletedRows} মুছে ফেলা।`);
+      else toast.warning(`Rollback শেষ — ${failed} রেকর্ড ব্যর্থ। Log দেখুন।`);
+      fetchStats();
+    } catch (e: any) {
+      toast.error('Rollback ব্যর্থ: ' + e.message);
+      await logHistory({
+        action: 'rollback', label: `Rollback → ${h.label}`, tables: h.tables,
+        records: 0, status: 'error', error: e.message,
+      });
+    }
+    setReverting(null);
+    setRestoring(false);
+    setProgress(0);
+    setProgressLabel('');
+  };
+
+  const deleteHistoryEntry = async (id: string) => {
+    const { error } = await supabase.from('backup_history').delete().eq('id', id);
+    if (error) toast.error('মুছে ফেলা যায়নি: ' + error.message);
+    else { toast.success('হিস্ট্রি এন্ট্রি মুছে ফেলা হয়েছে'); loadHistory(); }
   };
 
   const fetchStats = async () => {
