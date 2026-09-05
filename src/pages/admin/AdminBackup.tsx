@@ -911,7 +911,7 @@ Restore:
           { label: 'মোট রেকর্ড', value: loading ? '...' : totalRecords.toLocaleString(), icon: HardDrive, color: 'text-primary' },
           { label: 'টেবিল', value: TABLES.length, icon: Database, color: 'text-emerald-400' },
           { label: 'ব্যাকআপ হিস্ট্রি', value: history.length, icon: Clock, color: 'text-amber-400' },
-          { label: 'সর্বশেষ ব্যাকআপ', value: history[0] ? new Date(history[0].date).toLocaleDateString('bn-BD') : 'কখনো না', icon: BarChart3, color: 'text-blue-400' },
+          { label: 'সর্বশেষ ব্যাকআপ', value: history[0] ? new Date(history[0].created_at).toLocaleDateString('bn-BD') : 'কখনো না', icon: BarChart3, color: 'text-blue-400' },
         ].map(({ label, value, icon: Icon, color }) => (
           <div key={label} className="glass-card rounded-2xl p-4">
             <div className={`flex items-center gap-2 mb-1 ${color}`}>
