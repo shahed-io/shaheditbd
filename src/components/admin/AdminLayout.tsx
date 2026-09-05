@@ -6,6 +6,7 @@ import { Navigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAdminPrefetch, prefetchAdminRoute } from '@/hooks/useAdminPrefetch';
 import AdminCommandPalette from '@/components/admin/AdminCommandPalette';
+import { useAdminDesign } from '@/hooks/useAdminDesign';
 import AdminScrollController from '@/components/admin/AdminScrollController';
 import { useAdminCopyAnywhere } from '@/hooks/useAdminCopyAnywhere';
 import AdminHeroHeader from '@/components/admin/AdminHeroHeader';
@@ -197,6 +198,7 @@ const MENU_SECTIONS: MenuSection[] = [
       { icon: Shield, label: 'Copy Protection', path: '/ceo/copy-protection', badge: 'new' },
       { icon: Database, label: 'Backup', path: '/ceo/backup' },
       { icon: Database, label: 'Mirror Backup', path: '/ceo/mirror-backup', badge: 'new' },
+      { icon: Palette, label: 'Design Backup', path: '/ceo/design-backup', badge: 'new' },
       { icon: Settings, label: 'General Settings', path: '/ceo/settings' },
       { icon: Globe, label: 'Multi Currency', path: '/ceo/currencies', badge: 'new' },
       { icon: Wrench, label: 'Maintenance Mode', path: '/ceo/maintenance', badge: 'live' },
@@ -220,6 +222,7 @@ const getPageTitle = (pathname: string): { title: string; section: string } => {
 };
 
 const AdminLayout = () => {
+  useAdminDesign(); // applies saved admin design tokens/overrides
   const { user, isAdmin, loading, signOut: rawSignOut } = useAuth();
   const { status: get2faStatus, validateSession, logout: logout2fa } = useAdmin2FA();
   const [twoFaChecked, setTwoFaChecked] = useState(false);
