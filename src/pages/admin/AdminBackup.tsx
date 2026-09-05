@@ -1249,27 +1249,100 @@ Restore:
         </div>
       )}
 
-      {/* History */}
-      {history.length > 0 && (
-        <div className="glass-card rounded-2xl overflow-hidden">
-          <div className="p-4 border-b border-border/40 flex items-center gap-2">
-            <Clock size={14} className="text-muted-foreground" />
-            <h3 className="text-sm font-bold text-foreground">ব্যাকআপ / রিস্টোর হিস্ট্রি</h3>
-            <span className="text-[10px] text-muted-foreground ml-auto">{history.length} entries</span>
-          </div>
-          <div className="divide-y divide-border/30 max-h-80 overflow-y-auto">
-            {history.map(h => (
-              <div key={h.id} className="p-3 flex items-center gap-3 text-xs">
-                {h.status === 'success' ? <CheckCircle size={14} className="text-emerald-400 flex-shrink-0" /> : <AlertTriangle size={14} className="text-destructive flex-shrink-0" />}
-                <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-foreground truncate">{h.label} <span className="text-muted-foreground font-normal">({h.type})</span></div>
-                  <div className="text-[10px] text-muted-foreground">{new Date(h.date).toLocaleString('bn-BD')} • {h.records} রেকর্ড {h.error ? `• ${h.error}` : ''}</div>
-                </div>
-              </div>
-            ))}
-          </div>
+      {/* History — persistent backup / restore / rollback timeline */}
+      <div className="glass-card rounded-2xl overflow-hidden">
+        <div className="p-4 border-b border-border/40 flex items-center gap-2 flex-wrap">
+          <Clock size={14} className="text-muted-foreground" />
+          <h3 className="text-sm font-bold text-foreground">ব্যাকআপ / রিস্টোর হিস্ট্রি</h3>
+          <span className="text-[10px] text-muted-foreground">{history.length} entries</span>
+          <button
+            onClick={loadHistory}
+            className="ml-auto text-[11px] flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border/60 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <RefreshCw size={12} className={historyLoading ? 'animate-spin' : ''} /> রিফ্রেশ
+          </button>
         </div>
-      )}
+
+        {historyLoading && history.length === 0 ? (
+          <div className="p-6 flex items-center gap-2 text-xs text-muted-foreground">
+            <Loader2 size={14} className="animate-spin" /> হিস্ট্রি লোড হচ্ছে…
+          </div>
+        ) : history.length === 0 ? (
+          <div className="p-6 text-xs text-muted-foreground">এখনো কোনো ব্যাকআপ বা রিস্টোর হয়নি।</div>
+        ) : (
+          <div className="divide-y divide-border/30 max-h-[28rem] overflow-y-auto">
+            {history.map(h => {
+              const isRollback = h.action === 'rollback';
+              const isExport = h.action === 'export';
+              return (
+                <div key={h.id} className="p-3 flex items-start gap-3 text-xs">
+                  {h.status === 'success'
+                    ? (isRollback
+                        ? <RotateCcw size={14} className="text-sky-400 flex-shrink-0 mt-0.5" />
+                        : isExport
+                          ? <Download size={14} className="text-emerald-400 flex-shrink-0 mt-0.5" />
+                          : <Upload size={14} className="text-amber-400 flex-shrink-0 mt-0.5" />)
+                    : <AlertTriangle size={14} className="text-destructive flex-shrink-0 mt-0.5" />}
+
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-foreground truncate">
+                      {h.label}
+                      <span className={`ml-2 text-[9px] uppercase tracking-wide px-1.5 py-0.5 rounded-md font-bold ${
+                        isRollback ? 'bg-sky-400/10 text-sky-400'
+                          : isExport ? 'bg-emerald-400/10 text-emerald-400'
+                          : 'bg-amber-400/10 text-amber-400'
+                      }`}>
+                        {isRollback ? 'rollback' : isExport ? 'backup' : 'restore'}
+                      </span>
+                      {h.reverted_at && (
+                        <span className="ml-2 text-[9px] uppercase tracking-wide px-1.5 py-0.5 rounded-md font-bold bg-muted text-muted-foreground">
+                          reverted
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-[10px] text-muted-foreground mt-0.5">
+                      {new Date(h.created_at).toLocaleString('bn-BD')} • {h.records} রেকর্ড
+                      {h.files ? ` • ${h.files} ফাইল` : ''}
+                      {h.tables?.length ? ` • ${h.tables.length} টেবিল` : ''}
+                      {h.error ? ` • ❌ ${h.error}` : ''}
+                    </div>
+                    {h.note && <div className="text-[10px] text-muted-foreground/80 mt-0.5">{h.note}</div>}
+                    {h.snapshot_rows > 0 && (
+                      <div className="text-[10px] text-sky-400/90 mt-0.5">
+                        ↩︎ এই পয়েন্টের আগের অবস্থা সংরক্ষিত ({h.snapshot_rows.toLocaleString()} রেকর্ড)
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-1.5 flex-shrink-0">
+                    {h.snapshot_rows > 0 && (
+                      <button
+                        onClick={() => revertTo(h)}
+                        disabled={!!reverting || restoring}
+                        className="px-2.5 py-1.5 rounded-lg text-[11px] font-semibold border border-sky-400/40 text-sky-400 hover:bg-sky-400/10 transition-colors disabled:opacity-50 flex items-center gap-1.5"
+                      >
+                        {reverting === h.id
+                          ? <Loader2 size={12} className="animate-spin" />
+                          : <RotateCcw size={12} />}
+                        আগের অবস্থায় ফিরুন
+                      </button>
+                    )}
+                    <button
+                      onClick={() => deleteHistoryEntry(h.id)}
+                      disabled={!!reverting}
+                      className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive transition-colors disabled:opacity-50"
+                      aria-label="হিস্ট্রি এন্ট্রি মুছুন"
+                    >
+                      <Trash2 size={12} />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
     </div>
   );
 };
