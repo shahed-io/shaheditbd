@@ -73,9 +73,6 @@ export interface AdminDesignConfig {
     glassSidebar: boolean;
     gradientHeader: boolean;
     compactDensity: boolean;
-    commandPalette: boolean;
-    notificationBell: boolean;
-    soundAlerts: boolean;
   };
   updated_at?: string;
 }
@@ -88,9 +85,6 @@ export const DEFAULT_ADMIN_DESIGN: AdminDesignConfig = {
     glassSidebar: true,
     gradientHeader: true,
     compactDensity: false,
-    commandPalette: true,
-    notificationBell: true,
-    soundAlerts: true,
   },
 };
 
