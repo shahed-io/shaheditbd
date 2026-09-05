@@ -26,6 +26,25 @@ type BackupEntry = {
   error?: string;
 };
 
+/** A persisted backup / restore / rollback event (table: public.backup_history). */
+type HistoryRow = {
+  id: string;
+  action: 'export' | 'restore' | 'rollback';
+  label: string;
+  tables: string[];
+  records: number;
+  files: number;
+  status: 'success' | 'error';
+  error: string | null;
+  note: string | null;
+  snapshot_rows: number;
+  reverted_at: string | null;
+  created_at: string;
+};
+
+/** Max rows captured as an undo snapshot before a restore. */
+const SNAPSHOT_ROW_CAP = 20000;
+
 // Ordered so parents (categories, products, profiles) restore before children (order_items, license_keys)
 const TABLES = [
   { table: 'categories',     label: 'Categories',      icon: Grid3X3,      color: 'text-violet-400',  bg: 'bg-violet-400/10' },
@@ -81,7 +100,9 @@ const AdminBackup = () => {
   const [exporting, setExporting] = useState<string | null>(null);
   const [stats, setStats] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
-  const [history, setHistory] = useState<BackupEntry[]>([]);
+  const [history, setHistory] = useState<HistoryRow[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(true);
+  const [reverting, setReverting] = useState<string | null>(null);
   const [restoreTab, setRestoreTab] = useState<'export' | 'import'>('export');
   const [importPreview, setImportPreview] = useState<{ table: string; data: any[]; file: string } | null>(null);
   const [confirmRestore, setConfirmRestore] = useState(false);
@@ -101,18 +122,180 @@ const AdminBackup = () => {
 
   useEffect(() => {
     fetchStats();
-    const saved = localStorage.getItem('admin_backup_history_v2');
-    if (saved) setHistory(JSON.parse(saved));
+    loadHistory();
   }, []);
 
-  const saveHistory = (entries: BackupEntry[]) => {
-    const trimmed = entries.slice(0, 20);
-    setHistory(trimmed);
-    localStorage.setItem('admin_backup_history_v2', JSON.stringify(trimmed));
+  // ─── Persistent history (public.backup_history) ───────────────────
+  const loadHistory = async () => {
+    setHistoryLoading(true);
+    const { data, error } = await supabase
+      .from('backup_history')
+      .select('id, action, label, tables, records, files, status, error, note, snapshot_rows, reverted_at, created_at')
+      .order('created_at', { ascending: false })
+      .limit(100);
+    if (error) console.warn('[backup] history load failed:', error.message);
+    setHistory((data || []) as HistoryRow[]);
+    setHistoryLoading(false);
   };
 
+  const logHistory = async (entry: {
+    action: HistoryRow['action'];
+    label: string;
+    tables: string[];
+    records: number;
+    files?: number;
+    status: 'success' | 'error';
+    error?: string | null;
+    note?: string | null;
+    snapshot?: Record<string, any[]> | null;
+    snapshot_rows?: number;
+  }) => {
+    const { data: auth } = await supabase.auth.getUser();
+    const { error } = await supabase.from('backup_history').insert({
+      action: entry.action,
+      label: entry.label,
+      tables: entry.tables,
+      records: entry.records,
+      files: entry.files ?? 0,
+      status: entry.status,
+      error: entry.error || null,
+      note: entry.note || null,
+      snapshot: (entry.snapshot ?? null) as any,
+      snapshot_rows: entry.snapshot_rows ?? 0,
+      created_by: auth?.user?.id ?? null,
+    });
+    if (error) console.warn('[backup] history log failed:', error.message);
+    await loadHistory();
+  };
+
+  /** Back-compat shim so existing call sites keep working, now writing to the DB. */
   const addHistory = (entry: Omit<BackupEntry, 'id'>) => {
-    saveHistory([{ ...entry, id: Date.now() }, ...history]);
+    void logHistory({
+      action: entry.type === 'export' ? 'export' : 'restore',
+      label: entry.label,
+      tables: entry.tableName === 'all' || entry.tableName === 'mega' || entry.tableName === 'zip'
+        ? TABLES.map(t => t.table)
+        : [entry.tableName],
+      records: entry.records,
+      status: entry.status,
+      error: entry.error,
+    });
+  };
+
+  /** Snapshot the current contents of the tables a restore is about to touch. */
+  const captureSnapshot = async (tableNames: string[]) => {
+    const snapshot: Record<string, any[]> = {};
+    let rows = 0;
+    try {
+      for (const t of tableNames) {
+        setProgressLabel(`Undo snapshot: ${t}`);
+        const data = await fetchAllRows(t).catch(() => []);
+        rows += data.length;
+        if (rows > SNAPSHOT_ROW_CAP) {
+          return { snapshot: null, rows: 0, note: `Undo snapshot skipped — more than ${SNAPSHOT_ROW_CAP.toLocaleString()} rows` };
+        }
+        snapshot[t] = data;
+      }
+    } catch (e: any) {
+      return { snapshot: null, rows: 0, note: `Undo snapshot failed — ${e.message}` };
+    }
+    return { snapshot, rows, note: null as string | null };
+  };
+
+  /** Roll the affected tables back to the state stored in a history entry. */
+  const revertTo = async (h: HistoryRow) => {
+    if (!h.snapshot_rows) return;
+    const ok = window.confirm(
+      `"${h.label}" এর আগের অবস্থায় ফিরে যাবেন?\n\n` +
+      `${h.tables.length} টি টেবিল ${new Date(h.created_at).toLocaleString('bn-BD')} এর ঠিক আগের অবস্থায় ফিরে যাবে। ` +
+      `এর পরে যোগ হওয়া রেকর্ডগুলো মুছে যাবে।`
+    );
+    if (!ok) return;
+
+    setReverting(h.id);
+    setRestoring(true);
+    setRestoreLog([]);
+    setProgress(0);
+    const log: string[] = [];
+    let restoredRows = 0, deletedRows = 0, failed = 0;
+
+    try {
+      const { data, error } = await supabase
+        .from('backup_history').select('snapshot').eq('id', h.id).maybeSingle();
+      if (error) throw error;
+      const snap = (data?.snapshot || null) as Record<string, any[]> | null;
+      if (!snap) throw new Error('এই এন্ট্রির কোনো snapshot সংরক্ষিত নেই');
+
+      const names = [
+        ...TABLES.map(t => t.table).filter(n => snap[n]),
+        ...Object.keys(snap).filter(n => !TABLES.find(t => t.table === n)),
+      ];
+      let idx = 0;
+      for (const table of names) {
+        const rows = snap[table] || [];
+        const label = TABLES.find(t => t.table === table)?.label || table;
+        setProgressLabel(`Rollback: ${label}`);
+        const hasId = rows.length === 0 || 'id' in rows[0];
+
+        // 1) remove rows that did not exist at snapshot time
+        if (hasId) {
+          const keep = new Set(rows.map((r: any) => String(r.id)));
+          const { data: current } = await supabase.from(table as any).select('id');
+          const extra = ((current as any[]) || []).map(r => r.id).filter(id => !keep.has(String(id)));
+          for (let i = 0; i < extra.length; i += 100) {
+            const chunk = extra.slice(i, i + 100);
+            const { error: delErr } = await supabase.from(table as any).delete().in('id', chunk as any);
+            if (delErr) { failed += chunk.length; if (log.length < 60) log.push(`${label}: ❌ delete — ${delErr.message}`); }
+            else deletedRows += chunk.length;
+          }
+        }
+
+        // 2) put the snapshot rows back, overwriting current values
+        for (let i = 0; i < rows.length; i += 100) {
+          const chunk = rows.slice(i, i + 100);
+          const conflictKey = CONFLICT_KEYS[table] || (hasId ? 'id' : undefined);
+          const opts: any = conflictKey ? { onConflict: conflictKey } : {};
+          const { error: upErr } = await supabase.from(table as any).upsert(chunk, opts);
+          if (upErr) { failed += chunk.length; if (log.length < 60) log.push(`${label}: ❌ ${upErr.message}`); }
+          else restoredRows += chunk.length;
+        }
+
+        log.push(`${label}: ♻️ ${rows.length} রেকর্ড ফেরানো হয়েছে`);
+        setRestoreLog([...log]);
+        idx++;
+        setProgress(Math.round((idx / names.length) * 100));
+      }
+
+      await supabase.from('backup_history').update({ reverted_at: new Date().toISOString() }).eq('id', h.id);
+      await logHistory({
+        action: 'rollback',
+        label: `Rollback → ${h.label}`,
+        tables: Object.keys(snap),
+        records: restoredRows,
+        status: failed === 0 ? 'success' : 'error',
+        error: failed ? `${failed} rows failed` : null,
+        note: `${new Date(h.created_at).toLocaleString('en-GB')} এর অবস্থায় ফেরানো হয়েছে • ${deletedRows} নতুন রেকর্ড মুছে ফেলা হয়েছে`,
+      });
+      if (failed === 0) toast.success(`✅ আগের অবস্থায় ফেরানো হয়েছে — ♻️ ${restoredRows} রেকর্ড, 🗑️ ${deletedRows} মুছে ফেলা।`);
+      else toast.warning(`Rollback শেষ — ${failed} রেকর্ড ব্যর্থ। Log দেখুন।`);
+      fetchStats();
+    } catch (e: any) {
+      toast.error('Rollback ব্যর্থ: ' + e.message);
+      await logHistory({
+        action: 'rollback', label: `Rollback → ${h.label}`, tables: h.tables,
+        records: 0, status: 'error', error: e.message,
+      });
+    }
+    setReverting(null);
+    setRestoring(false);
+    setProgress(0);
+    setProgressLabel('');
+  };
+
+  const deleteHistoryEntry = async (id: string) => {
+    const { error } = await supabase.from('backup_history').delete().eq('id', id);
+    if (error) toast.error('মুছে ফেলা যায়নি: ' + error.message);
+    else { toast.success('হিস্ট্রি এন্ট্রি মুছে ফেলা হয়েছে'); loadHistory(); }
   };
 
   const fetchStats = async () => {
@@ -454,12 +637,17 @@ Restore:
     const { table, data } = importPreview;
     const label = TABLES.find(t => t.table === table)?.label || table;
     setProgressLabel(`Restoring ${label}…`);
+    const snap = await captureSnapshot([table]);
     try {
       const res = await upsertInBatches(table, data, (done, total) => {
         setProgress(Math.round((done / total) * 100));
       });
       const status: 'success' | 'error' = res.failed === 0 ? 'success' : 'error';
-      addHistory({ label: `Restore: ${label}`, tableName: table, date: new Date().toISOString(), records: res.added, type: 'import', status, error: res.errors.join(' | ') });
+      await logHistory({
+        action: 'restore', label: `Restore: ${label}`, tables: [table], records: res.added,
+        status, error: res.errors.join(' | ') || null,
+        note: snap.note, snapshot: snap.snapshot, snapshot_rows: snap.rows,
+      });
       setRestoreLog([
         `${label}: ✨ ${res.added} নতুন যোগ, ⏭️ ${res.skipped} আগেই আছে (skipped), ❌ ${res.failed} failed`,
         ...res.errors.map(e => `  • ${e}`)
@@ -471,7 +659,7 @@ Restore:
       else toast.error(`${label}: ${res.failed}টি রেকর্ড ব্যর্থ — ${res.errors[0]}`);
       fetchStats();
     } catch (e: any) {
-      addHistory({ label: `Restore: ${label}`, tableName: table, date: new Date().toISOString(), records: 0, type: 'import', status: 'error', error: e.message });
+      await logHistory({ action: 'restore', label: `Restore: ${label}`, tables: [table], records: 0, status: 'error', error: e.message });
       toast.error('রিস্টোর ব্যর্থ: ' + e.message);
     }
     setProgress(0);
@@ -495,6 +683,7 @@ Restore:
       ...Object.keys(tables).filter(n => !TABLES.find(t => t.table === n)),
     ];
     const totalRows = orderedNames.reduce((s, n) => s + (tables[n]?.length || 0), 0) || 1;
+    const snap = opts?.keepRestoring ? { snapshot: null, rows: 0, note: null as string | null } : await captureSnapshot(orderedNames);
     let processed = 0;
     let totalAdded = 0;
     let totalSkipped = 0;
@@ -524,14 +713,16 @@ Restore:
     }
 
     if (!opts?.keepRestoring) {
-      addHistory({
+      await logHistory({
+        action: 'restore',
         label: 'Full Restore',
-        tableName: 'all',
-        date: new Date().toISOString(),
+        tables: orderedNames,
         records: totalAdded,
-        type: 'import',
         status: totalFailed === 0 ? 'success' : 'error',
-        error: totalFailed ? `${totalFailed} rows failed` : undefined,
+        error: totalFailed ? `${totalFailed} rows failed` : null,
+        note: snap.note,
+        snapshot: snap.snapshot,
+        snapshot_rows: snap.rows,
       });
       if (totalFailed === 0) toast.success(`✅ Full Restore সম্পন্ন! ✨ ${totalAdded} নতুন যোগ, ⏭️ ${totalSkipped} আগেই ছিল।`);
       else toast.warning(`Restore শেষ — ✨ ${totalAdded} added, ⏭️ ${totalSkipped} skipped, ❌ ${totalFailed} failed। বিস্তারিত log দেখুন।`);
@@ -599,6 +790,9 @@ Restore:
     const log: string[] = [];
 
     // 1) Database (duplicate-safe, FK-ordered)
+    const zipSnap = Object.keys(zipPreview.tables).length
+      ? await captureSnapshot(Object.keys(zipPreview.tables))
+      : { snapshot: null, rows: 0, note: null as string | null };
     let dbRes = { added: 0, skipped: 0, failed: 0, log: [] as string[] };
     if (Object.keys(zipPreview.tables).length) {
       dbRes = await restoreFull(zipPreview.tables, { keepRestoring: true }) as any;
@@ -633,14 +827,17 @@ Restore:
       setRestoreLog([...log]);
     }
 
-    addHistory({
+    await logHistory({
+      action: 'restore',
       label: 'Complete ZIP Restore',
-      tableName: 'zip',
-      date: new Date().toISOString(),
-      records: dbRes.added + uploaded,
-      type: 'import',
+      tables: Object.keys(zipPreview.tables),
+      records: dbRes.added,
+      files: uploaded,
       status: dbRes.failed + failedFiles === 0 ? 'success' : 'error',
-      error: dbRes.failed + failedFiles ? `${dbRes.failed} rows / ${failedFiles} files failed` : undefined,
+      error: dbRes.failed + failedFiles ? `${dbRes.failed} rows / ${failedFiles} files failed` : null,
+      note: zipSnap.note,
+      snapshot: zipSnap.snapshot,
+      snapshot_rows: zipSnap.rows,
     });
     toast.success(`✅ ZIP রিস্টোর সম্পন্ন — ✨ ${dbRes.added} রেকর্ড + ${uploaded} ফাইল যোগ, ⏭️ ${dbRes.skipped + skippedFiles} আগেই ছিল।`);
     fetchStats();
@@ -714,7 +911,7 @@ Restore:
           { label: 'মোট রেকর্ড', value: loading ? '...' : totalRecords.toLocaleString(), icon: HardDrive, color: 'text-primary' },
           { label: 'টেবিল', value: TABLES.length, icon: Database, color: 'text-emerald-400' },
           { label: 'ব্যাকআপ হিস্ট্রি', value: history.length, icon: Clock, color: 'text-amber-400' },
-          { label: 'সর্বশেষ ব্যাকআপ', value: history[0] ? new Date(history[0].date).toLocaleDateString('bn-BD') : 'কখনো না', icon: BarChart3, color: 'text-blue-400' },
+          { label: 'সর্বশেষ ব্যাকআপ', value: history[0] ? new Date(history[0].created_at).toLocaleDateString('bn-BD') : 'কখনো না', icon: BarChart3, color: 'text-blue-400' },
         ].map(({ label, value, icon: Icon, color }) => (
           <div key={label} className="glass-card rounded-2xl p-4">
             <div className={`flex items-center gap-2 mb-1 ${color}`}>
@@ -1052,27 +1249,100 @@ Restore:
         </div>
       )}
 
-      {/* History */}
-      {history.length > 0 && (
-        <div className="glass-card rounded-2xl overflow-hidden">
-          <div className="p-4 border-b border-border/40 flex items-center gap-2">
-            <Clock size={14} className="text-muted-foreground" />
-            <h3 className="text-sm font-bold text-foreground">ব্যাকআপ / রিস্টোর হিস্ট্রি</h3>
-            <span className="text-[10px] text-muted-foreground ml-auto">{history.length} entries</span>
-          </div>
-          <div className="divide-y divide-border/30 max-h-80 overflow-y-auto">
-            {history.map(h => (
-              <div key={h.id} className="p-3 flex items-center gap-3 text-xs">
-                {h.status === 'success' ? <CheckCircle size={14} className="text-emerald-400 flex-shrink-0" /> : <AlertTriangle size={14} className="text-destructive flex-shrink-0" />}
-                <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-foreground truncate">{h.label} <span className="text-muted-foreground font-normal">({h.type})</span></div>
-                  <div className="text-[10px] text-muted-foreground">{new Date(h.date).toLocaleString('bn-BD')} • {h.records} রেকর্ড {h.error ? `• ${h.error}` : ''}</div>
-                </div>
-              </div>
-            ))}
-          </div>
+      {/* History — persistent backup / restore / rollback timeline */}
+      <div className="glass-card rounded-2xl overflow-hidden">
+        <div className="p-4 border-b border-border/40 flex items-center gap-2 flex-wrap">
+          <Clock size={14} className="text-muted-foreground" />
+          <h3 className="text-sm font-bold text-foreground">ব্যাকআপ / রিস্টোর হিস্ট্রি</h3>
+          <span className="text-[10px] text-muted-foreground">{history.length} entries</span>
+          <button
+            onClick={loadHistory}
+            className="ml-auto text-[11px] flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border/60 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <RefreshCw size={12} className={historyLoading ? 'animate-spin' : ''} /> রিফ্রেশ
+          </button>
         </div>
-      )}
+
+        {historyLoading && history.length === 0 ? (
+          <div className="p-6 flex items-center gap-2 text-xs text-muted-foreground">
+            <Loader2 size={14} className="animate-spin" /> হিস্ট্রি লোড হচ্ছে…
+          </div>
+        ) : history.length === 0 ? (
+          <div className="p-6 text-xs text-muted-foreground">এখনো কোনো ব্যাকআপ বা রিস্টোর হয়নি।</div>
+        ) : (
+          <div className="divide-y divide-border/30 max-h-[28rem] overflow-y-auto">
+            {history.map(h => {
+              const isRollback = h.action === 'rollback';
+              const isExport = h.action === 'export';
+              return (
+                <div key={h.id} className="p-3 flex items-start gap-3 text-xs">
+                  {h.status === 'success'
+                    ? (isRollback
+                        ? <RotateCcw size={14} className="text-sky-400 flex-shrink-0 mt-0.5" />
+                        : isExport
+                          ? <Download size={14} className="text-emerald-400 flex-shrink-0 mt-0.5" />
+                          : <Upload size={14} className="text-amber-400 flex-shrink-0 mt-0.5" />)
+                    : <AlertTriangle size={14} className="text-destructive flex-shrink-0 mt-0.5" />}
+
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-foreground truncate">
+                      {h.label}
+                      <span className={`ml-2 text-[9px] uppercase tracking-wide px-1.5 py-0.5 rounded-md font-bold ${
+                        isRollback ? 'bg-sky-400/10 text-sky-400'
+                          : isExport ? 'bg-emerald-400/10 text-emerald-400'
+                          : 'bg-amber-400/10 text-amber-400'
+                      }`}>
+                        {isRollback ? 'rollback' : isExport ? 'backup' : 'restore'}
+                      </span>
+                      {h.reverted_at && (
+                        <span className="ml-2 text-[9px] uppercase tracking-wide px-1.5 py-0.5 rounded-md font-bold bg-muted text-muted-foreground">
+                          reverted
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-[10px] text-muted-foreground mt-0.5">
+                      {new Date(h.created_at).toLocaleString('bn-BD')} • {h.records} রেকর্ড
+                      {h.files ? ` • ${h.files} ফাইল` : ''}
+                      {h.tables?.length ? ` • ${h.tables.length} টেবিল` : ''}
+                      {h.error ? ` • ❌ ${h.error}` : ''}
+                    </div>
+                    {h.note && <div className="text-[10px] text-muted-foreground/80 mt-0.5">{h.note}</div>}
+                    {h.snapshot_rows > 0 && (
+                      <div className="text-[10px] text-sky-400/90 mt-0.5">
+                        ↩︎ এই পয়েন্টের আগের অবস্থা সংরক্ষিত ({h.snapshot_rows.toLocaleString()} রেকর্ড)
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-1.5 flex-shrink-0">
+                    {h.snapshot_rows > 0 && (
+                      <button
+                        onClick={() => revertTo(h)}
+                        disabled={!!reverting || restoring}
+                        className="px-2.5 py-1.5 rounded-lg text-[11px] font-semibold border border-sky-400/40 text-sky-400 hover:bg-sky-400/10 transition-colors disabled:opacity-50 flex items-center gap-1.5"
+                      >
+                        {reverting === h.id
+                          ? <Loader2 size={12} className="animate-spin" />
+                          : <RotateCcw size={12} />}
+                        আগের অবস্থায় ফিরুন
+                      </button>
+                    )}
+                    <button
+                      onClick={() => deleteHistoryEntry(h.id)}
+                      disabled={!!reverting}
+                      className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive transition-colors disabled:opacity-50"
+                      aria-label="হিস্ট্রি এন্ট্রি মুছুন"
+                    >
+                      <Trash2 size={12} />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
     </div>
   );
 };
