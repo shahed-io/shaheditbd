@@ -69,7 +69,7 @@ const LoginNotificationEmail = ({
         <Container style={wrapper}>
           <Section style={headerStyle}>
             <div style={logoCardStyle}>
-              <Img src={LOGO_URL} width="240" height="65" alt="Shahed Store" style={logoStyle} />
+              <Img src={LOGO_URL} width="240" height="65" alt="Shahed IT" style={logoStyle} />
             </div>
           </Section>
 
@@ -78,7 +78,7 @@ const LoginNotificationEmail = ({
               {isAdmin ? '🛡️ Admin Sign-in Alert' : '🔐 New Sign-in to Your Account'}
             </Text>
             <Text style={subtitleStyle}>
-              Hi {customerName}, we noticed a sign-in to your <strong>Shahed Store</strong> account.
+              Hi {customerName}, we noticed a sign-in to your <strong>Shahed IT</strong> account.
               If this was you, no action is needed. If you don't recognize this activity, please reset your password immediately.
             </Text>
 
@@ -124,7 +124,7 @@ const LoginNotificationEmail = ({
               </Text>
             </Section>
 
-            <Button style={{ ...buttonStyle, marginTop: '22px' }} href="https://shahedstore.com.bd/dashboard">
+            <Button style={{ ...buttonStyle, marginTop: '22px' }} href="https://shahedit.com/dashboard">
               Review Account Activity
             </Button>
 
@@ -137,7 +137,7 @@ const LoginNotificationEmail = ({
 
           <Section style={footerSection}>
             <Text style={copyrightStyle}>
-              &copy; {new Date().getFullYear()} Shahed Store. All rights reserved.
+              &copy; {new Date().getFullYear()} Shahed IT. All rights reserved.
             </Text>
           </Section>
         </Container>
@@ -150,8 +150,8 @@ export const template = {
   component: LoginNotificationEmail,
   subject: (data: LoginNotificationProps) =>
     data?.isAdmin
-      ? '🛡️ Admin sign-in alert — Shahed Store'
-      : '🔐 New sign-in to your Shahed Store account',
+      ? '🛡️ Admin sign-in alert — Shahed IT'
+      : '🔐 New sign-in to your Shahed IT account',
   displayName: 'Login Notification',
   previewData: {
     customerName: 'Rahul Ahmed',

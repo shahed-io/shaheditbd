@@ -363,7 +363,7 @@ const Navbar = () => {
               <span className="font-semibold tracking-wide tabular-nums">01840-099853</span>
             </a>
             <a
-              href="mailto:info@shahedstore.com.bd"
+              href="mailto:info@shahedit.com"
               aria-label="Email us"
               className="hidden md:flex group items-center gap-1.5 px-2.5 py-[5px] rounded-full transition-all hover:scale-[1.04] active:scale-95"
               style={{
@@ -374,7 +374,7 @@ const Navbar = () => {
               }}
             >
               <Mail size={11} style={{ color: 'hsl(var(--primary))' }} strokeWidth={2.5} />
-              <span className="font-semibold tracking-wide">info@shahedstore.com.bd</span>
+              <span className="font-semibold tracking-wide">info@shahedit.com</span>
             </a>
           </div>
 

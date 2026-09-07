@@ -13,8 +13,8 @@ const corsHeaders = {
  * 
  * এবং এই ইমেইলটা ছিল এটাকে set up করে দাও
  */
-const SITE_NAME = 'Shahed Store'
-const SITE_URL = 'https://shahedstore.com.bd'
+const SITE_NAME = 'Shahed IT'
+const SITE_URL = 'https://shahedit.com'
 const BRAND_COLOR = 'hsl(258,78%,55%)'
 const BRAND_GRADIENT = 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))'
 
@@ -187,7 +187,7 @@ function buildInvoiceHtml(order: any, items: any[]) {
       </div>
       <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:12px;line-height:1.8;">
         <a href="${SITE_URL}" style="color:#818cf8;text-decoration:none;font-weight:600;">${SITE_URL}</a>
-        &nbsp;•&nbsp; info@shahedstore.com.bd
+        &nbsp;•&nbsp; info@shahedit.com
       </div>
     </div>
 
@@ -266,7 +266,7 @@ function buildPromoHtml(subject: string, body: string, ctaText?: string, ctaUrl?
     <div style="background:#f9f9fc;border-top:1px solid #f0f0f5;padding:16px 28px;text-align:center;">
       <p style="margin:0;font-size:11px;color:#c4c4c4;">
         <a href="${SITE_URL}" style="color:hsl(258,78%,55%);text-decoration:none;">${SITE_URL}</a> | 
-        সাপোর্ট: info@shahedstore.com.bd
+        সাপোর্ট: info@shahedit.com
       </p>
     </div>
   </div>

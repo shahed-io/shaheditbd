@@ -432,17 +432,17 @@ const ProductDetail = () => {
   const dbSeoTitle = normalizeBrandNameText((product as any).seo_title || '');
   const dbSeoDesc = normalizeBrandNameText((product as any).seo_description || '');
 
-  // Title format: "{Product Name} – ৳{Price} in BD | Shahed Store"
+  // Title format: "{Product Name} – ৳{Price} in BD | Shahed IT"
   const seoTitle = dbSeoTitle
     ? dbSeoTitle
-    : `${productDisplayName} – ৳${displayPrice.toLocaleString()} in BD | Shahed Store`;
+    : `${productDisplayName} – ৳${displayPrice.toLocaleString()} in BD | Shahed IT`;
 
   const seoDescription = (() => {
     if (dbSeoDesc) return dbSeoDesc.substring(0, 160);
     // Auto-generate 150-160 char description mentioning product name, BDT price, instant delivery.
     const priceStr = `৳${displayPrice.toLocaleString()} BDT`;
     const catStr = product.categories?.name ? ` ${product.categories.name.toLowerCase()}` : '';
-    const base = `Buy ${productDisplayName} at ${priceStr} in Bangladesh. 100% genuine${catStr} license with instant delivery via email. bKash/Nagad accepted — Shahed Store.`;
+    const base = `Buy ${productDisplayName} at ${priceStr} in Bangladesh. 100% genuine${catStr} license with instant delivery via email. bKash/Nagad accepted — Shahed IT.`;
     // Pad short strings to hit 150+ chars; truncate long ones to 160.
     if (base.length >= 150) return base.substring(0, 160);
     return `${base} Trusted digital software shop in BD.`.substring(0, 160);
@@ -459,7 +459,7 @@ const ProductDetail = () => {
     `buy ${productDisplayName} bangladesh`,
     `${productDisplayName} cheap price bangladesh`,
     product.categories?.name ? `${product.categories.name} বাংলাদেশ` : '',
-    'Shahed Store',
+    'Shahed IT',
     'digital software bangladesh',
   ].filter(Boolean).join(', ');
 
@@ -512,7 +512,7 @@ const ProductDetail = () => {
         ogImage={product.image_url || undefined}
         ogImages={(product.images || []).filter(Boolean)}
         ogType="product"
-        canonical={`https://shahedstore.com.bd/product/${product.slug}`}
+        canonical={`https://shahedit.com/product/${product.slug}`}
         schema={seoSchemas}
         keywords={seoKeywords}
       />
@@ -562,8 +562,8 @@ const ProductDetail = () => {
                 <img
                   key={images[activeImg]}
                   src={images[activeImg]}
-                  alt={(product as any).image_alt || `${productDisplayName} price in Bangladesh - Shahed Store`}
-                  title={`${productDisplayName} - ৳${displayPrice.toLocaleString()} | Shahed Store Bangladesh`}
+                  alt={(product as any).image_alt || `${productDisplayName} price in Bangladesh - Shahed IT`}
+                  title={`${productDisplayName} - ৳${displayPrice.toLocaleString()} | Shahed IT Bangladesh`}
                   width={800}
                   height={800}
                   loading="eager"
@@ -635,7 +635,7 @@ const ProductDetail = () => {
                   {images.map((img, i) => (
                     <button key={i} onClick={() => { setActiveImg(i); setImgLoaded(false); }}
                       className={`flex-shrink-0 w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all hover:scale-105 ${activeImg === i ? 'border-primary shadow-[0_0_16px_hsla(271,91%,65%,0.5)]' : 'border-border hover:border-primary/50'}`}>
-                      <img src={img} alt={(product as any).image_alt || `${productDisplayName} price in Bangladesh - Shahed Store`} title={`${productDisplayName} gallery image ${i + 1}`} width={160} height={160} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+                      <img src={img} alt={(product as any).image_alt || `${productDisplayName} price in Bangladesh - Shahed IT`} title={`${productDisplayName} gallery image ${i + 1}`} width={160} height={160} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                     </button>
                   ))}
                 </div>
@@ -765,7 +765,7 @@ const ProductDetail = () => {
 
                 </a>
 
-                {/* ── RIGHT: Floating Shahed Store logo card (overhangs right) ── */}
+                {/* ── RIGHT: Floating Shahed IT logo card (overhangs right) ── */}
                 <div
                   className="absolute top-1/2 -translate-y-1/2 right-0 translate-x-[16%] lg:translate-x-[20%]"
                   style={{ filter: 'drop-shadow(0 4px 10px rgba(124,58,237,0.18))' }}
@@ -785,7 +785,7 @@ const ProductDetail = () => {
                   >
                     <img
                       src={brandIcon}
-                      alt="Shahed Store — DBID Verified Merchant"
+                      alt="Shahed IT — DBID Verified Merchant"
                       className="w-[82%] h-[82%] object-contain relative z-10"
                       style={{
                         filter: 'drop-shadow(0 2px 4px rgba(124,58,237,0.20))',
@@ -1540,7 +1540,7 @@ const RelatedProducts = ({ categoryId, currentProductId }: { categoryId: string 
                   <div className="relative aspect-square overflow-hidden rounded-lg border border-border bg-muted/30 group-hover:border-primary/40 transition-colors">
                     <img
                       src={p.image_url || PLACEHOLDER}
-                      alt={`${p.name} price in Bangladesh - Shahed Store`}
+                      alt={`${p.name} price in Bangladesh - Shahed IT`}
                       width={300}
                       height={300}
                       loading="lazy"

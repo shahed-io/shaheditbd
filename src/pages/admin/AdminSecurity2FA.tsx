@@ -212,11 +212,11 @@ const AdminSecurity2FA = () => {
   .warn{margin-top:24px;padding:12px;background:#fff7e6;border:1px solid #f0c674;border-radius:8px;font-size:13px;color:#8a5a00}
   .footer{margin-top:24px;font-size:11px;color:#888;text-align:center}
 </style></head><body>
-<h1>Shahed Store — Admin 2FA Backup Codes</h1>
+<h1>Shahed IT — Admin 2FA Backup Codes</h1>
 <div class="meta">Generated: ${new Date().toLocaleString()}</div>
 <div class="grid">${codes.map(c => `<div class="code">${c}</div>`).join('')}</div>
 <div class="warn">⚠ Each code can be used only once. Keep this page in a safe place. Anyone with these codes can bypass your authenticator.</div>
-<div class="footer">Shahed Store Admin Panel</div>
+<div class="footer">Shahed IT Admin Panel</div>
 <script>window.onload=()=>{window.print();}</script>
 </body></html>`;
     const w = window.open('', '_blank', 'width=720,height=900');
@@ -226,7 +226,7 @@ const AdminSecurity2FA = () => {
   };
 
   const downloadBackupCodes = (codes: string[]) => {
-    const text = `Shahed Store — Admin 2FA Backup Codes\nGenerated: ${new Date().toISOString()}\n\n${codes.join('\n')}\n\nEach code is single-use. Keep safe.\n`;
+    const text = `Shahed IT — Admin 2FA Backup Codes\nGenerated: ${new Date().toISOString()}\n\n${codes.join('\n')}\n\nEach code is single-use. Keep safe.\n`;
     const blob = new Blob([text], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');

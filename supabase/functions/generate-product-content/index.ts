@@ -88,11 +88,11 @@ KEYWORD INTENT TYPES to include naturally:
   - Local: "[product] ঢাকা", "[product] bangladesh online shop"
 PRICE FORMAT: Always write price as ৳[amount] (Taka symbol)
 TRUST SIGNALS: "১০০% genuine", "instant delivery", "official license", "নিরাপদ পেমেন্ট"
-STORE NAME RULE: Use the correct spelling based on language. In English text write exactly "Shahed Store". In Bengali text write exactly "শাহেদ স্টোর" (শা-হে-দ, "হে"-তে এ-কার) — this is the correct Bengali spelling. NEVER use misspelled Bengali variants like "শাহিদ স্টোর", "সাহেদ স্টোর", "শায়েদ স্টোর", "শাহীদ স্টোর", "শহীদ স্টোর", "শাওন স্টোর", "শাহেদ ষ্টোর", "শাহেদ ইস্টোর". NEVER use English variants like "ShahedStore", "Shahid Store", "Sahed Store", "Shawon Store". In Bengali sentences use Bengali case markers naturally (শাহেদ স্টোরের, শাহেদ স্টোরে, শাহেদ স্টোরকে) — do not mix English name with Bengali suffix ("Shahed Store-এর" is wrong).`;
+STORE NAME RULE: Use the correct spelling based on language. In English text write exactly "Shahed IT". In Bengali text write exactly "Shahed IT" (শা-হে-দ, "হে"-তে এ-কার) — this is the correct Bengali spelling. NEVER use misspelled Bengali variants like "শাহিদ স্টোর", "সাহেদ স্টোর", "শায়েদ স্টোর", "শাহীদ স্টোর", "শহীদ স্টোর", "শাওন স্টোর", "শাহেদ ষ্টোর", "শাহেদ ইস্টোর". NEVER use English variants like "ShahedIT", "Shahid Store", "Sahed Store", "Shawon Store". In Bengali sentences use Bengali case markers naturally (Shahed ITের, Shahed ITে, Shahed ITকে) — do not mix English name with Bengali suffix ("Shahed IT-এর" is wrong).`;
 
     if (type === "short_description") {
       const numOptions = count && count > 1 ? count : 1;
-      systemPrompt = `You are a product copywriter for Shahed Store — Bangladesh's top digital software shop. Write compelling short product descriptions in Bangla-English mix optimized for Bangladesh Google search ranking.
+      systemPrompt = `You are a product copywriter for Shahed IT — Bangladesh's top digital software shop. Write compelling short product descriptions in Bangla-English mix optimized for Bangladesh Google search ranking.
 
 ${bdSeoContext}
 
@@ -117,7 +117,7 @@ CRITICAL PUNCTUATION RULE: After any English word, number, or alphanumeric conte
 
     } else if (type === "description") {
       maxTokens = 2800;
-      systemPrompt = `You are an expert eCommerce SEO content writer for Shahed Store — a certified Digital E-commerce Platform, officially registered under the Ministry of Commerce, People's Republic of Bangladesh (DBID: 586772174).
+      systemPrompt = `You are an expert eCommerce SEO content writer for Shahed IT — a certified Digital E-commerce Platform, officially registered under the Ministry of Commerce, People's Republic of Bangladesh (DBID: 586772174).
 
 ${bdSeoContext}
 
@@ -140,7 +140,7 @@ STRICT SEO STRUCTURE — follow exactly in this order:
    - 2-3 sentences with 4-6 strategic keywords naturally embedded
    - Include: [product name] বাংলাদেশ, [product] কিনুন, [product] price bd, [product] সেরা দাম
    - Mention at least 2 major cities from: ${bdCities}
-7. ### 🏪 কেন Shahed Store? (Why Choose Us?)
+7. ### 🏪 কেন Shahed IT? (Why Choose Us?)
    - 3-4 trust points: genuine license, instant delivery, 24/7 support, secure payment
 8. ### 🚀 এখনই কিনুন (Call To Action)
    - 1-2 action-oriented lines with urgency
@@ -184,9 +184,9 @@ So the SEO title MUST contain one of these EXACT English patterns to rank.
 
 RULES:
 - seo_title: max 60 chars. MUST start with the short common product name (e.g. "IDM", "Windows 11 Pro", "Office 365") followed by "Price in BD" or "Price in Bangladesh". Then trust phrase. Example formats (pick best fit):
-    * "IDM Price in BD ৳[price] | Lifetime Key | Shahed Store"
+    * "IDM Price in BD ৳[price] | Lifetime Key | Shahed IT"
     * "Windows 11 Pro Price in Bangladesh – Buy Genuine Key"
-    * "Office 365 Price in BD | Original License | Shahed Store"
+    * "Office 365 Price in BD | Original License | Shahed IT"
   Use the SHORT common name (IDM, not "Internet Download Manager Lifetime Key").
 - seo_description: max 160 chars. Bangla-English mix. MUST include: exact price in ৳, the phrase "price in BD" or "in Bangladesh", action word (কিনুন/Buy), trust signal (100% genuine/original/অরিজিনাল), instant delivery.
 - Write naturally like a Bangladeshi user would search.`;
@@ -207,7 +207,7 @@ Meta Description MUST include exact ৳ price, "price in BD"/"in Bangladesh", "1
 
     } else if (type === "all") {
       maxTokens = 2800;
-      systemPrompt = `You are a product copywriter and Bangladesh SEO expert for Shahed Store (DBID: 586772174) — Bangladesh's #1 digital software shop.
+      systemPrompt = `You are a product copywriter and Bangladesh SEO expert for Shahed IT (DBID: 586772174) — Bangladesh's #1 digital software shop.
 
 ${bdSeoContext}
 
@@ -215,7 +215,7 @@ Return ONLY valid JSON in this exact format:
 {
   "short_description": "1-2 sentences in Bangla-English mix with BDT price and buying intent",
   "description": "full markdown formatted description following the 9-section Bangladesh SEO structure",
-  "seo_title": "max 60 chars — product keyword + Bangladesh signal + Shahed Store",
+  "seo_title": "max 60 chars — product keyword + Bangladesh signal + Shahed IT",
   "seo_description": "max 160 chars — Bangla-English, price in ৳, buying intent, Bangladesh/বাংলাদেশ, trust signal"
 }
 
@@ -226,7 +226,7 @@ For the description field, follow this exact structure:
 4. ### 💡 কেন কিনবেন? (Benefits — bullets)
 5. ### 💰 মূল্য ও প্ল্যান (Pricing — all plans with ৳ prices, Personal/Shared if given)
 6. ### 🔍 SEO কীওয়ার্ড সেকশন (2-3 sentences, Bangladesh keywords, 2+ cities)
-7. ### 🏪 কেন Shahed Store? (3-4 trust points)
+7. ### 🏪 কেন Shahed IT? (3-4 trust points)
 8. ### 🚀 এখনই কিনুন (Call To Action)
 9. ### ⚠️ Important Notes (ALWAYS LAST — copy this footer EXACTLY as below, do NOT translate)\n\n❌ Sold Products Are Not Returnable.\n\n🛒 The product will be delivered instantly or within 1 hours (Rare cases: up to 24 hours)\n\n❌ Any of our products are requested to be activated within two days maximum. Otherwise the warranty will be void.
 
@@ -241,7 +241,7 @@ No markdown outside the JSON string values. Escape newlines as \\n in the JSON.`
 - Pricing Plans: ${durationInfo}
 - Base Price: ${price ? `৳${price}` : "See plans"}
 
-SEO title: include "${productName}" + "বাংলাদেশ" or "BD" + "Shahed Store" within 60 chars.
+SEO title: include "${productName}" + "বাংলাদেশ" or "BD" + "Shahed IT" within 60 chars.
 SEO description: include price in ৳, "বাংলাদেশ", "অরিজিনাল/genuine", buying intent word within 160 chars.
 In description's SEO section: include these naturally: "${productName} বাংলাদেশ", "${productName} কিনুন ঢাকা", "${productName} price bd".`;
 
@@ -253,7 +253,7 @@ In description's SEO section: include these naturally: "${productName} বাং
         });
       }
       maxTokens = 3000;
-      systemPrompt = `You are an expert eCommerce SEO content writer for Shahed Store (DBID: 586772174) — Bangladesh's #1 digital software shop.
+      systemPrompt = `You are an expert eCommerce SEO content writer for Shahed IT (DBID: 586772174) — Bangladesh's #1 digital software shop.
 
 ${bdSeoContext}
 
@@ -293,7 +293,7 @@ Now write the full description for the NEW PRODUCT following the EXACT SAME styl
       // Long-form SEO-rich product body (700-1500 words) + structured FAQ array.
       // Used by the bulk Product Content Enrichment admin tool.
       maxTokens = 4500;
-      systemPrompt = `You are a senior eCommerce SEO content strategist for Shahed Store (DBID: 586772174) — Bangladesh's #1 digital software shop.
+      systemPrompt = `You are a senior eCommerce SEO content strategist for Shahed IT (DBID: 586772174) — Bangladesh's #1 digital software shop.
 
 ${bdSeoContext}
 
@@ -319,7 +319,7 @@ Return ONLY valid JSON in this EXACT shape (no markdown fences, no extra prose):
 6-8 bullet points focusing on USER OUTCOMES (time saved, money saved, productivity, learning, entertainment, peace of mind). NOT features — actual benefits.
 
 ### 🧭 ব্যবহার গাইড (Usage Guide / How To Use)
-Step-by-step numbered list (5-8 steps) of how to purchase, receive, activate, and start using the product. Be specific to digital delivery on Shahed Store (order → instant license delivery → activation steps).
+Step-by-step numbered list (5-8 steps) of how to purchase, receive, activate, and start using the product. Be specific to digital delivery on Shahed IT (order → instant license delivery → activation steps).
 
 ### ⚖️ তুলনা (Comparison — Why This Over Alternatives)
 A short markdown table comparing this product against 2 common alternatives or the pirated/free version. Columns: Feature | This Product | Alternative 1 | Alternative 2. 5-7 rows covering price, genuineness, support, updates, security, warranty.
@@ -333,7 +333,7 @@ List ALL duration plans with exact BDT prices clearly. Mention Personal/Shared/a
 ### 🔍 SEO কীওয়ার্ড সেকশন (Search Intent Coverage)
 3-4 sentences naturally weaving 6-8 strategic keywords: "[product] বাংলাদেশ", "[product] কিনুন", "[product] price in bd", "[product] সেরা দাম", "[product] online shop bangladesh", and at least 2 city names from: ${bdCities}.
 
-### 🏪 কেন Shahed Store? (Trust & Authority)
+### 🏪 কেন Shahed IT? (Trust & Authority)
 4-5 trust points: genuine license, instant delivery, 24/7 support, secure bKash/Nagad/Rocket payment, official DBID 586772174 registration.
 
 ### 🚀 এখনই কিনুন (Call To Action)
@@ -373,7 +373,7 @@ The description MUST be 700–1500 words and contain ALL 11 sections in the exac
     } else if (type === "faq") {
       // Generate FAQ ONLY — grounded in the existing product description + metadata
       maxTokens = 2500;
-      systemPrompt = `You are a senior eCommerce SEO content strategist for Shahed Store (DBID: 586772174) — Bangladesh's #1 digital software shop.
+      systemPrompt = `You are a senior eCommerce SEO content strategist for Shahed IT (DBID: 586772174) — Bangladesh's #1 digital software shop.
 
 ${bdSeoContext}
 
@@ -403,7 +403,7 @@ Return ONLY valid JSON in this EXACT shape (no markdown fences, no extra prose):
 - Base Price: ${price ? `৳${price}` : "See plans"}
 
 === EXISTING PRODUCT DESCRIPTION (source of truth — do not contradict) ===
-${(demoDescription || "").slice(0, 8000) || "(no existing description — base answers on the metadata above and standard Shahed Store policies)"}
+${(demoDescription || "").slice(0, 8000) || "(no existing description — base answers on the metadata above and standard Shahed IT policies)"}
 
 Return ONLY the JSON object with 6–8 FAQ items.`;
 

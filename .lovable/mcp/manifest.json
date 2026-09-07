@@ -13,13 +13,13 @@
     "server": {
       "name": "shahed-store-mcp",
       "version": "0.1.0",
-      "title": "Shahed Store"
+      "title": "Shahed IT"
     },
     "tools": [
       {
         "name": "get_my_profile",
         "title": "Get my profile",
-        "description": "Return the signed-in user's Shahed Store profile (name, email, phone, wallet balance, points).",
+        "description": "Return the signed-in user's Shahed IT profile (name, email, phone, wallet balance, points).",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -35,7 +35,7 @@
       {
         "name": "list_my_orders",
         "title": "List my orders",
-        "description": "List the signed-in user's recent Shahed Store orders with status, total and item summary.",
+        "description": "List the signed-in user's recent Shahed IT orders with status, total and item summary.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -97,7 +97,7 @@
       {
         "name": "search_products",
         "title": "Search products",
-        "description": "Search Shahed Store's public product catalog by keyword. Returns name, price and slug.",
+        "description": "Search Shahed IT's public product catalog by keyword. Returns name, price and slug.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,

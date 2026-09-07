@@ -375,7 +375,7 @@ const AdminLicenses = () => {
   const handlePrint = () => {
     const printContent = `
       <!DOCTYPE html><html><head><meta charset="UTF-8">
-      <title>License Keys - Shahed Store</title>
+      <title>License Keys - Shahed IT</title>
       <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; padding: 30px; color: #1a1a2e; }
         h1 { font-size: 20px; color: hsl(258,78%,55%); margin-bottom: 5px; }
@@ -388,7 +388,7 @@ const AdminLicenses = () => {
         .mono { font-family: 'Courier New', monospace; font-size: 11px; }
         @media print { body { padding: 10px; } }
       </style></head><body>
-      <h1>🔑 License Keys — Shahed Store</h1>
+      <h1>🔑 License Keys — Shahed IT</h1>
       <p class="subtitle">${filtered.length} টি লাইসেন্স • প্রিন্ট তারিখ: ${new Date().toLocaleDateString('bn-BD')}</p>
       <table>
         <thead><tr>
@@ -453,7 +453,7 @@ const AdminLicenses = () => {
     <div class="invoice">
       <div class="header">
         <div class="brand">
-          <h1>🔑 Shahed Store</h1>
+          <h1>🔑 Shahed IT</h1>
           <p>Digital License & Software Store</p>
         </div>
         <div class="invoice-info">
@@ -473,8 +473,8 @@ const AdminLicenses = () => {
         </div>
         <div class="party" style="text-align:right;">
           <h4>From</h4>
-          <p class="name">Shahed Store</p>
-          <p>info@shahedstore.com.bd</p>
+          <p class="name">Shahed IT</p>
+          <p>info@shahedit.com</p>
         </div>
       </div>
       <div class="license-box">
@@ -570,8 +570,8 @@ const AdminLicenses = () => {
     msg += `*Email:*\n\`${lic.key_value}\`\n`;
     if (lic.extra_info) msg += `\n*Temporary Password:*\n\`${lic.extra_info}\`\n`;
     msg += `\n________________________\n\n`;
-    msg += `Thank you for choosing *Shahed Store*\n`;
-    msg += `_www.shahedstore.com.bd_`;
+    msg += `Thank you for choosing *Shahed IT*\n`;
+    msg += `_www.shahedit.com_`;
 
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
     window.open(url, '_blank');
@@ -624,8 +624,8 @@ const AdminLicenses = () => {
       msg += `________________________\n\n`;
     });
 
-    msg += `Thank you for choosing *Shahed Store*\n`;
-    msg += `_www.shahedstore.com.bd_`;
+    msg += `Thank you for choosing *Shahed IT*\n`;
+    msg += `_www.shahedit.com_`;
 
     // Open WhatsApp
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
@@ -1845,7 +1845,7 @@ const AdminLicenses = () => {
                   🔐 Key: {waModal.license.key_value}{'\n'}
                   {waModal.license.extra_info && <>🔒 Password: {waModal.license.extra_info}{'\n'}</>}
                   ━━━━━━━━━━━━{'\n\n'}
-                  ✅ ধন্যবাদ! — Shahed Store
+                  ✅ ধন্যবাদ! — Shahed IT
                 </div>
               </div>
             </div>

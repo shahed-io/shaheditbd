@@ -23,7 +23,7 @@ interface OverviewData {
 const DATABASES = ['us', 'uk', 'in', 'au', 'ca', 'de', 'fr'];
 
 export default function AdminSemrush() {
-  const [domain, setDomain] = useState('shahedstore.com.bd');
+  const [domain, setDomain] = useState('shahedit.com');
   const [database, setDatabase] = useState('us');
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<OverviewData | null>(null);

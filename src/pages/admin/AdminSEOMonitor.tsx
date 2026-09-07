@@ -24,7 +24,7 @@ interface SitemapStat {
 interface PingLog { id: string; entity: 'product' | 'blog'; title: string; slug: string; updated_at: string; }
 interface SchemaCheck { type: string; present: boolean; valid: boolean; note?: string; }
 
-const SITE = 'https://shahedstore.com.bd';
+const SITE = 'https://shahedit.com';
 
 const Card = ({ children, className = '' }: any) => (
   <div className={`rounded-2xl border border-border bg-card/80 backdrop-blur-md p-5 shadow-sm ${className}`}>
@@ -361,7 +361,7 @@ const AdminSEOMonitor = () => {
             { label: 'Bing Webmaster Tools', desc: 'Bing crawl reports', url: 'https://www.bing.com/webmasters', icon: Globe },
             { label: 'Rich Results Test', desc: 'Schema.org validator', url: `https://search.google.com/test/rich-results?url=${encodeURIComponent(SITE)}`, icon: Code2 },
             { label: 'PageSpeed Insights', desc: 'Core Web Vitals', url: `https://pagespeed.web.dev/analysis?url=${encodeURIComponent(SITE)}`, icon: Activity },
-            { label: 'Google site: search', desc: 'See indexed pages', url: `https://www.google.com/search?q=site%3Ashahedstore.com.bd`, icon: Search },
+            { label: 'Google site: search', desc: 'See indexed pages', url: `https://www.google.com/search?q=site%3Ashahedit.com`, icon: Search },
             { label: 'Schema.org Validator', desc: 'Markup validation', url: `https://validator.schema.org/#url=${encodeURIComponent(SITE)}`, icon: Database },
           ].map(t => (
             <a

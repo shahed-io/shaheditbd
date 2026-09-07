@@ -245,7 +245,7 @@ export default function AdminAbandonedCheckouts() {
   };
 
   const waLink = (phone: string, name: string | null) => {
-    const msg = encodeURIComponent(`Hi ${name || ''}, this is from Shahed Store. We noticed you started a purchase on our website but didn't finish. Can we help complete your order?`);
+    const msg = encodeURIComponent(`Hi ${name || ''}, this is from Shahed IT. We noticed you started a purchase on our website but didn't finish. Can we help complete your order?`);
     const cleanPhone = phone.replace(/\D/g, '').replace(/^0/, '880');
     return `https://wa.me/${cleanPhone}?text=${msg}`;
   };
@@ -581,7 +581,7 @@ function DetailDrawer({
             )}
             {row.customer_email && (
               <a
-                href={`mailto:${row.customer_email}?subject=${encodeURIComponent('Complete your order at Shahed Store')}`}
+                href={`mailto:${row.customer_email}?subject=${encodeURIComponent('Complete your order at Shahed IT')}`}
                 className="flex-1 min-w-[140px] px-4 py-2.5 rounded-xl bg-blue-500 text-white text-sm font-medium flex items-center justify-center gap-2 hover:bg-blue-600"
               >
                 <Mail size={16} /> Email

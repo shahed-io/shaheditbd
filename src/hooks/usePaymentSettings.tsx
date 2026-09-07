@@ -134,7 +134,7 @@ export const DEFAULT_PAYMENT_CONFIGS: PaymentMethodConfig[] = [
     accentColor: 'hsl(214,80%,48%)',
     bgColor: 'hsla(214,80%,48%,0.07)',
     bankName: 'Dutch Bangla Bank',
-    accountName: 'Shahed Store',
+    accountName: 'Shahed IT',
     branchName: 'Rajshahi',
     routingNumber: '090811933',
     steps: [

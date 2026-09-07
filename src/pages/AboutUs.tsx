@@ -71,9 +71,9 @@ export default function AboutUs() {
       style={{ background: 'linear-gradient(145deg, hsl(258,55%,97%) 0%, hsl(220,40%,96%) 40%, hsl(200,50%,96%) 100%)' }}
     >
       <SEOHead
-        title="About Shahed Store"
-        description="Learn about Shahed Store, our team, mission, and commitment to genuine digital software with fast delivery in Bangladesh."
-        canonical="https://shahedstore.com.bd/about"
+        title="About Shahed IT"
+        description="Learn about Shahed IT, our team, mission, and commitment to genuine digital software with fast delivery in Bangladesh."
+        canonical="https://shahedit.com/about"
       />
       <Navbar />
 
@@ -139,7 +139,7 @@ export default function AboutUs() {
           </div>
           <div className="space-y-4 text-[13.5px] leading-relaxed" style={{ color: 'hsl(226,25%,38%)' }}>
             <p>
-              <strong style={{ color: 'hsl(226,35%,18%)' }}>Shahed Store</strong> বাংলাদেশের একটি বিশ্বস্ত ডিজিটাল সফটওয়্যার মার্কেটপ্লেস। আমরা <strong style={{ color: 'hsl(258,78%,50%)' }}>২০২২ সাল</strong> থেকে গ্রাহকদের কাছে অরিজিনাল উইন্ডোজ, অফিস, অ্যাডোবি, স্ট্রিমিং সাবস্ক্রিপশন, ভিপিএন এবং এআই টুলস সরবরাহ করে আসছি।
+              <strong style={{ color: 'hsl(226,35%,18%)' }}>Shahed IT</strong> বাংলাদেশের একটি বিশ্বস্ত ডিজিটাল সফটওয়্যার মার্কেটপ্লেস। আমরা <strong style={{ color: 'hsl(258,78%,50%)' }}>২০২২ সাল</strong> থেকে গ্রাহকদের কাছে অরিজিনাল উইন্ডোজ, অফিস, অ্যাডোবি, স্ট্রিমিং সাবস্ক্রিপশন, ভিপিএন এবং এআই টুলস সরবরাহ করে আসছি।
             </p>
             <p>
               আমাদের লক্ষ্য সহজ — প্রতিটি বাংলাদেশি ব্যবহারকারীর কাছে অরিজিনাল সফটওয়্যার সাশ্রয়ী মূল্যে এবং তাৎক্ষণিকভাবে পৌঁছে দেওয়া। কোনো হ্যাসেল নেই, কোনো ঝামেলা নেই — শুধু দ্রুত, নিরাপদ ও নির্ভরযোগ্য সেবা।

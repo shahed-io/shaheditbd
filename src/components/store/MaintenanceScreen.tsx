@@ -22,7 +22,7 @@ const MaintenanceScreen = ({ settings }: { settings: MaintenanceSettings }) => {
 
   const waHref = settings.whatsapp
     ? `https://wa.me/${settings.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
-        settings.whatsappMessage || 'Hello, I need support from Shahed Store.'
+        settings.whatsappMessage || 'Hello, I need support from Shahed IT.'
       )}`
     : '';
 
@@ -78,7 +78,7 @@ const MaintenanceScreen = ({ settings }: { settings: MaintenanceSettings }) => {
           />
           <img
             src={mascot}
-            alt="Shahed Store maintenance mascot — a cartoon technician waving with a wrench"
+            alt="Shahed IT maintenance mascot — a cartoon technician waving with a wrench"
             width={230}
             height={230}
             loading="eager"
@@ -222,7 +222,7 @@ const MaintenanceScreen = ({ settings }: { settings: MaintenanceSettings }) => {
           className="mt-9 pt-6 flex items-center justify-center gap-2 text-[11px] font-semibold tracking-[0.14em] uppercase"
           style={{ borderTop: '1px solid hsla(226,30%,88%,0.9)', color: 'hsl(226,15%,58%)' }}
         >
-          <ShieldCheck size={13} /> {settings.footerText || 'Shahed Store'}
+          <ShieldCheck size={13} /> {settings.footerText || 'Shahed IT'}
         </div>
       </div>
 

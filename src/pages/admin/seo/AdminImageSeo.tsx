@@ -95,7 +95,7 @@ const AdminImageSeo = () => {
                     <input
                       value={getAlt(p)}
                       onChange={e => setAlts(prev => ({ ...prev, [p.id]: e.target.value }))}
-                      placeholder={`${p.name} — Shahed Store`}
+                      placeholder={`${p.name} — Shahed IT`}
                       className="flex-1 bg-background border border-border rounded-lg px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:border-primary transition-colors"
                     />
                     <button onClick={() => save(p)} disabled={saving === p.id}

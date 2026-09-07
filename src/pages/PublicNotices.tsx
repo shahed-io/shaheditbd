@@ -62,7 +62,7 @@ export default function PublicNotices() {
           <div className="text-center py-20 text-muted-foreground">Notice পাওয়া যায়নি।</div>
         ) : (
           <div ref={noticeRef}>
-            <NoticeTemplate notice={one} brand={{ name: 'Shahed Store' }} signatureUrl={signature.imageDataUrl || undefined} />
+            <NoticeTemplate notice={one} brand={{ name: 'Shahed IT' }} signatureUrl={signature.imageDataUrl || undefined} />
           </div>
         )}
       </div>
@@ -71,7 +71,7 @@ export default function PublicNotices() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white py-10 px-4">
-      <SEOHead title="Notices" description="Latest notices and announcements from Shahed Store." />
+      <SEOHead title="Notices" description="Latest notices and announcements from Shahed IT." />
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 bg-violet-100 text-violet-700 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider">

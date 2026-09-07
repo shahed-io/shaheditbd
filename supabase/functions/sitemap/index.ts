@@ -5,7 +5,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const SITE_URL = 'https://shahedstore.com.bd';
+const SITE_URL = 'https://shahedit.com';
 const SUPABASE_STORAGE_ORIGIN = 'https://dpvdavjwqyviredzoorj.supabase.co';
 const SUPABASE_STORAGE_PUBLIC_PATH = '/storage/v1/object/public/';
 
@@ -120,8 +120,8 @@ Deno.serve(async (req) => {
         }
       }
 
-      const imageTitle = escape(p.seo_title || `${p.name} - Buy at Best Price in Bangladesh | Shahed Store`);
-      const imageCaption = escape(`${p.name} - High quality product image from Shahed Store Bangladesh`);
+      const imageTitle = escape(p.seo_title || `${p.name} - Buy at Best Price in Bangladesh | Shahed IT`);
+      const imageCaption = escape(`${p.name} - High quality product image from Shahed IT Bangladesh`);
 
       const imageBlocks = allImages.map((img, i) => `
     <image:image>

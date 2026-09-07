@@ -21,7 +21,7 @@ Deno.serve(async (req) => {
       .eq('user_id', u.user.id).eq('role', 'admin').maybeSingle();
     if (!role) return j({ error: 'Forbidden' }, 403);
 
-    const { name = 'Shahed Store Authority', style = 'elegant cursive' } =
+    const { name = 'Shahed IT Authority', style = 'elegant cursive' } =
       (await req.json().catch(() => ({}))) as { name?: string; style?: string };
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');

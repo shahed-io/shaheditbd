@@ -62,7 +62,7 @@ Deno.serve(async (req) => {
 
     const BOT_TOKEN = Deno.env.get('TELEGRAM_BOT_TOKEN');
     const telegramChatId = settingMap['telegram_chat_id'];
-    const siteName = settingMap['site_name'] || 'Shahed Store';
+    const siteName = settingMap['site_name'] || 'Shahed IT';
 
     const result: Record<string, any> = {};
 

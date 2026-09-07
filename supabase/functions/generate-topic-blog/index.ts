@@ -111,7 +111,7 @@ serve(async (req) => {
 
     const bdCities = "ঢাকা, চট্টগ্রাম, সিলেট, রাজশাহী, খুলনা, বরিশাল, ময়মনসিংহ, কুমিল্লা";
 
-    const systemPrompt = `You are a senior SEO content strategist for Shahed Store (DBID: 586772174) — Bangladesh's #1 digital software & subscription store (shahedstore.com.bd).
+    const systemPrompt = `You are a senior SEO content strategist for Shahed IT (DBID: 586772174) — Bangladesh's #1 digital software & subscription store (shahedit.com).
 
 GOAL: Write a comprehensive, deeply informational blog post in Bangla-English mix that ranks #1 on Google Bangladesh AND gets cited by ChatGPT, Perplexity, and Google AI Overview.
 
@@ -120,7 +120,7 @@ CITIES: ${bdCities}
 INTENT: ${intent || "informational"}
 LANGUAGE: Bangla + English mix — exactly how Bangladeshi users search Google.
 PRICE FORMAT: ৳[amount] (Taka symbol)
-STORE NAME RULE: Use the correct spelling based on language. In English text write exactly "Shahed Store". In Bengali text write exactly "শাহেদ স্টোর" (শা-হে-দ, "হে"-তে এ-কার) — this is the correct Bengali spelling. NEVER use misspelled Bengali variants like "শাহিদ স্টোর", "সাহেদ স্টোর", "শায়েদ স্টোর", "শাহীদ স্টোর", "শহীদ স্টোর", "শাওন স্টোর", "শাহেদ ষ্টোর", "শাহেদ ইস্টোর". NEVER use English variants like "ShahedStore", "Shahid Store", "Sahed Store", "Shawon Store". In Bengali sentences use Bengali case markers naturally (শাহেদ স্টোরের, শাহেদ স্টোরে, শাহেদ স্টোরকে) — do not mix English name with Bengali suffix ("Shahed Store-এর" is wrong).
+STORE NAME RULE: Use the correct spelling based on language. In English text write exactly "Shahed IT". In Bengali text write exactly "Shahed IT" (শা-হে-দ, "হে"-তে এ-কার) — this is the correct Bengali spelling. NEVER use misspelled Bengali variants like "শাহিদ স্টোর", "সাহেদ স্টোর", "শায়েদ স্টোর", "শাহীদ স্টোর", "শহীদ স্টোর", "শাওন স্টোর", "শাহেদ ষ্টোর", "শাহেদ ইস্টোর". NEVER use English variants like "ShahedIT", "Shahid Store", "Sahed Store", "Shawon Store". In Bengali sentences use Bengali case markers naturally (Shahed ITের, Shahed ITে, Shahed ITকে) — do not mix English name with Bengali suffix ("Shahed IT-এর" is wrong).
 
 Return ONLY valid JSON in this EXACT shape:
 {
@@ -128,7 +128,7 @@ Return ONLY valid JSON in this EXACT shape:
   "slug": "kebab-case-english-slug",
   "excerpt": "2-3 sentence summary that hooks the reader (160-220 chars)",
   "content": "FULL MARKDOWN BLOG BODY — 1500 to 2500 words — see structure below",
-  "seo_title": "max 60 chars — primary keyword + Bangladesh signal + Shahed Store",
+  "seo_title": "max 60 chars — primary keyword + Bangladesh signal + Shahed IT",
   "seo_description": "max 160 chars — Bangla-English, includes 'bangladesh' or 'BD', a buying intent word, and a unique angle",
   "tags": ["8-12 relevant tags"],
   "reading_time": 8,
@@ -157,23 +157,23 @@ For "price" topics: pricing table with BDT + USD + payment methods.
 Cover: how to buy in BD, bKash/Nagad/Rocket payment, instant delivery, common scams to avoid, support availability.
 
 ## [Topic-specific H2 #4 — recommendations / verdict / next steps]
-Clear recommendation with reasoning. Mention Shahed Store products naturally where relevant — link as [product name](https://shahedstore.com.bd/shop).
+Clear recommendation with reasoning. Mention Shahed IT products naturally where relevant — link as [product name](https://shahedit.com/shop).
 
 ## সাধারণ ভুল (Common Mistakes to Avoid)
 4-6 bullet points of pitfalls.
 
-## কেন Shahed Store থেকে কিনবেন? (Why Buy From Shahed Store)
+## কেন Shahed IT থেকে কিনবেন? (Why Buy From Shahed IT)
 3-5 bullets: genuine license, instant delivery, bKash/Nagad/Rocket, 24/7 support, DBID 586772174 official registration.
 
 ## উপসংহার (Conclusion)
-2-3 paragraph wrap-up + a clear call to action linking to https://shahedstore.com.bd/shop.
+2-3 paragraph wrap-up + a clear call to action linking to https://shahedit.com/shop.
 
 === HARD RULES ===
 - Word count of "content": 1500–2500 words. NEVER less than 1500.
 - Use primary keyword 8-15 times naturally — never stuffed.
 - Include at least 2 BD city names from: ${bdCities}.
 - Include real product/service names, version numbers, and current prices where applicable.
-- All external links use real, working URLs (shahedstore.com.bd, official vendor sites).
+- All external links use real, working URLs (shahedit.com, official vendor sites).
 - After any English word/number, use English period (.) — never Bengali danda (।). Only use । at the end of purely Bengali sentences.
 - "slug" must be lowercase ASCII kebab-case (a-z, 0-9, hyphens only).
 - FAQ items must directly answer questions Bangladeshi readers would ask about this exact topic.
@@ -185,7 +185,7 @@ Return ONLY the JSON object.`;
 
 TOPIC: "${cleanTopic}"
 
-Make it the BEST result on Google Bangladesh for anyone searching this topic. Include real Bangladesh prices in ৳, real product names, and link relevant items to https://shahedstore.com.bd/shop.
+Make it the BEST result on Google Bangladesh for anyone searching this topic. Include real Bangladesh prices in ৳, real product names, and link relevant items to https://shahedit.com/shop.
 
 Return ONLY the JSON object specified.`;
 
@@ -218,7 +218,7 @@ Return ONLY the JSON object specified.`;
         content: blog.content,
         status: auto_publish ? "published" : "draft",
         published_at: auto_publish ? new Date().toISOString() : null,
-        author_name: "Shahed Store",
+        author_name: "Shahed IT",
         featured_image: featured_image || null,
         category_id: category_id || null,
         tags,

@@ -232,7 +232,7 @@ const GetCID = () => {
   return (
     <>
       <SEOHead
-        title="Microsoft Confirmation ID Generator — Phone Activation | Shahed Store"
+        title="Microsoft Confirmation ID Generator — Phone Activation | Shahed IT"
         description="Generate Microsoft Confirmation IDs (CID) instantly for phone activation. Skip the call to Microsoft support. Self-service tool with screenshot upload."
       />
       <Navbar />

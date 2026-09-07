@@ -392,13 +392,13 @@ const AdminMaintenance = () => {
         </Field>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Field label="Support email">
-            <input value={settings.email} onChange={e => set('email', e.target.value)} placeholder="info@shahedstore.com.bd" className={inputCls} />
+            <input value={settings.email} onChange={e => set('email', e.target.value)} placeholder="info@shahedit.com" className={inputCls} />
           </Field>
           <Field label="Hotline / phone">
             <input value={settings.phone} onChange={e => set('phone', e.target.value)} placeholder="01840-099853" className={inputCls} />
           </Field>
           <Field label="Website">
-            <input value={settings.website} onChange={e => set('website', e.target.value)} placeholder="www.shahedstore.com.bd" className={inputCls} />
+            <input value={settings.website} onChange={e => set('website', e.target.value)} placeholder="www.shahedit.com" className={inputCls} />
           </Field>
           <Field label="Address">
             <input value={settings.address} onChange={e => set('address', e.target.value)} placeholder="Dhaka, Bangladesh" className={inputCls} />

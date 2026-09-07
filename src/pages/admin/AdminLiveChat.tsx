@@ -65,7 +65,7 @@ const DEFAULT_SETTINGS: LiveChatSettings = {
   phone_subtitle: 'সরাসরি কল করুন',
   ai_label: 'AI Support',
   ai_subtitle: 'তাৎক্ষণিক উত্তর পান',
-  ai_welcome_message: 'হ্যালো! 👋 আমি Shahed Store AI সহকারী। Windows, Office, Adobe, Netflix, Spotify সহ যেকোনো প্রোডাক্ট সম্পর্কে প্রশ্ন করুন!',
+  ai_welcome_message: 'হ্যালো! 👋 আমি Shahed IT AI সহকারী। Windows, Office, Adobe, Netflix, Spotify সহ যেকোনো প্রোডাক্ট সম্পর্কে প্রশ্ন করুন!',
   ai_placeholder: 'আপনার প্রশ্ন লিখুন...',
   quick_suggestions: ['💰 দাম জানতে চাই', '📦 কোন প্রোডাক্ট ভালো?', '🚚 ডেলিভারি কতক্ষণ?'],
   fab_label: 'কোনটি পছন্দ করবেন?',

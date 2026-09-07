@@ -68,14 +68,14 @@ const Blog = () => {
     <div className="min-h-screen bg-background text-foreground">
       <SEOHead
         title="Software Tips, Guides & Digital Product News – Blog"
-        description="Shahed Store Blog – Read guides, tips and news about Windows, Microsoft Office, Adobe, Antivirus, VPN, streaming subscriptions and all digital software in Bangladesh."
+        description="Shahed IT Blog – Read guides, tips and news about Windows, Microsoft Office, Adobe, Antivirus, VPN, streaming subscriptions and all digital software in Bangladesh."
         ogType="website"
-        canonical="https://shahedstore.com.bd/blog"
+        canonical="https://shahedit.com/blog"
         keywords="software tips bangladesh, windows guide, office 365 tutorial, adobe tips, digital software blog"
         schema={{
           '@context': 'https://schema.org',
           '@type': 'Blog',
-          name: 'Shahed Store Blog',
+          name: 'Shahed IT Blog',
           description: 'Tips, guides and news about digital products',
           url: `${SITE_URL}/blog`,
         }}
@@ -194,7 +194,7 @@ const Blog = () => {
                   {/* Image */}
                   {post.featured_image ? (
                     <div className={`overflow-hidden ${i === 0 ? 'h-56' : 'h-40'}`}>
-                      <img src={post.featured_image} alt={`${post.title} — Shahed Store Blog Bangladesh`} title={post.title} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" fetchPriority={i === 0 ? 'high' : 'auto'}
+                      <img src={post.featured_image} alt={`${post.title} — Shahed IT Blog Bangladesh`} title={post.title} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" fetchPriority={i === 0 ? 'high' : 'auto'}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                     </div>
                   ) : (
@@ -322,7 +322,7 @@ const Blog = () => {
                     {/* Image */}
                     {post.featured_image ? (
                       <div className="h-44 overflow-hidden">
-                        <img src={post.featured_image} alt={`${post.title} — Shahed Store Blog Bangladesh`} title={post.title} loading="lazy" decoding="async"
+                        <img src={post.featured_image} alt={`${post.title} — Shahed IT Blog Bangladesh`} title={post.title} loading="lazy" decoding="async"
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                       </div>
                     ) : (

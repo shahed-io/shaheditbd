@@ -21,7 +21,7 @@ import { startPrerenderServer } from "./prerender-server";
 
 const DIST_DIR = resolve("dist");
 const SITEMAP_PATH = resolve("public/sitemap.xml");
-const BASE_URL = "https://shahedstore.com.bd";
+const BASE_URL = "https://shahedit.com";
 const PORT = 4183;
 const MAX_PRERENDER_PAGES = Number(process.env.MAX_PRERENDER_PAGES || 2000);
 const NAV_TIMEOUT_MS = 30_000;
@@ -180,7 +180,7 @@ async function main() {
     const page = await browser!.newPage();
     try {
       await page.setUserAgent(
-        "Mozilla/5.0 (compatible; ShahedStorePrerender/1.0; +https://shahedstore.com.bd)",
+        "Mozilla/5.0 (compatible; ShahedITPrerender/1.0; +https://shahedit.com)",
       );
       // Speed up: block heavy 3rd-party requests we don't need in HTML.
       await page.setRequestInterception(true);

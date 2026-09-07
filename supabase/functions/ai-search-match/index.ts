@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
     }));
 
     const system = strict
-      ? `You are a STRICT product search matcher for a Bangladeshi digital software store (Shahed Store).
+      ? `You are a STRICT product search matcher for a Bangladeshi digital software store (Shahed IT).
 Return ONLY products that genuinely match the user's query (typos, abbreviations, Bangla/English mix, synonyms allowed).
 DO NOT return loosely-related or unrelated products. If the query targets something the store does not sell, return an empty matchedIds array.
 Examples:
@@ -49,7 +49,7 @@ Examples:
 - "google meet" → return [] if no Google Meet product exists (do NOT suggest Zoom, Teams, etc.)
 - "pizza" → return [] (unrelated)
 Return STRICT JSON. No markdown.`
-      : `You are an EXTREMELY forgiving fuzzy product search assistant for a Bangladeshi digital software store (Shahed Store).
+      : `You are an EXTREMELY forgiving fuzzy product search assistant for a Bangladeshi digital software store (Shahed IT).
 Your #1 goal: NEVER return an empty list if there's even a remotely related product. Always suggest something useful.
 
 Handle aggressively:

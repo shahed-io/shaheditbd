@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Invalid input' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    const systemPrompt = `You are an expert giveaway/offer/contest designer for a Bangladeshi digital store (Shahed Store).
+    const systemPrompt = `You are an expert giveaway/offer/contest designer for a Bangladeshi digital store (Shahed IT).
 The admin will describe an offer in natural language (Bengali or English). You must design a complete contest configuration.
 
 OUTPUT ONLY VALID JSON with this exact shape:

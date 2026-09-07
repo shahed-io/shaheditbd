@@ -6,8 +6,8 @@ const B = 'hsl(200,90%,45%)';
 
 const RefundPolicy = () => (
   <PolicyLayout
-    seoTitle="Refund Policy — Shahed Store"
-    seoDesc="Shahed Store রিফান্ড পলিসি জানুন। কখন ও কীভাবে রিফান্ড পাবেন।"
+    seoTitle="Refund Policy — Shahed IT"
+    seoDesc="Shahed IT রিফান্ড পলিসি জানুন। কখন ও কীভাবে রিফান্ড পাবেন।"
     badge="Customer Protection"
     badgeIcon={<RefreshCw size={13} />}
     title="Refund Policy"

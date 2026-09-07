@@ -110,7 +110,7 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
     win.document.write(`
       <html>
       <head>
-        <title>Invoice #${order.order_number} — Shahed Store</title>
+        <title>Invoice #${order.order_number} — Shahed IT</title>
         <style>
           * { margin: 0; padding: 0; box-sizing: border-box; }
           body { font-family: 'Segoe UI', Arial, sans-serif; color: #1a1a2e; background: #fff; padding: 0; }
@@ -172,7 +172,7 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px', paddingBottom: '20px', borderBottom: `3px solid ${brandColor}` }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
                 {logoBase64 && (
-                  <img src={logoBase64} alt="Shahed Store" style={{ height: '48px', width: 'auto', objectFit: 'contain' }} />
+                  <img src={logoBase64} alt="Shahed IT" style={{ height: '48px', width: 'auto', objectFit: 'contain' }} />
                 )}
               </div>
               <div style={{ textAlign: 'right' }}>
@@ -260,7 +260,7 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
             <div style={{ marginTop: '28px', textAlign: 'center', borderTop: `2px solid ${brandLight}`, paddingTop: '18px' }}>
               <div style={{ fontSize: '12px', color: '#888', marginBottom: '4px' }}>ধন্যবাদ আমাদের সাথে কেনাকাটা করার জন্য!</div>
               <div style={{ fontSize: '11px', color: '#aaa' }}>
-                🌐 shahedstore.com.bd &nbsp;•&nbsp; 📧 info@shahedstore.com.bd
+                🌐 shahedit.com &nbsp;•&nbsp; 📧 info@shahedit.com
               </div>
               <div style={{ fontSize: '10px', color: '#ccc', marginTop: '8px' }}>This is a computer-generated invoice and does not require a signature.</div>
             </div>
@@ -507,7 +507,7 @@ const OrderDetailModal = ({
     const items = order.order_items?.map((i: any) => `- ${i.product_name}`).join('\n') || '';
     const statusLabel = STATUS_CONFIG[order.status]?.label || order.status;
     const msg = encodeURIComponent(
-      `Order Update\n\nOrder: ${order.order_number}\nStatus: ${statusLabel}\n\n${items}${customNote ? '\n\n' + customNote : ''}\n\nThank you!\n-- Shahed Store`
+      `Order Update\n\nOrder: ${order.order_number}\nStatus: ${statusLabel}\n\n${items}${customNote ? '\n\n' + customNote : ''}\n\nThank you!\n-- Shahed IT`
     );
     const phone = order.customer_phone?.replace(/\D/g, '').replace(/^0/, '880');
     window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
@@ -1264,8 +1264,8 @@ const AdminOrders = () => {
       `Payment: ${PM_LABELS[order.payment_method] || order.payment_method}\n` +
       (order.transaction_id ? `TrxID: ${order.transaction_id}\n` : '') +
       `Total: ${Number(order.total).toLocaleString()} BDT\n\n` +
-      `Thank you for choosing Shahed Store\n` +
-      `www.shahedstore.com.bd`
+      `Thank you for choosing Shahed IT\n` +
+      `www.shahedit.com`
     );
     window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
   }, []);
@@ -1289,7 +1289,7 @@ const AdminOrders = () => {
               onClick: () => {
                 const phone = newOrder.customer_phone?.replace(/\D/g, '').replace(/^0/, '880');
                 const msg = encodeURIComponent(
-                  `SHAHED STORE\n\nOrder: #${newOrder.order_number}\nName: ${newOrder.customer_name}\nTotal: ${Number(newOrder.total).toLocaleString()} BDT\nPayment: ${PM_LABELS[newOrder.payment_method] || newOrder.payment_method}${newOrder.transaction_id ? '\nTrxID: ' + newOrder.transaction_id : ''}\n\nThank you!\n-- Shahed Store`
+                  `SHAHED STORE\n\nOrder: #${newOrder.order_number}\nName: ${newOrder.customer_name}\nTotal: ${Number(newOrder.total).toLocaleString()} BDT\nPayment: ${PM_LABELS[newOrder.payment_method] || newOrder.payment_method}${newOrder.transaction_id ? '\nTrxID: ' + newOrder.transaction_id : ''}\n\nThank you!\n-- Shahed IT`
                 );
                 window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
               }

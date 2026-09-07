@@ -11,7 +11,7 @@ export interface NoticeSignature {
 
 export const DEFAULT_NOTICE_SIGNATURE: NoticeSignature = {
   imageDataUrl: '',
-  signedBy: 'Shahed Store Authority',
+  signedBy: 'Shahed IT Authority',
   signedRole: 'Management',
 };
 

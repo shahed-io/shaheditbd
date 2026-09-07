@@ -215,7 +215,7 @@ const AdminPopupBanner = () => {
               type="url"
               value={linkUrl}
               onChange={e => setLinkUrl(e.target.value)}
-              placeholder="https://shahedstore.com.bd/product/microsoft-365"
+              placeholder="https://shahedit.com/product/microsoft-365"
               className="w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
             />
           </div>

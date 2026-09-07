@@ -44,12 +44,12 @@ Deno.serve(async (req) => {
       return json({ error: 'Order already paid' }, 409);
     }
 
-    const origin = req.headers.get('origin') || 'https://shahedstore.com.bd';
+    const origin = req.headers.get('origin') || 'https://shahedit.com';
     const base = String(cfg.base_url).replace(/\/+$/, '');
 
     const payload = {
       full_name: order.customer_name || 'Customer',
-      email: order.customer_email || 'noreply@shahedstore.com.bd',
+      email: order.customer_email || 'noreply@shahedit.com',
       amount: Number(order.total).toFixed(2),
       metadata: { order_id: order.id, order_number: order.order_number },
       redirect_url: `${origin}/uddoktapay/return?order_id=${order.id}`,

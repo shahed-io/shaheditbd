@@ -12,10 +12,10 @@ const projectRef = import.meta.env.VITE_SUPABASE_PROJECT_ID ?? "project-ref-unse
 
 export default defineMcp({
   name: "shahed-store-mcp",
-  title: "Shahed Store",
+  title: "Shahed IT",
   version: "0.1.0",
   instructions:
-    "Tools for the signed-in Shahed Store customer. Look up your profile, orders, personal licenses, wallet transactions, and search the public product catalog. All tools act as the authenticated user; Row-Level Security in the database keeps other users' data private.",
+    "Tools for the signed-in Shahed IT customer. Look up your profile, orders, personal licenses, wallet transactions, and search the public product catalog. All tools act as the authenticated user; Row-Level Security in the database keeps other users' data private.",
   auth: auth.oauth.issuer({
     issuer: `https://${projectRef}.supabase.co/auth/v1`,
     acceptedAudiences: "authenticated",

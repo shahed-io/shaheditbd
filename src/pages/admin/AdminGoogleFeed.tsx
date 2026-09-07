@@ -8,7 +8,7 @@ import { Copy, ExternalLink, RefreshCw, AlertTriangle, CheckCircle2, ShoppingBag
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 
-const FEED_URL = "https://shahedstore.com.bd/product-feed.xml";
+const FEED_URL = "https://shahedit.com/product-feed.xml";
 
 type Row = {
   id: string;
@@ -35,7 +35,7 @@ function auditProduct(p: Row): Issue[] {
   else if (desc.length < 30) issues.push({ field: "description", label: "Description too short (<30 chars)" });
   if (!p.image_url && !(p.images && p.images.length)) issues.push({ field: "image_url", label: "Missing image" });
   if (p.price == null || Number(p.price) <= 0) issues.push({ field: "price", label: "Missing or zero price" });
-  if (!p.brand?.trim()) issues.push({ field: "brand", label: "Missing brand (defaults to Shahed Store)" });
+  if (!p.brand?.trim()) issues.push({ field: "brand", label: "Missing brand (defaults to Shahed IT)" });
   return issues;
 }
 

@@ -7,8 +7,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const SITE = 'https://shahedstore.com.bd';
-const SITE_NAME = 'Shahed Store';
+const SITE = 'https://shahedit.com';
+const SITE_NAME = 'Shahed IT';
 
 const xmlEscape = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
       <description>${xmlEscape(p.excerpt || p.title || '')}</description>
       ${p.featured_image ? `<enclosure url="${xmlEscape(p.featured_image)}" type="image/jpeg" />` : ''}
       <pubDate>${new Date(p.published_at || p.updated_at || Date.now()).toUTCString()}</pubDate>
-      <author>noreply@shahedstore.com.bd (${xmlEscape(p.author_name || SITE_NAME)})</author>
+      <author>noreply@shahedit.com (${xmlEscape(p.author_name || SITE_NAME)})</author>
     </item>`).join('');
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>

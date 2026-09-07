@@ -41,7 +41,7 @@ const warnBox = {
 
 const Admin2FACodeEmail = ({
   code = '000000',
-  requestedByEmail = 'admin@shahedstore.com.bd',
+  requestedByEmail = 'admin@shahedit.com',
   ip = '',
   expiresInMinutes = 10,
 }: Admin2FACodeProps) => (
@@ -51,13 +51,13 @@ const Admin2FACodeEmail = ({
       <Container style={wrapper}>
         <Section style={headerStyle}>
           <div style={logoCardStyle}>
-            <Img src={LOGO_URL} width="240" height="65" alt="Shahed Store" style={logoStyle} />
+            <Img src={LOGO_URL} width="240" height="65" alt="Shahed IT" style={logoStyle} />
           </div>
         </Section>
         <Section style={contentStyle}>
           <Text style={h1Style}>Admin Login Verification Code</Text>
           <Text style={subtitleStyle}>
-            A login attempt to the <strong>Shahed Store Admin Panel</strong> requires verification.
+            A login attempt to the <strong>Shahed IT Admin Panel</strong> requires verification.
             Use the code below to continue. This code expires in {expiresInMinutes} minutes.
           </Text>
           <div style={codeBox}>{code}</div>
@@ -73,7 +73,7 @@ const Admin2FACodeEmail = ({
         </Section>
         <Section style={footerSection}>
           <Text style={copyrightStyle}>
-            &copy; {new Date().getFullYear()} Shahed Store — Admin Security Notification
+            &copy; {new Date().getFullYear()} Shahed IT — Admin Security Notification
           </Text>
         </Section>
       </Container>
@@ -87,7 +87,7 @@ export const template = {
   displayName: 'Admin 2FA Code',
   previewData: {
     code: '482915',
-    requestedByEmail: 'admin@shahedstore.com.bd',
+    requestedByEmail: 'admin@shahedit.com',
     ip: '203.0.113.42',
     expiresInMinutes: 10,
   },

@@ -88,7 +88,7 @@ const LicenseDeliveryEmail = ({
         <Container style={wrapper}>
           <Section style={headerStyle}>
             <div style={logoCardStyle}>
-              <Img src={LOGO_URL} width="240" height="65" alt="Shahed Store" style={logoStyle} />
+              <Img src={LOGO_URL} width="240" height="65" alt="Shahed IT" style={logoStyle} />
             </div>
           </Section>
 
@@ -127,7 +127,7 @@ const LicenseDeliveryEmail = ({
               </Text>
             </Section>
 
-            <Button style={buttonStyle} href="https://shahedstore.com.bd/dashboard">
+            <Button style={buttonStyle} href="https://shahedit.com/dashboard">
               Go to Dashboard
             </Button>
 
@@ -138,7 +138,7 @@ const LicenseDeliveryEmail = ({
 
           <Section style={footerSection}>
             <Text style={copyrightStyle}>
-              &copy; {new Date().getFullYear()} Shahed Store. All rights reserved.
+              &copy; {new Date().getFullYear()} Shahed IT. All rights reserved.
             </Text>
           </Section>
         </Container>
@@ -152,7 +152,7 @@ export const template = {
   subject: (data: any) =>
     data?.orderNumber
       ? `Your License Key — Order #${data.orderNumber}`
-      : 'Your License Key from Shahed Store',
+      : 'Your License Key from Shahed IT',
   displayName: 'License Delivery',
   previewData: {
     customerName: 'Rahul Ahmed',

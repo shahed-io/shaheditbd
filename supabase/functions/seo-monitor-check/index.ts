@@ -25,7 +25,7 @@ async function checkUrl(name: string, url: string): Promise<CheckResult> {
   const started = Date.now();
   try {
     const r = await fetch(url, {
-      headers: { 'User-Agent': 'ShahedStore-SEO-Monitor/1.0 (+admin)' },
+      headers: { 'User-Agent': 'ShahedIT-SEO-Monitor/1.0 (+admin)' },
       redirect: 'follow',
     });
     const text = await r.text();
@@ -119,7 +119,7 @@ Deno.serve(async (req) => {
     }
 
     const body = await req.json().catch(() => ({}));
-    const site: string = body.site || 'https://shahedstore.com.bd';
+    const site: string = body.site || 'https://shahedit.com';
     const targets: { name: string; url: string }[] = body.targets || [
       { name: 'sitemap.xml', url: `${site}/sitemap.xml` },
       { name: 'image-sitemap.xml', url: `${site}/image-sitemap.xml` },

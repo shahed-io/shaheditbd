@@ -80,7 +80,7 @@ const DEFAULTS: LiveChatConfig = {
   phone_subtitle: 'সরাসরি কল করুন',
   ai_label: 'AI Support',
   ai_subtitle: 'তাৎক্ষণিক উত্তর পান',
-  ai_welcome_message: 'হ্যালো! 👋 আমি Shahed Store AI সহকারী। Windows, Office, Adobe, Netflix, Spotify সহ যেকোনো প্রোডাক্ট সম্পর্কে প্রশ্ন করুন!',
+  ai_welcome_message: 'হ্যালো! 👋 আমি Shahed IT AI সহকারী। Windows, Office, Adobe, Netflix, Spotify সহ যেকোনো প্রোডাক্ট সম্পর্কে প্রশ্ন করুন!',
   ai_placeholder: 'আপনার প্রশ্ন লিখুন...',
   quick_suggestions: [
     '🔥 আজকের সেরা অফার দেখাও',
@@ -135,7 +135,7 @@ const FloatingSupport = () => {
   const configLoaded = useRef(false);
   const sessionIdRef = useRef(crypto.randomUUID());
 
-  const WELCOME_EN = "Hi! 👋 I'm the Shahed Store AI assistant. Ask me anything about Windows, Office, Adobe, Netflix, Spotify or any other product!";
+  const WELCOME_EN = "Hi! 👋 I'm the Shahed IT AI assistant. Ask me anything about Windows, Office, Adobe, Netflix, Spotify or any other product!";
   const PLACEHOLDER_EN = 'Type your question...';
 
   const switchLanguage = (lang: 'bn' | 'en') => {

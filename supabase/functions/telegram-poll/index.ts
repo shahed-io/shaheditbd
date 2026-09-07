@@ -36,7 +36,7 @@ const STATUS_EMOJI: Record<string, string> = {
 type Lang = 'bn' | 'en';
 const T = {
   bn: {
-    welcome_title: '🛍️ *Shahed Store* আপনাকে স্বাগতম জানাচ্ছে!',
+    welcome_title: '🛍️ *Shahed IT* আপনাকে স্বাগতম জানাচ্ছে!',
     welcome_sub: 'বাংলাদেশের #১ ডিজিটাল প্রোডাক্ট স্টোর। আপনার চাহিদা মতো সাবস্ক্রিপশন, লাইসেন্স কী, সফটওয়্যার — সব এক জায়গায়।',
     quick_actions: '⚡ দ্রুত অ্যাকশন বেছে নিন:',
     btn_shop: '🛍️ শপিং শুরু', btn_deals: '🔥 ডিল ও অফার',
@@ -76,7 +76,7 @@ const T = {
     no_orders: '😔 এখনো কোনো অর্ডার নেই।\n\n/shop দিয়ে শপিং শুরু করুন!',
     account_title: '👤 আপনার অ্যাকাউন্ট:',
     account_link_prompt: 'অ্যাকাউন্ট তথ্য দেখতে নিচের লিংক ব্যবহার করুন:',
-    help_title: '❓ Shahed Store Bot — সাহায্য',
+    help_title: '❓ Shahed IT Bot — সাহায্য',
     help_body: 'আপনি নিচের কমান্ডগুলো ব্যবহার করতে পারেন। যেকোনো সময় /menu দিয়ে মূল মেনুতে ফিরতে পারেন।',
     contact_title: '📞 যোগাযোগ',
     contact_body: 'আপনার যেকোনো প্রশ্ন/সমস্যায় আমাদের সাথে যোগাযোগ করুন:',
@@ -103,7 +103,7 @@ const T = {
     you: 'আপনি',
   },
   en: {
-    welcome_title: '🛍️ Welcome to *Shahed Store*!',
+    welcome_title: '🛍️ Welcome to *Shahed IT*!',
     welcome_sub: "Bangladesh's #1 digital products store. Subscriptions, license keys, software — all in one place.",
     quick_actions: '⚡ Pick a quick action:',
     btn_shop: '🛍️ Start Shopping', btn_deals: '🔥 Deals & Offers',
@@ -143,7 +143,7 @@ const T = {
     no_orders: '😔 No orders yet.\n\nUse /shop to start shopping!',
     account_title: '👤 Your Account:',
     account_link_prompt: 'View your full account on the website:',
-    help_title: '❓ Shahed Store Bot — Help',
+    help_title: '❓ Shahed IT Bot — Help',
     help_body: 'You can use the commands below. Use /menu anytime to return to the main menu.',
     contact_title: '📞 Contact Us',
     contact_body: 'For any question/issue, get in touch with us:',
@@ -207,7 +207,7 @@ function inlineKb(buttons: { text: string; callback_data?: string; url?: string 
 }
 
 function getSiteUrl(): string {
-  return 'https://shahedstore.com.bd';
+  return 'https://shahedit.com';
 }
 
 // ─── LICENSE KEY CHECKER (PidMS) ──────────────────────────────────────────
@@ -702,7 +702,7 @@ async function registerBotCommands(botToken: string) {
     fetch(`https://api.telegram.org/bot${botToken}/setMyDescription`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        description: '🛍️ Shahed Store — বাংলাদেশের #১ ডিজিটাল প্রোডাক্ট স্টোর। সাবস্ক্রিপশন, লাইসেন্স কী, সফটওয়্যার সরাসরি Telegram থেকেই কিনুন।',
+        description: '🛍️ Shahed IT — বাংলাদেশের #১ ডিজিটাল প্রোডাক্ট স্টোর। সাবস্ক্রিপশন, লাইসেন্স কী, সফটওয়্যার সরাসরি Telegram থেকেই কিনুন।',
       }),
     }),
     fetch(`https://api.telegram.org/bot${botToken}/setMyShortDescription`, {

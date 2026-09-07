@@ -85,7 +85,7 @@ const AdminAiFaqGenerator = () => {
         },
         count,
         language,
-        storeName: language === 'bn' ? 'Shahed Store' : 'Shahed Store',
+        storeName: language === 'bn' ? 'Shahed IT' : 'Shahed IT',
       },
     });
     if (error) throw new Error(error.message);

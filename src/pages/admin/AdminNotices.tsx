@@ -43,7 +43,7 @@ const blank = (sig?: { signedBy?: string; signedRole?: string }): Partial<Notice
   audience: 'public',
   status: 'draft',
   pinned: false,
-  signed_by: sig?.signedBy || 'Shahed Store Authority',
+  signed_by: sig?.signedBy || 'Shahed IT Authority',
   signed_role: sig?.signedRole || 'Management',
   effective_date: new Date().toISOString().slice(0, 10),
 });
@@ -111,7 +111,7 @@ export default function AdminNotices() {
         summary: n.summary || prev?.summary || '',
         body: n.body_markdown || prev?.body || '',
         reference_no: n.reference_no || prev?.reference_no || '',
-        signed_by: n.signed_by || prev?.signed_by || 'Shahed Store Authority',
+        signed_by: n.signed_by || prev?.signed_by || 'Shahed IT Authority',
         signed_role: n.signed_role || prev?.signed_role || 'Management',
         effective_date: n.effective_date || prev?.effective_date || new Date().toISOString().slice(0, 10),
       }));
@@ -188,7 +188,7 @@ export default function AdminNotices() {
       setDownloadingId((n as any).id || 'preview');
       toast.info('PDF তৈরি হচ্ছে...');
       await downloadNoticePdf(n, {
-        brand: { name: 'Shahed Store' },
+        brand: { name: 'Shahed IT' },
         signatureUrl: signature.imageDataUrl || undefined,
       });
       toast.success('Notice download হয়েছে');
@@ -557,7 +557,7 @@ export default function AdminNotices() {
             <TabsContent value="preview" className="pt-4">
               {previewNotice ? (
                 <div className="bg-gray-100 p-4 rounded-lg">
-                  <NoticeTemplate notice={previewNotice} brand={{ name: 'Shahed Store' }} signatureUrl={signature.imageDataUrl || undefined} />
+                  <NoticeTemplate notice={previewNotice} brand={{ name: 'Shahed IT' }} signatureUrl={signature.imageDataUrl || undefined} />
                 </div>
               ) : <div className="text-center text-muted-foreground py-10">কিছু তথ্য দিন তারপর preview দেখুন</div>}
             </TabsContent>
@@ -611,7 +611,7 @@ export default function AdminNotices() {
           </DialogHeader>
           {previewing && (
             <div className="bg-gray-100 p-4 rounded-lg print:bg-white print:p-0">
-              <NoticeTemplate notice={previewing} brand={{ name: 'Shahed Store' }} signatureUrl={signature.imageDataUrl || undefined} />
+              <NoticeTemplate notice={previewing} brand={{ name: 'Shahed IT' }} signatureUrl={signature.imageDataUrl || undefined} />
             </div>
           )}
         </DialogContent>

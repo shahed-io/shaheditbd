@@ -49,7 +49,7 @@ class RootErrorBoundary extends React.Component<
         // Serve brand-aligned static content to crawlers so search snippets stay clean
         return (
           <div style={{ maxWidth: 900, margin: "40px auto", padding: 24, fontFamily: "system-ui, sans-serif", lineHeight: 1.6, color: "#111" }}>
-            <h1 style={{ fontSize: "2rem", marginBottom: 8 }}>Shahed Store – Bangladesh's #1 Trusted Digital Software Shop</h1>
+            <h1 style={{ fontSize: "2rem", marginBottom: 8 }}>Shahed IT – Bangladesh's #1 Trusted Digital Software Shop</h1>
             <p><strong>বাংলাদেশের সবচেয়ে বিশ্বস্ত ডিজিটাল সফটওয়্যার শপ।</strong> Windows 11, Microsoft Office 365, Adobe Creative Cloud, Netflix, Spotify, NordVPN, Antivirus সর্বনিম্ন মূল্যে। ১০০% অরিজিনাল লাইসেন্স, ইনস্ট্যান্ট ডেলিভারি ২৪/৭।</p>
             <p>Buy genuine Windows 11 Pro keys, Microsoft Office 365, Adobe Creative Cloud, Netflix Premium, Spotify Premium, NordVPN, ESET, Bitdefender at the lowest price in Bangladesh — instant email delivery, bKash / Nagad / Bank payment supported.</p>
           </div>

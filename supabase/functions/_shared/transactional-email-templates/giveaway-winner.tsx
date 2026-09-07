@@ -33,9 +33,9 @@ const Email = ({ name, offerTitle, rank, prize }: Props) => (
             </Section>
           ) : null}
           <Text style={p}>Our team will contact you shortly regarding prize delivery. You can also check your account dashboard for updates.</Text>
-          <Button href="https://shahedstore.com.bd/dashboard" style={btn}>Open Dashboard</Button>
+          <Button href="https://shahedit.com/dashboard" style={btn}>Open Dashboard</Button>
           <Hr style={hr} />
-          <Text style={muted}>Thank you for participating with Shahed Store.</Text>
+          <Text style={muted}>Thank you for participating with Shahed IT.</Text>
         </Section>
       </Container>
     </Body>

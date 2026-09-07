@@ -13,7 +13,7 @@ function supabaseForUser(ctx: ToolContext) {
 export default defineTool({
   name: "search_products",
   title: "Search products",
-  description: "Search Shahed Store's public product catalog by keyword. Returns name, price and slug.",
+  description: "Search Shahed IT's public product catalog by keyword. Returns name, price and slug.",
   inputSchema: {
     query: z.string().trim().min(1).describe("Search term matched against product name/description."),
     limit: z.number().int().min(1).max(50).default(10),

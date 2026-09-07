@@ -95,8 +95,8 @@ Deno.serve(async (req) => {
       .select('key, value')
       .in('key', ['admin_email', 'store_name']);
 
-    const adminEmail = settingRows?.find(r => r.key === 'admin_email')?.value || 'admin@shahedstore.com.bd';
-    const storeName = esc(settingRows?.find(r => r.key === 'store_name')?.value || 'Shahed Store');
+    const adminEmail = settingRows?.find(r => r.key === 'admin_email')?.value || 'admin@shahedit.com';
+    const storeName = esc(settingRows?.find(r => r.key === 'store_name')?.value || 'Shahed IT');
 
 
     // Build screenshot HTML (only https URLs, escaped)
@@ -210,7 +210,7 @@ Deno.serve(async (req) => {
 
         <!-- CTA -->
         <tr><td style="padding:0 24px 28px;text-align:center;">
-          <a href="https://shahedstore.com.bd/admin/tickets"
+          <a href="https://shahedit.com/admin/tickets"
             style="display:inline-block;background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;padding:13px 32px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:700;">
             🔍 অ্যাডমিন প্যানেলে দেখুন →
           </a>
