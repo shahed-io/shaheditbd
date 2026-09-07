@@ -16,8 +16,8 @@ type Slide = {
 const STATIC_SLIDES: Slide[] = [
   {
     tag: 'Most Requested', tagIcon: '🔥',
-    title: 'Business', titleAccent: 'Website',
-    subtitle: 'Design & Development',
+    title: 'Web', titleAccent: 'Development',
+    subtitle: 'Fast, Secure & SEO-Ready Websites',
     desc: 'আপনার প্রতিষ্ঠানের জন্য আধুনিক, মোবাইল ফ্রেন্ডলি ও SEO-রেডি প্রফেশনাল ওয়েবসাইট।',
     price: '৳15,000', original: '৳20,000', off: '-25%', badge: 'MOST POPULAR',
     accentFrom: 'hsl(258,78%,55%)', accentTo: 'hsl(200,90%,48%)',
@@ -25,39 +25,40 @@ const STATIC_SLIDES: Slide[] = [
     productSlug: 'business-website-development',
   },
   {
-    tag: 'Growth Package', tagIcon: '⚡',
-    title: 'E-Commerce', titleAccent: 'Website',
-    subtitle: 'অনলাইন শপ সলিউশন',
-    desc: 'কার্ট, চেকআউট, bKash/Nagad পেমেন্ট ও অর্ডার ম্যানেজমেন্ট সহ সম্পূর্ণ অনলাইন শপ।',
-    price: '৳35,000', original: '৳45,000', off: '-22%', badge: 'BEST VALUE',
-    accentFrom: 'hsl(258,78%,55%)', accentTo: 'hsl(200,90%,48%)',
-    emoji: '🛍️', features: ['পেমেন্ট গেটওয়ে', 'অ্যাডমিন ড্যাশবোর্ড', '৩ মাস সাপোর্ট'],
-    productSlug: 'ecommerce-website-development',
+    tag: 'Creative Studio', tagIcon: '🎨',
+    title: 'Graphics', titleAccent: 'Design',
+    subtitle: 'Logo, Branding & Social Media Creatives',
+    desc: 'লোগো, ব্র্যান্ডিং, সোশ্যাল মিডিয়া ডিজাইন — প্রিমিয়াম কোয়ালিটিতে দ্রুত ডেলিভারি।',
+    price: '৳3,000', original: '৳4,500', off: '-33%', badge: 'PREMIUM QUALITY',
+    accentFrom: 'hsl(300,78%,55%)', accentTo: 'hsl(258,78%,55%)',
+    emoji: '🎨', features: ['ক্রিয়েটিভ কনসেপ্ট', 'আনলিমিটেড রিভিশন', 'সোর্স ফাইল'],
+    productSlug: 'logo-design',
   },
   {
-    tag: 'Marketing', tagIcon: '📈',
-    title: 'SEO &', titleAccent: 'Digital Marketing',
-    subtitle: 'মাসিক গ্রোথ প্যাকেজ',
-    desc: 'গুগলে র‍্যাংক বাড়ান — কীওয়ার্ড রিসার্চ, অন-পেজ SEO, কনটেন্ট প্ল্যান ও মাসিক রিপোর্ট।',
-    price: '৳8,000', original: '৳12,000', off: '-33%', badge: 'MONTHLY PLAN',
-    accentFrom: 'hsl(258,78%,55%)', accentTo: 'hsl(200,90%,48%)',
-    emoji: '🚀', features: ['কীওয়ার্ড রিসার্চ', 'অন-পেজ SEO', 'মাসিক রিপোর্ট'],
-    productSlug: 'seo-service-monthly',
+    tag: 'For Business', tagIcon: '💼',
+    title: 'Business', titleAccent: 'Solution',
+    subtitle: 'IT Consultancy, Domain, Hosting & Support',
+    desc: 'ডোমেইন, হোস্টিং, বিজনেস ইমেইল ও আইটি কনসালটেন্সি — এক ছাদের নিচে সম্পূর্ণ সমাধান।',
+    price: '৳5,000', original: '৳7,500', off: '-33%', badge: 'TRUSTED PARTNER',
+    accentFrom: 'hsl(215,82%,52%)', accentTo: 'hsl(45,90%,55%)',
+    emoji: '💼', features: ['এক্সপার্ট কনসালটেন্সি', 'সিকিউর হোস্টিং', '২৪/৭ সাপোর্ট'],
+    productSlug: 'it-consultancy-support',
   },
 ];
 
 const LOGO_MAP: Record<string, string> = {};
 
-// Admin-uploaded bgImage always wins. Fallback bundled service banners.
+// Admin-uploaded bgImage always wins. Fallback bundled premium service banners.
 const pickBannerBg = (s: Slide): string => {
   if (s.bgImage && s.bgImage.trim()) return s.bgImage;
   const t = `${s.title} ${s.titleAccent} ${s.subtitle} ${s.productSlug || ''}`.toLowerCase();
-  if (t.includes('commerce') || t.includes('shop') || t.includes('অনলাইন শপ')) return bannerEcommerce;
-  if (t.includes('seo') || t.includes('marketing') || t.includes('ads') || t.includes('facebook')) return bannerSeo;
-  if (t.includes('web') || t.includes('site') || t.includes('design') || t.includes('development')) return bannerWebDev;
-  const pool = [bannerWebDev, bannerEcommerce, bannerSeo];
+  if (t.includes('graphic') || t.includes('design') || t.includes('logo') || t.includes('brand')) return bannerGraphics;
+  if (t.includes('business') || t.includes('consult') || t.includes('hosting') || t.includes('domain')) return bannerBusiness;
+  if (t.includes('web') || t.includes('site') || t.includes('development')) return bannerWebDev;
+  const pool = [bannerWebDev, bannerGraphics, bannerBusiness];
   const idx = Math.abs(t.split('').reduce((a, c) => a + c.charCodeAt(0), 0)) % pool.length;
   return pool[idx];
+
 };
 
 
