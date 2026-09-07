@@ -46,24 +46,20 @@ const STATIC_SLIDES: Slide[] = [
   },
 ];
 
-const LOGO_MAP: Record<string, string> = {
-  'slide-win11': winLogo,
-  'slide-ms365': ms365Logo,
-  'slide-idm': idmLogo,
-};
+const LOGO_MAP: Record<string, string> = {};
 
-// Admin-uploaded bgImage always wins. Fallback bundled banners by product.
+// Admin-uploaded bgImage always wins. Fallback bundled service banners.
 const pickBannerBg = (s: Slide): string => {
   if (s.bgImage && s.bgImage.trim()) return s.bgImage;
-  const t = `${s.title} ${s.titleAccent}`.toLowerCase();
-  const slug = (s.productSlug || '').toLowerCase();
-  if (t.includes('idm') || slug.includes('idm') || slug.includes('download-manager')) return bannerIdm;
-  if (t.includes('365') || t.includes('office') || slug.includes('365') || slug.includes('office')) return bannerMs365;
-  if (t.includes('windows') || slug.includes('windows')) return bannerWin11;
-  const pool = [bannerWin11, bannerMs365, bannerIdm];
+  const t = `${s.title} ${s.titleAccent} ${s.subtitle} ${s.productSlug || ''}`.toLowerCase();
+  if (t.includes('commerce') || t.includes('shop') || t.includes('অনলাইন শপ')) return bannerEcommerce;
+  if (t.includes('seo') || t.includes('marketing') || t.includes('ads') || t.includes('facebook')) return bannerSeo;
+  if (t.includes('web') || t.includes('site') || t.includes('design') || t.includes('development')) return bannerWebDev;
+  const pool = [bannerWebDev, bannerEcommerce, bannerSeo];
   const idx = Math.abs(t.split('').reduce((a, c) => a + c.charCodeAt(0), 0)) % pool.length;
   return pool[idx];
 };
+
 
 const dbSlideToSlide = (s: SlideData): Slide => ({
   tag: s.tag, tagIcon: s.tagIcon || '', title: s.title, titleAccent: s.titleAccent,
