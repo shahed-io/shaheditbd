@@ -23,20 +23,22 @@ export interface FooterSection {
 const DEFAULT_SECTIONS: FooterSection[] = [
   {
     id: 'sec-products',
-    title: 'Products',
+    title: 'Services',
     icon: 'Package',
     accent: 'hsl(258,78%,55%)',
     is_active: true,
     sort_order: 1,
     links: [
-      { id: 'l-1', label: 'Windows Keys',     href: '/shop?category=windows', is_active: true, sort_order: 1 },
-      { id: 'l-2', label: 'Office 365',       href: '/shop?category=office',  is_active: true, sort_order: 2 },
-      { id: 'l-3', label: 'All Products',     href: '/shop',                  is_active: true, sort_order: 3 },
-      
-      { id: 'l-6', label: 'Free Tools',       href: '/free-tools',            is_active: true, sort_order: 6 },
-      { id: 'l-19', label: 'Confirmation ID',  href: '/get-cid',               is_active: true, sort_order: 7 },
-      { id: 'l-20', label: 'Check Key',        href: '/check-key',             is_active: true, sort_order: 8 },
+      { id: 'l-1', label: 'Web Development',     href: '/shop?category=web-development',     is_active: true, sort_order: 1 },
+      { id: 'l-2', label: 'Website Maintenance', href: '/shop?category=website-maintenance', is_active: true, sort_order: 2 },
+      { id: 'l-3', label: 'Graphics Design',     href: '/shop?category=graphics-design',     is_active: true, sort_order: 3 },
+      { id: 'l-4', label: 'Facebook Services',   href: '/shop?category=facebook-services',   is_active: true, sort_order: 4 },
+      { id: 'l-5', label: 'Digital Marketing',   href: '/shop?category=digital-marketing',   is_active: true, sort_order: 5 },
+      { id: 'l-21', label: 'Business Solutions', href: '/shop?category=business-solutions',  is_active: true, sort_order: 6 },
+      { id: 'l-6', label: 'All Services',        href: '/shop',                              is_active: true, sort_order: 7 },
+      { id: 'l-22', label: 'Get a Quote',        href: '/contact',                           is_active: true, sort_order: 8 },
     ],
+
   },
   {
     id: 'sec-info',
