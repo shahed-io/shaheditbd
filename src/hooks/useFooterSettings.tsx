@@ -21,7 +21,7 @@ export interface FooterSettings {
 const DEFAULTS: FooterSettings = {
   cert_title: ' Certificate of Digital Business Identity (DBID)',
   cert_id: 'DBID: 586772174',
-  status_text: 'Trusted Digital Product Store',
+  status_text: 'Trusted Digital IT Partner',
   payment_methods: 'BKash,Nagad,Rocket,Upay,BKash Merchant',
   phone: '01840-099853',
   email: 'info@shahedit.com',
