@@ -349,17 +349,17 @@ const Shop = () => {
       <SEOHead
         title={catSeo?.title
           ?? (activeCategory
-            ? `Buy ${activeCategory.name} in Bangladesh | Best Price – Shahed IT`
-            : 'Buy Digital Software, License Keys & Subscriptions – Best Price in Bangladesh')}
+            ? `${activeCategory.name} Service in Bangladesh | Shahed IT`
+            : 'IT Services in Bangladesh – Web Development, Design & Marketing')}
         description={catSeo?.desc
           ?? (activeCategory
-            ? `Buy original ${activeCategory.name} at the best price in Bangladesh. 100% genuine license, instant email delivery, bKash/Nagad accepted. Shahed IT BD.`
-            : 'Shop Windows 11, Office 365, Adobe CC, Netflix, Spotify, Antivirus, VPN & all digital software at the lowest price in Bangladesh. 100% genuine, instant delivery.')}
+            ? `Get professional ${activeCategory.name} service in Bangladesh from Shahed IT. Expert team, fair pricing and dedicated support.`
+            : 'Shahed IT provides web development, website maintenance, graphics design, Facebook services, digital marketing and IT business solutions in Bangladesh.')}
         canonical={activeCatSlug ? `https://shahedit.com/shop?category=${activeCatSlug}` : 'https://shahedit.com/shop'}
         keywords={catSeo?.keywords
           ?? (activeCategory
-            ? `buy ${activeCategory.name} in bangladesh, ${activeCategory.name} price bd, ${activeCategory.name} bangladesh, shahed it`
-            : 'digital software bangladesh, license key bangladesh, windows 11 key, office 365 bangladesh, adobe bangladesh, netflix subscription bd, shahed it')}
+            ? `${activeCategory.name} bangladesh, ${activeCategory.name} price bd, ${activeCategory.name} service bd, shahed it`
+            : 'it service bangladesh, web development bd, website maintenance bangladesh, graphics design bd, digital marketing bangladesh, shahed it')}
         schema={[
           ...(products.length > 0 ? [itemListSchema(products.map(p => ({ name: p.name, slug: p.slug, image: p.image_url, price: p.price })))] : []),
           breadcrumbSchema([
