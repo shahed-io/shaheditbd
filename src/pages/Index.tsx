@@ -94,7 +94,7 @@ const Index = () => {
       <Navbar />
       <main>
         <h1 className="sr-only">
-          Shahed IT (ShahedIT / Shahed IT BD / শাহেদ স্টোর) — Bangladesh's trusted digital software shop
+          Shahed IT (ShahedIT / Shahed IT BD / Shahed IT) — Bangladesh's trusted digital software shop
         </h1>
         <HeroBanner />
         <TickerBanner />

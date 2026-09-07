@@ -91,7 +91,7 @@ Write the body as a real corporate notice with these sections, in this order:
 ═══ HARD RULES ═══
 - Language: ${isBn ? 'বাংলা — স্বাভাবিক, সাবলীল, পেশাদার বাংলা। কোনো অনুবাদ-গন্ধ নয়। শুদ্ধ বানান।' : 'English — clean professional English. No translation feel.'}
 - Tone: ${toneGuide}
-- Store name spelling by language: in English text write exactly \`Shahed IT\`; in Bengali text write exactly \`শাহেদ স্টোর\` (correct spelling — শা-হে-দ, "হে"-তে এ-কার). NEVER use misspelled variants: শাহিদ স্টোর, সাহেদ স্টোর, শায়েদ স্টোর, শাহীদ স্টোর, শহীদ স্টোর, শাওন স্টোর, ShahedIT, Shahid Store. In Bengali sentences attach case markers to the Bengali form (শাহেদ স্টোরের / শাহেদ স্টোরে / শাহেদ স্টোরকে) — do NOT mix "Shahed IT-এর".
+- Store name spelling by language: in English text write exactly \`Shahed IT\`; in Bengali text write exactly \`Shahed IT\` (correct spelling — শা-হে-দ, "হে"-তে এ-কার). NEVER use misspelled variants: শাহিদ স্টোর, সাহেদ স্টোর, শায়েদ স্টোর, শাহীদ স্টোর, শহীদ স্টোর, শাওন স্টোর, ShahedIT, Shahid Store. In Bengali sentences attach case markers to the Bengali form (Shahed ITের / Shahed ITে / Shahed ITকে) — do NOT mix "Shahed IT-এর".
 - Use \`**bold**\` for important keywords (dates, amounts, deadlines).
 - Use markdown lists for any enumeration of 2+ items.
 - Length: aim for 180-350 words in body_markdown for normal notices, up to 500 for complex ones. Never under 120 words.
@@ -117,7 +117,7 @@ Write the body as a real corporate notice with these sections, in this order:
     let plan: any;
     try { plan = JSON.parse(match[0]); } catch { throw new Error('AI returned invalid JSON'); }
 
-    // Normalize store name — language-aware (English → "Shahed IT", Bengali → "শাহেদ স্টোর")
+    // Normalize store name — language-aware (English → "Shahed IT", Bengali → "Shahed IT")
     const { normalizeBrandNameText } = await import('../_shared/brand-name.ts');
     const fixStoreName = (s: string) => normalizeBrandNameText(String(s || ''));
 

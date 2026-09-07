@@ -1,11 +1,11 @@
 // Brand name normalization
 // Rule (updated):
 //   • English contexts  → "Shahed IT"
-//   • Bengali contexts  → "শাহেদ স্টোর" (correct Bengali spelling)
+//   • Bengali contexts  → "Shahed IT" (correct Bengali spelling)
 //   • All misspellings (Bengali or English) → corrected form in the matching language
 
 const EN_NAME = 'Shahed IT';
-const BN_NAME = 'শাহেদ স্টোর';
+const BN_NAME = 'Shahed IT';
 
 // Misspelled Bengali variants → always fixed to the correct Bengali form
 const BENGALI_MISSPELLINGS = [

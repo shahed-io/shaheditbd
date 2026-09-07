@@ -1,11 +1,11 @@
 // Brand name normalization (edge-function copy)
 // Rule (updated):
 //   • English contexts  → "Shahed IT"
-//   • Bengali contexts  → "শাহেদ স্টোর"
+//   • Bengali contexts  → "Shahed IT"
 //   • Misspellings are auto-corrected in the matching language
 
 const EN_NAME = "Shahed IT";
-const BN_NAME = "শাহেদ স্টোর";
+const BN_NAME = "Shahed IT";
 
 const BENGALI_MISSPELLINGS = [
   "শাহিদ স্টোর",
