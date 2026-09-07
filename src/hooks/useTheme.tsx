@@ -62,9 +62,10 @@ export const THEMES: ThemeInfo[] = [
 ];
 
 const THEME_KEY = 'active_theme';
+const DEFAULT_THEME: ThemeId = 'midnight-purple';
 
 export const useTheme = () => {
-  const [activeTheme, setActiveTheme] = useState<ThemeId>('clean-white');
+  const [activeTheme, setActiveTheme] = useState<ThemeId>(DEFAULT_THEME);
   const [loading, setLoading] = useState(true);
 
   const applyTheme = (themeId: ThemeId) => {
@@ -73,6 +74,7 @@ export const useTheme = () => {
   };
 
   useEffect(() => {
+    applyTheme(DEFAULT_THEME);
     const cached = localStorage.getItem('site_theme');
     if (cached && THEMES.some(t => t.id === cached)) {
       applyTheme(cached as ThemeId);
@@ -88,6 +90,9 @@ export const useTheme = () => {
         if (val && THEMES.some(t => t.id === val)) {
           applyTheme(val);
           localStorage.setItem('site_theme', val);
+        } else {
+          applyTheme(DEFAULT_THEME);
+          localStorage.setItem('site_theme', DEFAULT_THEME);
         }
         setLoading(false);
       });
