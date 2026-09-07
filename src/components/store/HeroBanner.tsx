@@ -104,8 +104,8 @@ const HeroBanner = () => {
     <section className="relative mt-[64px] lg:mt-[54px] px-2 sm:px-4 lg:px-6 pt-2 pb-3 md:pt-3 md:pb-5">
       {/* Preload fallback banners so first paint is instant */}
       <link rel="preload" as="image" href={bannerWebDev} />
-      <link rel="preload" as="image" href={bannerEcommerce} />
-      <link rel="preload" as="image" href={bannerSeo} />
+      <link rel="preload" as="image" href={bannerGraphics} />
+      <link rel="preload" as="image" href={bannerBusiness} />
 
       <div
         className="relative mx-auto w-full max-w-[1800px] rounded-[20px] lg:rounded-[28px] overflow-hidden"
