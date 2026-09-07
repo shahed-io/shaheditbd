@@ -71,12 +71,6 @@ const dbSlideToSlide = (s: SlideData): Slide => ({
   features: s.features, productSlug: s.productSlug || '',
 });
 
-const DEFAULT_TRUST = [
-  { text: 'Instant Delivery', icon: <Zap size={12} /> },
-  { text: '100% Genuine',     icon: <Shield size={12} /> },
-  { text: '24/7 Support',     icon: <Clock size={12} /> },
-  { text: '4.9★ Rating',      icon: <Star size={12} /> },
-];
 
 const HeroBanner = () => {
   const [active, setActive] = useState(0);
