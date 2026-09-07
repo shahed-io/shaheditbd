@@ -25,7 +25,7 @@ const DEFAULTS: FooterSettings = {
   payment_methods: 'BKash,Nagad,Rocket,Upay,BKash Merchant',
   phone: '01840-099853',
   email: 'info@shahedit.com',
-  address: 'Ishwardi, Pabna',
+  address: 'Rajshahi, Bangladesh',
   website_url: 'https://www.shahedit.com',
   store_name: 'Shahed IT',
   tagline: 'বাংলাদেশের সবচেয়ে বিশ্বস্ত ডিজিটাল সফটওয়্যার স্টোর। অরিজিনাল সফটওয়্যার, সেরা দামে, ইনস্ট্যান্ট ডেলিভারি।',
