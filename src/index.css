@@ -293,41 +293,41 @@
      THEME: MIDNIGHT PURPLE
   ══════════════════════════════════════ */
   [data-theme="midnight-purple"] {
-    --background:         276 44% 4%;
-    --foreground:         270 20% 96%;
-    --card:               276 67% 10%;
-    --card-foreground:    270 20% 96%;
-    --popover:            276 55% 7%;
-    --popover-foreground: 270 20% 96%;
-    --primary:            266 80% 54%;
-    --primary-foreground: 0 0% 100%;
-    --secondary:          276 35% 14%;
-    --secondary-foreground: 270 15% 90%;
-    --muted:              276 30% 13%;
-    --muted-foreground:   270 12% 66%;
-    --accent:             319 93% 56%;
-    --accent-foreground:  0 0% 100%;
+    --background:         270 30% 8%;
+    --foreground:         270 15% 90%;
+    --card:               270 25% 12%;
+    --card-foreground:    270 15% 92%;
+    --popover:            270 25% 10%;
+    --popover-foreground: 270 15% 92%;
+    --primary:            280 70% 70%;
+    --primary-foreground: 270 30% 6%;
+    --secondary:          270 20% 16%;
+    --secondary-foreground: 270 15% 85%;
+    --muted:              270 20% 15%;
+    --muted-foreground:   270 12% 55%;
+    --accent:             330 75% 65%;
+    --accent-foreground:  270 30% 6%;
     --destructive:        4 80% 55%;
     --destructive-foreground: 0 0% 100%;
-    --border:             276 28% 20%;
-    --input:              276 30% 16%;
-    --ring:               319 93% 56%;
-    --brand-h: 266; --brand-s: 80%; --brand-l: 54%;
-    --accent-h: 319; --accent-s: 93%; --accent-l: 56%;
-    --brand2-h: 292; --brand2-s: 82%; --brand2-l: 48%;
-    --brand3-h: 319; --brand3-s: 93%; --brand3-l: 56%;
-    --brand4-h: 266; --brand4-s: 80%; --brand4-l: 62%;
-    --glass-bg: hsla(276, 67%, 10%, 0.64);
-    --glass-border: hsla(319, 93%, 56%, 0.20);
-    --glass-shadow: 0 4px 24px hsla(276, 80%, 3%, 0.45), inset 0 1px 0 hsla(319, 93%, 70%, 0.08);
-    --sidebar-background: 276 55% 7%;
-    --sidebar-foreground: 270 15% 90%;
-    --sidebar-primary:    266 80% 54%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent:     276 35% 14%;
-    --sidebar-accent-foreground: 270 15% 90%;
-    --sidebar-border:     276 28% 20%;
-    --sidebar-ring:       319 93% 56%;
+    --border:             270 20% 20%;
+    --input:              270 20% 18%;
+    --ring:               280 70% 70%;
+    --brand-h: 280; --brand-s: 70%; --brand-l: 70%;
+    --accent-h: 330; --accent-s: 75%; --accent-l: 65%;
+    --brand2-h: 300; --brand2-s: 60%; --brand2-l: 60%;
+    --brand3-h: 330; --brand3-s: 75%; --brand3-l: 65%;
+    --brand4-h: 250; --brand4-s: 60%; --brand4-l: 65%;
+    --glass-bg: hsla(270, 25%, 12%, 0.55);
+    --glass-border: hsla(280, 70%, 65%, 0.2);
+    --glass-shadow: 0 4px 24px hsla(270,30%,6%,0.3), inset 0 1px 0 hsla(280,70%,70%,0.08);
+    --sidebar-background: 270 25% 9%;
+    --sidebar-foreground: 270 15% 85%;
+    --sidebar-primary:    280 70% 70%;
+    --sidebar-primary-foreground: 270 30% 6%;
+    --sidebar-accent:     270 20% 16%;
+    --sidebar-accent-foreground: 270 15% 85%;
+    --sidebar-border:     270 20% 18%;
+    --sidebar-ring:       280 70% 70%;
   }
 
   /* ══════════════════════════════════════
@@ -436,7 +436,7 @@
     background: linear-gradient(135deg, hsl(260,40%,6%) 0%, hsl(250,35%,8%) 50%, hsl(270,30%,7%) 100%);
   }
   html[data-theme="midnight-purple"] body {
-    background: linear-gradient(135deg, hsl(276,44%,4%) 0%, hsl(276,67%,7%) 50%, hsl(276,55%,5%) 100%);
+    background: linear-gradient(135deg, hsl(270,30%,8%) 0%, hsl(280,25%,10%) 50%, hsl(260,20%,9%) 100%);
   }
 
   #root {

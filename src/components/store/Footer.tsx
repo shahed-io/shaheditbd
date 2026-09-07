@@ -81,27 +81,27 @@ const Footer = () => {
     <div className="relative z-10 border-b" style={{ borderColor: 'hsla(258,78%,75%,0.15)' }}>
       <div className="container-fluid py-7"
         style={{
-          background: 'hsla(276,67%,10%,0.66)',
+          background: 'hsla(0,0%,100%,0.50)',
           backdropFilter: 'blur(24px) saturate(180%)',
           WebkitBackdropFilter: 'blur(24px) saturate(180%)',
         }}>
         <div className="flex flex-col sm:flex-row items-center justify-between gap-5">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
-              style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))', boxShadow: '0 4px 16px hsla(var(--accent-h),var(--accent-s),var(--accent-l),0.30)' }}>
+              style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', boxShadow: '0 4px 16px hsla(258,78%,55%,0.30)' }}>
               <Zap size={18} className="text-white" />
             </div>
             <div>
-              <h3 className="font-sora font-black text-xl" style={{ color: 'hsl(var(--foreground))' }}>Need help choosing a product?</h3>
-              <p className="text-sm mt-0.5" style={{ color: 'hsl(var(--muted-foreground))' }}>Our experts are available 24/7 to assist you</p>
+              <h3 className="font-sora font-black text-xl" style={{ color: 'hsl(226,35%,12%)' }}>Need help choosing a product?</h3>
+              <p className="text-sm mt-0.5" style={{ color: 'hsl(226,35%,45%)' }}>Our experts are available 24/7 to assist you</p>
             </div>
           </div>
           <div className="flex items-center gap-3 flex-shrink-0">
             <a href={`https://wa.me/${settings.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer"
               className="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold transition-all hover:scale-105"
               style={{
-                color: 'hsl(var(--foreground))',
-                background: 'hsla(276,35%,14%,0.82)',
+                color: 'hsl(226,35%,28%)',
+                background: 'hsla(0,0%,100%,0.75)',
                 backdropFilter: 'blur(12px)',
                 border: '1.5px solid hsla(258,78%,75%,0.25)',
                 boxShadow: '0 2px 12px hsla(226,35%,12%,0.06)',
@@ -110,7 +110,7 @@ const Footer = () => {
             </a>
             <a href="/shop"
               className="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold text-white transition-all hover:scale-105"
-              style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))', boxShadow: '0 4px 16px hsla(var(--accent-h),var(--accent-s),var(--accent-l),0.30)' }}>
+              style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', boxShadow: '0 4px 16px hsla(258,78%,55%,0.30)' }}>
               Shop Now <ArrowUpRight size={15} />
             </a>
           </div>
@@ -124,7 +124,7 @@ const Footer = () => {
       {/* Brand section — always centered */}
       <div className="flex flex-col items-center text-center mb-10 space-y-5"
         style={{
-          background: 'linear-gradient(135deg, hsla(276,67%,10%,0.80) 0%, hsla(276,55%,7%,0.68) 100%)',
+          background: 'linear-gradient(135deg, hsla(0,0%,100%,0.72) 0%, hsla(0,0%,100%,0.50) 100%)',
           backdropFilter: 'blur(24px) saturate(180%)',
           WebkitBackdropFilter: 'blur(24px) saturate(180%)',
           border: '1px solid hsla(258,78%,75%,0.20)',
@@ -135,7 +135,7 @@ const Footer = () => {
         <a href="/" className="flex items-center justify-center">
           <BrandLogo size="lg" />
         </a>
-        <p className="text-[13px] leading-relaxed md:whitespace-nowrap footer-tagline-highlight" style={{ color: 'hsl(var(--muted-foreground))' }}
+        <p className="text-[13px] leading-relaxed md:whitespace-nowrap footer-tagline-highlight" style={{ color: 'hsl(226,35%,42%)' }}
           dangerouslySetInnerHTML={{ __html: highlightTagline(settings.tagline) }}
         />
 
@@ -149,9 +149,9 @@ const Footer = () => {
           ].map((c, i) => (
             <a key={i} href={c.href}
               className="flex items-center gap-3 text-sm transition-all group hover:translate-x-1"
-              style={{ color: 'hsl(var(--muted-foreground))' }}
+              style={{ color: 'hsl(226,35%,42%)' }}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = c.color; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(var(--muted-foreground))'; }}>
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(226,35%,42%)'; }}>
               <span className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
                 style={{
                   background: `${c.color.replace('hsl(','hsla(').replace(')',',0.10)')}`,
@@ -177,10 +177,10 @@ const Footer = () => {
               aria-label={`Visit Shahed IT on ${s.label}`}
               className="w-11 h-11 rounded-xl flex items-center justify-center transition-all hover:scale-110 hover:-translate-y-0.5"
               style={{
-                background: 'hsla(276,35%,14%,0.82)',
+                background: 'hsla(0,0%,100%,0.65)',
                 backdropFilter: 'blur(12px)',
                 border: '1.5px solid hsla(258,78%,75%,0.22)',
-                color: 'hsl(var(--muted-foreground))',
+                color: 'hsl(226,35%,42%)',
                 boxShadow: '0 2px 8px hsla(226,35%,12%,0.06)',
               }}
               title={s.label}
@@ -192,7 +192,7 @@ const Footer = () => {
               }}
               onMouseLeave={e => {
                 const el = e.currentTarget as HTMLElement;
-                el.style.color = 'hsl(var(--muted-foreground))';
+                el.style.color = 'hsl(226,35%,42%)';
                 el.style.borderColor = 'hsla(258,78%,75%,0.22)';
                 el.style.boxShadow = '0 2px 8px hsla(226,35%,12%,0.06)';
               }}>
@@ -210,7 +210,7 @@ const Footer = () => {
           return (
             <div key={col.id} className="rounded-2xl p-5 space-y-4"
               style={{
-                background: 'linear-gradient(135deg, hsla(276,67%,10%,0.80) 0%, hsla(276,55%,7%,0.68) 100%)',
+                background: 'linear-gradient(135deg, hsla(0,0%,100%,0.72) 0%, hsla(0,0%,100%,0.50) 100%)',
                 backdropFilter: 'blur(24px) saturate(180%)',
                 WebkitBackdropFilter: 'blur(24px) saturate(180%)',
                 border: `1px solid ${accent.replace('hsl(','hsla(').replace(')',',0.18)')}`,
@@ -226,7 +226,7 @@ const Footer = () => {
                   <IconComp size={14} />
                 </div>
                 <h4 className="font-sora font-bold text-[11px] uppercase tracking-[0.18em]"
-                  style={{ color: 'hsl(var(--foreground))' }}>
+                  style={{ color: 'hsl(226,35%,20%)' }}>
                   {col.title}
                 </h4>
               </div>
@@ -240,7 +240,7 @@ const Footer = () => {
                       rel={link.external ? 'noopener noreferrer' : undefined}
                       className="group flex items-center gap-2 px-2.5 py-2 rounded-xl text-[12.5px] transition-all"
                       style={{
-                        color: 'hsl(var(--muted-foreground))',
+                        color: 'hsl(226,35%,45%)',
                         background: 'transparent',
                         border: '1px solid transparent',
                       }}
@@ -253,7 +253,7 @@ const Footer = () => {
                       }}
                       onMouseLeave={e => {
                         const el = e.currentTarget as HTMLElement;
-                        el.style.color = 'hsl(var(--muted-foreground))';
+                        el.style.color = 'hsl(226,35%,45%)';
                         el.style.background = 'transparent';
                         el.style.borderColor = 'transparent';
                         el.style.transform = 'translateX(0)';
@@ -274,7 +274,7 @@ const Footer = () => {
     {/* ── Trust bar ── */}
     <div className="relative z-10 mx-4 sm:mx-6 lg:mx-8 mb-6 rounded-2xl overflow-hidden"
       style={{
-        background: 'hsla(276,67%,10%,0.72)',
+        background: 'hsla(0,0%,100%,0.55)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         border: '1px solid hsla(258,78%,75%,0.18)',
@@ -327,9 +327,9 @@ const Footer = () => {
             <span key={pm}
               className="px-3 py-1.5 rounded-lg text-[10.5px] font-bold font-fira cursor-default transition-all hover:scale-105"
               style={{
-                background: 'hsla(276,35%,14%,0.82)',
+                background: 'hsla(0,0%,100%,0.70)',
                 backdropFilter: 'blur(10px)',
-                color: 'hsl(var(--foreground))',
+                color: 'hsl(258,78%,45%)',
                 border: '1px solid hsla(258,78%,75%,0.22)',
                 boxShadow: '0 1px 4px hsla(226,35%,12%,0.05)',
               }}>
@@ -353,7 +353,7 @@ const Footer = () => {
         <div
           className="inline-flex items-center px-4 py-1.5 rounded-full backdrop-blur-md transition-all hover:scale-[1.02]"
           style={{
-            background: 'linear-gradient(135deg, hsla(276,67%,10%,0.88), hsla(276,35%,14%,0.78))',
+            background: 'linear-gradient(135deg, hsla(0,0%,100%,0.85), hsla(258,78%,98%,0.75))',
             border: '1px solid hsla(258,78%,75%,0.25)',
             boxShadow: '0 4px 16px -4px hsla(258,78%,50%,0.12), inset 0 1px 0 hsla(0,0%,100%,0.6)',
           }}
@@ -373,7 +373,7 @@ const Footer = () => {
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
             }}>{settings.store_name}</strong>
-            <span style={{ color: 'hsl(var(--muted-foreground))' }}>. </span>
+            <span style={{ color: 'hsl(226,30%,45%)' }}>. </span>
             <span style={{
               background: 'linear-gradient(90deg, hsl(190,75%,40%), hsl(258,70%,50%))',
               WebkitBackgroundClip: 'text',
@@ -386,7 +386,7 @@ const Footer = () => {
         <a href={settings.website_url} target="_blank" rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full backdrop-blur-md transition-all hover:scale-[1.02]"
           style={{
-            background: 'linear-gradient(135deg, hsla(276,67%,10%,0.88), hsla(276,35%,14%,0.78))',
+            background: 'linear-gradient(135deg, hsla(0,0%,100%,0.85), hsla(258,78%,98%,0.75))',
             border: '1px solid hsla(258,78%,75%,0.25)',
             boxShadow: '0 4px 16px -4px hsla(258,78%,50%,0.12), inset 0 1px 0 hsla(0,0%,100%,0.6)',
           }}>
