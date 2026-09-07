@@ -29,11 +29,11 @@ const DEFAULT_SETTINGS: AnnouncementSettings = {
   accentColor: 'hsl(258,78%,55%)',
   liveLabel: 'LIVE',
   items: [
-    { label: 'Windows 11 Pro', price: '৳599', off: '-94%' },
-    { label: 'Office 365 Personal', price: '৳1,999', off: '-88%' },
-    { label: 'Netflix Premium', price: '৳499', off: '-81%' },
-    { label: 'Adobe Creative Cloud', price: '৳599', off: '-70%' },
-    { label: 'Spotify Premium', price: '৳899', off: '-60%' },
+    { label: 'Business Website', price: '৳15,000', off: '-25%' },
+    { label: 'E-Commerce Website', price: '৳35,000', off: '-22%' },
+    { label: 'Logo Design', price: '৳3,000', off: '-33%' },
+    { label: 'Facebook Page Setup', price: '৳2,000', off: '-33%' },
+    { label: 'Monthly SEO', price: '৳8,000', off: '-33%' },
   ],
 };
 

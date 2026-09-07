@@ -68,8 +68,8 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SEOHead
-        title="Shahed IT – Digital Software Shop BD"
-        description="Buy genuine Windows, Office, Adobe, antivirus, VPN and digital subscriptions in Bangladesh with instant delivery from Shahed IT."
+        title="Shahed IT – Trusted Digital IT Partner in Bangladesh"
+        description="Web development, website maintenance, graphics design, Facebook services, digital marketing and IT business solutions in Bangladesh from Shahed IT, Rajshahi."
         ogType="website"
         canonical="https://shahedit.com/"
         schema={[
@@ -80,10 +80,10 @@ const Index = () => {
           siteNavigationSchema([
             { name: 'Home', url: '/' },
             { name: 'Shop', url: '/shop' },
-            { name: 'Windows', url: '/shop?category=windows' },
-            { name: 'Microsoft Office', url: '/shop?category=microsoft-office' },
-            { name: 'Adobe', url: '/shop?category=adobe' },
-            { name: 'Antivirus', url: '/shop?category=antivirus' },
+            { name: 'Web Development', url: '/shop?category=web-development' },
+            { name: 'Website Maintenance', url: '/shop?category=website-maintenance' },
+            { name: 'Graphics Design', url: '/shop?category=graphics-design' },
+            { name: 'Digital Marketing', url: '/shop?category=digital-marketing' },
             { name: 'Help Center', url: '/help' },
             { name: 'Blog', url: '/blog' },
             { name: 'Contact', url: '/contact-us' },
@@ -94,7 +94,7 @@ const Index = () => {
       <Navbar />
       <main>
         <h1 className="sr-only">
-          Shahed IT (ShahedIT / Shahed IT BD / Shahed IT) — Bangladesh's trusted digital software shop
+          Shahed IT — Bangladesh's trusted IT partner for web development, design and digital marketing
         </h1>
         <HeroBanner />
         <TickerBanner />

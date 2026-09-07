@@ -40,7 +40,7 @@ const fetchProducts = async () => {
     .limit(80);
   if (error) throw error;
   const rows = data ?? [];
-  const hiddenCats = ['Streaming', 'Adobe', 'Antivirus'];
+  const hiddenCats: string[] = [];
   const filteredRows = rows.filter((p: any) => !hiddenCats.includes(p.category?.name));
   const products = filteredRows.map(mapProduct);
   const map = new Map<string, number>();
