@@ -20,7 +20,7 @@ export interface FooterSettings {
 
 const DEFAULTS: FooterSettings = {
   cert_title: ' Certificate of Digital Business Identity (DBID)',
-  cert_id: 'DBID: 586772174',
+  cert_id: 'DBID:\u00a0623962552',
   status_text: 'Trusted Digital IT Partner',
   payment_methods: 'BKash,Nagad,Rocket,Upay,BKash Merchant',
   phone: '01840-099853',
