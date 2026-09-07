@@ -131,7 +131,7 @@ export default function AdminBkashTransactions() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
-            <Wallet className="h-6 w-6 text-pink-600" />
+            <Wallet className="h-6 w-6 text-orange-600" />
             bKash Transactions
           </h1>
           <p className="text-sm text-muted-foreground">
@@ -157,7 +157,7 @@ export default function AdminBkashTransactions() {
         <StatCard label="Total" value={stats.total} cls="text-foreground" />
         <StatCard label="Completed" value={stats.completed} cls="text-green-600" />
         <StatCard label="Failed" value={stats.failed} cls="text-red-600" />
-        <StatCard label="Revenue (৳)" value={stats.revenue.toLocaleString()} cls="text-pink-600" />
+        <StatCard label="Revenue (৳)" value={stats.revenue.toLocaleString()} cls="text-orange-600" />
       </div>
 
       {/* Filters */}
@@ -241,7 +241,7 @@ export default function AdminBkashTransactions() {
                         </td>
                         <td className="p-3 font-mono text-xs whitespace-nowrap">
                           {t.payer_msisdn ? (
-                            <span className="inline-flex items-center gap-1 text-pink-600 whitespace-nowrap">
+                            <span className="inline-flex items-center gap-1 text-orange-600 whitespace-nowrap">
                               <Smartphone className="h-3 w-3 shrink-0" /> {t.payer_msisdn}
                             </span>
                           ) : <span className="text-muted-foreground">—</span>}
@@ -275,7 +275,7 @@ export default function AdminBkashTransactions() {
 
       {/* Detail dialog — premium redesign */}
       <Dialog open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0 bg-gradient-to-br from-white via-pink-50/30 to-rose-50/40 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 border-pink-200/50 dark:border-pink-900/30">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0 bg-gradient-to-br from-white via-orange-50/30 to-rose-50/40 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 border-orange-200/50 dark:border-orange-900/30">
           {selected && (() => {
             const st = statusBadge[selected.status];
             const StatusIcon = st?.icon || Clock;
@@ -283,7 +283,7 @@ export default function AdminBkashTransactions() {
             return (
               <>
                 {/* Premium gradient header */}
-                <div className="relative overflow-hidden bg-gradient-to-br from-pink-500 via-rose-500 to-pink-600 px-6 pt-6 pb-20 text-white">
+                <div className="relative overflow-hidden bg-gradient-to-br from-orange-500 via-rose-500 to-orange-600 px-6 pt-6 pb-20 text-white">
                   <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 20% 20%, white 0%, transparent 40%), radial-gradient(circle at 80% 80%, white 0%, transparent 40%)' }} />
                   <DialogHeader className="relative space-y-1">
                     <DialogTitle className="flex items-center gap-2 text-white text-lg">
@@ -292,7 +292,7 @@ export default function AdminBkashTransactions() {
                       </div>
                       bKash Transaction
                     </DialogTitle>
-                    <DialogDescription className="text-pink-100/90 text-xs">
+                    <DialogDescription className="text-orange-100/90 text-xs">
                       {selected.order_number || 'Payment record'} • {format(new Date(selected.created_at), 'dd MMM yyyy, hh:mm a')}
                     </DialogDescription>
                   </DialogHeader>
@@ -300,10 +300,10 @@ export default function AdminBkashTransactions() {
 
                 {/* Floating amount card */}
                 <div className="px-6 -mt-14 relative">
-                  <div className="rounded-2xl bg-white dark:bg-zinc-900 border border-pink-200/60 dark:border-zinc-800 shadow-xl p-5 flex items-center justify-between">
+                  <div className="rounded-2xl bg-white dark:bg-zinc-900 border border-orange-200/60 dark:border-zinc-800 shadow-xl p-5 flex items-center justify-between">
                     <div>
                       <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Amount Paid</div>
-                      <div className="text-3xl font-bold text-pink-600 mt-1">৳{Number(selected.amount).toLocaleString()}<span className="text-sm font-normal text-muted-foreground ml-1">{selected.currency}</span></div>
+                      <div className="text-3xl font-bold text-orange-600 mt-1">৳{Number(selected.amount).toLocaleString()}<span className="text-sm font-normal text-muted-foreground ml-1">{selected.currency}</span></div>
                     </div>
                     <div className="flex flex-col items-end gap-2">
                       <Badge variant="outline" className={`${st?.cls || ''} font-semibold gap-1 px-3 py-1`}>
@@ -385,9 +385,9 @@ function StatCard({ label, value, cls }: { label: string; value: string | number
 }
 
 const tintMap: Record<string, string> = {
-  pink: 'from-pink-500/10 to-rose-500/5 border-pink-200/60 dark:border-pink-900/40 text-pink-600',
-  rose: 'from-rose-500/10 to-pink-500/5 border-rose-200/60 dark:border-rose-900/40 text-rose-600',
-  violet: 'from-violet-500/10 to-purple-500/5 border-violet-200/60 dark:border-violet-900/40 text-violet-600',
+  pink: 'from-orange-500/10 to-rose-500/5 border-orange-200/60 dark:border-orange-900/40 text-orange-600',
+  rose: 'from-rose-500/10 to-orange-500/5 border-rose-200/60 dark:border-rose-900/40 text-rose-600',
+  violet: 'from-cyan-500/10 to-sky-500/5 border-cyan-200/60 dark:border-cyan-900/40 text-cyan-600',
   slate: 'from-slate-500/10 to-zinc-500/5 border-slate-200/60 dark:border-slate-800/60 text-slate-600 dark:text-slate-300',
 };
 
@@ -417,11 +417,11 @@ function CopyRow({ label, value, mono, highlight }: { label: string; value: stri
     <div className="flex items-center justify-between gap-3 px-4 py-2.5 group">
       <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold shrink-0">{label}</span>
       <div className="flex items-center gap-2 min-w-0">
-        <span className={`truncate ${mono ? 'font-mono text-xs' : 'text-sm'} ${highlight ? 'text-pink-600 font-semibold' : 'text-foreground'}`}>
+        <span className={`truncate ${mono ? 'font-mono text-xs' : 'text-sm'} ${highlight ? 'text-orange-600 font-semibold' : 'text-foreground'}`}>
           {value || '—'}
         </span>
         {value && (
-          <button onClick={copy} className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-md hover:bg-pink-500/10 text-muted-foreground hover:text-pink-600">
+          <button onClick={copy} className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-md hover:bg-orange-500/10 text-muted-foreground hover:text-orange-600">
             <Copy className="h-3.5 w-3.5" />
           </button>
         )}

@@ -74,7 +74,7 @@ export default function PublicNotices() {
       <SEOHead title="Notices" description="Latest notices and announcements from Shahed IT." />
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 bg-violet-100 text-violet-700 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider">
+          <div className="inline-flex items-center gap-2 bg-cyan-100 text-cyan-700 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider">
             <Megaphone className="w-3.5 h-3.5" /> Notice Board
           </div>
           <h1 className="text-3xl md:text-4xl font-bold mt-3">সকল নোটিশ</h1>
@@ -89,7 +89,7 @@ export default function PublicNotices() {
           <div className="space-y-3">
             {list.map((n) => (
               <Link key={n.id} to={`/notices/${n.slug}`}
-                    className="block bg-white rounded-xl border border-gray-200 hover:border-violet-300 hover:shadow-md transition p-5">
+                    className="block bg-white rounded-xl border border-gray-200 hover:border-cyan-300 hover:shadow-md transition p-5">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
@@ -200,7 +200,7 @@ function NoticeActions({ targetRef, notice }: { targetRef: React.RefObject<HTMLD
       <button
         onClick={handleShare}
         disabled={!!busy}
-        className="inline-flex items-center gap-1.5 rounded-full border border-violet-200 bg-white/80 backdrop-blur px-3 py-1.5 text-xs font-medium text-violet-700 hover:bg-violet-50 disabled:opacity-60"
+        className="inline-flex items-center gap-1.5 rounded-full border border-cyan-200 bg-white/80 backdrop-blur px-3 py-1.5 text-xs font-medium text-cyan-700 hover:bg-cyan-50 disabled:opacity-60"
       >
         {busy === 'share' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Share2 className="w-3.5 h-3.5" />}
         <span>শেয়ার</span>
@@ -208,7 +208,7 @@ function NoticeActions({ targetRef, notice }: { targetRef: React.RefObject<HTMLD
       <button
         onClick={handleSave}
         disabled={!!busy}
-        className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-md shadow-violet-500/30 hover:shadow-lg hover:shadow-violet-500/40 disabled:opacity-60"
+        className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-cyan-600 to-blue-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-md shadow-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/40 disabled:opacity-60"
       >
         {busy === 'save' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
         <span>গ্যালারিতে সেভ</span>

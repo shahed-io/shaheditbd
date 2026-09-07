@@ -283,12 +283,12 @@ const AdminAttributes = () => {
               <div>
                 <label className={lc}>Color Code <span className="opacity-50">(hex)</span></label>
                 <div className="flex gap-2 items-center">
-                  <input type="color" value={valForm.color_code || '#7c3aed'}
+                  <input type="color" value={valForm.color_code || '#0891b2'}
                     onChange={e => setValForm(p => ({ ...p, color_code: e.target.value }))}
                     className="w-10 h-10 rounded-lg border border-border cursor-pointer" />
                   <input value={valForm.color_code}
                     onChange={e => setValForm(p => ({ ...p, color_code: e.target.value }))}
-                    placeholder="#7c3aed" className={`${ic} flex-1`} />
+                    placeholder="#0891b2" className={`${ic} flex-1`} />
                 </div>
               </div>
             )}

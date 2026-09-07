@@ -224,8 +224,8 @@ export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
               style={{ position: 'relative', filter: 'drop-shadow(0 6px 20px hsla(258,80%,60%,0.6))' }}>
               <defs>
                 <linearGradient id="sg" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stopColor="#f5f3ff" />
-                  <stop offset="100%" stopColor="#c4b5fd" />
+                  <stop offset="0%" stopColor="#f0fdff" />
+                  <stop offset="100%" stopColor="#a5f3fc" />
                 </linearGradient>
               </defs>
               <path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3Z"
@@ -242,11 +242,11 @@ export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
             background: 'hsla(258,80%,60%,0.14)',
             border: '1px solid hsla(258,80%,70%,0.28)',
             fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase',
-            color: '#ddd6fe', fontWeight: 700,
+            color: '#cffafe', fontWeight: 700,
           }}>
             <span style={{
-              width: 6, height: 6, borderRadius: '50%', background: '#a78bfa',
-              boxShadow: '0 0 10px #a78bfa',
+              width: 6, height: 6, borderRadius: '50%', background: '#67e8f9',
+              boxShadow: '0 0 10px #67e8f9',
             }} />
             Shahed IT · Secure Zone
           </div>
@@ -295,7 +295,7 @@ export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
             style={{
               position: 'relative', display: 'inline-flex', alignItems: 'center', gap: 10,
               padding: '14px 32px', borderRadius: 999,
-              background: 'linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #ec4899 100%)',
+              background: 'linear-gradient(135deg, #0891b2 0%, #0ea5e9 50%, #f97316 100%)',
               color: '#fff', textDecoration: 'none', fontWeight: 700, fontSize: 15,
               letterSpacing: '0.01em',
               boxShadow:

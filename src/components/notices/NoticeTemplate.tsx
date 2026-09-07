@@ -45,7 +45,7 @@ const formatDate = (s?: string | null) => {
 
 export default function NoticeTemplate({ notice, brand = {}, signatureUrl, className = '' }: Props) {
   const brandName = brand.name || 'Shahed IT';
-  const brandColor = brand.brandColor || '#7c3aed';
+  const brandColor = brand.brandColor || '#0891b2';
   const brandLight = brand.brandLight || '#f3f0ff';
   const accentText = brand.accentText || '#1a1a2e';
   const logo = brand.logoUrl || logoIcon;

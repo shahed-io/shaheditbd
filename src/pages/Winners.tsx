@@ -85,7 +85,7 @@ export default function Winners() {
           <div className="space-y-8">
             {blocks.map((b) => (
               <Card key={b.offer_id} className="overflow-hidden">
-                <div className="bg-gradient-to-r from-primary/10 via-fuchsia-500/5 to-transparent px-5 py-4 border-b flex items-center justify-between flex-wrap gap-3">
+                <div className="bg-gradient-to-r from-primary/10 via-blue-500/5 to-transparent px-5 py-4 border-b flex items-center justify-between flex-wrap gap-3">
                   <div>
                     <Link to={`/offer/${b.offer_slug}`} className="font-semibold text-lg hover:text-primary transition-colors">
                       {b.offer_title}

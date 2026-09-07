@@ -40,7 +40,7 @@ const CLUSTERS: Cluster[] = [
     ],
   },
   {
-    id: 'license', niche: 'Digital License', icon: KeyRound, color: 'from-purple-500 to-pink-500',
+    id: 'license', niche: 'Digital License', icon: KeyRound, color: 'from-sky-500 to-orange-500',
     topics: [
       { title: 'Digital Software License Bangladesh — Buyer\'s Ultimate Guide 2026', intent: 'pillar', pillar: true },
       { title: 'OEM vs Retail vs Volume License — পার্থক্য ও কোনটি কিনবেন', intent: 'guide' },
@@ -115,7 +115,7 @@ const CLUSTERS: Cluster[] = [
     ],
   },
   {
-    id: 'ai-tools', niche: 'AI Tools', icon: Bot, color: 'from-indigo-500 to-violet-500',
+    id: 'ai-tools', niche: 'AI Tools', icon: Bot, color: 'from-blue-500 to-cyan-500',
     topics: [
       { title: 'Best AI Tools in Bangladesh 2026 — Ultimate Pillar Guide', intent: 'pillar', pillar: true },
       { title: 'ChatGPT Plus বাংলাদেশে কিভাবে কিনবেন (Full Payment Guide)', intent: 'how-to' },

@@ -321,7 +321,7 @@ const ProductOptionsBuilder = ({ productId, basePrice }: Props) => {
                       onClick={() => updateGroup(gi, { allow_multiple: !group.allow_multiple })}
                       className={`w-full flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium border transition-colors ${
                         group.allow_multiple
-                          ? 'border-violet-500/40 bg-violet-500/10 text-violet-300'
+                          ? 'border-cyan-500/40 bg-cyan-500/10 text-cyan-300'
                           : 'border-border bg-muted/20 text-muted-foreground'
                       }`}
                       title={group.allow_multiple ? 'Customers can select multiple options — prices add up' : 'Only one option can be selected'}

@@ -751,7 +751,7 @@ const FloatingSupport = () => {
             aria-label="সাপোর্ট"
           >
             {/* Outer halo / glow */}
-            <span className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-br from-[#7c3aed] to-[#ec4899] opacity-40 blur-xl group-hover:opacity-60 transition-opacity" />
+            <span className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-br from-[#0891b2] to-[#f97316] opacity-40 blur-xl group-hover:opacity-60 transition-opacity" />
 
             {/* Main glass body */}
             <span className="relative w-full h-full flex items-center justify-center rounded-full border border-white/30 bg-white/20 backdrop-blur-xl shadow-[0_8px_32px_rgba(124,58,237,0.3)] overflow-hidden">

@@ -242,10 +242,10 @@ const AdminSettings = () => {
 
 
           {/* AI API Configuration */}
-          <div className="glass-card rounded-2xl p-6 border border-purple-500/20">
+          <div className="glass-card rounded-2xl p-6 border border-sky-500/20">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-9 h-9 rounded-xl bg-purple-500/20 flex items-center justify-center">
-                <Brain size={18} className="text-purple-400" />
+              <div className="w-9 h-9 rounded-xl bg-sky-500/20 flex items-center justify-center">
+                <Brain size={18} className="text-sky-400" />
               </div>
               <div>
                 <h3 className="font-bold text-foreground">🧠 AI API কনফিগারেশন</h3>
@@ -314,7 +314,7 @@ const AdminSettings = () => {
               ))}
             </div>
 
-            <div className="mt-4 bg-purple-500/5 border border-purple-500/20 rounded-xl p-4">
+            <div className="mt-4 bg-sky-500/5 border border-sky-500/20 rounded-xl p-4">
               <p className="text-xs text-foreground font-semibold mb-2">🔒 নিরাপত্তা তথ্য:</p>
               <ul className="text-xs text-muted-foreground space-y-1">
                 <li>✅ API Key গুলো এনক্রিপ্টেড ডাটাবেজে সেভ হয় — শুধু অ্যাডমিন দেখতে পারবে</li>
@@ -374,10 +374,10 @@ const AdminSettings = () => {
           </div>
 
           {/* Admin Email Notification Settings */}
-          <div className="glass-card rounded-2xl p-6 border border-violet-500/20">
+          <div className="glass-card rounded-2xl p-6 border border-cyan-500/20">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-9 h-9 rounded-xl bg-violet-500/20 flex items-center justify-center">
-                <Mail size={18} className="text-violet-500" />
+              <div className="w-9 h-9 rounded-xl bg-cyan-500/20 flex items-center justify-center">
+                <Mail size={18} className="text-cyan-500" />
               </div>
               <div>
                 <h3 className="font-bold text-foreground">📧 Admin Email নোটিফিকেশন</h3>

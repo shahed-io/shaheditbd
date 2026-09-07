@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { BarChart3, TrendingUp, ShoppingCart, Users, DollarSign, Package, ArrowUpRight, ArrowDownRight, Calendar, PieChart, Target, Repeat, Clock } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, CartesianGrid, PieChart as RePieChart, Pie, Cell, AreaChart, Area } from 'recharts';
 
-const COLORS = ['hsl(var(--primary))', '#4ade80', '#facc15', '#60a5fa', '#f87171', '#a78bfa', '#fb923c'];
+const COLORS = ['hsl(var(--primary))', '#4ade80', '#facc15', '#60a5fa', '#f87171', '#67e8f9', '#fb923c'];
 
 const AdminReports = () => {
   const [stats, setStats] = useState({ totalRevenue: 0, totalOrders: 0, totalCustomers: 0, totalProducts: 0, avgOrderValue: 0, completionRate: 0, newCustomers: 0, repeatRate: 0 });
@@ -108,12 +108,12 @@ const AdminReports = () => {
     { label: 'মোট অর্ডার', value: stats.totalOrders, icon: ShoppingCart, color: 'text-primary', bg: 'bg-primary/10', trend: orderTrend },
     { label: 'গড় অর্ডার ভ্যালু', value: `৳${stats.avgOrderValue.toLocaleString()}`, icon: Target, color: 'text-amber-400', bg: 'bg-amber-400/10', trend: '' },
     { label: 'নতুন কাস্টমার', value: stats.newCustomers, icon: Users, color: 'text-blue-400', bg: 'bg-blue-400/10', trend: '' },
-    { label: 'কমপ্লিশন রেট', value: `${stats.completionRate}%`, icon: TrendingUp, color: 'text-purple-400', bg: 'bg-purple-400/10', trend: '' },
-    { label: 'রিপিট রেট', value: `${stats.repeatRate}%`, icon: Repeat, color: 'text-pink-400', bg: 'bg-pink-400/10', trend: '' },
+    { label: 'কমপ্লিশন রেট', value: `${stats.completionRate}%`, icon: TrendingUp, color: 'text-sky-400', bg: 'bg-sky-400/10', trend: '' },
+    { label: 'রিপিট রেট', value: `${stats.repeatRate}%`, icon: Repeat, color: 'text-orange-400', bg: 'bg-orange-400/10', trend: '' },
   ];
 
   const statusColors: Record<string, string> = {
-    completed: '#4ade80', pending: '#facc15', processing: '#60a5fa', cancelled: '#f87171', refunded: '#a78bfa', delivered: '#2dd4bf', failed: '#fb923c'
+    completed: '#4ade80', pending: '#facc15', processing: '#60a5fa', cancelled: '#f87171', refunded: '#67e8f9', delivered: '#2dd4bf', failed: '#fb923c'
   };
 
   const tooltipStyle = { background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 12, color: 'hsl(var(--foreground))' };

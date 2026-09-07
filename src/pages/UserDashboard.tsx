@@ -723,7 +723,7 @@ const UserDashboard = () => {
   };
 
   const TOPUP_PAYMENT_METHODS = [
-    { id: 'bkash_online', label: 'bKash (Online)', number: '', type: 'bKash PGW', logo: bkashLogoSrc, color: 'from-pink-600 to-rose-700' },
+    { id: 'bkash_online', label: 'bKash (Online)', number: '', type: 'bKash PGW', logo: bkashLogoSrc, color: 'from-orange-600 to-rose-700' },
     ...paymentConfigs
       .filter(c => c.isActive)
       .sort((a, b) => a.sortOrder - b.sortOrder)
@@ -1543,7 +1543,7 @@ const UserDashboard = () => {
                                   <div className="flex items-center gap-2 flex-wrap">
                                     <span className="text-sm font-bold text-foreground">#{order.order_number}</span>
                                     {isWallet && (
-                                      <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-violet-500/15 text-violet-600 border border-violet-400/30">
+                                      <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-600 border border-cyan-400/30">
                                         <Wallet size={9} /> Wallet
                                       </span>
                                     )}
@@ -2617,7 +2617,7 @@ const UserDashboard = () => {
 
                             {/* bKash Online (PGW) info block */}
                             {isBkashOnline && (
-                              <div className="rounded-xl p-4 space-y-2 border bg-pink-500/10 border-pink-500/30">
+                              <div className="rounded-xl p-4 space-y-2 border bg-orange-500/10 border-orange-500/30">
                                 <div className="flex items-center gap-2 text-sm font-bold text-foreground">
                                   <img src={bkashLogoSrc} alt="bKash" className="h-6 w-auto" />
                                   <span>{bkashContent.title}</span>
@@ -2630,7 +2630,7 @@ const UserDashboard = () => {
                                     {bkashContent.bullets.map((b, i) => <li key={i}>{b}</li>)}
                                   </ul>
                                 )}
-                                <p className="text-xs text-pink-600 dark:text-pink-300 font-medium">
+                                <p className="text-xs text-orange-600 dark:text-orange-300 font-medium">
                                   {bkashContent.amount_prefix} ৳{amt.toLocaleString()}
                                 </p>
                               </div>
@@ -2733,7 +2733,7 @@ const UserDashboard = () => {
                                   onClick={handleTopupSubmit}
                                   disabled={topupProcessing || !topupTxId.trim()}
                                   className="group relative flex-1 overflow-hidden rounded-2xl py-3.5 px-5 font-bold text-base text-white shadow-[0_12px_40px_-8px_rgba(79,70,229,0.55)] transition-all duration-300 hover:shadow-[0_18px_55px_-8px_rgba(79,70,229,0.75)] hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
-                                  style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 45%, #1e3a8a 100%)' }}
+                                  style={{ background: 'linear-gradient(135deg, #0891b2 0%, #2563eb 45%, #1e3a8a 100%)' }}
                                 >
                                   <span aria-hidden className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full" />
                                   <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-2xl bg-gradient-to-b from-white/25 to-transparent" />
@@ -2743,7 +2743,7 @@ const UserDashboard = () => {
                                     ) : (
                                       <>
                                         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-white/40">
-                                          <CreditCard size={16} className="text-indigo-700" />
+                                          <CreditCard size={16} className="text-blue-700" />
                                         </span>
                                         <span className="tracking-wide">Submit Top-up Request</span>
                                         <span className="ml-1 rounded-full bg-white/20 px-3 py-1 text-sm font-extrabold backdrop-blur-sm">৳{amt.toLocaleString()}</span>

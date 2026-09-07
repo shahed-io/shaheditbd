@@ -211,7 +211,7 @@ const AdminReferrals = () => {
           { label: 'মোট রেফারেল', value: stats.total, icon: Gift, color: 'text-primary' },
           { label: 'সফল রেফারেল', value: stats.completed, icon: CheckCircle2, color: 'text-emerald-400' },
           { label: 'পেন্ডিং', value: stats.pending, icon: Clock, color: 'text-amber-400' },
-          { label: 'মোট ক্রেডিট বিতরণ', value: `৳${stats.totalPaid}`, icon: TrendingUp, color: 'text-purple-400' },
+          { label: 'মোট ক্রেডিট বিতরণ', value: `৳${stats.totalPaid}`, icon: TrendingUp, color: 'text-sky-400' },
         ].map(s => (
           <div key={s.label} className="glass-card rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-2">

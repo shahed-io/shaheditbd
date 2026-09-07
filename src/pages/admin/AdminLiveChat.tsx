@@ -80,7 +80,7 @@ const LIVE_SET_TYPES = [
   { value: 'messenger', label: 'Facebook Messenger', color: '#0084FF', icon: 'Facebook' },
   { value: 'telegram', label: 'Telegram', color: '#0088CC', icon: 'TelegramIcon' },
   { value: 'whatsapp', label: 'WhatsApp (Extra)', color: '#25D366', icon: 'MessageCircle' },
-  { value: 'custom_link', label: 'Custom Link', color: '#7c3aed', icon: 'LinkIcon' },
+  { value: 'custom_link', label: 'Custom Link', color: '#0891b2', icon: 'LinkIcon' },
 ];
 
 // Available icons for picker

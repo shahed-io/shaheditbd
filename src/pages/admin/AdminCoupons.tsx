@@ -352,8 +352,8 @@ const AdminCoupons = () => {
                 {selected ? <CheckSquare size={16} className="text-primary" /> : <Square size={16} className="text-muted-foreground" />}
               </button>
               {/* Decorative blob */}
-              <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-gradient-to-br from-primary/30 to-purple-500/20 blur-3xl opacity-60 group-hover:opacity-100 transition-opacity pointer-events-none" />
-              <div className="absolute -bottom-10 -left-10 w-28 h-28 rounded-full bg-gradient-to-br from-pink-500/20 to-amber-400/15 blur-3xl opacity-50 pointer-events-none" />
+              <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-gradient-to-br from-primary/30 to-sky-500/20 blur-3xl opacity-60 group-hover:opacity-100 transition-opacity pointer-events-none" />
+              <div className="absolute -bottom-10 -left-10 w-28 h-28 rounded-full bg-gradient-to-br from-orange-500/20 to-amber-400/15 blur-3xl opacity-50 pointer-events-none" />
 
               {/* Ticket notch perforations */}
               <div className="absolute left-0 top-1/2 -translate-y-1/2 -ml-2 w-4 h-4 rounded-full bg-background border border-primary/15" />
@@ -365,7 +365,7 @@ const AdminCoupons = () => {
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <Sparkles size={13} className="text-amber-400 animate-pulse" />
-                      <span className="font-mono font-extrabold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-500 to-pink-500 text-lg truncate">
+                      <span className="font-mono font-extrabold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-primary via-sky-500 to-orange-500 text-lg truncate">
                         {coupon.code}
                       </span>
                       <button
@@ -387,7 +387,7 @@ const AdminCoupons = () => {
                 {/* Big discount display */}
                 <div className="my-4 flex items-end gap-2">
                   <div className="flex items-baseline gap-1">
-                    <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br from-primary via-fuchsia-500 to-pink-500 leading-none">
+                    <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br from-primary via-blue-500 to-orange-500 leading-none">
                       {valueLabel}
                     </span>
                     <span className="text-xs font-bold text-primary/70 uppercase tracking-wider">OFF</span>
@@ -405,7 +405,7 @@ const AdminCoupons = () => {
                     </span>
                   )}
                   {coupon.customer_email && (
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-400/10 text-purple-300 border border-purple-400/30 flex items-center gap-1">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-sky-400/10 text-sky-300 border border-sky-400/30 flex items-center gap-1">
                       <Users size={9} /> Personal
                     </span>
                   )}
@@ -422,7 +422,7 @@ const AdminCoupons = () => {
                   {usage !== null && (
                     <div className="h-1.5 bg-muted/40 rounded-full overflow-hidden">
                       <div
-                        className={`h-full rounded-full transition-all duration-700 ${usage >= 100 ? 'bg-gradient-to-r from-red-500 to-rose-500' : usage >= 80 ? 'bg-gradient-to-r from-amber-500 to-orange-500' : 'bg-gradient-to-r from-primary via-fuchsia-500 to-pink-500'}`}
+                        className={`h-full rounded-full transition-all duration-700 ${usage >= 100 ? 'bg-gradient-to-r from-red-500 to-rose-500' : usage >= 80 ? 'bg-gradient-to-r from-amber-500 to-orange-500' : 'bg-gradient-to-r from-primary via-blue-500 to-orange-500'}`}
                         style={{ width: `${Math.max(3, usage)}%` }}
                       />
                     </div>

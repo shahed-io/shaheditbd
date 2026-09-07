@@ -12,12 +12,12 @@ import {
 import { toast } from 'sonner';
 
 const CATEGORY_CONFIG: Record<string, { icon: any; color: string; label: string }> = {
-  general:   { icon: BookOpen,     color: '#7c3aed', label: 'সাধারণ' },
+  general:   { icon: BookOpen,     color: '#0891b2', label: 'সাধারণ' },
   orders:    { icon: Package,      color: '#06b6d4', label: 'অর্ডার' },
   payment:   { icon: CreditCard,   color: '#22c55e', label: 'পেমেন্ট' },
   refund:    { icon: RefreshCw,    color: '#f59e0b', label: 'রিফান্ড' },
-  security:  { icon: Shield,       color: '#ec4899', label: 'নিরাপত্তা' },
-  support:   { icon: Headphones,   color: '#8b5cf6', label: 'সাপোর্ট' },
+  security:  { icon: Shield,       color: '#f97316', label: 'নিরাপত্তা' },
+  support:   { icon: Headphones,   color: '#22d3ee', label: 'সাপোর্ট' },
 };
 
 // Reuse the same markdown renderer

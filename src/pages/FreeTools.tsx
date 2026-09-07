@@ -125,7 +125,7 @@ const PasswordGenerator = () => {
       </div>
       <div className="space-y-2">
         <div className="flex justify-between"><span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,30%)' }}>Length</span><span className="font-black text-lg" style={{ color: 'hsl(258,78%,50%)' }}>{length}</span></div>
-        <input type="range" min={6} max={64} value={length} onChange={e => setLength(Number(e.target.value))} className="w-full accent-violet-600 cursor-pointer" />
+        <input type="range" min={6} max={64} value={length} onChange={e => setLength(Number(e.target.value))} className="w-full accent-cyan-600 cursor-pointer" />
       </div>
       <div className="space-y-1.5">
         <div className="flex justify-between text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}><span>Strength</span><span style={{ color: s.color }}>{s.label}</span></div>
@@ -421,7 +421,7 @@ const ImageConverter = () => {
           {format !== 'png' && (
             <div className="space-y-2">
               <div className="flex justify-between text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}><span>Quality</span><span style={{ color: 'hsl(258,78%,50%)' }}>{quality}%</span></div>
-              <input type="range" min={10} max={100} value={quality} onChange={e => setQuality(Number(e.target.value))} className="w-full accent-violet-600 cursor-pointer" />
+              <input type="range" min={10} max={100} value={quality} onChange={e => setQuality(Number(e.target.value))} className="w-full accent-cyan-600 cursor-pointer" />
             </div>
           )}
           <PrimaryBtn onClick={convert}><RotateCcw size={14} />Convert</PrimaryBtn>
@@ -473,7 +473,7 @@ const ImageCompressor = () => {
           <img src={imgSrc} alt="orig" className="w-full max-h-36 object-contain rounded-xl" />
           <div className="space-y-2">
             <div className="flex justify-between text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}><span>Quality</span><span style={{ color: 'hsl(258,78%,50%)' }}>{quality}%</span></div>
-            <input type="range" min={10} max={99} value={quality} onChange={e => setQuality(Number(e.target.value))} className="w-full accent-violet-600 cursor-pointer" />
+            <input type="range" min={10} max={99} value={quality} onChange={e => setQuality(Number(e.target.value))} className="w-full accent-cyan-600 cursor-pointer" />
           </div>
           <PrimaryBtn onClick={compress}><Scissors size={14} />Compress</PrimaryBtn>
         </>

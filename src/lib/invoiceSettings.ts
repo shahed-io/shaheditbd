@@ -42,7 +42,7 @@ export interface InvoiceDesign {
 }
 
 export const DEFAULT_INVOICE_DESIGN: InvoiceDesign = {
-  brandColor: '#7c3aed',
+  brandColor: '#0891b2',
   brandLight: '#f3f0ff',
   headerBg: 'auto',
   headerText: '#ffffff',

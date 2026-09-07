@@ -47,35 +47,35 @@ const SNAPSHOT_ROW_CAP = 20000;
 
 // Ordered so parents (categories, products, profiles) restore before children (order_items, license_keys)
 const TABLES = [
-  { table: 'categories',     label: 'Categories',      icon: Grid3X3,      color: 'text-violet-400',  bg: 'bg-violet-400/10' },
+  { table: 'categories',     label: 'Categories',      icon: Grid3X3,      color: 'text-cyan-400',  bg: 'bg-cyan-400/10' },
   { table: 'products',       label: 'Products',        icon: Package,      color: 'text-blue-400',    bg: 'bg-blue-400/10' },
-  { table: 'product_categories', label: 'Product↔Category', icon: Grid3X3, color: 'text-violet-300', bg: 'bg-violet-300/10' },
+  { table: 'product_categories', label: 'Product↔Category', icon: Grid3X3, color: 'text-cyan-300', bg: 'bg-cyan-300/10' },
   { table: 'profiles',       label: 'Customers',       icon: Users,        color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
-  { table: 'coupons',        label: 'Coupons',         icon: Tag,          color: 'text-pink-400',    bg: 'bg-pink-400/10' },
+  { table: 'coupons',        label: 'Coupons',         icon: Tag,          color: 'text-orange-400',    bg: 'bg-orange-400/10' },
   { table: 'orders',         label: 'Orders',          icon: ShoppingCart, color: 'text-amber-400',   bg: 'bg-amber-400/10' },
   { table: 'order_items',    label: 'Order Items',     icon: Tag,          color: 'text-orange-400',  bg: 'bg-orange-400/10' },
   { table: 'license_keys',   label: 'License Keys',    icon: Key,          color: 'text-cyan-400',    bg: 'bg-cyan-400/10' },
-  { table: 'blog_categories',label: 'Blog Categories', icon: BookOpen,     color: 'text-indigo-300',  bg: 'bg-indigo-300/10' },
-  { table: 'blog_posts',     label: 'Blog Posts',      icon: BookOpen,     color: 'text-indigo-400',  bg: 'bg-indigo-400/10' },
-  { table: 'blog_tags',      label: 'Blog Tags',       icon: Tag,          color: 'text-indigo-200',  bg: 'bg-indigo-200/10' },
-  { table: 'blog_post_tags', label: 'Blog Post↔Tag',   icon: Tag,          color: 'text-indigo-200',  bg: 'bg-indigo-200/10' },
-  { table: 'blog_comments',  label: 'Blog Comments',   icon: BookOpen,     color: 'text-indigo-500',  bg: 'bg-indigo-500/10' },
+  { table: 'blog_categories',label: 'Blog Categories', icon: BookOpen,     color: 'text-blue-300',  bg: 'bg-blue-300/10' },
+  { table: 'blog_posts',     label: 'Blog Posts',      icon: BookOpen,     color: 'text-blue-400',  bg: 'bg-blue-400/10' },
+  { table: 'blog_tags',      label: 'Blog Tags',       icon: Tag,          color: 'text-blue-200',  bg: 'bg-blue-200/10' },
+  { table: 'blog_post_tags', label: 'Blog Post↔Tag',   icon: Tag,          color: 'text-blue-200',  bg: 'bg-blue-200/10' },
+  { table: 'blog_comments',  label: 'Blog Comments',   icon: BookOpen,     color: 'text-blue-500',  bg: 'bg-blue-500/10' },
   { table: 'product_reviews',label: 'Product Reviews', icon: Package,      color: 'text-yellow-400',  bg: 'bg-yellow-400/10' },
   { table: 'support_tickets',label: 'Support Tickets', icon: Ticket,       color: 'text-red-400',     bg: 'bg-red-400/10' },
   { table: 'support_replies',label: 'Support Replies', icon: Ticket,       color: 'text-red-300',     bg: 'bg-red-300/10' },
   { table: 'notices',        label: 'Notices',         icon: FileJson,     color: 'text-sky-400',     bg: 'bg-sky-400/10' },
   { table: 'help_articles',  label: 'Help Articles',   icon: BookOpen,     color: 'text-teal-400',    bg: 'bg-teal-400/10' },
   { table: 'software_downloads', label: 'Software Downloads', icon: Download, color: 'text-lime-400', bg: 'bg-lime-400/10' },
-  { table: 'newsletter_subscribers', label: 'Newsletter Subs', icon: Users, color: 'text-fuchsia-400', bg: 'bg-fuchsia-400/10' },
+  { table: 'newsletter_subscribers', label: 'Newsletter Subs', icon: Users, color: 'text-blue-400', bg: 'bg-blue-400/10' },
   { table: 'addresses',      label: 'Addresses',       icon: Users,        color: 'text-emerald-300', bg: 'bg-emerald-300/10' },
   { table: 'wallet_transactions', label: 'Wallet Txns', icon: BarChart3,   color: 'text-yellow-300',  bg: 'bg-yellow-300/10' },
   { table: 'point_transactions', label: 'Point Txns',  icon: BarChart3,    color: 'text-yellow-500',  bg: 'bg-yellow-500/10' },
   { table: 'referrals',      label: 'Referrals',       icon: Users,        color: 'text-rose-400',    bg: 'bg-rose-400/10' },
-  { table: 'wishlists',      label: 'Wishlists',       icon: Package,      color: 'text-pink-300',    bg: 'bg-pink-300/10' },
+  { table: 'wishlists',      label: 'Wishlists',       icon: Package,      color: 'text-orange-300',    bg: 'bg-orange-300/10' },
   { table: 'user_cart_items',label: 'Cart Items',      icon: ShoppingCart, color: 'text-orange-300',  bg: 'bg-orange-300/10' },
-  { table: 'offers',         label: 'Offers',          icon: Tag,          color: 'text-pink-500',    bg: 'bg-pink-500/10' },
-  { table: 'offer_submissions', label: 'Offer Submissions', icon: FileJson, color: 'text-pink-300',   bg: 'bg-pink-300/10' },
-  { table: 'affiliate_accounts', label: 'Affiliates',  icon: Users,        color: 'text-purple-400',  bg: 'bg-purple-400/10' },
+  { table: 'offers',         label: 'Offers',          icon: Tag,          color: 'text-orange-500',    bg: 'bg-orange-500/10' },
+  { table: 'offer_submissions', label: 'Offer Submissions', icon: FileJson, color: 'text-orange-300',   bg: 'bg-orange-300/10' },
+  { table: 'affiliate_accounts', label: 'Affiliates',  icon: Users,        color: 'text-sky-400',  bg: 'bg-sky-400/10' },
   { table: 'user_roles',     label: 'User Roles',      icon: Shield,       color: 'text-red-500',     bg: 'bg-red-500/10' },
   { table: 'site_settings',  label: 'Site Settings',   icon: Database,     color: 'text-primary',     bg: 'bg-primary/10' },
   { table: 'text_overrides', label: 'Text Overrides',  icon: FileJson,     color: 'text-slate-400',   bg: 'bg-slate-400/10' },
@@ -889,7 +889,7 @@ Restore:
 
       {/* GLOBAL PROGRESS BAR */}
       {showProgress && (
-        <div className="glass-card rounded-2xl p-4 border border-primary/30 bg-gradient-to-r from-primary/10 to-purple-500/10">
+        <div className="glass-card rounded-2xl p-4 border border-primary/30 bg-gradient-to-r from-primary/10 to-sky-500/10">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
               <Loader2 size={14} className="animate-spin text-primary" />
@@ -899,7 +899,7 @@ Restore:
             <div className="text-lg font-bold text-primary tabular-nums">{progress}%</div>
           </div>
           <div className="h-2.5 rounded-full bg-muted/40 overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-primary via-purple-500 to-pink-500 transition-all duration-200"
+            <div className="h-full bg-gradient-to-r from-primary via-sky-500 to-orange-500 transition-all duration-200"
               style={{ width: `${progress}%` }} />
           </div>
         </div>
@@ -938,12 +938,12 @@ Restore:
       {/* ── EXPORT TAB ── */}
       {restoreTab === 'export' && (
         <>
-          <div className="relative overflow-hidden rounded-3xl border-2 border-primary/40 bg-gradient-to-br from-primary/15 via-purple-500/10 to-pink-500/10 p-6 backdrop-blur-xl">
+          <div className="relative overflow-hidden rounded-3xl border-2 border-primary/40 bg-gradient-to-br from-primary/15 via-sky-500/10 to-orange-500/10 p-6 backdrop-blur-xl">
             <div className="absolute -top-16 -right-16 w-64 h-64 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-16 -left-16 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-16 -left-16 w-64 h-64 bg-sky-500/20 rounded-full blur-3xl pointer-events-none" />
             <div className="relative flex flex-col lg:flex-row items-start lg:items-center gap-5 justify-between">
               <div className="flex items-start gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center shadow-lg shadow-primary/40 flex-shrink-0">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-sky-600 flex items-center justify-center shadow-lg shadow-primary/40 flex-shrink-0">
                   <Archive size={26} className="text-white" />
                 </div>
                 <div>
@@ -957,7 +957,7 @@ Restore:
                 </div>
               </div>
               <button onClick={exportEverything} disabled={!!exporting}
-                className="w-full lg:w-auto px-8 py-4 rounded-2xl font-bold text-base text-white bg-gradient-to-r from-primary via-purple-600 to-pink-600 shadow-xl shadow-primary/40 hover:shadow-primary/60 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed">
+                className="w-full lg:w-auto px-8 py-4 rounded-2xl font-bold text-base text-white bg-gradient-to-r from-primary via-sky-600 to-orange-600 shadow-xl shadow-primary/40 hover:shadow-primary/60 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed">
                 {exporting === 'mega' ? <Loader2 size={20} className="animate-spin" /> : <Download size={20} />}
                 <span>এখনই ব্যাকআপ নিন</span>
               </button>
@@ -1168,10 +1168,10 @@ Restore:
           </div>
 
           {/* Complete ZIP Restore — Database + Storage in one click */}
-          <div className="glass-card rounded-2xl p-5 space-y-4 border border-purple-500/25">
+          <div className="glass-card rounded-2xl p-5 space-y-4 border border-sky-500/25">
             <div className="flex items-center gap-2 pb-3 border-b border-border/40">
-              <div className="w-8 h-8 rounded-xl bg-purple-500/10 flex items-center justify-center">
-                <Archive size={14} className="text-purple-400" />
+              <div className="w-8 h-8 rounded-xl bg-sky-500/10 flex items-center justify-center">
+                <Archive size={14} className="text-sky-400" />
               </div>
               <div>
                 <h3 className="font-bold text-foreground text-sm">Complete ZIP রিস্টোর</h3>
@@ -1180,9 +1180,9 @@ Restore:
             </div>
 
             <button onClick={() => zipInputRef.current?.click()}
-              className="w-full py-4 rounded-xl border-2 border-dashed border-border hover:border-purple-400/50 text-sm text-muted-foreground hover:text-foreground transition-all flex flex-col items-center justify-center gap-2 group">
-              <div className="w-10 h-10 rounded-xl bg-muted/30 group-hover:bg-purple-500/10 flex items-center justify-center transition-colors">
-                <Upload size={18} className="group-hover:text-purple-400 transition-colors" />
+              className="w-full py-4 rounded-xl border-2 border-dashed border-border hover:border-sky-400/50 text-sm text-muted-foreground hover:text-foreground transition-all flex flex-col items-center justify-center gap-2 group">
+              <div className="w-10 h-10 rounded-xl bg-muted/30 group-hover:bg-sky-500/10 flex items-center justify-center transition-colors">
+                <Upload size={18} className="group-hover:text-sky-400 transition-colors" />
               </div>
               <span className="font-medium">Complete Backup ZIP আপলোড</span>
               <span className="text-[10px] text-muted-foreground/70">shahed_store_complete_XXXX.zip</span>
@@ -1191,11 +1191,11 @@ Restore:
 
             {zipPreview && (
               <div className="space-y-3">
-                <div className="glass-card rounded-xl p-4 space-y-3 border border-purple-500/20">
+                <div className="glass-card rounded-xl p-4 space-y-3 border border-sky-500/20">
                   <div className="flex items-center justify-between flex-wrap gap-2">
                     <span className="text-xs font-bold text-foreground truncate">📦 {zipPreview.name}</span>
                     <div className="flex gap-2">
-                      <span className="text-[10px] bg-purple-500/10 text-purple-400 px-2 py-0.5 rounded-full font-semibold">
+                      <span className="text-[10px] bg-sky-500/10 text-sky-400 px-2 py-0.5 rounded-full font-semibold">
                         {Object.keys(zipPreview.tables).length} টেবিল
                       </span>
                       <span className="text-[10px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded-full font-semibold">
@@ -1218,7 +1218,7 @@ Restore:
                 </div>
                 <div className="flex gap-2">
                   <button onClick={restoreZip} disabled={!confirmZip || restoring}
-                    className="flex-1 py-2.5 rounded-xl bg-purple-500/20 border border-purple-500/40 text-purple-300 hover:bg-purple-500/30 text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                    className="flex-1 py-2.5 rounded-xl bg-sky-500/20 border border-sky-500/40 text-sky-300 hover:bg-sky-500/30 text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
                     {restoring ? <><Loader2 size={14} className="animate-spin" /> রিস্টোর হচ্ছে...</> : <><Archive size={14} /> সম্পূর্ণ রিস্টোর করুন</>}
                   </button>
                   <button onClick={() => { setZipPreview(null); setConfirmZip(false); setRestoreLog([]); }}

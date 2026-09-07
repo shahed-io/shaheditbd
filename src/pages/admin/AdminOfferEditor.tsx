@@ -665,7 +665,7 @@ export default function AdminOfferEditor() {
 
         {/* AI BUILDER */}
         <TabsContent value="ai" className="space-y-4">
-          <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-purple-500/5">
+          <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-sky-500/5">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Wand2 className="w-5 h-5 text-primary" /> AI Offer Builder (Gemini)
@@ -1157,7 +1157,7 @@ export default function AdminOfferEditor() {
                 size="sm"
                 variant="outline"
                 onClick={openAddSubmission}
-                className="border-violet-500/40 text-violet-700 hover:bg-violet-500/10"
+                className="border-cyan-500/40 text-cyan-700 hover:bg-cyan-500/10"
               >
                 <Plus className="w-4 h-4 mr-1" /> Add Submission
               </Button>
@@ -1165,7 +1165,7 @@ export default function AdminOfferEditor() {
                 size="sm"
                 onClick={() => convertSubmissions()}
                 disabled={converting || submissions.length === 0}
-                className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:opacity-90 text-white"
+                className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:opacity-90 text-white"
               >
                 {converting ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : '👥 '}
                 Convert All to Customers
@@ -1175,7 +1175,7 @@ export default function AdminOfferEditor() {
               </Button>
             </div>
           </div>
-          <Card className="bg-violet-50 dark:bg-violet-950/20 border-violet-200 dark:border-violet-900">
+          <Card className="bg-cyan-50 dark:bg-cyan-950/20 border-cyan-200 dark:border-cyan-900">
             <CardContent className="py-3 text-xs text-muted-foreground">
               💡 "Convert to Customer" সব submission এর email-এ account invite পাঠাবে। তারা link এ click করে password set করলেই customer হয়ে যাবে — এক click এ সবাই!
             </CardContent>
@@ -1223,7 +1223,7 @@ export default function AdminOfferEditor() {
             return submissions.length === 0 ? (
             <Card><CardContent className="py-10 text-center text-muted-foreground space-y-3">
               <div>No submissions yet.</div>
-              <Button variant="outline" size="sm" onClick={openAddSubmission} className="border-violet-500/40 text-violet-700 hover:bg-violet-500/10">
+              <Button variant="outline" size="sm" onClick={openAddSubmission} className="border-cyan-500/40 text-cyan-700 hover:bg-cyan-500/10">
                 <Plus className="w-4 h-4 mr-1" /> Add first submission
               </Button>
             </CardContent></Card>
@@ -1352,7 +1352,7 @@ export default function AdminOfferEditor() {
         {/* WINNERS */}
         <TabsContent value="winners" className="space-y-3">
           {/* One-click auto-pick using Settings → Winner Automation config */}
-          <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-fuchsia-500/5">
+          <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-blue-500/5">
             <CardContent className="p-4 flex items-center justify-between gap-3 flex-wrap">
               <div className="text-sm">
                 <div className="font-semibold flex items-center gap-2">
@@ -1366,7 +1366,7 @@ export default function AdminOfferEditor() {
               <Button
                 onClick={autoPickWinners}
                 disabled={picking || submissions.length === 0 || offer.winner_selection_mode === 'manual'}
-                className="bg-gradient-to-r from-primary to-fuchsia-600 text-white"
+                className="bg-gradient-to-r from-primary to-blue-600 text-white"
               >
                 {picking ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Sparkles className="w-4 h-4 mr-1" />}
                 Auto Pick Winners
@@ -1482,7 +1482,7 @@ export default function AdminOfferEditor() {
                               variant="outline"
                               disabled={!sub.participant_email || sendingWinnerEmail === w.id}
                               onClick={() => sendWinnerEmail(w)}
-                              className="text-violet-600 border-violet-500/30 hover:bg-violet-500/10"
+                              className="text-cyan-600 border-cyan-500/30 hover:bg-cyan-500/10"
                               title={sub.participant_email ? 'Send winner notification email' : 'No email on file'}
                             >
                               {sendingWinnerEmail === w.id
@@ -1583,7 +1583,7 @@ export default function AdminOfferEditor() {
                   <Badge className="bg-green-500/20 text-green-700">✓ Customer</Badge>
                 )}
                 {viewingSubmission.prize_won && (
-                  <Badge className="bg-violet-500/20 text-violet-700">🎁 {viewingSubmission.prize_won}</Badge>
+                  <Badge className="bg-cyan-500/20 text-cyan-700">🎁 {viewingSubmission.prize_won}</Badge>
                 )}
               </div>
 
@@ -1635,7 +1635,7 @@ export default function AdminOfferEditor() {
                       setViewingSubmission(null);
                       convertSubmissions([id]);
                     }}
-                    className="bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white"
+                    className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white"
                   >
                     👥 Invite as Customer
                   </Button>
@@ -1762,7 +1762,7 @@ export default function AdminOfferEditor() {
             )}
             <div className="flex justify-end gap-2 pt-2 border-t">
               <Button variant="outline" onClick={() => setAddingSubmission(false)}>Cancel</Button>
-              <Button onClick={createSubmission} disabled={savingNew} className="bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white">
+              <Button onClick={createSubmission} disabled={savingNew} className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white">
                 {savingNew ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Plus className="w-4 h-4 mr-1" />}
                 Add Submission
               </Button>

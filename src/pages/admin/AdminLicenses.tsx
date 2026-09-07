@@ -423,8 +423,8 @@ const AdminLicenses = () => {
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font-family: 'Segoe UI', Arial, sans-serif; padding: 40px; color: #1a1a2e; background: #fff; }
       .invoice { max-width: 700px; margin: 0 auto; }
-      .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 35px; padding-bottom: 20px; border-bottom: 3px solid #7c3aed; }
-      .brand h1 { font-size: 22px; color: #7c3aed; font-weight: 900; }
+      .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 35px; padding-bottom: 20px; border-bottom: 3px solid #0891b2; }
+      .brand h1 { font-size: 22px; color: #0891b2; font-weight: 900; }
       .brand p { font-size: 11px; color: #888; margin-top: 3px; }
       .invoice-info { text-align: right; }
       .invoice-info h2 { font-size: 24px; font-weight: 900; color: #1a1a2e; text-transform: uppercase; letter-spacing: 2px; }
@@ -432,16 +432,16 @@ const AdminLicenses = () => {
       .invoice-info .meta span { font-weight: 700; color: #1a1a2e; }
       .parties { display: flex; justify-content: space-between; margin-bottom: 30px; }
       .party { flex: 1; }
-      .party h4 { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; color: #7c3aed; font-weight: 800; margin-bottom: 8px; }
+      .party h4 { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; color: #0891b2; font-weight: 800; margin-bottom: 8px; }
       .party p { font-size: 12px; color: #444; line-height: 1.6; }
       .party .name { font-weight: 700; color: #1a1a2e; font-size: 14px; }
       .license-box { background: #f8f5ff; border: 2px solid #e9e0ff; border-radius: 12px; padding: 24px; margin-bottom: 25px; }
-      .license-box h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #7c3aed; font-weight: 800; margin-bottom: 15px; }
+      .license-box h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #0891b2; font-weight: 800; margin-bottom: 15px; }
       .license-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e9e0ff; }
       .license-row:last-child { border-bottom: none; }
       .license-row .label { font-size: 11px; color: #888; font-weight: 600; }
       .license-row .value { font-size: 13px; color: #1a1a2e; font-weight: 700; text-align: right; max-width: 65%; word-break: break-all; }
-      .license-row .value.mono { font-family: 'Courier New', monospace; color: #7c3aed; font-size: 14px; }
+      .license-row .value.mono { font-family: 'Courier New', monospace; color: #0891b2; font-size: 14px; }
       .footer { margin-top: 35px; padding-top: 20px; border-top: 2px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
       .footer .note { font-size: 10px; color: #999; max-width: 60%; line-height: 1.5; }
       .footer .stamp { text-align: center; }

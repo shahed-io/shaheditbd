@@ -204,22 +204,22 @@ const AdminCopyProtection = () => {
           {/* Advanced protections */}
           <div>
             <h2 className="text-sm font-bold text-foreground/80 mb-3 uppercase tracking-wider flex items-center gap-2">
-              Advanced Protections <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-500 normal-case">Pro</span>
+              Advanced Protections <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-500 normal-case">Pro</span>
             </h2>
             <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 transition-opacity ${masterOn ? '' : 'opacity-60'}`}>
               {ADVANCED_FEATURES.map(f => {
                 const on = settings[f.key];
                 return (
-                  <div key={f.key} className={`glass-card rounded-2xl p-5 border transition-colors ${on && masterOn ? 'border-purple-500/30' : 'border-border/40'}`}>
+                  <div key={f.key} className={`glass-card rounded-2xl p-5 border transition-colors ${on && masterOn ? 'border-sky-500/30' : 'border-border/40'}`}>
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-start gap-3 flex-1">
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${on && masterOn ? 'bg-purple-500/20' : 'bg-muted/30'}`}>
-                          <f.icon size={18} className={on && masterOn ? 'text-purple-500' : 'text-muted-foreground'} />
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${on && masterOn ? 'bg-sky-500/20' : 'bg-muted/30'}`}>
+                          <f.icon size={18} className={on && masterOn ? 'text-sky-500' : 'text-muted-foreground'} />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="text-sm font-bold text-foreground">{f.title}</div>
                           <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{f.desc}</p>
-                          <div className={`text-[11px] mt-2 font-semibold ${on ? 'text-purple-500' : 'text-muted-foreground'}`}>{on ? '● চালু' : '○ বন্ধ'}</div>
+                          <div className={`text-[11px] mt-2 font-semibold ${on ? 'text-sky-500' : 'text-muted-foreground'}`}>{on ? '● চালু' : '○ বন্ধ'}</div>
                         </div>
                       </div>
                       <Toggle checked={on} disabled={savingKey === f.key} onChange={() => save(f.key, !on)} />

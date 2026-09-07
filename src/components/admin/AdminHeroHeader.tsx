@@ -67,10 +67,10 @@ const StatChip = ({
   accent: 'violet' | 'emerald' | 'amber' | 'rose';
 }) => {
   const accents: Record<string, string> = {
-    violet: 'from-violet-500/15 to-fuchsia-500/10 text-violet-700 dark:text-violet-300 ring-violet-300/40',
+    violet: 'from-cyan-500/15 to-blue-500/10 text-cyan-700 dark:text-cyan-300 ring-cyan-300/40',
     emerald: 'from-emerald-500/15 to-teal-500/10 text-emerald-700 dark:text-emerald-300 ring-emerald-300/40',
     amber: 'from-amber-500/15 to-orange-500/10 text-amber-700 dark:text-amber-300 ring-amber-300/40',
-    rose: 'from-rose-500/15 to-pink-500/10 text-rose-700 dark:text-rose-300 ring-rose-300/40',
+    rose: 'from-rose-500/15 to-orange-500/10 text-rose-700 dark:text-rose-300 ring-rose-300/40',
   };
   return (
     <div

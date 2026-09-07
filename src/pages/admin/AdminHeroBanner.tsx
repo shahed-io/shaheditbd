@@ -632,13 +632,13 @@ const MiniSlidePreview = ({ slide }: { slide: Slide }) => {
 function hslToHex(hsl: string): string {
   try {
     const match = hsl.match(/hsl\((\d+(?:\.\d+)?),\s*(\d+(?:\.\d+)?)%,\s*(\d+(?:\.\d+)?)%\)/);
-    if (!match) return '#7c3aed';
+    if (!match) return '#0891b2';
     const h = parseFloat(match[1]) / 360, s = parseFloat(match[2]) / 100, l = parseFloat(match[3]) / 100;
     const a = s * Math.min(l, 1 - l);
     const f = (n: number) => { const k = (n + h * 12) % 12; return l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1); };
     const toHex = (x: number) => Math.round(x * 255).toString(16).padStart(2, '0');
     return `#${toHex(f(0))}${toHex(f(8))}${toHex(f(4))}`;
-  } catch { return '#7c3aed'; }
+  } catch { return '#0891b2'; }
 }
 
 function hexToHsl(hex: string): string {

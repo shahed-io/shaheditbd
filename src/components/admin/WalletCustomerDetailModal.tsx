@@ -172,7 +172,7 @@ export default function WalletCustomerDetailModal({ customer, onClose }: Props) 
           <Stat icon={Wallet} label="Current" value={`৳${(customer.wallet_balance || 0).toLocaleString()}`} color="text-primary" />
           <Stat icon={TrendingUp} label="Total Credit" value={`৳${stats.totalCredit.toLocaleString()}`} color="text-green-600" sub={`${stats.creditCount} tx`} />
           <Stat icon={TrendingDown} label="Total Debit" value={`৳${stats.totalDebit.toLocaleString()}`} color="text-destructive" sub={`${stats.debitCount} tx`} />
-          <Stat icon={ShoppingBag} label="Order Spends" value={String(stats.orderCount)} color="text-violet-600" />
+          <Stat icon={ShoppingBag} label="Order Spends" value={String(stats.orderCount)} color="text-cyan-600" />
           <Stat icon={Hash} label="Net Flow" value={`৳${(stats.totalCredit - stats.totalDebit).toLocaleString()}`} color={stats.totalCredit >= stats.totalDebit ? 'text-green-600' : 'text-destructive'} />
         </div>
 
@@ -229,9 +229,9 @@ export default function WalletCustomerDetailModal({ customer, onClose }: Props) 
                           <p className="text-sm font-semibold text-foreground">
                             {ord ? (
                               <span className="flex items-center gap-1.5 flex-wrap">
-                                <ShoppingBag size={13} className="text-violet-600" />
+                                <ShoppingBag size={13} className="text-cyan-600" />
                                 Order Purchase
-                                <span className="font-mono text-xs px-1.5 py-0.5 rounded bg-violet-500/10 text-violet-600">
+                                <span className="font-mono text-xs px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-600">
                                   {ord.order_number}
                                 </span>
                               </span>

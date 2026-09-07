@@ -476,7 +476,7 @@ const AdminProducts = () => {
   };
 
   const CARD_STYLES = [
-    { value: 'auto_smart', label: 'Auto (Best Match)', icon: '🤖', desc: 'AI নিজেই product অনুযায়ী সেরা background বেছে নিবে', preview: 'linear-gradient(135deg,#eef3f9 0%,#cfe0f5 50%,#f3a8c4 100%)', accent: '#6366f1' },
+    { value: 'auto_smart', label: 'Auto (Best Match)', icon: '🤖', desc: 'AI নিজেই product অনুযায়ী সেরা background বেছে নিবে', preview: 'linear-gradient(135deg,#eef3f9 0%,#cfe0f5 50%,#f3a8c4 100%)', accent: '#3b82f6' },
     { value: 'ice_bokeh', label: 'Ice Bokeh', icon: '❄️', desc: 'আইস-হোয়াইট ব্যাকগ্রাউন্ড + বড় ব্লার করা নীল/টিল বোকে বল', preview: 'linear-gradient(135deg,#eef3f9 0%,#e2ebf6 100%)', accent: '#2f6fd0' },
     { value: 'sky_spheres', label: 'Sky Spheres', icon: '🔵', desc: 'লাইট ব্লু ব্যাকগ্রাউন্ড + গ্লসি 3D নীল ও মিন্ট বল', preview: 'linear-gradient(135deg,#dce8f7 0%,#cfe0f5 100%)', accent: '#7fd3bd' },
     { value: 'pastel_aurora', label: 'Pastel Aurora', icon: '🌈', desc: 'পার্পল-পিংক-পিচ-ব্লু পাস্টেল গ্রেডিয়েন্ট + গ্লাস বাবল', preview: 'linear-gradient(135deg,#b48be0 0%,#f3a8c4 40%,#f7b98f 70%,#a8c8ee 100%)', accent: '#b48be0' },

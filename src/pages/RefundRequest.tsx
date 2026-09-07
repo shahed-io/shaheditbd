@@ -274,7 +274,7 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
     }
   };
 
-  const inputCls = `w-full rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white/70 border border-white/60 focus:border-indigo-400/60 focus:ring-2 focus:ring-indigo-400/15 placeholder:text-slate-400`;
+  const inputCls = `w-full rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white/70 border border-white/60 focus:border-blue-400/60 focus:ring-2 focus:ring-blue-400/15 placeholder:text-slate-400`;
   const labelCls = `block text-[12.5px] font-semibold mb-1.5`;
 
   return (

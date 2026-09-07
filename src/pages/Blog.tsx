@@ -58,8 +58,8 @@ const Blog = () => {
   });
 
   const gradients = [
-    'from-violet-600/20 via-purple-600/10 to-blue-600/20',
-    'from-pink-600/20 via-rose-600/10 to-orange-600/20',
+    'from-cyan-600/20 via-sky-600/10 to-blue-600/20',
+    'from-orange-600/20 via-rose-600/10 to-orange-600/20',
     'from-cyan-600/20 via-teal-600/10 to-emerald-600/20',
     'from-amber-600/20 via-yellow-600/10 to-orange-600/20',
   ];
