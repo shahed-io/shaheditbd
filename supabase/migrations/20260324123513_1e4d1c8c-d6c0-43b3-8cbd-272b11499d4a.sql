@@ -1,1 +1,0 @@
-UPDATE public.reseller_users SET is_admin = true WHERE username = 'shahedstore';

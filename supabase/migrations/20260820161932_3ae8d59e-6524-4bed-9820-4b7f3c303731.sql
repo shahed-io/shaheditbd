@@ -1,1 +1,0 @@
-REVOKE ALL ON FUNCTION public.backup_enqueue() FROM PUBLIC, anon, authenticated;

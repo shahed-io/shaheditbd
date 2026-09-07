@@ -1,1 +1,0 @@
-DELETE FROM public.user_cart_items WHERE created_at < now() - interval '7 days';

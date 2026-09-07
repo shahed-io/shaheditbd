@@ -1,1 +1,0 @@
-update public.products set image_url='https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-elevenlabs-premium-1.png' where id='a37c0c78-94be-4d84-b143-1e380b5f1e45';

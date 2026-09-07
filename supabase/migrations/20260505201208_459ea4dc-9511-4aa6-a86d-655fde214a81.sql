@@ -1,2 +1,0 @@
-UPDATE site_settings SET value = 'verified-via-google-analytics' WHERE key = 'google_site_verification';
-UPDATE site_settings SET value = '{"google":"verified-via-google-analytics","bing":"","yandex":"","pinterest":"","facebook":"","baidu":"","norton":""}' WHERE key = 'seo_verification';
