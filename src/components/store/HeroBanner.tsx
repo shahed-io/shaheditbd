@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import bannerWebDev from '@/assets/banner-web-development.webp';
-import bannerGraphics from '@/assets/banner-graphics-design.webp';
-import bannerBusiness from '@/assets/banner-business-solution.webp';
+import bannerGraphics from '@/assets/hero-graphics-photo.webp';
 
 import { useHeroBanner, type SlideData } from '@/hooks/useHeroBanner';
 
@@ -15,16 +13,6 @@ type Slide = {
 
 const STATIC_SLIDES: Slide[] = [
   {
-    tag: 'Most Requested', tagIcon: '🔥',
-    title: 'Web', titleAccent: 'Development',
-    subtitle: 'Fast, Secure & SEO-Ready Websites',
-    desc: 'আপনার প্রতিষ্ঠানের জন্য আধুনিক, মোবাইল ফ্রেন্ডলি ও SEO-রেডি প্রফেশনাল ওয়েবসাইট।',
-    price: '৳15,000', original: '৳20,000', off: '-25%', badge: 'MOST POPULAR',
-    accentFrom: 'hsl(258,78%,55%)', accentTo: 'hsl(200,90%,48%)',
-    emoji: '💻', features: ['৫–৮ পেজ', 'মোবাইল রেসপনসিভ', '১ মাস ফ্রি সাপোর্ট'],
-    productSlug: 'business-website-development',
-  },
-  {
     tag: 'Creative Studio', tagIcon: '🎨',
     title: 'Graphics', titleAccent: 'Design',
     subtitle: 'Logo, Branding & Social Media Creatives',
@@ -34,31 +22,14 @@ const STATIC_SLIDES: Slide[] = [
     emoji: '🎨', features: ['ক্রিয়েটিভ কনসেপ্ট', 'আনলিমিটেড রিভিশন', 'সোর্স ফাইল'],
     productSlug: 'logo-design',
   },
-  {
-    tag: 'For Business', tagIcon: '💼',
-    title: 'Business', titleAccent: 'Solution',
-    subtitle: 'IT Consultancy, Domain, Hosting & Support',
-    desc: 'ডোমেইন, হোস্টিং, বিজনেস ইমেইল ও আইটি কনসালটেন্সি — এক ছাদের নিচে সম্পূর্ণ সমাধান।',
-    price: '৳5,000', original: '৳7,500', off: '-33%', badge: 'TRUSTED PARTNER',
-    accentFrom: 'hsl(215,82%,52%)', accentTo: 'hsl(45,90%,55%)',
-    emoji: '💼', features: ['এক্সপার্ট কনসালটেন্সি', 'সিকিউর হোস্টিং', '২৪/৭ সাপোর্ট'],
-    productSlug: 'it-consultancy-support',
-  },
 ];
 
 const LOGO_MAP: Record<string, string> = {};
 
-// Admin-uploaded bgImage always wins. Fallback bundled premium service banners.
+// Admin-uploaded image wins; the bundled image keeps the banner instant offline.
 const pickBannerBg = (s: Slide): string => {
   if (s.bgImage && s.bgImage.trim()) return s.bgImage;
-  const t = `${s.title} ${s.titleAccent} ${s.subtitle} ${s.productSlug || ''}`.toLowerCase();
-  if (t.includes('graphic') || t.includes('design') || t.includes('logo') || t.includes('brand')) return bannerGraphics;
-  if (t.includes('business') || t.includes('consult') || t.includes('hosting') || t.includes('domain')) return bannerBusiness;
-  if (t.includes('web') || t.includes('site') || t.includes('development')) return bannerWebDev;
-  const pool = [bannerWebDev, bannerGraphics, bannerBusiness];
-  const idx = Math.abs(t.split('').reduce((a, c) => a + c.charCodeAt(0), 0)) % pool.length;
-  return pool[idx];
-
+  return bannerGraphics;
 };
 
 
