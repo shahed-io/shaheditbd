@@ -1,0 +1,1 @@
+ALTER TABLE public.personal_licenses ADD COLUMN IF NOT EXISTS password_type text;

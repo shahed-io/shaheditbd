@@ -1,0 +1,1 @@
+GRANT INSERT, UPDATE, SELECT ON public.abandoned_checkouts TO anon, authenticated;

@@ -157,7 +157,7 @@ var list_my_wallet_transactions_default = defineTool5({
 });
 
 // src/lib/mcp/index.ts
-var projectRef = "dpvdavjwqyviredzoorj";
+var projectRef = "qxmsvpccvpawtxvhzbku";
 var mcp_default = defineMcp({
   name: "shahed-store-mcp",
   title: "Shahed Store",

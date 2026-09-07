@@ -1,0 +1,10 @@
+UPDATE products SET sort_order = 1 WHERE id = '85532fbb-bebf-42ec-8d3a-3b9efb3d84da';
+UPDATE products SET sort_order = 2 WHERE id = '48912bbe-a880-4941-8790-c26d38ec0c51';
+UPDATE products SET sort_order = 3 WHERE id = '534ba8f7-ee01-4f43-951e-04d9e82d572b';
+UPDATE products SET sort_order = 4 WHERE id = '3209415d-d618-4628-a1ee-a50bf2bb0499';
+UPDATE products SET sort_order = 5 WHERE id = 'b7618817-8fde-4ada-9987-577216f0be8a';
+UPDATE products SET sort_order = 6 WHERE id = '759b93ca-041e-4b87-a4dc-f40ff4489a55';
+UPDATE products SET sort_order = 7 WHERE id = 'cea08a70-faaf-40e3-947c-78d4cee58eae';
+UPDATE products SET sort_order = 8 WHERE id = '808fc4f8-5bcf-48c6-83d4-5aa6d7861466';
+UPDATE products SET sort_order = 100 WHERE id = '57ea20cd-854f-4947-91d3-025dc3da652a';
+UPDATE products SET sort_order = 101 WHERE id = 'e415a1db-759e-4c7b-8449-49bd75a90f04';
