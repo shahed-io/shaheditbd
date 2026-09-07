@@ -4,7 +4,7 @@
 - [x] Replace store name with "Shahed IT" across app, edge functions, manifest, index.html, emails, memory rules
 - [x] New logo installed (favicon, PWA icons, apple touch icon, email/invoice logos, BrandLogo)
 - [x] All shahedstore.com.bd links → shahedit.com (sender email domain get.shahedstore.com.bd kept)
-- [ ] Deploy updated edge functions
+- [x] Deploy updated edge functions
 - [ ] Optional: rename social accounts (Facebook/Telegram/Instagram handles unchanged)
 
 ## Remix setup
