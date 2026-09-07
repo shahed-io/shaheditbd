@@ -1,13 +1,10 @@
 // Brand name normalization (edge-function copy)
-// Rule (updated):
-//   • English contexts  → "Shahed IT"
-//   • Bengali contexts  → "Shahed IT"
-//   • Misspellings are auto-corrected in the matching language
+// Rule: the brand is always written "Shahed IT", in Bengali text too.
 
-const EN_NAME = "Shahed IT";
-const BN_NAME = "Shahed IT";
+const NAME = "Shahed IT";
 
-const BENGALI_MISSPELLINGS = [
+const BENGALI_VARIANTS = [
+  "শাহেদ স্টোর",
   "শাহিদ স্টোর",
   "সাহেদ স্টোর",
   "শায়েদ স্টোর",
@@ -17,42 +14,26 @@ const BENGALI_MISSPELLINGS = [
   "শাহেদ ষ্টোর",
   "শাহেদ ইস্টোর",
   "শাওন স্টোর",
+  "শাহেদ আইটি",
 ];
-
-const BN_RE = /[\u0980-\u09FF]/;
-
-function isBengaliContext(full: string, matchIndex: number, matchLen: number): boolean {
-  const before = full.slice(Math.max(0, matchIndex - 40), matchIndex);
-  const after = full.slice(matchIndex + matchLen, matchIndex + matchLen + 40);
-  return BN_RE.test(before) || BN_RE.test(after);
-}
 
 export function normalizeBrandNameText(value: string): string {
   let out = value || "";
 
-  for (const variant of BENGALI_MISSPELLINGS) {
-    out = out.split(variant).join(BN_NAME);
+  for (const variant of BENGALI_VARIANTS) {
+    out = out.split(variant).join(NAME);
   }
 
   out = out
-    .replace(/ShahedIT/gi, EN_NAME)
-    .replace(/\b(?:Shahid|Sahed|Shawon|Shahied|Sahid)\s+Store\b/gi, EN_NAME)
-    .replace(/Shahed\s{2,}Store/g, EN_NAME);
-
-  out = out.replace(
-    /Shahed\s*Store(?:\s*-\s*|\s*)?(এর|কে|তে|এ|ের|য়|ে)?/g,
-    (match, suffix, offset, full) => {
-      if (isBengaliContext(full, offset, match.length)) {
-        return BN_NAME + (suffix || "");
-      }
-      return EN_NAME;
-    },
-  );
+    .replace(/ShahedStore/gi, NAME)
+    .replace(/ShahedIT/g, NAME)
+    .replace(/\b(?:Shahed|Shahid|Sahed|Shawon|Shahied|Sahid)\s+Store\b/gi, NAME)
+    .replace(/\bShahed\s{2,}IT\b/g, NAME)
+    .replace(/\bshahed\s+it\b/g, NAME);
 
   out = out
-    .replace(/Shahed\s*Store\s*বাংলাদেশ/g, `${BN_NAME} বাংলাদেশ`)
-    .replace(/Shahed IT\s*Bangladesh/gi, `${EN_NAME} Bangladesh`)
-    .replace(/Shahed IT\s*BD/gi, `${EN_NAME} BD`);
+    .replace(/Shahed IT\s*Bangladesh/gi, `${NAME} Bangladesh`)
+    .replace(/Shahed IT\s*BD/gi, `${NAME} BD`);
 
   return out
     .replace(/\s+([।.,!?…])/g, "$1")

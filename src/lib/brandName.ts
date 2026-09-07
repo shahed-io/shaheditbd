@@ -1,14 +1,12 @@
 // Brand name normalization
-// Rule (updated):
-//   • English contexts  → "Shahed IT"
-//   • Bengali contexts  → "Shahed IT" (correct Bengali spelling)
-//   • All misspellings (Bengali or English) → corrected form in the matching language
+// Rule: the brand is always written "Shahed IT" (English), in Bengali text too.
+// Every legacy name / misspelling is corrected to that form.
 
-const EN_NAME = 'Shahed IT';
-const BN_NAME = 'Shahed IT';
+const NAME = 'Shahed IT';
 
-// Misspelled Bengali variants → always fixed to the correct Bengali form
-const BENGALI_MISSPELLINGS = [
+// Legacy + misspelled Bengali variants → always fixed to "Shahed IT"
+const BENGALI_VARIANTS = [
+  'শাহেদ স্টোর',
   'শাহিদ স্টোর',
   'সাহেদ স্টোর',
   'শায়েদ স্টোর',
@@ -18,66 +16,37 @@ const BENGALI_MISSPELLINGS = [
   'শাহেদ ষ্টোর',
   'শাহেদ ইস্টোর',
   'শাওন স্টোর',
+  'শাহেদ আইটি',
 ];
-
-// Bengali Unicode range
-const BN_RE = /[\u0980-\u09FF]/;
-
-const isBengaliContext = (full: string, matchIndex: number, matchLen: number): boolean => {
-  // Look at ~40 chars around the match for Bengali script
-  const before = full.slice(Math.max(0, matchIndex - 40), matchIndex);
-  const after = full.slice(matchIndex + matchLen, matchIndex + matchLen + 40);
-  return BN_RE.test(before) || BN_RE.test(after);
-};
 
 export const normalizeBrandNameText = (value: string): string => {
   let out = value || '';
 
-  // 1. Fix misspelled Bengali variants → correct Bengali
-  for (const variant of BENGALI_MISSPELLINGS) {
-    out = out.split(variant).join(BN_NAME);
+  // 1. Bengali legacy/misspelled variants → Shahed IT
+  for (const variant of BENGALI_VARIANTS) {
+    out = out.split(variant).join(NAME);
   }
 
-  // 2. Fix English misspellings → Shahed IT
+  // 2. Latin legacy names & misspellings → Shahed IT
   out = out
-    .replace(/ShahedIT/gi, EN_NAME)
-    .replace(/\b(?:Shahid|Sahed|Shawon|Shahied|Sahid)\s+Store\b/gi, EN_NAME)
-    .replace(/Shahed\s{2,}Store/g, EN_NAME);
+    .replace(/ShahedStore/gi, NAME)
+    .replace(/ShahedIT/g, NAME)
+    .replace(/\b(?:Shahed|Shahid|Sahed|Shawon|Shahied|Sahid)\s+Store\b/gi, NAME)
+    .replace(/\bShahed\s{2,}IT\b/g, NAME)
+    .replace(/\bshahed\s+it\b/g, NAME);
 
-  // 3. If "Shahed IT" appears inside a Bengali context, convert to Bengali form
-  //    (handles case markers like "Shahed IT-এর" / "Shahed ITে" too)
-  out = out.replace(
-    /Shahed\s*Store(\s*-\s*|\s+)?(এর|কে|তে|এ|ের|য়|ে)?/g,
-    (match, separator, suffix, offset, full) => {
-      if (isBengaliContext(full, offset, match.length)) {
-        // If there's a suffix like 'এর', we usually don't want a space before it in Bengali
-        const finalSeparator = suffix ? '' : (separator || ' ');
-        return BN_NAME + finalSeparator + (suffix || '');
-      }
-      // English context — keep English
-      return EN_NAME + (separator || ' ') + (suffix || '');
-    }
-  );
-
-  // 4. Country suffix normalization (English only)
+  // 3. Country suffix normalization
   out = out
-    .replace(/Shahed\s*Store\s*বাংলাদেশ/g, `${BN_NAME} বাংলাদেশ`)
-    .replace(/Shahed IT\s*Bangladesh/gi, `${EN_NAME} Bangladesh`)
-    .replace(/Shahed IT\s*BD/gi, `${EN_NAME} BD`);
+    .replace(/Shahed IT\s*Bangladesh/gi, `${NAME} Bangladesh`)
+    .replace(/Shahed IT\s*BD/gi, `${NAME} BD`);
 
-  // 5. Ensure Bengali brand name has a space before non-suffix Bengali characters
-  out = out.replace(
-    /শাহেদ\s*স্টোর(?!\s|[\-এরকেতেএেরয়ে])([\u0980-\u09FF])/g,
-    `${BN_NAME} $1`
-  );
-
-  // 6. Generic: ensure a space between Latin letters/digits and Bengali script
-  //    (fixes cases like "Storeথেকে", "VPNএর দাম", "2499৳" style joins)
+  // 4. Generic: ensure a space between Latin letters/digits and Bengali script
+  //    (fixes cases like "ITথেকে", "VPNএর দাম", "2499৳" style joins)
   out = out
     .replace(/([A-Za-z0-9])([\u0985-\u09B9\u09BE-\u09CC\u09D7\u09DC-\u09DF])/g, '$1 $2')
     .replace(/([\u0985-\u09B9\u09BE-\u09CC\u09D7\u09DC-\u09DF])([A-Za-z0-9])/g, '$1 $2');
 
-  // 7. Cleanup double spaces / spaces before Bengali punctuation
+  // 5. Cleanup double spaces / spaces before Bengali punctuation
   return out
     .replace(/\s+([।.,!?…])/g, '$1')
     .replace(/ {2,}/g, ' ');
