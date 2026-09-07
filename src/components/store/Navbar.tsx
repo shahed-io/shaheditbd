@@ -349,7 +349,7 @@ const Navbar = () => {
           {/* Left — contact chips */}
           <div className="flex items-center gap-1.5 flex-shrink-0 relative z-10">
             <a
-              href="tel:01840099853"
+              href="tel:01820060046"
               aria-label="Call us"
               className="group flex items-center gap-1.5 px-2.5 py-[5px] rounded-full transition-all hover:scale-[1.04] active:scale-95"
               style={{
@@ -360,7 +360,7 @@ const Navbar = () => {
               }}
             >
               <Phone size={11} className="text-emerald-600" strokeWidth={2.5} />
-              <span className="font-semibold tracking-wide tabular-nums">01840-099853</span>
+              <span className="font-semibold tracking-wide tabular-nums">01820-060046</span>
             </a>
             <a
               href="mailto:info@shahedit.com"

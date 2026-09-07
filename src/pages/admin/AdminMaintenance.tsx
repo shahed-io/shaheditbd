@@ -381,7 +381,7 @@ const AdminMaintenance = () => {
         </Field>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Field label="WhatsApp number (with country code)">
-            <input value={settings.whatsapp} onChange={e => set('whatsapp', e.target.value)} placeholder="8801840099853" className={inputCls} />
+            <input value={settings.whatsapp} onChange={e => set('whatsapp', e.target.value)} placeholder="8801820060046" className={inputCls} />
           </Field>
           <Field label="WhatsApp button label">
             <input value={settings.whatsappLabel} onChange={e => set('whatsappLabel', e.target.value)} placeholder="Chat on WhatsApp" className={inputCls} />
@@ -395,7 +395,7 @@ const AdminMaintenance = () => {
             <input value={settings.email} onChange={e => set('email', e.target.value)} placeholder="info@shahedit.com" className={inputCls} />
           </Field>
           <Field label="Hotline / phone">
-            <input value={settings.phone} onChange={e => set('phone', e.target.value)} placeholder="01840-099853" className={inputCls} />
+            <input value={settings.phone} onChange={e => set('phone', e.target.value)} placeholder="01820-060046" className={inputCls} />
           </Field>
           <Field label="Website">
             <input value={settings.website} onChange={e => set('website', e.target.value)} placeholder="www.shahedit.com" className={inputCls} />

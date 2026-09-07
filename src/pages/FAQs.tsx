@@ -59,7 +59,7 @@ const FAQ_CATS: FAQCategory[] = [
     items: [
       {
         q: 'কোন কোন পেমেন্ট মেথড গ্রহণ করা হয়?',
-        a: 'আমরা বিকাশ (Send Money ও Merchant), নগদ, রকেট এবং উপায় পেমেন্ট গ্রহণ করি। বিকাশ নম্বর: 01820-060046। বাকি সব মেথডের জন্য: 01840-099853।',
+        a: 'আমরা বিকাশ (Send Money ও Merchant), নগদ, রকেট এবং উপায় পেমেন্ট গ্রহণ করি। বিকাশ নম্বর: 01820-060046। বাকি সব মেথডের জন্য: 01820-060046।',
       },
       {
         q: 'পেমেন্ট করার পর কী করতে হবে?',
@@ -99,7 +99,7 @@ const FAQ_CATS: FAQCategory[] = [
       },
       {
         q: 'ডেলিভারি না পেলে কী করব?',
-        a: 'পেমেন্টের ২৪ ঘণ্টার মধ্যে পণ্য না পেলে আমাদের WhatsApp (01840-099853) বা সাইটের Contact Us পেজের মাধ্যমে সাথে সাথে অভিযোগ জানান। আমরা দ্রুত সমাধান করব।',
+        a: 'পেমেন্টের ২৪ ঘণ্টার মধ্যে পণ্য না পেলে আমাদের WhatsApp (01820-060046) বা সাইটের Contact Us পেজের মাধ্যমে সাথে সাথে অভিযোগ জানান। আমরা দ্রুত সমাধান করব।',
       },
     ],
   },
@@ -361,7 +361,7 @@ const FAQs = () => {
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <a
-                href="https://wa.me/8801840099853"
+                href="https://wa.me/8801820060046"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 px-6 py-3 rounded-2xl text-sm font-bold text-white transition-all hover:opacity-90"

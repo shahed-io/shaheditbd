@@ -16,8 +16,8 @@ const CONTACT_INFO = [
   {
     icon: <Phone size={18} />,
     label: 'ফোন',
-    value: '01840-099853',
-    href: 'tel:01840099853',
+    value: '01820-060046',
+    href: 'tel:01820060046',
     color: 'hsl(142,72%,38%)',
     bg: 'hsla(142,72%,38%,0.08)',
     border: 'hsla(142,72%,38%,0.20)',
@@ -25,8 +25,8 @@ const CONTACT_INFO = [
   {
     icon: <MessageCircle size={18} />,
     label: 'WhatsApp',
-    value: '01840-099853',
-    href: 'https://wa.me/8801840099853',
+    value: '01820-060046',
+    href: 'https://wa.me/8801820060046',
     color: 'hsl(142,58%,40%)',
     bg: 'hsla(142,58%,40%,0.08)',
     border: 'hsla(142,58%,40%,0.20)',
@@ -54,8 +54,8 @@ const CONTACT_INFO = [
 ];
 
 const SOCIAL = [
-  { icon: <Facebook size={20} />, label: 'Facebook', href: 'https://www.facebook.com/Shahed.Store365', color: 'hsl(221,44%,41%)', ext: true },
-  { icon: <MessageCircle size={20} />, label: 'WhatsApp', href: 'https://wa.me/shahedstore', color: 'hsl(142,58%,40%)', ext: true },
+  { icon: <Facebook size={20} />, label: 'Facebook', href: 'https://www.facebook.com/shahed.it.co', color: 'hsl(221,44%,41%)', ext: true },
+  { icon: <MessageCircle size={20} />, label: 'WhatsApp', href: 'https://wa.me/8801820060046', color: 'hsl(142,58%,40%)', ext: true },
   { icon: <Instagram size={20} />, label: 'Instagram', href: 'https://www.instagram.com/shahedstore.com.bd/', color: 'hsl(329,86%,56%)', ext: true },
 ];
 

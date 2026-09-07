@@ -1,6 +1,6 @@
 import { SITE_URL, SITE_NAME } from './SEOHead';
 
-const PHONE = '+8801840099853';
+const PHONE = '+8801820060046';
 const BD_AREA_CODE = 'BD';
 const SUPABASE_STORAGE_ORIGIN = 'https://dpvdavjwqyviredzoorj.supabase.co';
 const SUPABASE_STORAGE_PUBLIC_PATH = '/storage/v1/object/public/';
@@ -216,7 +216,7 @@ export const organizationSchema = () => ({
   contactPoint: [
     {
       '@type': 'ContactPoint',
-      telephone: '+8801840099853',
+      telephone: '+8801820060046',
       contactType: 'customer service',
       contactOption: 'TollFree',
       availableLanguage: ['Bengali', 'English'],
@@ -224,9 +224,8 @@ export const organizationSchema = () => ({
     },
   ],
   sameAs: [
-    'https://www.facebook.com/Shahed.Store365',
-    'https://www.facebook.com/shahedstore',
-    'https://wa.me/8801840099853',
+    'https://www.facebook.com/shahed.it.co',
+    'https://wa.me/8801820060046',
     'https://www.instagram.com/shahedstore',
     'https://www.youtube.com/@shahedit',
     'https://www.linkedin.com/company/shahedit',
@@ -365,7 +364,7 @@ export const localBusinessSchema = () => ({
   },
   geo: { '@type': 'GeoCoordinates', latitude: 23.8103, longitude: 90.4125 },
   areaServed: { '@type': 'Country', name: 'Bangladesh' },
-  sameAs: ['https://www.facebook.com/Shahed.Store365'],
+  sameAs: ['https://www.facebook.com/shahed.it.co'],
   hasMap: 'https://maps.google.com/?q=Dhaka+Bangladesh',
 });
 

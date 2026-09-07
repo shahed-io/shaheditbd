@@ -111,13 +111,12 @@ const orgSchema = {
   url: SITE_URL,
   logo: `${SITE_URL}/favicon.png`,
   sameAs: [
-    'https://www.facebook.com/Shahed.Store365',
-    'https://www.facebook.com/shahedstore',
-    'https://wa.me/8801840099853',
+    'https://www.facebook.com/shahed.it.co',
+    'https://wa.me/8801820060046',
   ],
   contactPoint: {
     '@type': 'ContactPoint',
-    telephone: '+8801840099853',
+    telephone: '+8801820060046',
     contactType: 'customer service',
     areaServed: 'BD',
     availableLanguage: ['Bengali', 'English'],

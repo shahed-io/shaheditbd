@@ -765,7 +765,7 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
                 style={{ background: `linear-gradient(135deg, ${A}08, ${B}06)`, border: `1px solid ${A}20` }}>
                 <Info size={16} style={{ color: A, flexShrink: 0, marginTop: 1 }} />
                 <p className="text-[12px] leading-relaxed" style={{ color: 'hsl(226,25%,42%)' }}>
-                  আবেদন জমার পর আমাদের টিম <strong>১–৬ ঘণ্টার মধ্যে</strong> আপনার ইমেইল বা WhatsApp-এ যোগাযোগ করবে। জরুরি প্রয়োজনে সরাসরি <strong>01840-099853</strong> নম্বরে যোগাযোগ করুন।
+                  আবেদন জমার পর আমাদের টিম <strong>১–৬ ঘণ্টার মধ্যে</strong> আপনার ইমেইল বা WhatsApp-এ যোগাযোগ করবে। জরুরি প্রয়োজনে সরাসরি <strong>01820-060046</strong> নম্বরে যোগাযোগ করুন।
                 </p>
               </div>
 

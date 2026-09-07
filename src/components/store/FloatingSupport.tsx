@@ -71,11 +71,11 @@ interface LiveChatConfig {
 const DEFAULTS: LiveChatConfig = {
   chat_enabled: true,
   whatsapp_enabled: true,
-  whatsapp_number: '8801840099853',
+  whatsapp_number: '8801820060046',
   whatsapp_label: 'WhatsApp',
   whatsapp_subtitle: 'সরাসরি কথা বলুন',
   phone_enabled: true,
-  phone_number: '01840-099853',
+  phone_number: '01820-060046',
   phone_label: 'ফোন করুন',
   phone_subtitle: 'সরাসরি কল করুন',
   ai_label: 'AI Support',
@@ -266,11 +266,11 @@ const FloatingSupport = () => {
         // Handle specific status codes with friendly Bengali messages — no throw
         let friendlyMsg = errData.error || 'দুঃখিত, সমস্যা হয়েছে।';
         if (resp.status === 402) {
-          friendlyMsg = '🔧 AI সহায়তা সাময়িকভাবে অনুপলব্ধ। সরাসরি WhatsApp-এ যোগাযোগ করুন: 01840099853';
+          friendlyMsg = '🔧 AI সহায়তা সাময়িকভাবে অনুপলব্ধ। সরাসরি WhatsApp-এ যোগাযোগ করুন: 01820060046';
         } else if (resp.status === 429) {
           friendlyMsg = '⏳ অনেক বেশি রিকোয়েস্ট। ১ মিনিট পরে আবার চেষ্টা করুন।';
         } else if (resp.status >= 500) {
-          friendlyMsg = '⚠️ সার্ভার সমস্যা। WhatsApp-এ যোগাযোগ করুন: 01840099853';
+          friendlyMsg = '⚠️ সার্ভার সমস্যা। WhatsApp-এ যোগাযোগ করুন: 01820060046';
         }
         setMessages(prev => {
           const updated = [...prev];
@@ -284,7 +284,7 @@ const FloatingSupport = () => {
       if (!resp.body) {
         setMessages(prev => {
           const updated = [...prev];
-          updated[updated.length - 1] = { role: 'assistant', content: 'দুঃখিত, রেসপন্স পাওয়া যায়নি। WhatsApp: 01840099853' };
+          updated[updated.length - 1] = { role: 'assistant', content: 'দুঃখিত, রেসপন্স পাওয়া যায়নি। WhatsApp: 01820060046' };
           return updated;
         });
         setLoading(false);
@@ -342,7 +342,7 @@ const FloatingSupport = () => {
       setMessages(prev => {
         const updated = [...prev];
         const last = updated[updated.length - 1];
-        const errMsg = { role: 'assistant' as const, content: '⚠️ সংযোগে সমস্যা হয়েছে। WhatsApp-এ যোগাযোগ করুন: 01840099853' };
+        const errMsg = { role: 'assistant' as const, content: '⚠️ সংযোগে সমস্যা হয়েছে। WhatsApp-এ যোগাযোগ করুন: 01820060046' };
         if (last && last.role === 'assistant' && !last.content) {
           updated[updated.length - 1] = errMsg;
         } else {
