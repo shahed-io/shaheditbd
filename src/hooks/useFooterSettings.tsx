@@ -31,7 +31,7 @@ const DEFAULTS: FooterSettings = {
   tagline: 'বাংলাদেশের সবচেয়ে বিশ্বস্ত ডিজিটাল সফটওয়্যার স্টোর। অরিজিনাল সফটওয়্যার, সেরা দামে, ইনস্ট্যান্ট ডেলিভারি।',
   facebook_url: 'https://www.facebook.com/Shahed.Store365',
   whatsapp_url: 'https://wa.me/8801840099853',
-  instagram_url: 'https://www.instagram.com/shahedit.com/',
+  instagram_url: 'https://www.instagram.com/shahedstore.com.bd/',
   telegram_url: 'https://t.me/Shahed_Store',
 };
 
