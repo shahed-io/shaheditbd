@@ -27,13 +27,13 @@ interface SEOHeadProps {
   };
 }
 
-const SITE_NAME = 'Shahed Store';
-const SITE_URL = 'https://shahedstore.com.bd';
+const SITE_NAME = 'Shahed IT';
+const SITE_URL = 'https://shahedit.com';
 const SUPABASE_STORAGE_ORIGIN = 'https://dpvdavjwqyviredzoorj.supabase.co';
 const SUPABASE_STORAGE_PUBLIC_PATH = '/storage/v1/object/public/';
-const DEFAULT_DESC = 'Buy genuine Windows, Office, Adobe, antivirus, VPN and digital subscriptions in Bangladesh with instant delivery from Shahed Store.';
+const DEFAULT_DESC = 'Buy genuine Windows, Office, Adobe, antivirus, VPN and digital subscriptions in Bangladesh with instant delivery from Shahed IT.';
 const DEFAULT_OG = '/og-image.jpg';
-const DEFAULT_KEYWORDS = 'windows 11 key bangladesh, microsoft office 365 bangladesh, adobe creative cloud bangladesh, antivirus cheap, buy digital software bangladesh, digital license key, Shahed Store';
+const DEFAULT_KEYWORDS = 'windows 11 key bangladesh, microsoft office 365 bangladesh, adobe creative cloud bangladesh, antivirus cheap, buy digital software bangladesh, digital license key, Shahed IT';
 
 // Cache for GA/GSC/Clarity settings so we only fetch once per session
 let _seoCache: { ga?: string; gsc?: string; clarity?: string; verification?: Record<string, string>; loaded?: boolean } = {};
@@ -193,7 +193,7 @@ const SEOHead = ({
       <meta name="robots" content={robotsContent} />
       <meta name="googlebot" content={robotsContent} />
       <meta name="keywords" content={keywords || DEFAULT_KEYWORDS} />
-      <meta name="author" content="Shahed Store" />
+      <meta name="author" content="Shahed IT" />
       <meta name="geo.region" content="BD" />
       <meta name="geo.placename" content="Bangladesh" />
       <meta name="geo.position" content="23.8103;90.4125" />

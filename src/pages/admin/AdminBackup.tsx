@@ -358,7 +358,7 @@ const AdminBackup = () => {
         return [table, rows] as const;
       });
       const results: Record<string, any[]> = Object.fromEntries(entries);
-      const payload = { exported_at: new Date().toISOString(), version: '3.0', store: 'Shahed Store', tables: results };
+      const payload = { exported_at: new Date().toISOString(), version: '3.0', store: 'Shahed IT', tables: results };
       downloadJson(payload, `shahed_store_full_backup_${today()}.json`);
       const total = Object.values(results).reduce((s, v) => s + v.length, 0);
       addHistory({ label: 'Full Backup', tableName: 'all', date: new Date().toISOString(), records: total, type: 'export', status: 'success' });
@@ -386,7 +386,7 @@ const AdminBackup = () => {
 
       // 1) Database: fetch all tables IN PARALLEL (up to 6 concurrent)
       setProgressLabel('Fetching database (parallel)…');
-      const manifest: any = { exported_at: new Date().toISOString(), version: '3.0', store: 'Shahed Store', tables: {} };
+      const manifest: any = { exported_at: new Date().toISOString(), version: '3.0', store: 'Shahed IT', tables: {} };
 
       // Phase 1 weights: DB = 40%, Storage = 60%
       let dbDone = 0;
@@ -452,7 +452,7 @@ const AdminBackup = () => {
 
       // 3) README
       zip.file('README.txt',
-`Shahed Store — Complete Website Backup
+`Shahed IT — Complete Website Backup
 Exported: ${new Date().toISOString()}
 
 Contents:

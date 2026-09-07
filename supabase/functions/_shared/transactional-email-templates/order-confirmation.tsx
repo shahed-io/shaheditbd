@@ -61,7 +61,7 @@ const OrderConfirmation = ({
         <Container style={wrapper}>
           <Section style={headerStyle}>
             <div style={logoCardStyle}>
-              <Img src={LOGO_URL} width="240" height="65" alt="Shahed Store" style={logoStyle} />
+              <Img src={LOGO_URL} width="240" height="65" alt="Shahed IT" style={logoStyle} />
             </div>
           </Section>
 
@@ -98,7 +98,7 @@ const OrderConfirmation = ({
 
           <Section style={footerSection}>
             <Text style={copyrightStyle}>
-              &copy; {new Date().getFullYear()} Shahed Store. All rights reserved.
+              &copy; {new Date().getFullYear()} Shahed IT. All rights reserved.
             </Text>
           </Section>
         </Container>
@@ -109,7 +109,7 @@ const OrderConfirmation = ({
 
 export const template = {
   component: OrderConfirmation,
-  subject: (data: OrderConfirmationProps) => `Order Confirmed - ${data.orderNumber || 'Shahed Store'}`,
+  subject: (data: OrderConfirmationProps) => `Order Confirmed - ${data.orderNumber || 'Shahed IT'}`,
   displayName: 'Order Confirmation',
   previewData: {
     customerName: 'Rahul Ahmed',

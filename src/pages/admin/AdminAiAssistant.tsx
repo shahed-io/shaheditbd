@@ -254,7 +254,7 @@ const AdminAiAssistant = () => {
               <RefreshCw className="w-3.5 h-3.5" />
             </Button>
             <a
-              href="https://shahedstore.com.bd"
+              href="https://shahedit.com"
               target="_blank"
               rel="noopener noreferrer"
               className="h-7 w-7 p-0 flex items-center justify-center rounded-md hover:bg-accent transition-colors"
@@ -273,7 +273,7 @@ const AdminAiAssistant = () => {
             >
               <iframe
                 key={previewKey}
-                src="https://shahedstore.com.bd"
+                src="https://shahedit.com"
                 className="w-full h-full border-0"
                 title="Website Preview"
                 sandbox="allow-scripts allow-same-origin allow-popups allow-forms"

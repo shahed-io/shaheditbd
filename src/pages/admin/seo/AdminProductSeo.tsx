@@ -347,7 +347,7 @@ const AdminProductSeo = () => {
                     <input
                       value={titleVal}
                       onChange={e => set(p.id, 'seo_title', e.target.value)}
-                      placeholder={`${p.name} কিনুন | সেরা দাম | Shahed Store`}
+                      placeholder={`${p.name} কিনুন | সেরা দাম | Shahed IT`}
                       className="w-full bg-background border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
                     />
                     {titleLen > 0 && titleLen <= 60 && (

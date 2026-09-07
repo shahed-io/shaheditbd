@@ -49,7 +49,7 @@ const TEMPLATE_VARIANTS: Record<string, Variant[]> = {
       subject: 'Guest post idea for {{site_name}} — Free practical guide for your readers',
       body: `Hi {{contact_name}},
 
-I'm Shahed from Shahed Store (shahedstore.com.bd) — a Bangladeshi digital software store serving 10,000+ local customers with genuine Microsoft, Adobe, AI tool, and other licenses.
+I'm Shahed from Shahed IT (shahedit.com) — a Bangladeshi digital software store serving 10,000+ local customers with genuine Microsoft, Adobe, AI tool, and other licenses.
 
 I've been a regular reader of {{site_name}} and I think your audience would find this guest post useful:
 
@@ -57,13 +57,13 @@ I've been a regular reader of {{site_name}} and I think your audience would find
 
 It would cover real BD pricing, bKash/Nagad payment, activation steps, and how to spot fake keys — entirely educational, not promotional. I'm happy to adapt the angle to whatever fits {{site_name}}'s tone best.
 
-In return, all I ask is one author bio link back to shahedstore.com.bd.
+In return, all I ask is one author bio link back to shahedit.com.
 
 Would this work for you? Happy to send a full draft within 3 days.
 
 Thanks for considering,
 Shahed
-shahedstore.com.bd
+shahedit.com
 WhatsApp: +880 ...`,
     },
     {
@@ -71,7 +71,7 @@ WhatsApp: +880 ...`,
       subject: '{{site_name}} guest post — 1500 words, ready in 3 days',
       body: `Hi {{contact_name}},
 
-Quick one — I run shahedstore.com.bd (BD's genuine software marketplace, 10k+ customers).
+Quick one — I run shahedit.com (BD's genuine software marketplace, 10k+ customers).
 
 I'd like to write a guest post for {{site_name}}:
 
@@ -82,14 +82,14 @@ I'd like to write a guest post for {{site_name}}:
 Yes / no — happy either way.
 
 Shahed
-shahedstore.com.bd`,
+shahedit.com`,
     },
     {
       label: 'Data-driven Pitch',
       subject: 'Exclusive 2026 BD software pricing data for {{site_name}}',
       body: `Hi {{contact_name}},
 
-I'm Shahed — founder of Shahed Store, where we've processed 10,000+ digital software orders across Bangladesh in the last 18 months.
+I'm Shahed — founder of Shahed IT, where we've processed 10,000+ digital software orders across Bangladesh in the last 18 months.
 
 We have proprietary data on what BD users actually pay (and save) for Microsoft 365, Adobe CC, ChatGPT Plus, Canva Pro, etc. — broken down by city, payment method (bKash/Nagad/card) and freelancer vs student vs business buyer.
 
@@ -103,16 +103,16 @@ Interested? I can send a sample chart today.
 
 Best,
 Shahed
-shahedstore.com.bd`,
+shahedit.com`,
     },
   ],
   review: [
     {
       label: 'No-strings Free Product',
-      subject: 'Free product for honest review — Shahed Store',
+      subject: 'Free product for honest review — Shahed IT',
       body: `Hi {{contact_name}},
 
-I run Shahed Store (shahedstore.com.bd) — Bangladesh's trusted source for genuine Microsoft 365, Adobe, ChatGPT Plus, Canva Pro and other digital licenses with bKash/Nagad payment and 1-hour delivery.
+I run Shahed IT (shahedit.com) — Bangladesh's trusted source for genuine Microsoft 365, Adobe, ChatGPT Plus, Canva Pro and other digital licenses with bKash/Nagad payment and 1-hour delivery.
 
 I'd love to send you any product from our catalog (worth up to ৳5,000) for a no-strings-attached honest review on {{site_name}}. You're welcome to share both the good and the bad.
 
@@ -120,7 +120,7 @@ If interested, just reply with the product you'd like and I'll send the license 
 
 Thanks,
 Shahed
-shahedstore.com.bd`,
+shahedit.com`,
     },
     {
       label: 'Comparison Review',
@@ -129,19 +129,19 @@ shahedstore.com.bd`,
 
 Big fan of how {{site_name}} reviews local services honestly.
 
-Would you be open to a comparison review of Bangladeshi digital software sellers (Shahed Store vs 3 others your readers know)? I'll cover the cost of all 4 products so the test is fair, and you keep full editorial control — including saying we're worse if we are.
+Would you be open to a comparison review of Bangladeshi digital software sellers (Shahed IT vs 3 others your readers know)? I'll cover the cost of all 4 products so the test is fair, and you keep full editorial control — including saying we're worse if we are.
 
 If yes, I'll send the budget and product list within 24 hours.
 
 Shahed
-shahedstore.com.bd`,
+shahedit.com`,
     },
     {
       label: 'YouTube / Video Pitch',
       subject: 'Video review collab — free Microsoft 365 + ChatGPT Plus for {{site_name}}',
       body: `Hi {{contact_name}},
 
-Loved your recent videos on {{site_name}} — your audience is exactly the people we serve at Shahed Store (BD freelancers and small businesses buying genuine software).
+Loved your recent videos on {{site_name}} — your audience is exactly the people we serve at Shahed IT (BD freelancers and small businesses buying genuine software).
 
 I'd like to send you free 1-year Microsoft 365 + ChatGPT Plus + Canva Pro licenses (worth ৳8,000+) for an honest video review. No script, no required mentions — just your real opinion.
 
@@ -149,16 +149,16 @@ If you're interested, reply with your delivery email and I'll activate everythin
 
 Cheers,
 Shahed
-shahedstore.com.bd`,
+shahedit.com`,
     },
   ],
   partnership: [
     {
       label: 'Affiliate Partnership',
-      subject: 'Partnership idea between {{site_name}} and Shahed Store',
+      subject: 'Partnership idea between {{site_name}} and Shahed IT',
       body: `Hi {{contact_name}},
 
-I'm Shahed, founder of Shahed Store (shahedstore.com.bd) — Bangladesh's digital software marketplace.
+I'm Shahed, founder of Shahed IT (shahedit.com) — Bangladesh's digital software marketplace.
 
 I'd like to explore a small partnership with {{site_name}}: an affiliate or referral arrangement where your readers get a discount code and your team earns commission on sales. We currently pay 10% on every order through our referral program.
 
@@ -166,14 +166,14 @@ If that sounds interesting, I'd love to jump on a 15-min call this week.
 
 Thanks,
 Shahed
-shahedstore.com.bd`,
+shahedit.com`,
     },
     {
       label: 'Co-marketing / Bundle',
-      subject: 'Co-marketing idea: bundle {{site_name}} audience with Shahed Store offer',
+      subject: 'Co-marketing idea: bundle {{site_name}} audience with Shahed IT offer',
       body: `Hi {{contact_name}},
 
-Quick idea — I run Shahed Store (shahedstore.com.bd), BD's largest genuine software marketplace.
+Quick idea — I run Shahed IT (shahedit.com), BD's largest genuine software marketplace.
 
 What if we ran a joint campaign for {{site_name}}'s audience? For example: an exclusive "{{site_name}} reader" bundle (Microsoft 365 + Canva Pro + ChatGPT Plus at 30% off) — you promote, we fulfill, and we split revenue 50/50 on every sale.
 
@@ -182,7 +182,7 @@ No upfront cost on either side. If it flops, we both walk away.
 Worth a quick call?
 
 Shahed
-shahedstore.com.bd`,
+shahedit.com`,
     },
     {
       label: 'White-label / Reseller',
@@ -197,7 +197,7 @@ We already power 5+ BD resellers this way. If it's a fit for {{site_name}}, I'm 
 
 Best,
 Shahed
-shahedstore.com.bd`,
+shahedit.com`,
     },
   ],
   resource_link: [
@@ -208,15 +208,15 @@ shahedstore.com.bd`,
 
 I noticed your post/article about software pricing in Bangladesh — really useful piece.
 
-We maintain a regularly-updated comparison page on Shahed Store that lists current BD prices for Microsoft 365, Adobe, Canva Pro, ChatGPT Plus, Grammarly, CapCut Pro and more (paid via bKash/Nagad, instant delivery). It might be a useful resource link for your readers:
+We maintain a regularly-updated comparison page on Shahed IT that lists current BD prices for Microsoft 365, Adobe, Canva Pro, ChatGPT Plus, Grammarly, CapCut Pro and more (paid via bKash/Nagad, instant delivery). It might be a useful resource link for your readers:
 
-  https://shahedstore.com.bd/shop
+  https://shahedit.com/shop
 
 No obligation at all — just thought it might add value if you ever update the post.
 
 Best,
 Shahed
-shahedstore.com.bd`,
+shahedit.com`,
     },
     {
       label: 'Broken Link Replacement',
@@ -227,13 +227,13 @@ While reading your guide on {{site_name}}, I noticed one of the outbound links t
 
 If you're updating it anyway, a current alternative could be our live BD pricing page:
 
-  https://shahedstore.com.bd/shop
+  https://shahedit.com/shop
 
 It's updated weekly with bKash/Nagad prices and is free to reference. Totally up to you — just wanted to flag it.
 
 Cheers,
 Shahed
-shahedstore.com.bd`,
+shahedit.com`,
     },
   ],
 };

@@ -178,7 +178,7 @@ export default function AdminPersonalLicenses() {
     if (lic.note) lines.push(`📝 নোট: ${lic.note}`);
     lines.push('');
     lines.push('✅ ধন্যবাদ আমাদের সাথে কেনাকাটা করার জন্য!');
-    lines.push('🌐 shahedstore.com.bd');
+    lines.push('🌐 shahedit.com');
 
     const msg = encodeURIComponent(lines.join('\n'));
     window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
@@ -210,7 +210,7 @@ export default function AdminPersonalLicenses() {
       total: 0,
       paymentMethod: 'cash',
       status: 'delivered',
-      notes: 'Personal license delivery from Shahed Store.',
+      notes: 'Personal license delivery from Shahed IT.',
     };
 
     const tid = toast.loading('PDF তৈরি হচ্ছে...');

@@ -12,7 +12,7 @@ const APP_SECRET = Deno.env.get("WHATSAPP_APP_SECRET") || "";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-const SITE_URL = "https://shahedstore.com.bd";
+const SITE_URL = "https://shahedit.com";
 
 const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
 

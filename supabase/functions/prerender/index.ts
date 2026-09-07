@@ -1,7 +1,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-const SITE_URL = 'https://shahedstore.com.bd';
-const SITE_NAME = 'Shahed Store';
+const SITE_URL = 'https://shahedit.com';
+const SITE_NAME = 'Shahed IT';
 const SUPABASE_STORAGE_ORIGIN = 'https://dpvdavjwqyviredzoorj.supabase.co';
 const SUPABASE_STORAGE_PUBLIC_PATH = '/storage/v1/object/public/';
 

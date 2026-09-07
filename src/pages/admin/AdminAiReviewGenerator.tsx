@@ -107,7 +107,7 @@ const AdminAiReviewGenerator = () => {
         language,
         ratingMin,
         ratingMax,
-        storeName: 'Shahed Store',
+        storeName: 'Shahed IT',
       },
     });
     if (error) throw new Error(error.message);

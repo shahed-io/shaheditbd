@@ -1,10 +1,10 @@
 // Brand name normalization
 // Rule (updated):
-//   • English contexts  → "Shahed Store"
+//   • English contexts  → "Shahed IT"
 //   • Bengali contexts  → "শাহেদ স্টোর" (correct Bengali spelling)
 //   • All misspellings (Bengali or English) → corrected form in the matching language
 
-const EN_NAME = 'Shahed Store';
+const EN_NAME = 'Shahed IT';
 const BN_NAME = 'শাহেদ স্টোর';
 
 // Misspelled Bengali variants → always fixed to the correct Bengali form
@@ -38,14 +38,14 @@ export const normalizeBrandNameText = (value: string): string => {
     out = out.split(variant).join(BN_NAME);
   }
 
-  // 2. Fix English misspellings → Shahed Store
+  // 2. Fix English misspellings → Shahed IT
   out = out
-    .replace(/ShahedStore/gi, EN_NAME)
+    .replace(/ShahedIT/gi, EN_NAME)
     .replace(/\b(?:Shahid|Sahed|Shawon|Shahied|Sahid)\s+Store\b/gi, EN_NAME)
     .replace(/Shahed\s{2,}Store/g, EN_NAME);
 
-  // 3. If "Shahed Store" appears inside a Bengali context, convert to Bengali form
-  //    (handles case markers like "Shahed Store-এর" / "Shahed Storeে" too)
+  // 3. If "Shahed IT" appears inside a Bengali context, convert to Bengali form
+  //    (handles case markers like "Shahed IT-এর" / "Shahed ITে" too)
   out = out.replace(
     /Shahed\s*Store(\s*-\s*|\s+)?(এর|কে|তে|এ|ের|য়|ে)?/g,
     (match, separator, suffix, offset, full) => {
@@ -62,8 +62,8 @@ export const normalizeBrandNameText = (value: string): string => {
   // 4. Country suffix normalization (English only)
   out = out
     .replace(/Shahed\s*Store\s*বাংলাদেশ/g, `${BN_NAME} বাংলাদেশ`)
-    .replace(/Shahed Store\s*Bangladesh/gi, `${EN_NAME} Bangladesh`)
-    .replace(/Shahed Store\s*BD/gi, `${EN_NAME} BD`);
+    .replace(/Shahed IT\s*Bangladesh/gi, `${EN_NAME} Bangladesh`)
+    .replace(/Shahed IT\s*BD/gi, `${EN_NAME} BD`);
 
   // 5. Ensure Bengali brand name has a space before non-suffix Bengali characters
   out = out.replace(

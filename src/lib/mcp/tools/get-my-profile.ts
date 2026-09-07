@@ -13,7 +13,7 @@ function supabaseForUser(ctx: ToolContext) {
 export default defineTool({
   name: "get_my_profile",
   title: "Get my profile",
-  description: "Return the signed-in user's Shahed Store profile (name, email, phone, wallet balance, points).",
+  description: "Return the signed-in user's Shahed IT profile (name, email, phone, wallet balance, points).",
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async (_input, ctx) => {

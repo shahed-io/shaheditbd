@@ -95,7 +95,7 @@ export default function WelcomeDiscount() {
           .single();
         let prizes = FALLBACK_PRIZES;
         let popup_title = 'আপনার Welcome Gift প্রস্তুত';
-        let popup_subtitle = 'Shahed Store আপনাকে স্বাগতম জানাচ্ছে! শুধুমাত্র নতুন ভিজিটরদের জন্য একটি গ্যারান্টিড ছাড় — মাত্র একবার দাবি করা যাবে।';
+        let popup_subtitle = 'Shahed IT আপনাকে স্বাগতম জানাচ্ছে! শুধুমাত্র নতুন ভিজিটরদের জন্য একটি গ্যারান্টিড ছাড় — মাত্র একবার দাবি করা যাবে।';
         let spin_button_text = 'CLAIM';
         if (data?.value) {
           try {
@@ -365,7 +365,7 @@ export default function WelcomeDiscount() {
   const prizes = settings?.prizes || FALLBACK_PRIZES;
   const sliceAngle = 360 / prizes.length;
   const popupTitle = settings?.popup_title || 'আপনার Welcome Gift প্রস্তুত';
-  const popupSubtitle = settings?.popup_subtitle || 'Shahed Store আপনাকে স্বাগতম জানাচ্ছে! শুধুমাত্র নতুন ভিজিটরদের জন্য একটি গ্যারান্টিড ছাড় — মাত্র একবার দাবি করা যাবে।';
+  const popupSubtitle = settings?.popup_subtitle || 'Shahed IT আপনাকে স্বাগতম জানাচ্ছে! শুধুমাত্র নতুন ভিজিটরদের জন্য একটি গ্যারান্টিড ছাড় — মাত্র একবার দাবি করা যাবে।';
   const spinButtonText = settings?.spin_button_text || 'CLAIM';
 
   // Professional muted gradient slices

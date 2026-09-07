@@ -1234,7 +1234,7 @@ const Checkout = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEOHead title="Checkout" description="Complete your secure checkout at Shahed Store." noIndex />
+      <SEOHead title="Checkout" description="Complete your secure checkout at Shahed IT." noIndex />
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} redirectAfterLogin={false} oauthRedirectTo={typeof window !== 'undefined' ? window.location.href : undefined} />
 
       <Dialog open={!!paypalOrderId} onOpenChange={(v) => { if (!v) { setPaypalOrderId(null); setLoading(false); submittingRef.current = false; } }}>
@@ -1515,7 +1515,7 @@ const Checkout = () => {
               />
               <span className="text-sm text-muted-foreground leading-relaxed">
                 আমি{' '}
-                <a href="https://shahedstore.com.bd/terms-conditions" className="text-primary hover:underline">Terms & Conditions</a>
+                <a href="https://shahedit.com/terms-conditions" className="text-primary hover:underline">Terms & Conditions</a>
                 {' '}এবং{' '}
                 <button type="button" onClick={() => navigate('/refund-policy')} className="text-primary hover:underline">Refund Policy</button>
                 {' '}পড়েছি এবং সম্মত আছি।

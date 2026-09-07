@@ -68,7 +68,7 @@ const SitemapStatusWidget = () => {
     try {
       const { data: res, error: err } = await supabase.functions.invoke(
         'search-console-sitemap-status',
-        { body: { siteUrl: 'sc-domain:shahedstore.com.bd' } },
+        { body: { siteUrl: 'sc-domain:shahedit.com' } },
       );
       if (err) throw err;
       if (res?.error) throw new Error(res.error);
@@ -134,7 +134,7 @@ const SitemapStatusWidget = () => {
           <p className="font-medium mb-1">⚠️ Could not fetch sitemap status</p>
           <p className="text-xs text-muted-foreground leading-relaxed break-all">{error}</p>
           <p className="text-xs text-muted-foreground mt-2">
-            Make sure the Google Search Console connector is linked and the connected Google account has access to <code className="text-primary">shahedstore.com.bd</code> in Search Console.
+            Make sure the Google Search Console connector is linked and the connected Google account has access to <code className="text-primary">shahedit.com</code> in Search Console.
           </p>
         </div>
       ) : data && (
@@ -176,7 +176,7 @@ const SitemapStatusWidget = () => {
             </div>
             {data.sitemaps.length === 0 ? (
               <div className="p-6 text-center text-xs text-muted-foreground">
-                No sitemaps submitted yet. Submit <code className="text-primary">https://shahedstore.com.bd/sitemap.xml</code> in Search Console.
+                No sitemaps submitted yet. Submit <code className="text-primary">https://shahedit.com/sitemap.xml</code> in Search Console.
               </div>
             ) : (
               <div className="overflow-x-auto">

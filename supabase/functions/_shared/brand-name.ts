@@ -1,10 +1,10 @@
 // Brand name normalization (edge-function copy)
 // Rule (updated):
-//   • English contexts  → "Shahed Store"
+//   • English contexts  → "Shahed IT"
 //   • Bengali contexts  → "শাহেদ স্টোর"
 //   • Misspellings are auto-corrected in the matching language
 
-const EN_NAME = "Shahed Store";
+const EN_NAME = "Shahed IT";
 const BN_NAME = "শাহেদ স্টোর";
 
 const BENGALI_MISSPELLINGS = [
@@ -35,7 +35,7 @@ export function normalizeBrandNameText(value: string): string {
   }
 
   out = out
-    .replace(/ShahedStore/gi, EN_NAME)
+    .replace(/ShahedIT/gi, EN_NAME)
     .replace(/\b(?:Shahid|Sahed|Shawon|Shahied|Sahid)\s+Store\b/gi, EN_NAME)
     .replace(/Shahed\s{2,}Store/g, EN_NAME);
 
@@ -51,8 +51,8 @@ export function normalizeBrandNameText(value: string): string {
 
   out = out
     .replace(/Shahed\s*Store\s*বাংলাদেশ/g, `${BN_NAME} বাংলাদেশ`)
-    .replace(/Shahed Store\s*Bangladesh/gi, `${EN_NAME} Bangladesh`)
-    .replace(/Shahed Store\s*BD/gi, `${EN_NAME} BD`);
+    .replace(/Shahed IT\s*Bangladesh/gi, `${EN_NAME} Bangladesh`)
+    .replace(/Shahed IT\s*BD/gi, `${EN_NAME} BD`);
 
   return out
     .replace(/\s+([।.,!?…])/g, "$1")

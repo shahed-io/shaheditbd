@@ -294,7 +294,7 @@ export default function OfferPage() {
 
   return (
     <>
-      <SEOHead title={offer.title} description={offer.description?.slice(0, 160) || `${offer.title} - Shahed Store offer`} />
+      <SEOHead title={offer.title} description={offer.description?.slice(0, 160) || `${offer.title} - Shahed IT offer`} />
       <Navbar />
       <main className="min-h-screen container max-w-3xl mx-auto px-4 pt-24 md:pt-32 pb-6 md:pb-8 space-y-6">
         {offer.show_notice && offer.notice && offer.notice.trim() && (

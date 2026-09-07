@@ -24,14 +24,14 @@ const DEFAULTS: FooterSettings = {
   status_text: 'Trusted Digital Product Store',
   payment_methods: 'BKash,Nagad,Rocket,Upay,BKash Merchant',
   phone: '01840-099853',
-  email: 'info@shahedstore.com.bd',
+  email: 'info@shahedit.com',
   address: 'Ishwardi, Pabna',
-  website_url: 'https://www.shahedstore.com.bd',
-  store_name: 'Shahed Store',
+  website_url: 'https://www.shahedit.com',
+  store_name: 'Shahed IT',
   tagline: 'বাংলাদেশের সবচেয়ে বিশ্বস্ত ডিজিটাল সফটওয়্যার স্টোর। অরিজিনাল সফটওয়্যার, সেরা দামে, ইনস্ট্যান্ট ডেলিভারি।',
   facebook_url: 'https://www.facebook.com/Shahed.Store365',
   whatsapp_url: 'https://wa.me/8801840099853',
-  instagram_url: 'https://www.instagram.com/shahedstore.com.bd/',
+  instagram_url: 'https://www.instagram.com/shahedit.com/',
   telegram_url: 'https://t.me/Shahed_Store',
 };
 

@@ -14,7 +14,7 @@ import { config } from "dotenv";
 
 config();
 
-const BASE_URL = "https://shahedstore.com.bd";
+const BASE_URL = "https://shahedit.com";
 const SUPABASE_URL =
   process.env.VITE_SUPABASE_URL ||
   "https://dpvdavjwqyviredzoorj.supabase.co";
@@ -186,7 +186,7 @@ async function main() {
   for (const p of products) {
     if (!p.slug) continue;
     const images = uniqueImages(p.image_url, p.images);
-    const caption = cleanText(p.short_description) || `${p.name} - genuine digital product from Shahed Store Bangladesh`;
+    const caption = cleanText(p.short_description) || `${p.name} - genuine digital product from Shahed IT Bangladesh`;
     entries.push({
       loc: `/product/${p.slug}`,
       lastmod: p.updated_at?.slice(0, 10),

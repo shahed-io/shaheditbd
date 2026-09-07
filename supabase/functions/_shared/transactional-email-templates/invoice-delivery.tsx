@@ -6,8 +6,8 @@ import {
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
 
-const SITE_NAME = 'Shahed Store'
-const SITE_URL = 'https://www.shahedstore.com.bd'
+const SITE_NAME = 'Shahed IT'
+const SITE_URL = 'https://www.shahedit.com'
 const LOGO_URL = 'https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/email-assets/logo-navbar.png'
 
 interface InvoiceItemData {
@@ -188,8 +188,8 @@ const InvoiceDeliveryEmail = ({
                 {SITE_URL.replace('https://', '')}
               </Link>
               {' • '}
-              <Link href="mailto:info@shahedstore.com.bd" style={{ color: '#7c3aed', textDecoration: 'none' }}>
-                info@shahedstore.com.bd
+              <Link href="mailto:info@shahedit.com" style={{ color: '#7c3aed', textDecoration: 'none' }}>
+                info@shahedit.com
               </Link>
             </Text>
           </Section>

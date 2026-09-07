@@ -14,7 +14,7 @@ const NotFound = () => {
     <>
       <SEOHead
         title="Page Not Found (404)"
-        description="The page you are looking for does not exist on Shahed Store."
+        description="The page you are looking for does not exist on Shahed IT."
         noIndex
       />
       <NotFoundScreen

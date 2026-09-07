@@ -32,7 +32,7 @@ export default function AdminWhatsAppBot() {
   const [cfg, setCfg] = useState<Config | null>(null);
   const [saving, setSaving] = useState(false);
   const [testTo, setTestTo] = useState("");
-  const [testMsg, setTestMsg] = useState("Hello from Shahed Store WhatsApp Bot ✅");
+  const [testMsg, setTestMsg] = useState("Hello from Shahed IT WhatsApp Bot ✅");
   const [sending, setSending] = useState(false);
   const [messages, setMessages] = useState<any[]>([]);
   const [contacts, setContacts] = useState<any[]>([]);

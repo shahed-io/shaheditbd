@@ -367,8 +367,8 @@ const AdminQuickSale = () => {
         msg += `________________________\n\n`;
         msg += `Total: ${subtotal} BDT\n`;
         msg += `Payment: ${paymentStatus === 'paid' ? 'Paid' : 'Pending'}\n\n`;
-        msg += `Thank you for choosing Shahed Store\n`;
-        msg += `www.shahedstore.com.bd`;
+        msg += `Thank you for choosing Shahed IT\n`;
+        msg += `www.shahedit.com`;
 
         window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
       }

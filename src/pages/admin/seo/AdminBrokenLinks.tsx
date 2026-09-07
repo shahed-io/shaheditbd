@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 
 interface LinkCheck { url: string; label: string; status: 'ok' | 'broken' | 'checking' | 'pending'; code?: number; }
 
-const SITE_URL = 'https://shahedstore.com.bd';
+const SITE_URL = 'https://shahedit.com';
 const STATIC_PAGES = [
   { url: '/', label: 'Home' }, { url: '/shop', label: 'Shop' }, { url: '/blog', label: 'Blog' },
   { url: '/link', label: 'Help Center' }, { url: '/about', label: 'About' }, { url: '/contact', label: 'Contact' },

@@ -50,7 +50,7 @@ Deno.serve(async (req) => {
 
   let body: any = {};
   try { body = await req.json(); } catch { body = {}; }
-  const domain: string = (body.domain || 'shahedstore.com.bd').toString().trim();
+  const domain: string = (body.domain || 'shahedit.com').toString().trim();
   const database: string = (body.database || 'us').toString().trim();
 
   try {

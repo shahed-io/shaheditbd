@@ -44,7 +44,7 @@ const formatDate = (s?: string | null) => {
 };
 
 export default function NoticeTemplate({ notice, brand = {}, signatureUrl, className = '' }: Props) {
-  const brandName = brand.name || 'Shahed Store';
+  const brandName = brand.name || 'Shahed IT';
   const brandColor = brand.brandColor || '#7c3aed';
   const brandLight = brand.brandLight || '#f3f0ff';
   const accentText = brand.accentText || '#1a1a2e';
@@ -165,7 +165,7 @@ export default function NoticeTemplate({ notice, brand = {}, signatureUrl, class
           )}
           <div style={{ borderTop: '2px solid #333', paddingTop: 6, marginTop: 4 }}>
             <div style={{ fontWeight: 700, color: accentText, fontSize: 14 }}>
-              {notice.signed_by || 'Shahed Store Authority'}
+              {notice.signed_by || 'Shahed IT Authority'}
             </div>
             {notice.signed_role && (
               <div style={{ fontSize: 11, color: '#666' }}>{notice.signed_role}</div>

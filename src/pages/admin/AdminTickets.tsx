@@ -84,7 +84,7 @@ const AdminTickets = () => {
       const { error } = await supabase.from('support_replies').insert({
         ticket_id: ticketId,
         message,
-        author_name: 'Shahed Store Support',
+        author_name: 'Shahed IT Support',
         is_admin: true,
       });
       if (error) throw error;

@@ -76,7 +76,7 @@ const SplashScreen = ({ onFinish }: { onFinish: () => void }) => {
         />
         <img
           src="/pwa-512.png"
-          alt="Shahed Store"
+          alt="Shahed IT"
           className="relative w-[80px] h-[80px] rounded-2xl object-cover"
           style={{
             boxShadow: '0 0 30px hsla(258, 78%, 55%, 0.5), 0 0 60px hsla(258, 78%, 55%, 0.2)',
@@ -93,7 +93,7 @@ const SplashScreen = ({ onFinish }: { onFinish: () => void }) => {
         }}
       >
         <p
-          aria-label="Shahed Store"
+          aria-label="Shahed IT"
           className="text-[22px] font-black tracking-tight text-center"
           style={{
             fontFamily: 'Sora, sans-serif',
@@ -102,7 +102,7 @@ const SplashScreen = ({ onFinish }: { onFinish: () => void }) => {
             WebkitTextFillColor: 'transparent',
           }}
         >
-          Shahed Store
+          Shahed IT
         </p>
         <p className="text-center text-[10px] mt-1.5 tracking-[0.25em] uppercase"
           style={{ color: 'hsla(0, 0%, 100%, 0.45)' }}>

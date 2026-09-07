@@ -4,7 +4,7 @@ import { Code2, Save, Check, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 
 const AdminSchema = () => {
-  const [org, setOrg] = useState({ name: 'Shahed Store', url: 'https://shahedstore.com.bd', logo: '', phone: '', email: '', facebook: '', description: '' });
+  const [org, setOrg] = useState({ name: 'Shahed IT', url: 'https://shahedit.com', logo: '', phone: '', email: '', facebook: '', description: '' });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -38,11 +38,11 @@ const AdminSchema = () => {
   }, null, 2);
 
   const FIELDS = [
-    { key: 'name', label: 'Organization Name', placeholder: 'Shahed Store' },
-    { key: 'url', label: 'Website URL', placeholder: 'https://shahedstore.com.bd' },
-    { key: 'logo', label: 'Logo URL', placeholder: 'https://shahedstore.com.bd/logo.png' },
+    { key: 'name', label: 'Organization Name', placeholder: 'Shahed IT' },
+    { key: 'url', label: 'Website URL', placeholder: 'https://shahedit.com' },
+    { key: 'logo', label: 'Logo URL', placeholder: 'https://shahedit.com/logo.png' },
     { key: 'phone', label: 'Phone Number', placeholder: '+8801840099853' },
-    { key: 'email', label: 'Email Address', placeholder: 'info@shahedstore.com.bd' },
+    { key: 'email', label: 'Email Address', placeholder: 'info@shahedit.com' },
     { key: 'facebook', label: 'Facebook URL', placeholder: 'https://facebook.com/shahedstore' },
     { key: 'description', label: 'Description', placeholder: "Bangladesh's trusted digital software store" },
   ];

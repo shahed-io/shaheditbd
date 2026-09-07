@@ -68,10 +68,10 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SEOHead
-        title="Shahed Store – Digital Software Shop BD"
-        description="Buy genuine Windows, Office, Adobe, antivirus, VPN and digital subscriptions in Bangladesh with instant delivery from Shahed Store."
+        title="Shahed IT – Digital Software Shop BD"
+        description="Buy genuine Windows, Office, Adobe, antivirus, VPN and digital subscriptions in Bangladesh with instant delivery from Shahed IT."
         ogType="website"
-        canonical="https://shahedstore.com.bd/"
+        canonical="https://shahedit.com/"
         schema={[
           organizationSchema(),
           websiteSchema(),
@@ -94,7 +94,7 @@ const Index = () => {
       <Navbar />
       <main>
         <h1 className="sr-only">
-          Shahed Store (ShahedStore / Shahed Store BD / শাহেদ স্টোর) — Bangladesh's trusted digital software shop
+          Shahed IT (ShahedIT / Shahed IT BD / শাহেদ স্টোর) — Bangladesh's trusted digital software shop
         </h1>
         <HeroBanner />
         <TickerBanner />

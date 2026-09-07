@@ -76,7 +76,7 @@ const AdminSpeedOptimization = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {[
-          { title: 'PageSpeed Insights', desc: 'Test your page speed score', url: `https://pagespeed.web.dev/report?url=https://shahedstore.com.bd` },
+          { title: 'PageSpeed Insights', desc: 'Test your page speed score', url: `https://pagespeed.web.dev/report?url=https://shahedit.com` },
           { title: 'GTmetrix', desc: 'Detailed performance waterfall', url: 'https://gtmetrix.com' },
           { title: 'Core Web Vitals', desc: 'Monitor in Google Search Console', url: 'https://search.google.com/search-console' },
         ].map(t => (

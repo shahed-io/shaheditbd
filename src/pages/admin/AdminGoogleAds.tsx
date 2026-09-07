@@ -287,7 +287,7 @@ const AdminGoogleAds = () => {
               <p className="text-sm font-semibold text-foreground flex items-center gap-2"><CheckCircle2 size={14} className="text-primary" /> Setup Steps</p>
               {[
                 { n: '1', t: 'GA4 Property তৈরি করুন', d: 'analytics.google.com → Admin → Create Property → আপনার website-এর নাম, time zone (Asia/Dhaka), currency (BDT) দিন।' },
-                { n: '2', t: 'Web Data Stream যোগ করুন', d: 'Property তৈরির পর "Web" platform বেছে নিন → আপনার website URL (https://shahedstore.com.bd) দিন → Stream তৈরি হবে।' },
+                { n: '2', t: 'Web Data Stream যোগ করুন', d: 'Property তৈরির পর "Web" platform বেছে নিন → আপনার website URL (https://shahedit.com) দিন → Stream তৈরি হবে।' },
                 { n: '3', t: 'Measurement ID কপি করুন', d: 'Stream-এর details page-এ "G-XXXXXXXXXX" format-এ একটা ID পাবেন। সেটাই Measurement ID। উপরে paste করুন।' },
                 { n: '4', t: 'Switch ON করে Save করুন', d: 'Toggle ON করে Save All চাপুন। ২৪–৪৮ ঘণ্টায় Realtime report-এ data দেখা যাবে।' },
               ].map(s => (
@@ -357,7 +357,7 @@ const AdminGoogleAds = () => {
             <div className="space-y-2">
               <p className="text-sm font-semibold text-foreground flex items-center gap-2"><CheckCircle2 size={14} className="text-primary" /> Setup Steps</p>
               {[
-                { n: '1', t: 'GTM Account তৈরি করুন', d: 'tagmanager.google.com → Create Account → Country: Bangladesh, Container name: shahedstore.com.bd, Target: Web।' },
+                { n: '1', t: 'GTM Account তৈরি করুন', d: 'tagmanager.google.com → Create Account → Country: Bangladesh, Container name: shahedit.com, Target: Web।' },
                 { n: '2', t: 'Container ID কপি করুন', d: 'Container তৈরির পর "GTM-XXXXXXX" format-এ ID পাবেন। সেটাই Container ID। উপরে paste করুন।' },
                 { n: '3', t: 'Tags & Triggers configure করুন', d: 'GTM dashboard-এ Tags → New → তারপর তৈরি tag (যেমন Hotjar, LinkedIn Insight)। Trigger বাছুন (যেমন All Pages)।' },
                 { n: '4', t: 'Switch ON করে Save', d: 'উপরে toggle ON করে Save All। GTM dashboard থেকে "Submit" করতে ভুলবেন না — নাহলে live হবে না।' },

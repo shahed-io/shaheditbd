@@ -289,7 +289,7 @@ const QrGenerator = () => {
   };
   return (
     <div className="space-y-4">
-      <ToolInput value={text} onChange={e => setText(e.target.value)} placeholder="Enter URL or text — e.g. https://shahedstore.com.bd" rows={3} />
+      <ToolInput value={text} onChange={e => setText(e.target.value)} placeholder="Enter URL or text — e.g. https://shahedit.com" rows={3} />
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1">
           <label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>QR Color</label>
@@ -726,7 +726,7 @@ const ImageBlurTool = () => {
 // ═══════════════════════════════════════════════════════════════════════════
 const WatermarkTool = () => {
   const [imgSrc, setImgSrc] = useState('');
-  const [text, setText] = useState('© Shahed Store');
+  const [text, setText] = useState('© Shahed IT');
   const [position, setPosition] = useState<'center' | 'bottom-right' | 'bottom-left' | 'top-right'>('bottom-right');
   const [opacity, setOpacity] = useState(70);
   const [fontSize, setFontSize] = useState(36);
@@ -1284,9 +1284,9 @@ const FreeTools = () => {
   return (
     <div className="min-h-screen" style={{ background: 'hsl(var(--background))' }}>
       <SEOHead
-        title={activeTolObj ? `${activeTolObj.title} — Free Online Tool | Shahed Store` : 'Free Online Tools | Shahed Store'}
+        title={activeTolObj ? `${activeTolObj.title} — Free Online Tool | Shahed IT` : 'Free Online Tools | Shahed IT'}
         description={activeTolObj ? `${activeTolObj.subtitle}. 100% free, no signup required.` : '100% free — Image Resizer, QR Generator, AI Caption, Hashtag Generator, Password Generator and 40+ more tools.'}
-        canonical={`https://shahedstore.com.bd/free-tools${activeTool ? '/' + activeTool : ''}`}
+        canonical={`https://shahedit.com/free-tools${activeTool ? '/' + activeTool : ''}`}
       />
       <Navbar />
 

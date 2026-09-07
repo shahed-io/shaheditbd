@@ -70,8 +70,8 @@ const AntivirusBd = () => {
 
   const schema = [
     breadcrumbSchema([
-      { name: 'Home', url: 'https://shahedstore.com.bd/' },
-      { name: 'Antivirus Price in BD', url: 'https://shahedstore.com.bd/antivirus-price-in-bd' },
+      { name: 'Home', url: 'https://shahedit.com/' },
+      { name: 'Antivirus Price in BD', url: 'https://shahedit.com/antivirus-price-in-bd' },
     ]),
     ...(products.length
       ? [itemListSchema(products.map(p => ({ name: p.name, slug: p.slug, image: p.image_url, price: p.price })))]
@@ -81,9 +81,9 @@ const AntivirusBd = () => {
   return (
     <div className="min-h-screen">
       <SEOHead
-        title="Antivirus Price in Bangladesh — ESET, Kaspersky, Bitdefender | Shahed Store"
+        title="Antivirus Price in Bangladesh — ESET, Kaspersky, Bitdefender | Shahed IT"
         description="Antivirus price in BD: ESET Internet Security, Kaspersky Plus, Bitdefender Total Security, Avast ও Norton 360-এর জেনুইন লাইসেন্স কী, দ্রুত ডেলিভারি।"
-        canonical="https://shahedstore.com.bd/antivirus-price-in-bd"
+        canonical="https://shahedit.com/antivirus-price-in-bd"
         keywords="antivirus price in bd, eset internet security price in bd, kaspersky price in bangladesh, bitdefender total security price in bd, norton 360 price in bangladesh, avast premium security bd"
         schema={schema}
       />
@@ -112,7 +112,7 @@ const AntivirusBd = () => {
           </h1>
           <p className="mt-2 text-[13.5px] leading-relaxed max-w-3xl" style={{ color: 'hsl(226,25%,40%)' }}>
             ESET Internet Security, Kaspersky Plus, Bitdefender Total Security, Avast Premium Security ও Norton 360 Deluxe —
-            সব জনপ্রিয় অ্যান্টিভাইরাসের জেনুইন লাইসেন্স কী বাংলাদেশে সাশ্রয়ী দামে পাওয়া যাচ্ছে Shahed Store-এ।
+            সব জনপ্রিয় অ্যান্টিভাইরাসের জেনুইন লাইসেন্স কী বাংলাদেশে সাশ্রয়ী দামে পাওয়া যাচ্ছে Shahed IT-এ।
             নিচে বর্তমান দাম দেখুন, পছন্দের প্যাকেজে ক্লিক করে সরাসরি অর্ডার করুন।
           </p>
 
@@ -153,7 +153,7 @@ const AntivirusBd = () => {
                     border: '1px solid hsla(258,78%,75%,0.22)',
                   }}>
                   {p.image_url && (
-                    <img src={p.image_url} alt={`${p.name} — Shahed Store`} loading="lazy"
+                    <img src={p.image_url} alt={`${p.name} — Shahed IT`} loading="lazy"
                       className="w-14 h-14 rounded-xl object-cover flex-shrink-0" />
                   )}
                   <div className="flex-1 min-w-0">

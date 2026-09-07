@@ -2,7 +2,7 @@
 // Public endpoint. Serves live XML built from the products table.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
-const SITE = "https://shahedstore.com.bd";
+const SITE = "https://shahedit.com";
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -61,7 +61,7 @@ Deno.serve(async (req) => {
       const desc = stripHtml(p.description || p.short_description || p.name);
       const inStock = (p.stock_quantity == null || Number(p.stock_quantity) > 0);
       const availability = inStock ? "in_stock" : "out_of_stock";
-      const brand = p.brand?.trim?.() || "Shahed Store";
+      const brand = p.brand?.trim?.() || "Shahed IT";
 
       return `    <item>
       <g:id>${xmlEscape(p.id)}</g:id>
@@ -81,7 +81,7 @@ ${extraImgs.map((u) => `      <g:additional_image_link>${xmlEscape(u)}</g:additi
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
   <channel>
-    <title>Shahed Store — Google Shopping Feed</title>
+    <title>Shahed IT — Google Shopping Feed</title>
     <link>${SITE}</link>
     <description>Digital software and license keys for Bangladesh.</description>
 ${items.join("\n")}

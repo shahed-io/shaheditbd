@@ -76,7 +76,7 @@ const InstallBanner = () => {
         {/* App icon */}
         <img
           src="/pwa-192.png"
-          alt="Shahed Store"
+          alt="Shahed IT"
           className="w-11 h-11 rounded-xl flex-shrink-0"
           style={{ boxShadow: '0 2px 12px hsla(258,78%,55%,0.4)' }}
         />
@@ -84,7 +84,7 @@ const InstallBanner = () => {
         {/* Text */}
         <div className="flex-1 min-w-0">
           <p className="text-white text-[13px] font-semibold leading-tight truncate">
-            Shahed Store অ্যাপ ইন্সটল করুন
+            Shahed IT অ্যাপ ইন্সটল করুন
           </p>
           <p className="text-white/55 text-[11px] mt-0.5 leading-tight">
             দ্রুত অ্যাক্সেস ও অর্ডার নোটিফিকেশন পান

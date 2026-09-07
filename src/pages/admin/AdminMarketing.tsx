@@ -14,7 +14,7 @@ const AdminMarketing = () => {
 
   // Promo Email State
   const [showEmailSection, setShowEmailSection] = useState(false);
-  const [emailForm, setEmailForm] = useState({ subject: '', body: '', ctaText: '', ctaUrl: 'https://shahedstore.com.bd/shop' });
+  const [emailForm, setEmailForm] = useState({ subject: '', body: '', ctaText: '', ctaUrl: 'https://shahedit.com/shop' });
   const [targetAudience, setTargetAudience] = useState<'all_users' | 'newsletter'>('all_users');
   const [sendingEmail, setSendingEmail] = useState(false);
   const [recipientCount, setRecipientCount] = useState<number | null>(null);
@@ -99,7 +99,7 @@ const AdminMarketing = () => {
 
       if (error) throw error;
       toast.success(`✅ ${emails.length} জনকে সফলভাবে ইমেইল পাঠানো হয়েছে!`);
-      setEmailForm({ subject: '', body: '', ctaText: '', ctaUrl: 'https://shahedstore.com.bd/shop' });
+      setEmailForm({ subject: '', body: '', ctaText: '', ctaUrl: 'https://shahedit.com/shop' });
     } catch (e: any) {
       toast.error('ইমেইল পাঠাতে সমস্যা হয়েছে: ' + (e?.message || String(e)));
     } finally {
@@ -216,7 +216,7 @@ const AdminMarketing = () => {
                 <input
                   value={emailForm.ctaUrl}
                   onChange={e => setEmailForm({ ...emailForm, ctaUrl: e.target.value })}
-                  placeholder="https://shahedstore.com.bd/shop"
+                  placeholder="https://shahedit.com/shop"
                   className="w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
                 />
               </div>

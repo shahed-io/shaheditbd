@@ -53,7 +53,7 @@ Deno.serve(async (req) => {
         ? (isBn ? 'বন্ধুসুলভ, উষ্ণ, সহজ ভাষা — কিন্তু পেশাদার।' : 'Warm, friendly, easy — but still professional.')
         : (isBn ? 'আনুষ্ঠানিক, সম্মানজনক, অফিসিয়াল সার্কুলারের ভাষা।' : 'Formal, respectful, official circular tone.');
 
-    const system = `You are the official Notice & Circular writer for "Shahed Store" — a Bangladeshi digital software & services store. You write notices that look and read like real, polished, ready-to-publish corporate circulars.
+    const system = `You are the official Notice & Circular writer for "Shahed IT" — a Bangladeshi digital software & services store. You write notices that look and read like real, polished, ready-to-publish corporate circulars.
 
 ═══ INTENT UNDERSTANDING (CRITICAL) ═══
 The admin will describe the notice in ${isBn ? 'Bengali (often informal, sometimes mixed with English, sometimes via voice with grammar/spelling errors)' : 'English (sometimes informal or with typos)'}. Your FIRST job is to deeply understand WHAT they actually want to announce — not to copy their words. Read the WHOLE input. Identify:
@@ -72,7 +72,7 @@ Return ONLY a single valid JSON object. No code fences, no commentary, no markdo
   "summary": "1-2 sentence executive summary (max 180 chars). What + when, no fluff.",
   "reference_no": "NTC-${yearShort}-${refSuffix}",
   "body_markdown": "Full notice in clean markdown. See STRUCTURE below.",
-  "signed_by": "Shahed Store Authority",
+  "signed_by": "Shahed IT Authority",
   "signed_role": "Management",
   "effective_date": "${today}"
 }
@@ -86,12 +86,12 @@ Write the body as a real corporate notice with these sections, in this order:
 4. **\`## ${isBn ? 'গুরুত্বপূর্ণ তথ্য' : 'Key Information'}\`** — bullet list of the important facts (dates, times, durations, affected services, amounts, percentages, links). Use \`- **Label:** value\` format. Always include at least 3 bullets.
 5. **\`## ${isBn ? 'করণীয়' : 'What You Need to Do'}\`** — only if there's an action for the reader; otherwise replace with \`## ${isBn ? 'আমাদের প্রতিশ্রুতি' : 'Our Commitment'}\` and a reassuring line.
 6. **Closing paragraph** — polite apology for any inconvenience (if applicable) + thanks for understanding/support.
-7. **Sign-off line** — exactly: \`${isBn ? 'ধন্যবাদান্তে,' : 'Sincerely,'}\` on its own line, then a blank line, then \`**Shahed Store Authority**\` and \`*Management*\`.
+7. **Sign-off line** — exactly: \`${isBn ? 'ধন্যবাদান্তে,' : 'Sincerely,'}\` on its own line, then a blank line, then \`**Shahed IT Authority**\` and \`*Management*\`.
 
 ═══ HARD RULES ═══
 - Language: ${isBn ? 'বাংলা — স্বাভাবিক, সাবলীল, পেশাদার বাংলা। কোনো অনুবাদ-গন্ধ নয়। শুদ্ধ বানান।' : 'English — clean professional English. No translation feel.'}
 - Tone: ${toneGuide}
-- Store name spelling by language: in English text write exactly \`Shahed Store\`; in Bengali text write exactly \`শাহেদ স্টোর\` (correct spelling — শা-হে-দ, "হে"-তে এ-কার). NEVER use misspelled variants: শাহিদ স্টোর, সাহেদ স্টোর, শায়েদ স্টোর, শাহীদ স্টোর, শহীদ স্টোর, শাওন স্টোর, ShahedStore, Shahid Store. In Bengali sentences attach case markers to the Bengali form (শাহেদ স্টোরের / শাহেদ স্টোরে / শাহেদ স্টোরকে) — do NOT mix "Shahed Store-এর".
+- Store name spelling by language: in English text write exactly \`Shahed IT\`; in Bengali text write exactly \`শাহেদ স্টোর\` (correct spelling — শা-হে-দ, "হে"-তে এ-কার). NEVER use misspelled variants: শাহিদ স্টোর, সাহেদ স্টোর, শায়েদ স্টোর, শাহীদ স্টোর, শহীদ স্টোর, শাওন স্টোর, ShahedIT, Shahid Store. In Bengali sentences attach case markers to the Bengali form (শাহেদ স্টোরের / শাহেদ স্টোরে / শাহেদ স্টোরকে) — do NOT mix "Shahed IT-এর".
 - Use \`**bold**\` for important keywords (dates, amounts, deadlines).
 - Use markdown lists for any enumeration of 2+ items.
 - Length: aim for 180-350 words in body_markdown for normal notices, up to 500 for complex ones. Never under 120 words.
@@ -117,7 +117,7 @@ Write the body as a real corporate notice with these sections, in this order:
     let plan: any;
     try { plan = JSON.parse(match[0]); } catch { throw new Error('AI returned invalid JSON'); }
 
-    // Normalize store name — language-aware (English → "Shahed Store", Bengali → "শাহেদ স্টোর")
+    // Normalize store name — language-aware (English → "Shahed IT", Bengali → "শাহেদ স্টোর")
     const { normalizeBrandNameText } = await import('../_shared/brand-name.ts');
     const fixStoreName = (s: string) => normalizeBrandNameText(String(s || ''));
 
@@ -126,7 +126,7 @@ Write the body as a real corporate notice with these sections, in this order:
       summary: fixStoreName(plan.summary).slice(0, 300),
       reference_no: String(plan.reference_no || `NTC-${new Date().getFullYear()}-${refSuffix}`).slice(0, 50),
       body_markdown: fixStoreName(plan.body_markdown),
-      signed_by: fixStoreName(plan.signed_by || 'Shahed Store Authority').slice(0, 120),
+      signed_by: fixStoreName(plan.signed_by || 'Shahed IT Authority').slice(0, 120),
       signed_role: String(plan.signed_role || 'Management').slice(0, 120),
       effective_date: typeof plan.effective_date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(plan.effective_date)
         ? plan.effective_date : today,

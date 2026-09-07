@@ -66,7 +66,7 @@ export default function Winners() {
 
   return (
     <>
-      <SEOHead title="Giveaway Winners — Shahed Store" description="Celebrating our giveaway winners from Shahed Store." />
+      <SEOHead title="Giveaway Winners — Shahed IT" description="Celebrating our giveaway winners from Shahed IT." />
       <Navbar />
       <div className="container max-w-5xl mx-auto px-4 py-10">
         <div className="text-center mb-10">

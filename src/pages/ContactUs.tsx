@@ -35,8 +35,8 @@ const CONTACT_INFO = [
   {
     icon: <Mail size={18} />,
     label: 'ইমেইল',
-    value: 'info@shahedstore.com.bd',
-    href: 'mailto:info@shahedstore.com.bd',
+    value: 'info@shahedit.com',
+    href: 'mailto:info@shahedit.com',
     color: A,
     bg: 'hsla(258,78%,55%,0.08)',
     border: 'hsla(258,78%,55%,0.20)',
@@ -44,8 +44,8 @@ const CONTACT_INFO = [
   {
     icon: <Globe size={18} />,
     label: 'ওয়েবসাইট',
-    value: 'www.shahedstore.com.bd',
-    href: 'https://www.shahedstore.com.bd',
+    value: 'www.shahedit.com',
+    href: 'https://www.shahedit.com',
     color: B,
     bg: 'hsla(200,90%,45%,0.08)',
     border: 'hsla(200,90%,45%,0.20)',
@@ -56,7 +56,7 @@ const CONTACT_INFO = [
 const SOCIAL = [
   { icon: <Facebook size={20} />, label: 'Facebook', href: 'https://www.facebook.com/Shahed.Store365', color: 'hsl(221,44%,41%)', ext: true },
   { icon: <MessageCircle size={20} />, label: 'WhatsApp', href: 'https://wa.me/shahedstore', color: 'hsl(142,58%,40%)', ext: true },
-  { icon: <Instagram size={20} />, label: 'Instagram', href: 'https://www.instagram.com/shahedstore.com.bd/', color: 'hsl(329,86%,56%)', ext: true },
+  { icon: <Instagram size={20} />, label: 'Instagram', href: 'https://www.instagram.com/shahedit.com/', color: 'hsl(329,86%,56%)', ext: true },
 ];
 
 const HOURS = [
@@ -114,7 +114,7 @@ export default function ContactUs() {
       className="min-h-screen text-foreground"
       style={{ background: 'linear-gradient(145deg, hsl(258,55%,97%) 0%, hsl(220,40%,96%) 40%, hsl(200,50%,96%) 100%)' }}
     >
-      <SEOHead title="Contact Shahed Store – Customer Support Bangladesh" description="Contact Shahed Store for support. Reach us via phone, email, WhatsApp or our contact form. Fast response, 7 days a week. Bangladesh's trusted digital software shop." canonical="https://shahedstore.com.bd/contact" />
+      <SEOHead title="Contact Shahed IT – Customer Support Bangladesh" description="Contact Shahed IT for support. Reach us via phone, email, WhatsApp or our contact form. Fast response, 7 days a week. Bangladesh's trusted digital software shop." canonical="https://shahedit.com/contact" />
       <Navbar />
 
       {/* ── Hero ── */}

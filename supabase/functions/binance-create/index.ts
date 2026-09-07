@@ -58,7 +58,7 @@ Deno.serve(async (req) => {
     const amount = Math.max(0.01, Number((Number(order.total) / rate).toFixed(2)));
 
     const mtn = `${String(order.order_number).replace(/[^a-zA-Z0-9]/g, '')}${Date.now().toString(36).toUpperCase()}`.slice(0, 32);
-    const origin = req.headers.get('origin') || 'https://shahedstore.com.bd';
+    const origin = req.headers.get('origin') || 'https://shahedit.com';
     const base = String((sandbox ? (cfg.sandbox_base_url || cfg.base_url) : cfg.base_url) || 'https://bpay.binanceapi.com').replace(/\/+$/, '');
 
     // Sandbox without real test credentials → fully simulated demo transaction.

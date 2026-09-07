@@ -4,8 +4,8 @@
 // internal links, and product list — so Google indexes everything fast.
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-const SITE_URL = 'https://shahedstore.com.bd';
-const SITE_NAME = 'Shahed Store';
+const SITE_URL = 'https://shahedit.com';
+const SITE_NAME = 'Shahed IT';
 
 const escape = (s: string) =>
   (s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -107,7 +107,7 @@ const orgSchema = {
   '@context': 'https://schema.org',
   '@type': ['Organization', 'OnlineStore'],
   name: SITE_NAME,
-  alternateName: ['Shahed Store BD', 'Shahed Store'],
+  alternateName: ['Shahed IT BD', 'Shahed IT'],
   url: SITE_URL,
   logo: `${SITE_URL}/favicon.png`,
   sameAs: [

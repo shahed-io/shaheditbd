@@ -42,7 +42,7 @@ const SearchConsoleWidget = () => {
     setError(null);
     try {
       const { data: res, error: err } = await supabase.functions.invoke('search-console-performance', {
-        body: { siteUrl: 'sc-domain:shahedstore.com.bd', days: 28 },
+        body: { siteUrl: 'sc-domain:shahedit.com', days: 28 },
       });
       if (err) throw err;
       if (res?.error) throw new Error(res.error);

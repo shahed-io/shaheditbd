@@ -16,7 +16,7 @@ Deno.serve(async (req) => {
     if (!GSC_KEY) throw new Error("GOOGLE_SEARCH_CONSOLE_API_KEY is not configured");
 
     const body = await req.json().catch(() => ({}));
-    const siteUrl: string = body.siteUrl || "sc-domain:shahedstore.com.bd";
+    const siteUrl: string = body.siteUrl || "sc-domain:shahedit.com";
 
     const headers = {
       Authorization: `Bearer ${LOVABLE_API_KEY}`,

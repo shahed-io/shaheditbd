@@ -56,7 +56,7 @@ Deno.serve(async (req) => {
     if (!(amount > 0)) return jsonResponse({ error: 'Invalid order total' }, 400);
 
     const token = await paypalAccessToken(cfg);
-    const origin = req.headers.get('origin') || 'https://shahedstore.com.bd';
+    const origin = req.headers.get('origin') || 'https://shahedit.com';
 
     const ppRes = await fetch(`${paypalBaseUrl(cfg.mode)}/v2/checkout/orders`, {
       method: 'POST',
@@ -74,7 +74,7 @@ Deno.serve(async (req) => {
           description: `Order ${order.order_number}`,
         }],
         application_context: {
-          brand_name: 'Shahed Store',
+          brand_name: 'Shahed IT',
           user_action: 'PAY_NOW',
           shipping_preference: 'NO_SHIPPING',
           return_url: `${origin}/checkout?paypal=success&order=${order.id}`,

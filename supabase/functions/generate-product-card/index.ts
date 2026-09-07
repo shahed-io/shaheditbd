@@ -21,7 +21,7 @@ const corsHeaders = {
 
 const sharedBlueprint = (name: string, brand: string) => {
   return `
-You MUST create a PREMIUM, GLOSSY, square (1:1) product promotional card in the EXACT Shahed Store signature house style. The layout below is NON-NEGOTIABLE — only the BACKGROUND changes between styles.
+You MUST create a PREMIUM, GLOSSY, square (1:1) product promotional card in the EXACT Shahed IT signature house style. The layout below is NON-NEGOTIABLE — only the BACKGROUND changes between styles.
 
 ═══ MAIN CARD (centered, ~80% of canvas) ═══
 - One large rounded-rectangle FROSTED GLASS card (glassmorphism)
@@ -42,7 +42,7 @@ You MUST create a PREMIUM, GLOSSY, square (1:1) product promotional card in the 
 
 ═══ BOTTOM CONTACT LINE INSIDE CARD ═══
 - Thin 1px separator (rgba(0,0,0,0.08)) spanning most of the card width
-- Below it a single row: LEFT = small circular outlined globe icon + "www.shahedstore.com.bd"; RIGHT = small circular outlined phone icon + "+880 1840-099853"
+- Below it a single row: LEFT = small circular outlined globe icon + "www.shahedit.com"; RIGHT = small circular outlined phone icon + "+880 1840-099853"
 - Dark charcoal (#1f2937), bold sans-serif ~15px, thin 1.5px outline icons
 
 ═══ ABSOLUTE RULES ═══
@@ -102,7 +102,7 @@ const STYLES = {
 ${sharedBlueprint(name, brand)}
 
 ═══ BACKGROUND — CHOOSE THE BEST MATCH FOR "${name}" ═══
-Pick EXACTLY ONE of the three approved Shahed Store backgrounds below — the one that makes this product's brand colors look best, and render it fully. Do not blend them.
+Pick EXACTLY ONE of the three approved Shahed IT backgrounds below — the one that makes this product's brand colors look best, and render it fully. Do not blend them.
 
 1) ${BG_ICE_BOKEH}
 

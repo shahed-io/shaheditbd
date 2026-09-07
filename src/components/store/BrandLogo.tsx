@@ -41,7 +41,7 @@ const BrandLogo = ({ size = 'md', className = '' }: BrandLogoProps) => {
 
           <img
             src={logoIcon}
-            alt="Shahed Store"
+            alt="Shahed IT"
             className="w-[76%] h-[76%] object-contain relative z-10"
             style={{ filter: 'brightness(0.9) saturate(1.2) drop-shadow(0 1px 3px hsla(258,78%,40%,0.25))' }}
           />
@@ -85,7 +85,7 @@ const BrandLogo = ({ size = 'md', className = '' }: BrandLogoProps) => {
               fontFamily: 'Fira Code, monospace',
               color: 'hsl(220,15%,52%)',
             }}>
-            shahedstore.com.bd
+            shahedit.com
           </span>
           <div className="h-[1.5px] w-5 rounded-full"
             style={{ background: 'linear-gradient(90deg, transparent, hsl(222,90%,60%))' }} />

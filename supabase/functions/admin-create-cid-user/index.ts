@@ -151,7 +151,7 @@ Deno.serve(async (req) => {
               email,
               password,
               initialCredit,
-              loginUrl: 'https://shahedstore.com.bd/get-cid',
+              loginUrl: 'https://shahedit.com/get-cid',
             },
           },
         });

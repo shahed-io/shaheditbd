@@ -38,7 +38,7 @@ interface SubRow {
 
 interface ProductOpt { id: string; name: string }
 
-const SITE = 'https://shahedstore.com.bd';
+const SITE = 'https://shahedit.com';
 const PAGE_SIZE = 50;
 
 function daysBetween(iso: string | null): number | null {

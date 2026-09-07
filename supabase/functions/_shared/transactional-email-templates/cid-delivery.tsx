@@ -81,7 +81,7 @@ const CidDeliveryEmail = ({
         <Container style={wrapper}>
           <Section style={headerStyle}>
             <div style={logoCardStyle}>
-              <Img src={LOGO_URL} width="240" height="65" alt="Shahed Store" style={logoStyle} />
+              <Img src={LOGO_URL} width="240" height="65" alt="Shahed IT" style={logoStyle} />
             </div>
           </Section>
 
@@ -123,7 +123,7 @@ const CidDeliveryEmail = ({
               </Text>
             </Section>
 
-            <Button style={buttonStyle} href="https://shahedstore.com.bd/get-cid">
+            <Button style={buttonStyle} href="https://shahedit.com/get-cid">
               Generate Another CID
             </Button>
 
@@ -134,7 +134,7 @@ const CidDeliveryEmail = ({
 
           <Section style={footerSection}>
             <Text style={copyrightStyle}>
-              &copy; {new Date().getFullYear()} Shahed Store. All rights reserved.
+              &copy; {new Date().getFullYear()} Shahed IT. All rights reserved.
             </Text>
           </Section>
         </Container>

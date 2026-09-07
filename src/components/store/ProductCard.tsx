@@ -120,8 +120,8 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
               <div className="w-48 flex-shrink-0 relative overflow-hidden">
                 <img
                   src={product.image}
-                  alt={`${product.name} price in Bangladesh - Shahed Store`}
-                  title={`${product.name} - Shahed Store Bangladesh`}
+                  alt={`${product.name} price in Bangladesh - Shahed IT`}
+                  title={`${product.name} - Shahed IT Bangladesh`}
                   width={300}
                   height={300}
                   loading="lazy"
@@ -334,8 +334,8 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
 
           <img
             src={product.image}
-            alt={`${product.name} price in Bangladesh - Shahed Store`}
-            title={`${product.name} - Shahed Store Bangladesh`}
+            alt={`${product.name} price in Bangladesh - Shahed IT`}
+            title={`${product.name} - Shahed IT Bangladesh`}
             width={400}
             height={400}
             loading={priority ? 'eager' : 'lazy'}

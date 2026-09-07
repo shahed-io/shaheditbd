@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
 
     const offerBlock = body.specialOffer ? `\nSpecial offer to highlight: ${body.specialOffer}` : '';
 
-    const sys = `You write subscription renewal reminder emails for an online software store (Shahed Store / Shahed Store).
+    const sys = `You write subscription renewal reminder emails for an online software store (Shahed IT / Shahed IT).
 
 Output rules:
 - Plain text body only — NO subject line, NO "Dear" greeting, NO signature/footer (the email template adds the brand header, greeting, CTA button, coupon block and footer).
@@ -60,7 +60,7 @@ ${body.couponCode ? `- IMPORTANT: Mention the personal discount coupon clearly. 
 ${body.specialOffer ? '- Weave the special offer naturally into the message.' : ''}
 - End with a soft, professional call to renew.
 - Do NOT invent prices or features that were not given. Do NOT include URLs (the template renders the renew button).
-- Bengali output must use the spelling "Shahed Store" (never "শাহিদ" / "সাহেদ" / "শাহীদ").`;
+- Bengali output must use the spelling "Shahed IT" (never "শাহিদ" / "সাহেদ" / "শাহীদ").`;
 
     const usr = `Product: ${body.productName}
 Customer name: ${body.customerName || '(unknown)'}

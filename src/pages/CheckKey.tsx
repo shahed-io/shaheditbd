@@ -259,7 +259,7 @@ const CheckKey = () => {
   return (
     <>
       <SEOHead
-        title="Product Key & Office 365 Account Checker | Shahed Store"
+        title="Product Key & Office 365 Account Checker | Shahed IT"
         description="Verify Microsoft product keys and check Office 365 account login status instantly. Free for logged-in users."
       />
       <Navbar />

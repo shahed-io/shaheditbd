@@ -45,14 +45,14 @@ const WelcomeEmail = ({
         <Container style={wrapper}>
           <Section style={headerStyle}>
             <div style={logoCardStyle}>
-              <Img src={LOGO_URL} width="240" height="65" alt="Shahed Store" style={logoStyle} />
+              <Img src={LOGO_URL} width="240" height="65" alt="Shahed IT" style={logoStyle} />
             </div>
           </Section>
 
           <Section style={contentStyle}>
             <Text style={h1Style}>Welcome, {customerName}!</Text>
             <Text style={subtitleStyle}>
-              Thank you for joining <strong>Shahed Store</strong>. We provide the best digital products in Bangladesh — software licenses, gaming keys, and much more.
+              Thank you for joining <strong>Shahed IT</strong>. We provide the best digital products in Bangladesh — software licenses, gaming keys, and much more.
             </Text>
 
             <Section style={featureBox}>
@@ -82,7 +82,7 @@ const WelcomeEmail = ({
 
           <Section style={footerSection}>
             <Text style={copyrightStyle}>
-              &copy; {new Date().getFullYear()} Shahed Store. All rights reserved.
+              &copy; {new Date().getFullYear()} Shahed IT. All rights reserved.
             </Text>
           </Section>
         </Container>
@@ -93,7 +93,7 @@ const WelcomeEmail = ({
 
 export const template = {
   component: WelcomeEmail,
-  subject: 'Welcome to Shahed Store!',
+  subject: 'Welcome to Shahed IT!',
   displayName: 'Welcome Email',
   previewData: {
     customerName: 'Rahul Ahmed',

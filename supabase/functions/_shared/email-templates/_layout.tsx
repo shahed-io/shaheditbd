@@ -5,8 +5,8 @@ import {
 } from 'npm:@react-email/components@0.0.22'
 
 export const BRAND = {
-  name: 'Shahed Store',
-  url: 'https://shahedstore.com.bd',
+  name: 'Shahed IT',
+  url: 'https://shahedit.com',
   logo: 'https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/email-assets/logo-email.png?v=4',
   primary: '#7c3aed',
   primaryDark: '#6d28d9',

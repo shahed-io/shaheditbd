@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Map, Download, RefreshCw, Globe, FileText, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
 
-const SITE_URL = 'https://shahedstore.com.bd';
+const SITE_URL = 'https://shahedit.com';
 
 const AdminSitemap = () => {
   const [products, setProducts] = useState<any[]>([]);

@@ -12,7 +12,7 @@ import { TEMPLATES } from '../_shared/transactional-email-templates/registry.ts'
  * 
  * এবং এই ইমেইলটা ছিল এটাকে set up করে দাও
  */
-const SITE_NAME = "Shahed Store"
+const SITE_NAME = "Shahed IT"
 // SENDER_DOMAIN is the verified sender subdomain FQDN (e.g., "notify.example.com").
 // It MUST match the subdomain delegated to Lovable's nameservers — never the root domain.
 // The email API looks up this exact domain; a mismatch causes "No email domain record found".

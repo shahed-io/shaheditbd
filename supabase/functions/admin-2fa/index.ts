@@ -10,7 +10,7 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
-const ISSUER = "Shahed Store Admin";
+const ISSUER = "Shahed IT Admin";
 const DEFAULT_SESSION_TTL_HOURS = 12;
 const DEFAULT_REMEMBER_TTL_DAYS = 30;
 

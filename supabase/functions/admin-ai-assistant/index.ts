@@ -866,7 +866,7 @@ async function executeTool(name: string, args: Record<string, any>, sb: any, api
           body: JSON.stringify({
             model: "google/gemini-3-flash-preview",
             messages: [
-              { role: "system", content: "You are a professional content writer for Shahed Store, a digital software shop in Bangladesh." },
+              { role: "system", content: "You are a professional content writer for Shahed IT, a digital software shop in Bangladesh." },
               { role: "user", content: prompt },
             ],
           }),
@@ -906,7 +906,7 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
 
-    const systemPrompt = `তুমি Shahed Store সুপার-পাওয়ার্ড এডমিন AI অ্যাসিস্ট্যান্ট। তুমি বাংলায় কথা বলো।
+    const systemPrompt = `তুমি Shahed IT সুপার-পাওয়ার্ড এডমিন AI অ্যাসিস্ট্যান্ট। তুমি বাংলায় কথা বলো।
 
 তুমি পুরো ওয়েবসাইট কন্ট্রোল করতে পারো:
 

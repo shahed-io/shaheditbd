@@ -1,5 +1,5 @@
 # ════════════════════════════════════════════════════════
-#  Shahed Store — robots.txt
+#  Shahed IT — robots.txt
 #  Validated against Google Search Console robots.txt Tester
 #  Last updated: 2026-05
 # ════════════════════════════════════════════════════════
@@ -217,6 +217,6 @@ Crawl-delay: 1
 Allow: /
 
 # ───────── Sitemaps ─────────
-Sitemap: https://shahedstore.com.bd/sitemap.xml
-Sitemap: https://shahedstore.com.bd/image-sitemap.xml
-Sitemap: https://shahedstore.com.bd/sitemap_index.xml
+Sitemap: https://shahedit.com/sitemap.xml
+Sitemap: https://shahedit.com/image-sitemap.xml
+Sitemap: https://shahedit.com/sitemap_index.xml

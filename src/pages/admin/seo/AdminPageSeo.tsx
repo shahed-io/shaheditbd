@@ -39,7 +39,7 @@ const defaultSeo = (): PageSeoData => ({
   noindex: false,
 });
 
-const SITE_URL = 'https://shahedstore.com.bd';
+const SITE_URL = 'https://shahedit.com';
 
 const AdminPageSeo = () => {
   const [seoData, setSeoData] = useState<Record<string, PageSeoData>>({});
@@ -165,7 +165,7 @@ const AdminPageSeo = () => {
                       <input
                         value={data.title}
                         onChange={e => set(page.key, 'title', e.target.value)}
-                        placeholder={`${page.label} | Shahed Store`}
+                        placeholder={`${page.label} | Shahed IT`}
                         className="w-full bg-background border border-border rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
                       />
                     </div>
@@ -246,7 +246,7 @@ const AdminPageSeo = () => {
                       <p className="text-[10px] text-muted-foreground mb-2 font-medium uppercase tracking-wider">Google Preview</p>
                       <div className="text-xs text-muted-foreground font-mono mb-0.5">{SITE_URL}{page.path}</div>
                       <div className="text-[15px] font-medium leading-tight" style={{ color: 'hsl(210,90%,52%)' }}>
-                        {data.title || `${page.label} | Shahed Store`}
+                        {data.title || `${page.label} | Shahed IT`}
                       </div>
                       <div className="text-xs text-muted-foreground mt-1 leading-relaxed line-clamp-2">
                         {data.description || 'No description set — add a meta description for better click-through rate.'}

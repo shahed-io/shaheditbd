@@ -6,8 +6,8 @@ const B = 'hsl(200,90%,45%)';
 
 const OrderPolicy = () => (
   <PolicyLayout
-    seoTitle="Order Policy — Shahed Store"
-    seoDesc="Shahed Store অর্ডার করার নিয়মকানুন ও প্রক্রিয়া জানুন।"
+    seoTitle="Order Policy — Shahed IT"
+    seoDesc="Shahed IT অর্ডার করার নিয়মকানুন ও প্রক্রিয়া জানুন।"
     badge="Order Guidelines"
     badgeIcon={<ShoppingCart size={13} />}
     title="Order & Cancellation Policy"
@@ -59,7 +59,7 @@ const OrderPolicy = () => (
         <Bullet>অর্ডার সফল হবার পর কোন ভাবে সেটি বাতিল করা যাবেনা, তবে যদি ডেলিভারির সফল হবার পূর্বে আমাদের সাপোর্টে জানানো হয় তবে সেই অর্ডারটি বাতিলকরণ প্রযোজ্য হবে। <strong>(শর্ত ১.১)</strong></Bullet>
         <Bullet>অর্ডার বাতিল এর ক্ষেত্রে প্রদানকৃত মূল্য ফেরত যোগ্য নয়, তবে সেটি <strong>(শর্ত ১.১)</strong> এর আওতাভুক্ত হলে অন্য প্রোডাক্ট এর সাথে মূল্য বিনিময় প্রযোজ্য হবে।</Bullet>
         <Bullet>যদি আমাদের দ্বারা কোন অর্ডার বাতিলকরণ হয় তবে গ্রাহকের মূল্যটি ১–২৪ ঘন্টার মধ্যে রিফান্ড করে দেওয়া হবে।</Bullet>
-        <Bullet>প্রোডাক্টের স্টক সমস্যার জন্য Shahed Store যেকোন অর্ডার বাতিল করার ক্ষমতা রাখে। তবে যদি অর্ডার বাতিল হয় তাহলে সঙ্গে সঙ্গে রিফান্ড পেয়ে যাবেন।</Bullet>
+        <Bullet>প্রোডাক্টের স্টক সমস্যার জন্য Shahed IT যেকোন অর্ডার বাতিল করার ক্ষমতা রাখে। তবে যদি অর্ডার বাতিল হয় তাহলে সঙ্গে সঙ্গে রিফান্ড পেয়ে যাবেন।</Bullet>
       </ul>
     </SectionCard>
 

@@ -151,7 +151,7 @@ serve(async (req) => {
         ? Math.round(((originalPrice - price) / originalPrice) * 100)
         : 0;
 
-      const prompt = `Write a detailed, SEO-optimized blog post in ENGLISH about the digital product "${product.name}" for a Bangladeshi digital software store called "Shahed Store" (website: shahedstore.com.bd).
+      const prompt = `Write a detailed, SEO-optimized blog post in ENGLISH about the digital product "${product.name}" for a Bangladeshi digital software store called "Shahed IT" (website: shahedit.com).
 
 Product Details:
 - Name: ${product.name}
@@ -165,11 +165,11 @@ Requirements for the blog post:
 1. Title: Engaging, SEO-friendly (include product name + benefit keyword)
 2. Length: 800-1200 words
 3. Structure with markdown headings (##, ###)
-4. Include: Introduction, Features/Benefits, Why Buy From Shahed Store, How to Activate, FAQ section, Conclusion with CTA
+4. Include: Introduction, Features/Benefits, Why Buy From Shahed IT, How to Activate, FAQ section, Conclusion with CTA
 5. Mention the affordable price in BDT
 6. Include keywords naturally: license key, Bangladesh, genuine, instant delivery, affordable
-7. Mention Shahed Store website: shahedstore.com.bd
-STORE NAME RULE: Use the correct spelling based on language. In English text write exactly "Shahed Store". In Bengali text write exactly "শাহেদ স্টোর" (শা-হে-দ, "হে"-তে এ-কার) — this is the correct Bengali spelling. NEVER use misspelled Bengali variants like "শাহিদ স্টোর", "সাহেদ স্টোর", "শায়েদ স্টোর", "শাহীদ স্টোর", "শহীদ স্টোর", "শাওন স্টোর", "শাহেদ ষ্টোর", "শাহেদ ইস্টোর". NEVER use English variants like "ShahedStore", "Shahid Store", "Sahed Store", "Shawon Store". In Bengali sentences use Bengali case markers naturally (শাহেদ স্টোরের, শাহেদ স্টোরে, শাহেদ স্টোরকে) — do not mix English name with Bengali suffix ("Shahed Store-এর" is wrong).
+7. Mention Shahed IT website: shahedit.com
+STORE NAME RULE: Use the correct spelling based on language. In English text write exactly "Shahed IT". In Bengali text write exactly "শাহেদ স্টোর" (শা-হে-দ, "হে"-তে এ-কার) — this is the correct Bengali spelling. NEVER use misspelled Bengali variants like "শাহিদ স্টোর", "সাহেদ স্টোর", "শায়েদ স্টোর", "শাহীদ স্টোর", "শহীদ স্টোর", "শাওন স্টোর", "শাহেদ ষ্টোর", "শাহেদ ইস্টোর". NEVER use English variants like "ShahedIT", "Shahid Store", "Sahed Store", "Shawon Store". In Bengali sentences use Bengali case markers naturally (শাহেদ স্টোরের, শাহেদ স্টোরে, শাহেদ স্টোরকে) — do not mix English name with Bengali suffix ("Shahed IT-এর" is wrong).
 8. Write in a professional, helpful tone
 
 Also provide:
@@ -205,7 +205,7 @@ Respond ONLY with this JSON (no markdown, no explanation):
             content: blogData.content || "",
             status: auto_publish ? "published" : "draft",
             published_at: auto_publish ? new Date().toISOString() : null,
-            author_name: "Shahed Store",
+            author_name: "Shahed IT",
             featured_image: product.image_url || null,
             tags: blogData.tags || product.tags || [],
             reading_time: blogData.reading_time || 5,

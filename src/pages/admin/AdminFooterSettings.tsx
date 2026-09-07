@@ -89,8 +89,8 @@ const AdminFooterSettings = () => {
       {/* Store Info */}
       <Section title="স্টোর তথ্য" icon={Globe}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Field label="Store Name" k="store_name" placeholder="Shahed Store" />
-          <Field label="Website URL" k="website_url" placeholder="https://www.shahedstore.com.bd" />
+          <Field label="Store Name" k="store_name" placeholder="Shahed IT" />
+          <Field label="Website URL" k="website_url" placeholder="https://www.shahedit.com" />
         </div>
         <div className="mt-4">
           <label className="text-xs text-muted-foreground mb-1.5 block">Tagline / বর্ণনা</label>
@@ -108,7 +108,7 @@ const AdminFooterSettings = () => {
       <Section title="যোগাযোগ তথ্য" icon={Phone}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Field label="ফোন নম্বর" k="phone" placeholder="01840-099853" />
-          <Field label="ইমেইল" k="email" placeholder="info@shahedstore.com.bd" />
+          <Field label="ইমেইল" k="email" placeholder="info@shahedit.com" />
           <Field label="ঠিকানা" k="address" placeholder="Ishwardi, Pabna" />
         </div>
       </Section>

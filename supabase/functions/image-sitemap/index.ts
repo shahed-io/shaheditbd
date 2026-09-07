@@ -12,7 +12,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const SITE_URL = 'https://shahedstore.com.bd';
+const SITE_URL = 'https://shahedit.com';
 const SUPABASE_STORAGE_ORIGIN = 'https://dpvdavjwqyviredzoorj.supabase.co';
 const SUPABASE_STORAGE_PUBLIC_PATH = '/storage/v1/object/public/';
 
@@ -98,7 +98,7 @@ Deno.serve(async (req) => {
       if (imgs.length === 0) continue;
 
       const pageUrl = `${SITE_URL}/product/${escape(p.slug)}`;
-      const title = p.seo_title || `${p.name} - Buy at Best Price in Bangladesh | Shahed Store`;
+      const title = p.seo_title || `${p.name} - Buy at Best Price in Bangladesh | Shahed IT`;
       const caption =
         cleanText(p.short_description) ||
         `${p.name} - 100% genuine digital product with instant delivery in Bangladesh`;
@@ -131,8 +131,8 @@ Deno.serve(async (req) => {
       if (imgs.length === 0) continue;
 
       const pageUrl = `${SITE_URL}/blog/${escape(b.slug)}`;
-      const title = b.seo_title || `${b.title} | Shahed Store Blog`;
-      const caption = cleanText(b.excerpt || b.content) || `${b.title} - Shahed Store Bangladesh`;
+      const title = b.seo_title || `${b.title} | Shahed IT Blog`;
+      const caption = cleanText(b.excerpt || b.content) || `${b.title} - Shahed IT Bangladesh`;
 
       const imageBlocks = imgs
         .slice(0, 10) // cap per page
@@ -157,7 +157,7 @@ Deno.serve(async (req) => {
       if (!c.image_url) continue;
       const categoryImage = seoAssetUrl(c.image_url);
       const pageUrl = `${SITE_URL}/shop?category=${encodeURIComponent(c.slug)}`;
-      const title = `${c.name} - Buy in Bangladesh | Shahed Store`;
+      const title = `${c.name} - Buy in Bangladesh | Shahed IT`;
       const caption =
         cleanText(c.description) ||
         `Shop ${c.name} digital products with instant delivery in Bangladesh`;

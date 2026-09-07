@@ -131,7 +131,7 @@ async function renderMenu(bot: string, chatId: number, supabase: any, editId?: n
   const todayRev = (todaySales.data || []).reduce((s: number, r: any) => s + Number(r.total || 0), 0);
 
   const text =
-    `🔐 <b>Shahed Store — Admin</b>\n` +
+    `🔐 <b>Shahed IT — Admin</b>\n` +
     `━━━━━━━━━━━━━━━━━━\n` +
     `📦 মোট অর্ডার: <b>${tot.count || 0}</b>\n` +
     `⏳ পেন্ডিং: <b>${pen.count || 0}</b>\n` +

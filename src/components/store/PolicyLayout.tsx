@@ -87,9 +87,9 @@ export const ContactCard = ({ accentFrom, accentTo }: { accentFrom: string; acce
         className="flex items-center gap-2 hover:underline w-fit" style={{ color: accentFrom }}>
         💬 WhatsApp: 01840-099853
       </a>
-      <a href="mailto:info@shahedstore.com.bd"
+      <a href="mailto:info@shahedit.com"
         className="flex items-center gap-2 hover:underline w-fit" style={{ color: accentFrom }}>
-        ✉️ info@shahedstore.com.bd
+        ✉️ info@shahedit.com
       </a>
       <a href="tel:01840099853"
         className="flex items-center gap-2 hover:underline w-fit" style={{ color: accentFrom }}>
