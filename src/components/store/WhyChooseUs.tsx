@@ -32,22 +32,22 @@ const FEATURES = [
   },
   {
     Icon: Tag,
-    title: 'Lowest Price BD',
-    desc: 'বাংলাদেশের সবচেয়ে কম দামে অরিজিনাল সফটওয়্যার।',
+    title: 'Fair Pricing',
+    desc: 'সাধ্যের মধ্যে প্রফেশনাল আইটি সার্ভিস।',
     from: '15, 95%, 62%',
     to:   '335, 85%, 65%',
   },
   {
     Icon: Users,
     title: '12K+ Customers',
-    desc: '২০২০ সাল থেকে ১২০০০+ সন্তুষ্ট গ্রাহক সারা বিশ্বে।',
+    desc: '২০২০ সাল থেকে ১২০০০+ সন্তুষ্ট ক্লায়েন্ট।',
     from: '38, 95%, 58%',
     to:   '15, 95%, 62%',
   },
 ];
 
 const STEPS = [
-  { n: '01', Icon: ShoppingCart, title: 'Choose Product', desc: 'আমাদের collection থেকে পছন্দের software বেছে নিন।', from: '258, 90%, 66%', to: '199, 89%, 60%' },
+  { n: '01', Icon: ShoppingCart, title: 'Choose Service', desc: 'আমাদের সার্ভিস লিস্ট থেকে প্রয়োজনীয় সেবা বেছে নিন।', from: '258, 90%, 66%', to: '199, 89%, 60%' },
   { n: '02', Icon: CreditCard,   title: 'Make Payment',    desc: 'BKash, Nagad বা Rocket-এ নিরাপদে payment করুন।',  from: '15, 95%, 62%',  to: '335, 85%, 65%' },
   { n: '03', Icon: Mail,         title: 'Get Delivery',    desc: '১–২৪ ঘণ্টার মধ্যে ইমেইলে license key পাঠানো হবে।', from: '199, 89%, 60%', to: '158, 76%, 50%' },
   { n: '04', Icon: CheckCircle2, title: 'Activate & Enjoy',desc: 'Product activate করুন, সমস্যায় support-এ যোগাযোগ।',from: '280, 85%, 65%', to: '243, 80%, 62%' },

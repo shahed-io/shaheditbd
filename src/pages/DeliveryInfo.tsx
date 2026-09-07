@@ -49,7 +49,7 @@ const DeliveryInfo = () => (
 
     <SectionCard icon={<Mail size={15} />} title="১. ডেলিভারি পদ্ধতি" accentFrom={A} accentTo={B}>
       <ul className="space-y-1.5">
-        <Bullet><strong>ইমেইল ডেলিভারি:</strong> লাইসেন্স কী, অ্যাক্টিভেশন গাইড সহ</Bullet>
+        <Bullet><strong>ইমেইল ডেলিভারি:</strong> প্রজেক্ট ফাইল, অ্যাক্সেস ও গাইড সহ</Bullet>
         <Bullet><strong>অ্যাকাউন্ট ডেলিভারি:</strong> My Account → My Orders থেকে ডাউনলোড</Bullet>
         <Bullet><strong>WhatsApp:</strong> কিছু ক্ষেত্রে সরাসরি WhatsApp-এ পাঠানো হয়</Bullet>
       </ul>
@@ -58,11 +58,12 @@ const DeliveryInfo = () => (
     <SectionCard icon={<Package size={15} />} title="২. পণ্য অনুযায়ী আনুমানিক ডেলিভারি সময়" accentFrom={A} accentTo={B}>
       <div className="space-y-2">
         {[
-          { name: 'Windows / Office লাইসেন্স', delivery: 'ইমেইলে কী + গাইড', time: '১–৩ ঘণ্টা' },
-          { name: 'Adobe Creative Cloud', delivery: 'লাইসেন্স বা শেয়ার্ড অ্যাকাউন্ট', time: '১–৬ ঘণ্টা' },
-          { name: 'Netflix / Streaming', delivery: 'ইমেইল + পাসওয়ার্ড', time: '১–৬ ঘণ্টা' },
-          { name: 'VPN / Antivirus', delivery: 'কী + ডাউনলোড লিংক', time: '১–৩ ঘণ্টা' },
-          { name: 'AI Tools', delivery: 'অ্যাকাউন্ট শেয়ার বা কী', time: '১–৬ ঘণ্টা' },
+          { name: 'Business Website', delivery: 'ডিজাইন অ্যাপ্রুভাল + লাইভ সাইট', time: '৫–১০ কর্মদিবস' },
+          { name: 'E-Commerce Website', delivery: 'ফুল সেটআপ + ট্রেনিং', time: '১০–২০ কর্মদিবস' },
+          { name: 'Landing Page', delivery: 'লাইভ পেজ + ফর্ম সেটআপ', time: '২–৪ কর্মদিবস' },
+          { name: 'Logo / Graphics Design', delivery: 'সোর্স ফাইল সহ ডেলিভারি', time: '২–৪ কর্মদিবস' },
+          { name: 'Facebook Page / Ads Setup', delivery: 'পেজ ও ক্যাম্পেইন হ্যান্ডওভার', time: '১–২ কর্মদিবস' },
+          { name: 'Domain, Hosting ও Business Email', delivery: 'সেটআপ + অ্যাক্সেস হ্যান্ডওভার', time: '১–২ কর্মদিবস' },
         ].map(item => (
           <div key={item.name} className="flex items-center gap-3 rounded-xl px-3 py-2.5"
             style={{ background: 'hsla(258,78%,55%,0.05)', border: '1px solid hsla(258,78%,55%,0.10)' }}>
@@ -81,7 +82,7 @@ const DeliveryInfo = () => (
       <ul className="space-y-1.5">
         <Bullet>পাওয়ার সাথে সাথে কাজ করছে কিনা যাচাই করুন</Bullet>
         <Bullet>সমস্যা হলে <strong>২৪ ঘণ্টার মধ্যে</strong> আমাদের জানান</Bullet>
-        <Bullet>লাইসেন্স কী নিরাপদ জায়গায় সংরক্ষণ করুন</Bullet>
+        <Bullet>প্রজেক্টের অ্যাক্সেস ও পাসওয়ার্ড নিরাপদ জায়গায় সংরক্ষণ করুন</Bullet>
         <Bullet>অ্যাক্টিভেশন গাইড অনুসরণ করুন</Bullet>
         <Bullet color="hsl(38,92%,38%)">প্রোডাক্ট ব্যবহারকালীন কোনো সমস্যার সমাধানে সর্বোচ্চ <strong>৩ কর্মদিবস</strong> সময় প্রযোজ্য হতে পারে।</Bullet>
       </ul>
