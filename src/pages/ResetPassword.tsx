@@ -44,7 +44,7 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'linear-gradient(160deg, hsl(230,25%,97%) 0%, hsl(243,20%,96%) 100%)' }}>
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'linear-gradient(160deg, hsl(192,25%,97%) 0%, hsl(192,20%,96%) 100%)' }}>
       <SEOHead title="Reset Password" description="Reset your Shahed IT password." noIndex />
       <div className="w-full max-w-md">
         {/* Logo */}
@@ -59,7 +59,7 @@ const ResetPassword = () => {
 
         <div className="bg-card rounded-2xl border p-8 shadow-lg" style={{ borderColor: 'hsl(var(--border))' }}>
           <div className="text-center mb-6">
-            <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3" style={{ background: 'hsl(243,75%,97%)' }}>
+            <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3" style={{ background: 'hsl(192,75%,97%)' }}>
               <ShieldCheck size={24} style={{ color: 'hsl(var(--primary))' }} />
             </div>
             <h1 className="text-2xl font-black" style={{ color: 'hsl(var(--foreground))' }}>নতুন পাসওয়ার্ড সেট করুন</h1>
@@ -114,7 +114,7 @@ const ResetPassword = () => {
               type="submit"
               disabled={loading || !password || !confirm}
               className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90 disabled:opacity-50"
-              style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}
+              style={{ background: 'linear-gradient(135deg, hsl(192,75%,59%), hsl(192,70%,58%))' }}
             >
               {loading ? <><RefreshCw size={15} className="animate-spin" /> পরিবর্তন হচ্ছে...</> : <><ShieldCheck size={15} /> পাসওয়ার্ড পরিবর্তন করুন</>}
             </button>

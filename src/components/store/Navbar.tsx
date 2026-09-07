@@ -30,13 +30,13 @@ const NAV_LINKS = [
 ];
 
 const CAT_ICON_MAP: Record<string, { icon: string; color: string }> = {
-  'Web Development':     { icon: '💻', color: 'hsla(243,75%,62%,0.12)' },
+  'Web Development':     { icon: '💻', color: 'hsla(192,75%,62%,0.12)' },
   'Website Maintenance': { icon: '🛠️', color: 'hsla(190,70%,48%,0.12)' },
-  'Graphics Design':     { icon: '🎨', color: 'hsla(283,65%,62%,0.12)' },
+  'Graphics Design':     { icon: '🎨', color: 'hsla(216,65%,62%,0.12)' },
   'Facebook Services':   { icon: '📣', color: 'hsla(210,90%,60%,0.12)' },
   'Digital Marketing':   { icon: '📈', color: 'hsla(158,64%,45%,0.12)' },
   'Business Solutions':  { icon: '🏢', color: 'hsla(25,90%,60%,0.12)' },
-  'default':             { icon: '🚀', color: 'hsla(243,75%,62%,0.12)' },
+  'default':             { icon: '🚀', color: 'hsla(192,75%,62%,0.12)' },
 };
 
 interface NavCategory {
@@ -291,7 +291,7 @@ const Navbar = () => {
           <div className="w-full max-w-2xl xl:max-w-3xl rounded-3xl overflow-hidden shadow-[0_32px_80px_hsla(226,35%,10%,0.40)] flex flex-col"
             style={{ background: 'hsl(var(--card))', border: '1.5px solid hsl(var(--border))', maxHeight: '80vh' }}>
             {/* Top line */}
-            <div className="h-[2px] w-full" style={{ background: 'linear-gradient(90deg, hsl(var(--primary)), hsl(263,70%,58%))' }} />
+            <div className="h-[2px] w-full" style={{ background: 'linear-gradient(90deg, hsl(var(--primary)), hsl(192,70%,58%))' }} />
             <DesktopSearchPalette onClose={() => setDesktopSearch(false)} />
           </div>
         </div>
@@ -448,7 +448,7 @@ const Navbar = () => {
               {footerSettings.instagram_url && (
                 <a href={footerSettings.instagram_url} target="_blank" rel="noopener noreferrer"
                   className="social-soft w-6 h-6 flex items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95"
-                  style={{ background: 'hsla(0,0%,100%,0.85)', border: '1px solid hsla(340,80%,80%,0.6)', color: 'hsl(340,80%,50%)' }}
+                  style={{ background: 'hsla(0,0%,100%,0.85)', border: '1px solid hsla(24,80%,80%,0.6)', color: 'hsl(24,80%,50%)' }}
                   title="Instagram">
                   <Instagram size={11} />
                 </a>
@@ -505,7 +505,7 @@ const Navbar = () => {
             <button
               onClick={() => setDesktopSearch(true)}
               className="hidden lg:flex flex-1 min-w-0 max-w-[460px] items-center gap-2 rounded-xl border px-3 py-1.5 text-left transition-all hover:border-primary/50 hover:shadow-[0_0_0_3px_hsl(var(--primary)/0.08)] group overflow-hidden"
-              style={{ borderColor: 'hsla(258,78%,60%,0.20)', background: 'hsla(258,78%,55%,0.04)' }}
+              style={{ borderColor: 'hsla(192,78%,60%,0.20)', background: 'hsla(192,78%,55%,0.04)' }}
             >
               <Search size={14} className="text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
               <span className="text-sm text-muted-foreground flex-1 min-w-0 truncate whitespace-nowrap">Search products...</span>
@@ -534,28 +534,28 @@ const Navbar = () => {
                       // Prefetch route chunk for instant nav
                       prefetchRoute(link.href);
                       if (!isActive) {
-                        e.currentTarget.style.color = 'hsl(258,78%,45%)';
-                        e.currentTarget.style.border = '1px solid hsla(258,78%,75%,0.35)';
-                        e.currentTarget.style.boxShadow = '0 2px 10px hsla(258,78%,55%,0.12)';
-                        e.currentTarget.style.background = 'hsla(258,78%,55%,0.07)';
+                        e.currentTarget.style.color = 'hsl(192,78%,45%)';
+                        e.currentTarget.style.border = '1px solid hsla(192,78%,75%,0.35)';
+                        e.currentTarget.style.boxShadow = '0 2px 10px hsla(192,78%,55%,0.12)';
+                        e.currentTarget.style.background = 'hsla(192,78%,55%,0.07)';
                       }
                     }}
                     onTouchStart={() => prefetchRoute(link.href)}
                     onFocus={() => prefetchRoute(link.href)}
                     className="flex items-center px-2.5 lg:px-4 py-1.5 rounded-lg transition-all duration-200 font-bold text-xs lg:text-sm whitespace-nowrap hover:scale-105"
                     style={{
-                      background: isActive ? 'linear-gradient(135deg, hsla(258,78%,55%,0.12), hsla(200,90%,45%,0.08))' : 'hsla(0,0%,100%,0.70)',
+                      background: isActive ? 'linear-gradient(135deg, hsla(192,78%,55%,0.12), hsla(200,90%,45%,0.08))' : 'hsla(0,0%,100%,0.70)',
                       backdropFilter: 'blur(10px)',
-                      color: isActive ? 'hsl(258,78%,45%)' : 'hsl(226,35%,30%)',
-                      border: isActive ? '1px solid hsla(258,78%,75%,0.35)' : '1px solid hsla(258,78%,75%,0.22)',
+                      color: isActive ? 'hsl(192,78%,45%)' : 'hsl(226,35%,30%)',
+                      border: isActive ? '1px solid hsla(192,78%,75%,0.35)' : '1px solid hsla(192,78%,75%,0.22)',
                       boxShadow: isActive
-                        ? '0 2px 10px hsla(258,78%,55%,0.15)'
+                        ? '0 2px 10px hsla(192,78%,55%,0.15)'
                         : '0 1px 4px hsla(226,35%,12%,0.05)',
                     }}
                     onMouseLeave={e => {
                       if (!isActive) {
                         e.currentTarget.style.color = 'hsl(226,35%,30%)';
-                        e.currentTarget.style.border = '1px solid hsla(258,78%,75%,0.22)';
+                        e.currentTarget.style.border = '1px solid hsla(192,78%,75%,0.22)';
                         e.currentTarget.style.boxShadow = '0 1px 4px hsla(226,35%,12%,0.05)';
                         e.currentTarget.style.background = 'hsla(0,0%,100%,0.70)';
                       }
@@ -574,31 +574,31 @@ const Navbar = () => {
                   <button onClick={() => navigate('/dashboard')}
                     className="group relative flex items-center gap-2 pl-1 pr-3.5 py-1 rounded-full text-sm font-semibold transition-all duration-300"
                     style={{
-                      color: 'hsl(258,78%,40%)',
-                      background: 'linear-gradient(135deg, hsla(0,0%,100%,0.85), hsla(258,78%,96%,0.75))',
-                      border: '1px solid hsla(258,78%,55%,0.25)',
+                      color: 'hsl(192,78%,40%)',
+                      background: 'linear-gradient(135deg, hsla(0,0%,100%,0.85), hsla(192,78%,96%,0.75))',
+                      border: '1px solid hsla(192,78%,55%,0.25)',
                       backdropFilter: 'blur(14px)',
                       WebkitBackdropFilter: 'blur(14px)',
-                      boxShadow: '0 4px 14px -4px hsla(258,78%,55%,0.25), inset 0 1px 0 hsla(0,0%,100%,0.9)',
+                      boxShadow: '0 4px 14px -4px hsla(192,78%,55%,0.25), inset 0 1px 0 hsla(0,0%,100%,0.9)',
                     }}
                     onMouseEnter={e => {
                       e.currentTarget.style.transform = 'translateY(-1px)';
-                      e.currentTarget.style.boxShadow = '0 8px 22px -6px hsla(258,78%,55%,0.45), inset 0 1px 0 hsla(0,0%,100%,0.9)';
-                      e.currentTarget.style.borderColor = 'hsla(258,78%,55%,0.45)';
+                      e.currentTarget.style.boxShadow = '0 8px 22px -6px hsla(192,78%,55%,0.45), inset 0 1px 0 hsla(0,0%,100%,0.9)';
+                      e.currentTarget.style.borderColor = 'hsla(192,78%,55%,0.45)';
                     }}
                     onMouseLeave={e => {
                       e.currentTarget.style.transform = '';
-                      e.currentTarget.style.boxShadow = '0 4px 14px -4px hsla(258,78%,55%,0.25), inset 0 1px 0 hsla(0,0%,100%,0.9)';
-                      e.currentTarget.style.borderColor = 'hsla(258,78%,55%,0.25)';
+                      e.currentTarget.style.boxShadow = '0 4px 14px -4px hsla(192,78%,55%,0.25), inset 0 1px 0 hsla(0,0%,100%,0.9)';
+                      e.currentTarget.style.borderColor = 'hsla(192,78%,55%,0.25)';
                     }}>
                     <span className="relative flex-shrink-0">
                       <span className="block w-7 h-7 rounded-full overflow-hidden flex items-center justify-center text-xs font-bold text-white ring-2 ring-white"
-                        style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', boxShadow: '0 2px 6px hsla(258,78%,45%,0.4)' }}>
+                        style={{ background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(200,90%,45%))', boxShadow: '0 2px 6px hsla(192,78%,45%,0.4)' }}>
                         {avatarUrl ? <img src={avatarUrl} alt="avatar" className="w-full h-full object-cover" /> : initials}
                       </span>
                       <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white" />
                     </span>
-                    <span className="hidden lg:inline bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(135deg, hsl(258,78%,45%), hsl(200,90%,40%))' }}>
+                    <span className="hidden lg:inline bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(135deg, hsl(192,78%,45%), hsl(200,90%,40%))' }}>
                       Dashboard
                     </span>
                   </button>
@@ -613,9 +613,9 @@ const Navbar = () => {
               ) : (
                 <button onClick={() => setAuthOpen(true)}
                   className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all border"
-                  style={{ color: 'hsl(258,78%,50%)', borderColor: 'hsla(258,78%,55%,0.30)', background: 'hsla(258,78%,55%,0.05)' }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'hsla(258,78%,55%,0.55)'; e.currentTarget.style.background = 'hsla(258,78%,55%,0.10)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'hsla(258,78%,55%,0.30)'; e.currentTarget.style.background = 'hsla(258,78%,55%,0.05)'; }}>
+                  style={{ color: 'hsl(192,78%,50%)', borderColor: 'hsla(192,78%,55%,0.30)', background: 'hsla(192,78%,55%,0.05)' }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'hsla(192,78%,55%,0.55)'; e.currentTarget.style.background = 'hsla(192,78%,55%,0.10)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'hsla(192,78%,55%,0.30)'; e.currentTarget.style.background = 'hsla(192,78%,55%,0.05)'; }}>
                   <User size={16} />
                   <span className="hidden lg:inline">Login</span>
                 </button>
@@ -627,9 +627,9 @@ const Navbar = () => {
                 className="sm:hidden relative p-2.5 rounded-xl transition-all hover:scale-[1.03] active:scale-[0.97]"
                 style={{
                   background: mobileSearch
-                    ? 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))'
-                    : 'hsla(258,78%,55%,0.10)',
-                  color: mobileSearch ? 'hsl(0,0%,100%)' : 'hsl(258,78%,50%)',
+                    ? 'linear-gradient(135deg, hsl(192,78%,55%), hsl(200,90%,45%))'
+                    : 'hsla(192,78%,55%,0.10)',
+                  color: mobileSearch ? 'hsl(0,0%,100%)' : 'hsl(192,78%,50%)',
                 }}
                 aria-label="Search">
                 <Search size={18} />
@@ -641,10 +641,10 @@ const Navbar = () => {
                 className="hidden sm:flex lg:hidden items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all hover:scale-[1.03] active:scale-[0.97] flex-shrink-0"
                 style={{
                   background: mobileSearch
-                    ? 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))'
-                    : 'hsla(258,78%,55%,0.10)',
-                  color: mobileSearch ? 'hsl(0,0%,100%)' : 'hsl(258,78%,50%)',
-                  border: '1px solid hsla(258,78%,60%,0.20)',
+                    ? 'linear-gradient(135deg, hsl(192,78%,55%), hsl(200,90%,45%))'
+                    : 'hsla(192,78%,55%,0.10)',
+                  color: mobileSearch ? 'hsl(0,0%,100%)' : 'hsl(192,78%,50%)',
+                  border: '1px solid hsla(192,78%,60%,0.20)',
                 }}
                 aria-label="Search products">
                 <Search size={18} />
@@ -662,14 +662,14 @@ const Navbar = () => {
                 aria-label={cartCount > 0 ? `Open cart (${cartCount} items)` : 'Open cart'}
                 className="hidden sm:relative sm:flex items-center gap-2 px-3 lg:px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.97]"
                 style={{
-                  background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))',
-                  boxShadow: '0 4px 16px hsla(258,78%,55%,0.35)',
+                  background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(200,90%,45%))',
+                  boxShadow: '0 4px 16px hsla(192,78%,55%,0.35)',
                 }}>
                 <ShoppingCart size={18} />
                 <span className="hidden lg:inline">Cart</span>
                 {cartCount > 0 && (
                   <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full text-[9px] font-bold flex items-center justify-center border-2"
-                    style={{ background: 'hsl(330,85%,55%)', borderColor: 'hsl(0,0%,100%)', boxShadow: '0 0 8px hsla(330,85%,55%,0.5)' }}>
+                    style={{ background: 'hsl(24,85%,55%)', borderColor: 'hsl(0,0%,100%)', boxShadow: '0 0 8px hsla(24,85%,55%,0.5)' }}>
                     {cartCount}
                   </span>
                 )}
@@ -707,16 +707,16 @@ const Navbar = () => {
         >
           <div className="border-t px-3 py-4 pb-[calc(env(safe-area-inset-bottom)+24px)] relative"
             style={{
-              background: 'linear-gradient(180deg, hsla(258,60%,99%,0.98) 0%, hsla(220,50%,98%,0.98) 50%, hsla(280,40%,99%,0.98) 100%)',
-              borderColor: 'hsla(258,78%,60%,0.15)',
+              background: 'linear-gradient(180deg, hsla(192,60%,99%,0.98) 0%, hsla(220,50%,98%,0.98) 50%, hsla(216,40%,99%,0.98) 100%)',
+              borderColor: 'hsla(192,78%,60%,0.15)',
               backdropFilter: 'blur(32px) saturate(180%)',
               WebkitBackdropFilter: 'blur(32px) saturate(180%)',
               borderRadius: '0 0 24px 24px',
-              boxShadow: '0 24px 50px -20px hsla(258,78%,40%,0.22), inset 0 1px 0 hsla(0,0%,100%,0.7)',
+              boxShadow: '0 24px 50px -20px hsla(192,78%,40%,0.22), inset 0 1px 0 hsla(0,0%,100%,0.7)',
             }}>
             {/* Decorative orbs */}
             <div className="absolute top-0 right-0 w-48 h-48 rounded-full pointer-events-none opacity-40"
-              style={{ background: 'radial-gradient(circle, hsla(258,78%,55%,0.18), transparent 70%)', filter: 'blur(28px)' }} />
+              style={{ background: 'radial-gradient(circle, hsla(192,78%,55%,0.18), transparent 70%)', filter: 'blur(28px)' }} />
             <div className="absolute bottom-10 left-0 w-40 h-40 rounded-full pointer-events-none opacity-30"
               style={{ background: 'radial-gradient(circle, hsla(200,90%,50%,0.18), transparent 70%)', filter: 'blur(24px)' }} />
 
@@ -727,13 +727,13 @@ const Navbar = () => {
                   onClick={() => { navigate('/dashboard?tab=profile'); setMobileOpen(false); }}
                   className="w-full group relative rounded-3xl p-4 mb-4 overflow-hidden transition-all duration-300 hover:scale-[1.01] active:scale-[0.99]"
                   style={{
-                    background: 'linear-gradient(135deg, hsl(258,78%,55%) 0%, hsl(225,80%,52%) 45%, hsl(200,90%,50%) 100%)',
-                    boxShadow: '0 16px 40px -10px hsla(258,78%,45%,0.45), inset 0 1px 0 hsla(0,0%,100%,0.35)',
+                    background: 'linear-gradient(135deg, hsl(192,78%,55%) 0%, hsl(225,80%,52%) 45%, hsl(200,90%,50%) 100%)',
+                    boxShadow: '0 16px 40px -10px hsla(192,78%,45%,0.45), inset 0 1px 0 hsla(0,0%,100%,0.35)',
                     animation: mobileOpen ? 'slideInRight 0.4s ease-out both' : undefined,
                   }}>
                   {/* Animated mesh overlay */}
                   <div className="absolute inset-0 opacity-50 pointer-events-none"
-                    style={{ background: 'radial-gradient(circle at 20% 20%, hsla(0,0%,100%,0.35), transparent 50%), radial-gradient(circle at 80% 80%, hsla(280,90%,70%,0.4), transparent 50%)' }} />
+                    style={{ background: 'radial-gradient(circle at 20% 20%, hsla(0,0%,100%,0.35), transparent 50%), radial-gradient(circle at 80% 80%, hsla(216,90%,70%,0.4), transparent 50%)' }} />
                   <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full pointer-events-none"
                     style={{ background: 'radial-gradient(circle, hsla(0,0%,100%,0.25), transparent 70%)', filter: 'blur(8px)' }} />
 
@@ -741,9 +741,9 @@ const Navbar = () => {
                     {/* Avatar with premium ring — circular for clearer face */}
                     <div className="relative shrink-0">
                       <div className="absolute -inset-[3px] rounded-full"
-                        style={{ background: 'conic-gradient(from 180deg, hsla(0,0%,100%,0.95), hsla(280,90%,80%,0.85), hsla(200,90%,75%,0.85), hsla(0,0%,100%,0.95))', filter: 'blur(2px)' }} />
+                        style={{ background: 'conic-gradient(from 180deg, hsla(0,0%,100%,0.95), hsla(216,90%,80%,0.85), hsla(200,90%,75%,0.85), hsla(0,0%,100%,0.95))', filter: 'blur(2px)' }} />
                       <div className="relative w-16 h-16 rounded-full overflow-hidden flex items-center justify-center"
-                        style={{ background: 'linear-gradient(135deg, hsla(258,78%,55%,0.85), hsla(200,90%,50%,0.85))', border: '2.5px solid hsla(0,0%,100%,0.95)', boxShadow: '0 6px 18px hsla(258,60%,30%,0.35), inset 0 1px 0 hsla(0,0%,100%,0.5)' }}>
+                        style={{ background: 'linear-gradient(135deg, hsla(192,78%,55%,0.85), hsla(200,90%,50%,0.85))', border: '2.5px solid hsla(0,0%,100%,0.95)', boxShadow: '0 6px 18px hsla(192,60%,30%,0.35), inset 0 1px 0 hsla(0,0%,100%,0.5)' }}>
                         {avatarUrl && !avatarFailed ? (
                           <img
                             src={`${avatarUrl}${avatarUrl.includes('?') ? '&' : '?'}v=${imgVersion}`}
@@ -804,7 +804,7 @@ const Navbar = () => {
                   {[
                     { label: 'Orders',    icon: Package, tab: 'orders',   grad: 'linear-gradient(135deg, hsl(200,90%,55%), hsl(220,85%,55%))', count: userStats?.orders },
                     { label: 'Wallet',    icon: Wallet,  tab: 'wallet',   grad: 'linear-gradient(135deg, hsl(150,72%,45%), hsl(170,75%,42%))', count: undefined },
-                    { label: 'Wishlist',  icon: Heart,   tab: 'wishlist', grad: 'linear-gradient(135deg, hsl(0,82%,60%), hsl(340,82%,55%))', count: userStats?.wishlist },
+                    { label: 'Wishlist',  icon: Heart,   tab: 'wishlist', grad: 'linear-gradient(135deg, hsl(0,82%,60%), hsl(24,82%,55%))', count: userStats?.wishlist },
                     { label: 'Points',    icon: Award,   tab: 'points',   grad: 'linear-gradient(135deg, hsl(38,95%,55%), hsl(20,92%,55%))', count: undefined },
                   ].map((q, i) => (
                     <button
@@ -813,21 +813,21 @@ const Navbar = () => {
                       className="group relative aspect-square rounded-2xl overflow-hidden flex flex-col items-center justify-center gap-1.5 transition-all duration-300 hover:scale-[1.05] active:scale-[0.95]"
                       style={{
                         background: 'hsla(0,0%,100%,0.85)',
-                        border: '1px solid hsla(258,78%,60%,0.12)',
+                        border: '1px solid hsla(192,78%,60%,0.12)',
                         backdropFilter: 'blur(12px)',
-                        boxShadow: '0 4px 12px hsla(258,40%,40%,0.06)',
+                        boxShadow: '0 4px 12px hsla(192,40%,40%,0.06)',
                         animation: mobileOpen ? `slideInRight 0.4s ease-out ${0.05 + i * 0.04}s both` : undefined,
                       }}>
                       <div className="absolute inset-x-0 top-0 h-1/2 opacity-15 pointer-events-none" style={{ background: q.grad }} />
                       {/* Live count badge */}
                       {q.count !== undefined && q.count > 0 && (
                         <div className="absolute top-1.5 right-1.5 min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center text-[9px] font-extrabold text-white tabular-nums z-10"
-                          style={{ background: q.grad, boxShadow: '0 2px 6px hsla(258,40%,40%,0.3)' }}>
+                          style={{ background: q.grad, boxShadow: '0 2px 6px hsla(192,40%,40%,0.3)' }}>
                           {q.count > 99 ? '99+' : q.count}
                         </div>
                       )}
                       <div className="relative w-9 h-9 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6"
-                        style={{ background: q.grad, boxShadow: '0 6px 14px hsla(258,40%,40%,0.22), inset 0 1px 0 hsla(0,0%,100%,0.3)' }}>
+                        style={{ background: q.grad, boxShadow: '0 6px 14px hsla(192,40%,40%,0.22), inset 0 1px 0 hsla(0,0%,100%,0.3)' }}>
                         <q.icon size={17} className="text-white" strokeWidth={2.5} />
                       </div>
                       <span className="text-[10.5px] font-bold tracking-tight" style={{ color: 'hsl(226,35%,22%)' }}>{q.label}</span>
@@ -893,14 +893,14 @@ const Navbar = () => {
                             className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-full text-[11.5px] font-bold transition-all duration-300 hover:scale-105 active:scale-95"
                             style={{
                               background: 'hsla(0,0%,100%,0.85)',
-                              border: '1px solid hsla(258,78%,60%,0.18)',
+                              border: '1px solid hsla(192,78%,60%,0.18)',
                               color: 'hsl(226,35%,22%)',
                               backdropFilter: 'blur(10px)',
-                              boxShadow: '0 2px 6px hsla(258,40%,40%,0.06)',
+                              boxShadow: '0 2px 6px hsla(192,40%,40%,0.06)',
                             }}>
                             <span className="text-[13px]">{meta.icon}</span>
                             <span>{cat.name}</span>
-                            <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full" style={{ background: 'hsla(258,78%,55%,0.12)', color: 'hsl(258,78%,45%)' }}>{cat.count}</span>
+                            <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full" style={{ background: 'hsla(192,78%,55%,0.12)', color: 'hsl(192,78%,45%)' }}>{cat.count}</span>
                           </button>
                         );
                       })}
@@ -910,14 +910,14 @@ const Navbar = () => {
 
                 {/* Section Label */}
                 <div className="flex items-center gap-2 px-1 pb-2.5">
-                  <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,55%,0.3), transparent)' }} />
+                  <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsla(192,78%,55%,0.3), transparent)' }} />
                   <p className="text-[10px] font-bold tracking-[0.22em] uppercase flex items-center gap-1.5"
-                    style={{ background: 'linear-gradient(135deg, hsl(258,78%,50%), hsl(200,90%,45%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                    <Sparkles size={10} style={{ color: 'hsl(258,78%,55%)' }} />
+                    style={{ background: 'linear-gradient(135deg, hsl(192,78%,50%), hsl(200,90%,45%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                    <Sparkles size={10} style={{ color: 'hsl(192,78%,55%)' }} />
                     Account
                     <Sparkles size={10} style={{ color: 'hsl(200,90%,50%)' }} />
                   </p>
-                  <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,55%,0.3), transparent)' }} />
+                  <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsla(192,78%,55%,0.3), transparent)' }} />
                 </div>
 
                 {/* Detailed list — remaining items */}
@@ -925,8 +925,8 @@ const Navbar = () => {
                   { label: 'My Licenses',   icon: Key,    tab: 'licenses',      grad: 'linear-gradient(135deg, hsl(45,95%,55%), hsl(30,90%,55%))' },
                   { label: 'Addresses',     icon: MapPin, tab: 'addresses',     grad: 'linear-gradient(135deg, hsl(190,85%,45%), hsl(210,85%,50%))' },
                   { label: 'Notifications', icon: Bell,   tab: 'notifications', grad: 'linear-gradient(135deg, hsl(38,95%,55%), hsl(20,90%,55%))' },
-                  { label: 'Referral',      icon: Gift,   tab: 'referral',      grad: 'linear-gradient(135deg, hsl(280,75%,55%), hsl(310,70%,55%))' },
-                  { label: 'Security',      icon: Lock,   tab: 'security',      grad: 'linear-gradient(135deg, hsl(220,30%,40%), hsl(240,35%,45%))' },
+                  { label: 'Referral',      icon: Gift,   tab: 'referral',      grad: 'linear-gradient(135deg, hsl(216,75%,55%), hsl(24,70%,55%))' },
+                  { label: 'Security',      icon: Lock,   tab: 'security',      grad: 'linear-gradient(135deg, hsl(220,30%,40%), hsl(192,35%,45%))' },
                   { label: 'Language',      icon: Globe,  tab: 'language',      grad: 'linear-gradient(135deg, hsl(170,70%,42%), hsl(190,75%,45%))' },
                 ].map((item, i) => (
                   <button
@@ -936,18 +936,18 @@ const Navbar = () => {
                     style={{
                       color: 'hsl(226,35%,20%)',
                       background: 'hsla(0,0%,100%,0.75)',
-                      border: '1px solid hsla(258,78%,60%,0.10)',
+                      border: '1px solid hsla(192,78%,60%,0.10)',
                       backdropFilter: 'blur(10px)',
                       animation: mobileOpen ? `slideInRight 0.4s ease-out ${0.25 + i * 0.04}s both` : undefined,
-                      boxShadow: '0 2px 6px hsla(258,40%,40%,0.05)',
+                      boxShadow: '0 2px 6px hsla(192,40%,40%,0.05)',
                     }}>
                     <div className="flex items-center justify-center w-9 h-9 rounded-xl shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[-4deg]"
-                      style={{ background: item.grad, boxShadow: '0 5px 12px hsla(258,40%,40%,0.20), inset 0 1px 0 hsla(0,0%,100%,0.25)' }}>
+                      style={{ background: item.grad, boxShadow: '0 5px 12px hsla(192,40%,40%,0.20), inset 0 1px 0 hsla(0,0%,100%,0.25)' }}>
                       <item.icon size={16} className="text-white" strokeWidth={2.4} />
                     </div>
                     <span className="flex-1 text-left tracking-tight">{item.label}</span>
                     <ChevronRight size={15} className="transition-all duration-300 group-hover:translate-x-1 opacity-50 group-hover:opacity-100"
-                      style={{ color: 'hsl(258,78%,55%)' }} />
+                      style={{ color: 'hsl(192,78%,55%)' }} />
                   </button>
                 ))}
 
@@ -955,7 +955,7 @@ const Navbar = () => {
                 {canInstall && (
                   <button onClick={() => { handleInstall(); if (!isIOS) setMobileOpen(false); }}
                     className="w-full group flex items-center gap-3 px-3 py-2.5 mb-1.5 rounded-2xl text-sm font-semibold transition-all duration-300 hover:scale-[1.015] active:scale-[0.985]"
-                    style={{ color: 'hsl(226,35%,20%)', background: 'hsla(0,0%,100%,0.75)', border: '1px solid hsla(258,78%,60%,0.10)', backdropFilter: 'blur(10px)' }}>
+                    style={{ color: 'hsl(226,35%,20%)', background: 'hsla(0,0%,100%,0.75)', border: '1px solid hsla(192,78%,60%,0.10)', backdropFilter: 'blur(10px)' }}>
                     <div className="flex items-center justify-center w-9 h-9 rounded-xl shrink-0 transition-transform duration-300 group-hover:scale-110"
                       style={{ background: 'linear-gradient(135deg, hsl(160,75%,45%), hsl(180,75%,45%))', boxShadow: '0 5px 12px hsla(160,40%,40%,0.22), inset 0 1px 0 hsla(0,0%,100%,0.25)' }}>
                       <Download size={16} className="text-white" strokeWidth={2.4} />
@@ -965,9 +965,9 @@ const Navbar = () => {
                 )}
                 {showIOSTip && (
                   <div className="mx-1 mt-2 mb-2 rounded-2xl p-3.5 text-[12px] leading-relaxed"
-                    style={{ background: 'linear-gradient(135deg, hsla(258,78%,55%,0.08), hsla(200,90%,50%,0.08))', border: '1px solid hsla(258,78%,55%,0.18)', backdropFilter: 'blur(10px)' }}>
+                    style={{ background: 'linear-gradient(135deg, hsla(192,78%,55%,0.08), hsla(200,90%,50%,0.08))', border: '1px solid hsla(192,78%,55%,0.18)', backdropFilter: 'blur(10px)' }}>
                     <p className="font-bold mb-2 flex items-center gap-1.5" style={{ color: 'hsl(226,35%,20%)' }}>
-                      <Share2 size={13} style={{ color: 'hsl(258,78%,55%)' }} /> Install on iOS:
+                      <Share2 size={13} style={{ color: 'hsl(192,78%,55%)' }} /> Install on iOS:
                     </p>
                     <p className="flex items-center gap-1.5" style={{ color: 'hsl(226,35%,45%)' }}>
                       1. Tap the <Share2 size={12} className="text-blue-500" /> Share button
@@ -985,9 +985,9 @@ const Navbar = () => {
                       onClick={() => { navigate('/ceo'); setMobileOpen(false); }}
                       className="group relative flex items-center justify-center gap-2 px-3 py-3 rounded-2xl text-[13px] font-bold text-white overflow-hidden transition-all duration-300 hover:scale-[1.03] active:scale-[0.97]"
                       style={{
-                        background: 'linear-gradient(135deg, hsl(258,78%,55%) 0%, hsl(280,75%,55%) 50%, hsl(258,78%,55%) 100%)',
+                        background: 'linear-gradient(135deg, hsl(192,78%,55%) 0%, hsl(216,75%,55%) 50%, hsl(192,78%,55%) 100%)',
                         backgroundSize: '200% 100%',
-                        boxShadow: '0 10px 24px hsla(258,78%,55%,0.42), inset 0 1px 0 hsla(0,0%,100%,0.30)',
+                        boxShadow: '0 10px 24px hsla(192,78%,55%,0.42), inset 0 1px 0 hsla(0,0%,100%,0.30)',
                         animation: 'shimmer 3s linear infinite',
                       }}>
                       <div className="absolute inset-0 opacity-30 pointer-events-none"
@@ -1018,19 +1018,19 @@ const Navbar = () => {
                   onClick={() => { setAuthOpen(true); setMobileOpen(false); }}
                   className="w-full group relative rounded-3xl p-4 mb-4 overflow-hidden transition-all duration-300 hover:scale-[1.01] active:scale-[0.99]"
                   style={{
-                    background: 'linear-gradient(135deg, hsl(258,78%,55%) 0%, hsl(225,80%,52%) 45%, hsl(200,90%,50%) 100%)',
-                    boxShadow: '0 16px 40px -10px hsla(258,78%,45%,0.45), inset 0 1px 0 hsla(0,0%,100%,0.35)',
+                    background: 'linear-gradient(135deg, hsl(192,78%,55%) 0%, hsl(225,80%,52%) 45%, hsl(200,90%,50%) 100%)',
+                    boxShadow: '0 16px 40px -10px hsla(192,78%,45%,0.45), inset 0 1px 0 hsla(0,0%,100%,0.35)',
                     animation: mobileOpen ? 'slideInRight 0.4s ease-out both' : undefined,
                   }}>
                   <div className="absolute inset-0 opacity-50 pointer-events-none"
-                    style={{ background: 'radial-gradient(circle at 20% 20%, hsla(0,0%,100%,0.35), transparent 50%), radial-gradient(circle at 80% 80%, hsla(280,90%,70%,0.4), transparent 50%)' }} />
+                    style={{ background: 'radial-gradient(circle at 20% 20%, hsla(0,0%,100%,0.35), transparent 50%), radial-gradient(circle at 80% 80%, hsla(216,90%,70%,0.4), transparent 50%)' }} />
                   <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full pointer-events-none"
                     style={{ background: 'radial-gradient(circle, hsla(0,0%,100%,0.25), transparent 70%)', filter: 'blur(8px)' }} />
 
                   <div className="relative flex items-center gap-3.5">
                     <div className="relative shrink-0">
                       <div className="absolute -inset-1 rounded-2xl"
-                        style={{ background: 'linear-gradient(135deg, hsla(0,0%,100%,0.6), hsla(280,90%,80%,0.6))', filter: 'blur(4px)' }} />
+                        style={{ background: 'linear-gradient(135deg, hsla(0,0%,100%,0.6), hsla(216,90%,80%,0.6))', filter: 'blur(4px)' }} />
                       <div className="relative w-14 h-14 rounded-2xl overflow-hidden flex items-center justify-center"
                         style={{ background: 'hsla(0,0%,100%,0.25)', backdropFilter: 'blur(12px)', border: '2px solid hsla(0,0%,100%,0.5)' }}>
                         <User size={26} className="text-white" strokeWidth={2.5} />
@@ -1072,7 +1072,7 @@ const Navbar = () => {
                   {[
                     { label: 'Orders',    icon: Package, grad: 'linear-gradient(135deg, hsl(200,90%,55%), hsl(220,85%,55%))' },
                     { label: 'Wallet',    icon: Wallet,  grad: 'linear-gradient(135deg, hsl(150,72%,45%), hsl(170,75%,42%))' },
-                    { label: 'Wishlist',  icon: Heart,   grad: 'linear-gradient(135deg, hsl(0,82%,60%), hsl(340,82%,55%))' },
+                    { label: 'Wishlist',  icon: Heart,   grad: 'linear-gradient(135deg, hsl(0,82%,60%), hsl(24,82%,55%))' },
                     { label: 'Points',    icon: Award,   grad: 'linear-gradient(135deg, hsl(38,95%,55%), hsl(20,92%,55%))' },
                   ].map((q, i) => (
                     <button
@@ -1081,14 +1081,14 @@ const Navbar = () => {
                       className="group relative aspect-square rounded-2xl overflow-hidden flex flex-col items-center justify-center gap-1.5 transition-all duration-300 hover:scale-[1.05] active:scale-[0.95]"
                       style={{
                         background: 'hsla(0,0%,100%,0.85)',
-                        border: '1px solid hsla(258,78%,60%,0.12)',
+                        border: '1px solid hsla(192,78%,60%,0.12)',
                         backdropFilter: 'blur(12px)',
-                        boxShadow: '0 4px 12px hsla(258,40%,40%,0.06)',
+                        boxShadow: '0 4px 12px hsla(192,40%,40%,0.06)',
                         animation: mobileOpen ? `slideInRight 0.4s ease-out ${0.05 + i * 0.04}s both` : undefined,
                       }}>
                       <div className="absolute inset-x-0 top-0 h-1/2 opacity-15 pointer-events-none" style={{ background: q.grad }} />
                       <div className="relative w-9 h-9 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6"
-                        style={{ background: q.grad, boxShadow: '0 6px 14px hsla(258,40%,40%,0.22), inset 0 1px 0 hsla(0,0%,100%,0.3)' }}>
+                        style={{ background: q.grad, boxShadow: '0 6px 14px hsla(192,40%,40%,0.22), inset 0 1px 0 hsla(0,0%,100%,0.3)' }}>
                         <q.icon size={17} className="text-white" strokeWidth={2.5} />
                       </div>
                       <span className="text-[10.5px] font-bold tracking-tight" style={{ color: 'hsl(226,35%,22%)' }}>{q.label}</span>
@@ -1154,14 +1154,14 @@ const Navbar = () => {
                             className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-full text-[11.5px] font-bold transition-all duration-300 hover:scale-105 active:scale-95"
                             style={{
                               background: 'hsla(0,0%,100%,0.85)',
-                              border: '1px solid hsla(258,78%,60%,0.18)',
+                              border: '1px solid hsla(192,78%,60%,0.18)',
                               color: 'hsl(226,35%,22%)',
                               backdropFilter: 'blur(10px)',
-                              boxShadow: '0 2px 6px hsla(258,40%,40%,0.06)',
+                              boxShadow: '0 2px 6px hsla(192,40%,40%,0.06)',
                             }}>
                             <span className="text-[13px]">{meta.icon}</span>
                             <span>{cat.name}</span>
-                            <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full" style={{ background: 'hsla(258,78%,55%,0.12)', color: 'hsl(258,78%,45%)' }}>{cat.count}</span>
+                            <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full" style={{ background: 'hsla(192,78%,55%,0.12)', color: 'hsl(192,78%,45%)' }}>{cat.count}</span>
                           </button>
                         );
                       })}
@@ -1171,14 +1171,14 @@ const Navbar = () => {
 
                 {/* Section Label */}
                 <div className="flex items-center gap-2 px-1 pb-2.5">
-                  <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,55%,0.3), transparent)' }} />
+                  <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsla(192,78%,55%,0.3), transparent)' }} />
                   <p className="text-[10px] font-bold tracking-[0.22em] uppercase flex items-center gap-1.5"
-                    style={{ background: 'linear-gradient(135deg, hsl(258,78%,50%), hsl(200,90%,45%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                    <Sparkles size={10} style={{ color: 'hsl(258,78%,55%)' }} />
+                    style={{ background: 'linear-gradient(135deg, hsl(192,78%,50%), hsl(200,90%,45%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                    <Sparkles size={10} style={{ color: 'hsl(192,78%,55%)' }} />
                     Account
                     <Sparkles size={10} style={{ color: 'hsl(200,90%,50%)' }} />
                   </p>
-                  <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,55%,0.3), transparent)' }} />
+                  <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsla(192,78%,55%,0.3), transparent)' }} />
                 </div>
 
                 {/* Detailed account list — same as logged-in, opens auth modal */}
@@ -1186,8 +1186,8 @@ const Navbar = () => {
                   { label: 'My Licenses',   icon: Key,    grad: 'linear-gradient(135deg, hsl(45,95%,55%), hsl(30,90%,55%))' },
                   { label: 'Addresses',     icon: MapPin, grad: 'linear-gradient(135deg, hsl(190,85%,45%), hsl(210,85%,50%))' },
                   { label: 'Notifications', icon: Bell,   grad: 'linear-gradient(135deg, hsl(38,95%,55%), hsl(20,90%,55%))' },
-                  { label: 'Referral',      icon: Gift,   grad: 'linear-gradient(135deg, hsl(280,75%,55%), hsl(310,70%,55%))' },
-                  { label: 'Security',      icon: Lock,   grad: 'linear-gradient(135deg, hsl(220,30%,40%), hsl(240,35%,45%))' },
+                  { label: 'Referral',      icon: Gift,   grad: 'linear-gradient(135deg, hsl(216,75%,55%), hsl(24,70%,55%))' },
+                  { label: 'Security',      icon: Lock,   grad: 'linear-gradient(135deg, hsl(220,30%,40%), hsl(192,35%,45%))' },
                   { label: 'Language',      icon: Globe,  grad: 'linear-gradient(135deg, hsl(170,70%,42%), hsl(190,75%,45%))' },
                 ].map((item, i) => (
                   <button
@@ -1197,17 +1197,17 @@ const Navbar = () => {
                     style={{
                       color: 'hsl(226,35%,20%)',
                       background: 'hsla(0,0%,100%,0.75)',
-                      border: '1px solid hsla(258,78%,60%,0.10)',
+                      border: '1px solid hsla(192,78%,60%,0.10)',
                       backdropFilter: 'blur(10px)',
                       animation: mobileOpen ? `slideInRight 0.4s ease-out ${0.25 + i * 0.04}s both` : undefined,
-                      boxShadow: '0 2px 6px hsla(258,40%,40%,0.05)',
+                      boxShadow: '0 2px 6px hsla(192,40%,40%,0.05)',
                     }}>
                     <div className="flex items-center justify-center w-9 h-9 rounded-xl shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[-4deg]"
-                      style={{ background: item.grad, boxShadow: '0 5px 12px hsla(258,40%,40%,0.20), inset 0 1px 0 hsla(0,0%,100%,0.25)' }}>
+                      style={{ background: item.grad, boxShadow: '0 5px 12px hsla(192,40%,40%,0.20), inset 0 1px 0 hsla(0,0%,100%,0.25)' }}>
                       <item.icon size={16} className="text-white" strokeWidth={2.4} />
                     </div>
                     <span className="flex-1 text-left tracking-tight">{item.label}</span>
-                    <Lock size={13} className="opacity-50" style={{ color: 'hsl(258,78%,55%)' }} />
+                    <Lock size={13} className="opacity-50" style={{ color: 'hsl(192,78%,55%)' }} />
                   </button>
                 ))}
 
@@ -1215,7 +1215,7 @@ const Navbar = () => {
                 {canInstall && (
                   <button onClick={() => { handleInstall(); if (!isIOS) setMobileOpen(false); }}
                     className="w-full group flex items-center gap-3 px-3 py-2.5 mt-2 rounded-2xl text-sm font-semibold transition-all duration-300 hover:scale-[1.015] active:scale-[0.985]"
-                    style={{ color: 'hsl(226,35%,20%)', background: 'hsla(0,0%,100%,0.75)', border: '1px solid hsla(258,78%,60%,0.10)', backdropFilter: 'blur(10px)' }}>
+                    style={{ color: 'hsl(226,35%,20%)', background: 'hsla(0,0%,100%,0.75)', border: '1px solid hsla(192,78%,60%,0.10)', backdropFilter: 'blur(10px)' }}>
                     <div className="flex items-center justify-center w-9 h-9 rounded-xl shrink-0 transition-transform duration-300 group-hover:scale-110"
                       style={{ background: 'linear-gradient(135deg, hsl(160,75%,45%), hsl(180,75%,45%))', boxShadow: '0 5px 12px hsla(160,40%,40%,0.22), inset 0 1px 0 hsla(0,0%,100%,0.25)' }}>
                       <Download size={16} className="text-white" strokeWidth={2.4} />
@@ -1225,9 +1225,9 @@ const Navbar = () => {
                 )}
                 {showIOSTip && (
                   <div className="mx-1 mt-2 mb-2 rounded-2xl p-3.5 text-[12px] leading-relaxed"
-                    style={{ background: 'linear-gradient(135deg, hsla(258,78%,55%,0.08), hsla(200,90%,50%,0.08))', border: '1px solid hsla(258,78%,55%,0.18)', backdropFilter: 'blur(10px)' }}>
+                    style={{ background: 'linear-gradient(135deg, hsla(192,78%,55%,0.08), hsla(200,90%,50%,0.08))', border: '1px solid hsla(192,78%,55%,0.18)', backdropFilter: 'blur(10px)' }}>
                     <p className="font-bold mb-2 flex items-center gap-1.5" style={{ color: 'hsl(226,35%,20%)' }}>
-                      <Share2 size={13} style={{ color: 'hsl(258,78%,55%)' }} /> Install on iOS:
+                      <Share2 size={13} style={{ color: 'hsl(192,78%,55%)' }} /> Install on iOS:
                     </p>
                     <p className="flex items-center gap-1.5" style={{ color: 'hsl(226,35%,45%)' }}>
                       1. Tap the <Share2 size={12} className="text-blue-500" /> Share button
@@ -1243,9 +1243,9 @@ const Navbar = () => {
                   onClick={() => { setAuthOpen(true); setMobileOpen(false); }}
                   className="w-full group relative flex items-center justify-center gap-2 px-3 py-3 mt-3 rounded-2xl text-[13px] font-bold text-white overflow-hidden transition-all duration-300 hover:scale-[1.03] active:scale-[0.97]"
                   style={{
-                    background: 'linear-gradient(135deg, hsl(258,78%,55%) 0%, hsl(280,75%,55%) 50%, hsl(258,78%,55%) 100%)',
+                    background: 'linear-gradient(135deg, hsl(192,78%,55%) 0%, hsl(216,75%,55%) 50%, hsl(192,78%,55%) 100%)',
                     backgroundSize: '200% 100%',
-                    boxShadow: '0 10px 24px hsla(258,78%,55%,0.42), inset 0 1px 0 hsla(0,0%,100%,0.30)',
+                    boxShadow: '0 10px 24px hsla(192,78%,55%,0.42), inset 0 1px 0 hsla(0,0%,100%,0.30)',
                     animation: 'shimmer 3s linear infinite',
                   }}>
                   <User size={15} strokeWidth={2.6} className="relative" />
@@ -1253,12 +1253,12 @@ const Navbar = () => {
                 </button>
 
                 {/* Trust footer */}
-                <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t" style={{ borderColor: 'hsla(258,78%,55%,0.12)' }}>
+                <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t" style={{ borderColor: 'hsla(192,78%,55%,0.12)' }}>
                   <div className="flex items-center gap-1.5">
                     <Shield size={12} style={{ color: 'hsl(150,70%,42%)' }} />
                     <span className="text-[10px] font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>100% Secure</span>
                   </div>
-                  <div className="w-1 h-1 rounded-full" style={{ background: 'hsl(258,78%,60%)' }} />
+                  <div className="w-1 h-1 rounded-full" style={{ background: 'hsl(192,78%,60%)' }} />
                   <div className="flex items-center gap-1.5">
                     <Star size={12} style={{ color: 'hsl(38,95%,55%)' }} fill="hsl(38,95%,55%)" />
                     <span className="text-[10px] font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Trusted Store</span>

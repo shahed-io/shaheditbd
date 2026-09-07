@@ -275,7 +275,7 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
         className="absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse 70% 50% at 20% 10%, hsla(258,85%,55%,0.45), transparent 60%), radial-gradient(ellipse 60% 50% at 85% 90%, hsla(190,80%,55%,0.40), transparent 60%), radial-gradient(ellipse 40% 30% at 50% 50%, hsla(290,75%,55%,0.18), transparent 70%), hsla(226,55%,6%,0.78)',
+            'radial-gradient(ellipse 70% 50% at 20% 10%, hsla(192,85%,55%,0.45), transparent 60%), radial-gradient(ellipse 60% 50% at 85% 90%, hsla(190,80%,55%,0.40), transparent 60%), radial-gradient(ellipse 40% 30% at 50% 50%, hsla(216,75%,55%,0.18), transparent 70%), hsla(226,55%,6%,0.78)',
           backdropFilter: 'blur(24px)',
           WebkitBackdropFilter: 'blur(24px)',
         }}
@@ -287,16 +287,16 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
         className="relative w-full max-w-md animate-scale-in rounded-[28px] p-[1.5px]"
         style={{
           background:
-            'linear-gradient(160deg, hsla(258,85%,75%,0.55) 0%, hsla(290,70%,75%,0.30) 30%, hsla(0,0%,100%,0.10) 50%, hsla(190,80%,70%,0.30) 75%, hsla(258,85%,75%,0.55) 100%)',
+            'linear-gradient(160deg, hsla(192,85%,75%,0.55) 0%, hsla(216,70%,75%,0.30) 30%, hsla(0,0%,100%,0.10) 50%, hsla(190,80%,70%,0.30) 75%, hsla(192,85%,75%,0.55) 100%)',
           boxShadow:
-            '0 50px 100px -30px hsla(258,80%,30%,0.55), 0 20px 50px -20px hsla(190,80%,40%,0.35), 0 0 0 1px hsla(0,0%,100%,0.08)',
+            '0 50px 100px -30px hsla(192,80%,30%,0.55), 0 20px 50px -20px hsla(190,80%,40%,0.35), 0 0 0 1px hsla(0,0%,100%,0.08)',
         }}
       >
         <div
           className="relative rounded-[26px] overflow-hidden"
           style={{
             background:
-              'linear-gradient(160deg, hsla(0,0%,100%,0.94) 0%, hsla(258,60%,98%,0.92) 50%, hsla(190,60%,98%,0.90) 100%)',
+              'linear-gradient(160deg, hsla(0,0%,100%,0.94) 0%, hsla(192,60%,98%,0.92) 50%, hsla(190,60%,98%,0.90) 100%)',
             backdropFilter: 'blur(28px) saturate(180%)',
             WebkitBackdropFilter: 'blur(28px) saturate(180%)',
           }}
@@ -304,7 +304,7 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
         {/* Soft decorative blobs */}
         <div
           className="pointer-events-none absolute -top-24 -right-20 w-64 h-64 rounded-full opacity-40 blur-3xl"
-          style={{ background: 'radial-gradient(circle, hsl(258,90%,72%) 0%, transparent 70%)' }}
+          style={{ background: 'radial-gradient(circle, hsl(192,90%,72%) 0%, transparent 70%)' }}
         />
         <div
           className="pointer-events-none absolute -bottom-28 -left-16 w-72 h-72 rounded-full opacity-35 blur-3xl"
@@ -316,7 +316,7 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
           className="relative px-8 pt-9 pb-6"
           style={{
             background:
-              'linear-gradient(180deg, hsla(258,78%,55%,0.10) 0%, hsla(290,70%,60%,0.06) 50%, transparent 100%)',
+              'linear-gradient(180deg, hsla(192,78%,55%,0.10) 0%, hsla(216,70%,60%,0.06) 50%, transparent 100%)',
           }}
         >
           {/* Top accent line */}
@@ -324,7 +324,7 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
             className="absolute top-0 left-8 right-8 h-px"
             style={{
               background:
-                'linear-gradient(90deg, transparent, hsla(258,78%,55%,0.5), hsla(290,70%,60%,0.6), hsla(190,75%,55%,0.5), transparent)',
+                'linear-gradient(90deg, transparent, hsla(192,78%,55%,0.5), hsla(216,70%,60%,0.6), hsla(190,75%,55%,0.5), transparent)',
             }}
           />
 
@@ -334,10 +334,10 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
             className="absolute top-4 right-4 w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110 hover:rotate-90 z-10"
             style={{
               background: 'hsla(0,0%,100%,0.7)',
-              border: '1px solid hsla(258,78%,75%,0.30)',
-              color: 'hsl(258,78%,40%)',
+              border: '1px solid hsla(192,78%,75%,0.30)',
+              color: 'hsl(192,78%,40%)',
               backdropFilter: 'blur(8px)',
-              boxShadow: '0 4px 12px -2px hsla(258,78%,40%,0.15)',
+              boxShadow: '0 4px 12px -2px hsla(192,78%,40%,0.15)',
             }}
           >
             <X size={18} />
@@ -347,7 +347,7 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
             <button
               onClick={() => resetAndSwitch('login')}
               className="absolute top-5 left-5 flex items-center gap-1.5 text-xs font-semibold transition-colors z-10"
-              style={{ color: 'hsl(258,78%,45%)' }}
+              style={{ color: 'hsl(192,78%,45%)' }}
             >
               <ArrowLeft size={14} /> ফিরুন
             </button>
@@ -359,17 +359,17 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
               className="relative p-3.5 rounded-2xl transition-transform hover:scale-105"
               style={{
                 background:
-                  'linear-gradient(160deg, hsla(0,0%,100%,0.95) 0%, hsla(258,40%,97%,0.85) 100%)',
-                border: '1px solid hsla(258,78%,75%,0.45)',
+                  'linear-gradient(160deg, hsla(0,0%,100%,0.95) 0%, hsla(192,40%,97%,0.85) 100%)',
+                border: '1px solid hsla(192,78%,75%,0.45)',
                 boxShadow:
-                  '0 14px 40px -10px hsla(258,78%,45%,0.45), 0 4px 12px -4px hsla(190,75%,45%,0.30), inset 0 1px 0 hsla(0,0%,100%,0.95), inset 0 -1px 0 hsla(258,78%,80%,0.20)',
+                  '0 14px 40px -10px hsla(192,78%,45%,0.45), 0 4px 12px -4px hsla(190,75%,45%,0.30), inset 0 1px 0 hsla(0,0%,100%,0.95), inset 0 -1px 0 hsla(192,78%,80%,0.20)',
               }}
             >
               <div
                 className="absolute -inset-2 rounded-3xl opacity-60 blur-xl -z-10"
                 style={{
                   background:
-                    'conic-gradient(from 180deg at 50% 50%, hsl(258,85%,70%), hsl(290,75%,68%), hsl(190,80%,65%), hsl(258,85%,70%))',
+                    'conic-gradient(from 180deg at 50% 50%, hsl(192,85%,70%), hsl(216,75%,68%), hsl(190,80%,65%), hsl(192,85%,70%))',
                   animation: 'pulseGlow 4s ease-in-out infinite',
                 }}
               />
@@ -383,7 +383,7 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
               style={{
                 fontFamily: 'Rajdhani, sans-serif',
                 background:
-                  'linear-gradient(135deg, hsl(258,78%,38%) 0%, hsl(290,70%,42%) 50%, hsl(190,75%,38%) 100%)',
+                  'linear-gradient(135deg, hsl(192,78%,38%) 0%, hsl(216,70%,42%) 50%, hsl(190,75%,38%) 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
@@ -406,9 +406,9 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
             className="relative px-8 py-3.5 grid grid-cols-3 gap-2 text-center"
             style={{
               background:
-                'linear-gradient(90deg, hsla(258,78%,98%,0.7) 0%, hsla(290,70%,98%,0.5) 50%, hsla(190,75%,97%,0.7) 100%)',
-              borderTop: '1px solid hsla(258,78%,75%,0.18)',
-              borderBottom: '1px solid hsla(258,78%,75%,0.18)',
+                'linear-gradient(90deg, hsla(192,78%,98%,0.7) 0%, hsla(216,70%,98%,0.5) 50%, hsla(190,75%,97%,0.7) 100%)',
+              borderTop: '1px solid hsla(192,78%,75%,0.18)',
+              borderBottom: '1px solid hsla(192,78%,75%,0.18)',
             }}
           >
             {[
@@ -417,8 +417,8 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
               { icon: <Headphones size={14} />, label: '২৪/৭ সাপোর্ট' },
             ].map((b, i) => (
               <div key={i} className="flex flex-col items-center gap-1">
-                <span style={{ color: 'hsl(258,78%,50%)' }}>{b.icon}</span>
-                <span className="text-[10px] font-semibold" style={{ color: 'hsl(258,78%,35%)' }}>{b.label}</span>
+                <span style={{ color: 'hsl(192,78%,50%)' }}>{b.icon}</span>
+                <span className="text-[10px] font-semibold" style={{ color: 'hsl(192,78%,35%)' }}>{b.label}</span>
               </div>
             ))}
           </div>
@@ -430,7 +430,7 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
         {/* Forgot password sent state */}
         {mode === 'forgot' && forgotSent ? (
           <div className="text-center py-4">
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'hsl(243,75%,97%)' }}>
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'hsl(192,75%,97%)' }}>
               <Mail size={28} style={{ color: 'hsl(var(--primary))' }} />
             </div>
             <p className="text-sm font-semibold mb-1" style={{ color: 'hsl(var(--foreground))' }}>ইমেইল পাঠানো হয়েছে!</p>
@@ -453,11 +453,11 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
                     className="group relative rounded-xl py-3 px-3 flex items-center justify-center gap-2 text-[13px] font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60"
                     style={{
                       background:
-                        'linear-gradient(160deg, hsla(0,0%,100%,0.95) 0%, hsla(258,40%,97%,0.85) 100%)',
-                      border: '1px solid hsla(258,78%,75%,0.35)',
+                        'linear-gradient(160deg, hsla(0,0%,100%,0.95) 0%, hsla(192,40%,97%,0.85) 100%)',
+                      border: '1px solid hsla(192,78%,75%,0.35)',
                       color: 'hsl(226,40%,18%)',
                       boxShadow:
-                        '0 6px 18px -6px hsla(258,78%,45%,0.20), inset 0 1px 0 hsla(0,0%,100%,0.95)',
+                        '0 6px 18px -6px hsla(192,78%,45%,0.20), inset 0 1px 0 hsla(0,0%,100%,0.95)',
                       backdropFilter: 'blur(10px)',
                     }}
                   >
@@ -489,9 +489,9 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
                   </button>
                 </div>
                 <div className="flex items-center gap-3 mb-5">
-                  <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,40%,75%,0.40), transparent)' }} />
+                  <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, hsla(192,40%,75%,0.40), transparent)' }} />
                   <span className="text-[11px] uppercase tracking-[0.18em] font-bold" style={{ color: 'hsl(226,30%,55%)' }}>অথবা ইমেইল দিয়ে</span>
-                  <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,40%,75%,0.40), transparent)' }} />
+                  <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, hsla(192,40%,75%,0.40), transparent)' }} />
                 </div>
               </>
             )}
@@ -561,7 +561,7 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
                           style={{
                             background: i < pwScore
                               ? `linear-gradient(90deg, hsl(${pwScore <= 1 ? 0 : pwScore === 2 ? 30 : pwScore === 3 ? 45 : 158}, 80%, 55%), hsl(${pwScore <= 1 ? 0 : pwScore === 2 ? 30 : pwScore === 3 ? 45 : 158}, 80%, 65%))`
-                              : 'hsla(258,30%,85%,0.5)',
+                              : 'hsla(192,30%,85%,0.5)',
                           }}
                         />
                       ))}
@@ -598,7 +598,7 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
               {/* Forgot password link */}
               {mode === 'login' && (
                 <div className="text-right -mt-1">
-                  <button type="button" onClick={() => resetAndSwitch('forgot')} className="text-xs font-semibold hover:underline" style={{ color: 'hsl(258,78%,45%)' }}>
+                  <button type="button" onClick={() => resetAndSwitch('forgot')} className="text-xs font-semibold hover:underline" style={{ color: 'hsl(192,78%,45%)' }}>
                     পাসওয়ার্ড ভুলে গেছেন?
                   </button>
                 </div>
@@ -642,10 +642,10 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
                       className="w-4 h-4 rounded-md border flex items-center justify-center transition-all"
                       style={{
                         background: agreeTerms
-                          ? 'linear-gradient(135deg, hsl(258,78%,55%), hsl(190,75%,50%))'
+                          ? 'linear-gradient(135deg, hsl(192,78%,55%), hsl(190,75%,50%))'
                           : 'hsla(0,0%,100%,0.7)',
-                        borderColor: agreeTerms ? 'hsl(258,78%,55%)' : 'hsla(258,40%,75%,0.5)',
-                        boxShadow: agreeTerms ? '0 0 0 3px hsla(258,78%,60%,0.18)' : 'none',
+                        borderColor: agreeTerms ? 'hsl(192,78%,55%)' : 'hsla(192,40%,75%,0.5)',
+                        boxShadow: agreeTerms ? '0 0 0 3px hsla(192,78%,60%,0.18)' : 'none',
                       }}
                     >
                       {agreeTerms && <CheckCircle2 size={10} className="text-white" />}
@@ -653,9 +653,9 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
                   </span>
                   <span className="text-[11px] leading-relaxed" style={{ color: 'hsl(226,30%,40%)' }}>
                     আমি{' '}
-                    <a href="/terms-conditions" target="_blank" className="font-semibold hover:underline" style={{ color: 'hsl(258,78%,45%)' }}>শর্তাবলী</a>
+                    <a href="/terms-conditions" target="_blank" className="font-semibold hover:underline" style={{ color: 'hsl(192,78%,45%)' }}>শর্তাবলী</a>
                     {' '}এবং{' '}
-                    <a href="/privacy-policy" target="_blank" className="font-semibold hover:underline" style={{ color: 'hsl(258,78%,45%)' }}>প্রাইভেসি পলিসি</a>
+                    <a href="/privacy-policy" target="_blank" className="font-semibold hover:underline" style={{ color: 'hsl(192,78%,45%)' }}>প্রাইভেসি পলিসি</a>
                     {' '}মেনে নিচ্ছি
                   </span>
                 </label>
@@ -664,9 +664,9 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
               <button type="submit" disabled={!canSubmit}
                 className="relative w-full py-3.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 overflow-hidden group"
                 style={{
-                  background: 'linear-gradient(135deg, hsl(258,78%,55%) 0%, hsl(290,70%,55%) 50%, hsl(190,75%,50%) 100%)',
+                  background: 'linear-gradient(135deg, hsl(192,78%,55%) 0%, hsl(216,70%,55%) 50%, hsl(190,75%,50%) 100%)',
                   color: 'white',
-                  boxShadow: '0 10px 30px -8px hsla(258,78%,50%,0.55), inset 0 1px 0 hsla(0,0%,100%,0.35)',
+                  boxShadow: '0 10px 30px -8px hsla(192,78%,50%,0.55), inset 0 1px 0 hsla(0,0%,100%,0.35)',
                 }}
               >
                 {/* Shimmer effect on hover */}
@@ -703,7 +703,7 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
             )}
 
             {/* Trust badges footer */}
-            <div className="mt-5 pt-4 border-t flex items-center justify-around" style={{ borderColor: 'hsla(258,78%,75%,0.15)' }}>
+            <div className="mt-5 pt-4 border-t flex items-center justify-around" style={{ borderColor: 'hsla(192,78%,75%,0.15)' }}>
               {[
                 { icon: <ShieldCheck size={12} />, label: 'SSL সুরক্ষিত' },
                 { icon: <LockIcon size={12} />, label: 'এনক্রিপ্টেড' },
@@ -747,21 +747,21 @@ const GlassField = ({ icon, type, placeholder, value, onChange, onBlur, onKeyDow
   const borderColor = invalid
     ? 'hsl(0,75%,60%)'
     : focused
-    ? 'hsl(258,78%,60%)'
+    ? 'hsl(192,78%,60%)'
     : showCheck
     ? 'hsla(158,75%,55%,0.55)'
-    : 'hsla(258,40%,80%,0.45)';
+    : 'hsla(192,40%,80%,0.45)';
   const glow = invalid
     ? '0 0 0 4px hsla(0,75%,60%,0.12)'
     : focused
-    ? '0 0 0 4px hsla(258,78%,60%,0.18), 0 8px 22px -8px hsla(258,78%,55%,0.35)'
+    ? '0 0 0 4px hsla(192,78%,60%,0.18), 0 8px 22px -8px hsla(192,78%,55%,0.35)'
     : 'inset 0 1px 0 hsla(0,0%,100%,0.7)';
   return (
     <div>
       <div
         className="relative flex items-center rounded-xl transition-all duration-300"
         style={{
-          background: 'linear-gradient(135deg, hsla(0,0%,100%,0.85) 0%, hsla(258,78%,98%,0.75) 100%)',
+          background: 'linear-gradient(135deg, hsla(0,0%,100%,0.85) 0%, hsla(192,78%,98%,0.75) 100%)',
           border: `1px solid ${borderColor}`,
           boxShadow: glow,
           backdropFilter: 'blur(12px)',
@@ -771,7 +771,7 @@ const GlassField = ({ icon, type, placeholder, value, onChange, onBlur, onKeyDow
         <span
           className="pl-3.5 transition-all duration-300"
           style={{
-            color: invalid ? 'hsl(0,75%,55%)' : focused ? 'hsl(258,78%,55%)' : 'hsl(226,30%,55%)',
+            color: invalid ? 'hsl(0,75%,55%)' : focused ? 'hsl(192,78%,55%)' : 'hsl(226,30%,55%)',
             transform: focused ? 'scale(1.1)' : 'scale(1)',
           }}
         >
@@ -805,7 +805,7 @@ const GlassField = ({ icon, type, placeholder, value, onChange, onBlur, onKeyDow
           style={{
             background: invalid
               ? 'linear-gradient(90deg, hsl(0,75%,60%), hsl(20,80%,60%))'
-              : 'linear-gradient(90deg, hsl(258,78%,60%), hsl(290,70%,60%), hsl(190,75%,55%))',
+              : 'linear-gradient(90deg, hsl(192,78%,60%), hsl(216,70%,60%), hsl(190,75%,55%))',
             transform: focused ? 'scaleX(1)' : 'scaleX(0)',
             transformOrigin: 'left',
             opacity: focused ? 1 : 0,

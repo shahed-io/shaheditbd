@@ -31,8 +31,8 @@ export const DEFAULT_PAYMENT_CONFIGS: PaymentMethodConfig[] = [
     number: '01820060046',
     type: 'Send Money',
     logoUrl: '',
-    accentColor: 'hsl(338,90%,48%)',
-    bgColor: 'hsla(338,90%,48%,0.07)',
+    accentColor: 'hsl(24,90%,48%)',
+    bgColor: 'hsla(24,90%,48%,0.07)',
     steps: [
       'আপনার BKash অ্যাপ বা *247# ডায়াল করুন',
       '"Send Money" অপশনটি সিলেক্ট করুন',
@@ -71,8 +71,8 @@ export const DEFAULT_PAYMENT_CONFIGS: PaymentMethodConfig[] = [
     number: '01820060046',
     type: 'Send Money',
     logoUrl: '',
-    accentColor: 'hsl(270,80%,48%)',
-    bgColor: 'hsla(270,80%,48%,0.07)',
+    accentColor: 'hsl(216,80%,48%)',
+    bgColor: 'hsla(216,80%,48%,0.07)',
     steps: [
       'আপনার Rocket অ্যাপ বা *322# ডায়াল করুন',
       '"Send Money" অপশনটি সিলেক্ট করুন',
@@ -111,8 +111,8 @@ export const DEFAULT_PAYMENT_CONFIGS: PaymentMethodConfig[] = [
     number: '01820060046',
     type: 'Merchant Payment',
     logoUrl: '',
-    accentColor: 'hsl(338,85%,42%)',
-    bgColor: 'hsla(338,85%,42%,0.07)',
+    accentColor: 'hsl(24,85%,42%)',
+    bgColor: 'hsla(24,85%,42%,0.07)',
     steps: [
       'আপনার BKash অ্যাপ বা *247# ডায়াল করুন',
       '"Payment" অপশনটি সিলেক্ট করুন',

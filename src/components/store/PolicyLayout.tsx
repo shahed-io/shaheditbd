@@ -14,7 +14,7 @@ export const GlassCard = ({ children, className = '' }: { children: React.ReactN
       backdropFilter: 'blur(28px) saturate(180%)',
       WebkitBackdropFilter: 'blur(28px) saturate(180%)',
       border: '1px solid rgba(255,255,255,0.75)',
-      boxShadow: '0 8px 40px hsla(258,78%,55%,0.10), 0 1px 0 rgba(255,255,255,0.9) inset',
+      boxShadow: '0 8px 40px hsla(192,78%,55%,0.10), 0 1px 0 rgba(255,255,255,0.9) inset',
     }}
   >
     {/* Top shimmer line */}
@@ -36,14 +36,14 @@ export const SectionCard = ({
       background: 'linear-gradient(155deg, rgba(255,255,255,0.70) 0%, rgba(255,255,255,0.45) 100%)',
       backdropFilter: 'blur(20px)',
       WebkitBackdropFilter: 'blur(20px)',
-      border: `1px solid hsla(258,78%,75%,0.22)`,
-      boxShadow: '0 2px 16px hsla(258,78%,55%,0.06)',
+      border: `1px solid hsla(192,78%,75%,0.22)`,
+      boxShadow: '0 2px 16px hsla(192,78%,55%,0.06)',
     }}>
     {/* Header */}
     <div className="flex items-center gap-3 px-6 py-4"
       style={{
-        background: `linear-gradient(135deg, hsla(258,78%,55%,0.07), hsla(200,90%,45%,0.05))`,
-        borderBottom: '1px solid hsla(258,78%,75%,0.15)',
+        background: `linear-gradient(135deg, hsla(192,78%,55%,0.07), hsla(200,90%,45%,0.05))`,
+        borderBottom: '1px solid hsla(192,78%,75%,0.15)',
       }}>
       <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
         style={{ background: `linear-gradient(135deg, ${accentFrom}, ${accentTo})`, boxShadow: `0 4px 12px ${accentFrom}50` }}>
@@ -61,17 +61,17 @@ export const SectionCard = ({
 export const Bullet = ({ children, color }: { children: React.ReactNode; color?: string }) => (
   <li className="flex items-start gap-2.5">
     <span className="mt-[7px] w-1.5 h-1.5 rounded-full flex-shrink-0"
-      style={{ background: color || 'hsl(258,78%,55%)' }} />
+      style={{ background: color || 'hsl(192,78%,55%)' }} />
     <span>{children}</span>
   </li>
 );
 
 export const InfoRow = ({ label, value }: { label: string; value: string }) => (
   <div className="flex items-center justify-between py-2.5 px-1"
-    style={{ borderBottom: '1px solid hsla(258,78%,55%,0.08)' }}>
+    style={{ borderBottom: '1px solid hsla(192,78%,55%,0.08)' }}>
     <span className="text-[12px] font-semibold" style={{ color: 'hsl(226,35%,30%)' }}>{label}</span>
     <span className="text-[12px] font-bold px-3 py-1 rounded-full"
-      style={{ background: 'hsla(258,78%,55%,0.08)', color: 'hsl(258,78%,45%)' }}>{value}</span>
+      style={{ background: 'hsla(192,78%,55%,0.08)', color: 'hsl(192,78%,45%)' }}>{value}</span>
   </div>
 );
 
@@ -119,7 +119,7 @@ const PolicyLayout = ({
 }: PolicyLayoutProps) => (
   <div className="min-h-screen text-foreground"
     style={{
-      background: `linear-gradient(145deg, hsl(258,55%,97%) 0%, hsl(220,40%,96%) 40%, hsl(200,50%,96%) 100%)`,
+      background: `linear-gradient(145deg, hsl(192,55%,97%) 0%, hsl(220,40%,96%) 40%, hsl(200,50%,96%) 100%)`,
     }}>
     <SEOHead title={seoTitle} description={seoDesc} />
     <Navbar />

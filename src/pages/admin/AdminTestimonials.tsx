@@ -16,7 +16,7 @@ type Testimonial = {
   color: string;
 };
 
-const COLORS = ['hsl(258,78%,55%)', 'hsl(15,100%,58%)', 'hsl(158,64%,40%)', 'hsl(38,100%,50%)', 'hsl(200,90%,50%)', 'hsl(330,85%,55%)'];
+const COLORS = ['hsl(192,78%,55%)', 'hsl(15,100%,58%)', 'hsl(158,64%,40%)', 'hsl(38,100%,50%)', 'hsl(200,90%,50%)', 'hsl(24,85%,55%)'];
 const EMPTY = (): Testimonial => ({
   id: crypto.randomUUID(),
   name: 'নতুন গ্রাহক',

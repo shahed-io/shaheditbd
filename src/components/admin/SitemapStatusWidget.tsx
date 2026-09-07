@@ -141,7 +141,7 @@ const SitemapStatusWidget = () => {
         <>
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
             <Stat icon={Layers} label="Sitemaps" value={fmt(data.totals.sitemaps)} sub="Submitted to GSC" accent="hsl(220 90% 60%)" />
-            <Stat icon={FileText} label="URLs Submitted" value={fmt(data.totals.submitted)} sub="From sitemaps" accent="hsl(260 90% 60%)" />
+            <Stat icon={FileText} label="URLs Submitted" value={fmt(data.totals.submitted)} sub="From sitemaps" accent="hsl(192 90% 60%)" />
             <Stat icon={CheckCircle2} label="URLs Indexed" value={fmt(data.totals.indexed)} sub={`${data.totals.indexCoverage}% coverage`} accent="hsl(150 70% 45%)" />
             <Stat icon={AlertTriangle} label="Warnings" value={fmt(data.totals.warnings)} accent="hsl(40 95% 55%)" />
             <Stat icon={AlertCircle} label="Errors" value={fmt(data.totals.errors)} accent="hsl(0 80% 60%)" />

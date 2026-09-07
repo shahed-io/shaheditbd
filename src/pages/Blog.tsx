@@ -86,19 +86,19 @@ const Blog = () => {
       <section className="relative overflow-hidden pt-28 pb-20">
         {/* Background layers */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% -10%, hsla(271,91%,65%,0.18) 0%, transparent 65%)' }} />
+          <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% -10%, hsla(216,91%,65%,0.18) 0%, transparent 65%)' }} />
           <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 50% 40% at 80% 60%, hsla(200,90%,55%,0.08) 0%, transparent 60%)' }} />
           {/* Animated grid dots */}
           <div className="absolute inset-0 opacity-[0.025]"
-            style={{ backgroundImage: 'radial-gradient(circle, hsl(271,91%,65%) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
+            style={{ backgroundImage: 'radial-gradient(circle, hsl(216,91%,65%) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
         </div>
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center relative">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold mb-6 border"
             style={{
-              background: 'hsla(271,91%,65%,0.1)',
-              borderColor: 'hsla(271,91%,65%,0.3)',
-              color: 'hsl(271,91%,65%)'
+              background: 'hsla(216,91%,65%,0.1)',
+              borderColor: 'hsla(216,91%,65%,0.3)',
+              color: 'hsl(216,91%,65%)'
             }}>
             <Sparkles size={12} className="animate-pulse" />
             ব্লগ ও আর্টিকেল
@@ -106,7 +106,7 @@ const Blog = () => {
           </div>
 
           <h1 className="text-5xl sm:text-6xl font-black mb-5 leading-tight" style={{ fontFamily: 'Orbitron, sans-serif' }}>
-            <span style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(200,90%,55%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            <span style={{ background: 'linear-gradient(135deg, hsl(216,91%,65%), hsl(200,90%,55%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               Blog
             </span>
             <span className="text-foreground"> & Guides</span>
@@ -118,9 +118,9 @@ const Blog = () => {
 
           {/* Search bar */}
           <div className="relative max-w-lg mx-auto">
-            <div className="absolute inset-0 rounded-2xl blur-xl opacity-20" style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(200,90%,55%))' }} />
+            <div className="absolute inset-0 rounded-2xl blur-xl opacity-20" style={{ background: 'linear-gradient(135deg, hsl(216,91%,65%), hsl(200,90%,55%))' }} />
             <div className="relative flex items-center border rounded-2xl overflow-hidden"
-              style={{ background: 'hsl(var(--card))', borderColor: 'hsla(271,91%,65%,0.3)' }}>
+              style={{ background: 'hsl(var(--card))', borderColor: 'hsla(216,91%,65%,0.3)' }}>
               <Search size={16} className="absolute left-5 text-muted-foreground" />
               <input
                 value={search}
@@ -183,8 +183,8 @@ const Blog = () => {
                     boxShadow: '0 2px 20px hsla(226,35%,12%,0.08)'
                   }}
                   onMouseEnter={e => {
-                    (e.currentTarget as HTMLElement).style.borderColor = 'hsla(271,91%,65%,0.4)';
-                    (e.currentTarget as HTMLElement).style.boxShadow = '0 20px 60px hsla(271,91%,65%,0.15)';
+                    (e.currentTarget as HTMLElement).style.borderColor = 'hsla(216,91%,65%,0.4)';
+                    (e.currentTarget as HTMLElement).style.boxShadow = '0 20px 60px hsla(216,91%,65%,0.15)';
                   }}
                   onMouseLeave={e => {
                     (e.currentTarget as HTMLElement).style.borderColor = 'hsl(var(--border))';
@@ -200,7 +200,7 @@ const Blog = () => {
                   ) : (
                     <div className={`${i === 0 ? 'h-56' : 'h-40'} relative overflow-hidden flex items-center justify-center bg-gradient-to-br ${gradients[i % gradients.length]}`}>
                       <div className="absolute inset-0 opacity-30"
-                        style={{ backgroundImage: 'radial-gradient(circle at 30% 50%, hsla(271,91%,65%,0.3) 0%, transparent 50%)' }} />
+                        style={{ backgroundImage: 'radial-gradient(circle at 30% 50%, hsla(216,91%,65%,0.3) 0%, transparent 50%)' }} />
                       <BookOpen size={i === 0 ? 56 : 40} className="text-primary opacity-40 group-hover:scale-110 transition-transform duration-500" />
                     </div>
                   )}
@@ -226,8 +226,8 @@ const Blog = () => {
                         <span className="flex items-center gap-1.5"><Clock size={11} />{post.reading_time}m পড়া</span>
                       </div>
                       <div className="w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300 group-hover:translate-x-1"
-                        style={{ background: 'hsla(271,91%,65%,0.1)' }}>
-                        <ArrowRight size={13} style={{ color: 'hsl(271,91%,65%)' }} />
+                        style={{ background: 'hsla(216,91%,65%,0.1)' }}>
+                        <ArrowRight size={13} style={{ color: 'hsl(216,91%,65%)' }} />
                       </div>
                     </div>
                   </div>
@@ -246,9 +246,9 @@ const Blog = () => {
                 onClick={() => setSelectedCat('all')}
                 className="px-5 py-2 rounded-full text-xs font-bold transition-all duration-300"
                 style={selectedCat === 'all' ? {
-                  background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(200,90%,55%))',
+                  background: 'linear-gradient(135deg, hsl(216,91%,65%), hsl(200,90%,55%))',
                   color: 'white',
-                  boxShadow: '0 4px 15px hsla(271,91%,65%,0.4)'
+                  boxShadow: '0 4px 15px hsla(216,91%,65%,0.4)'
                 } : {
                   background: 'hsl(var(--card))',
                   border: '1px solid hsl(var(--border))',
@@ -286,7 +286,7 @@ const Blog = () => {
             ) : filtered.length === 0 ? (
               <div className="text-center py-24 text-muted-foreground">
                 <div className="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center"
-                  style={{ background: 'hsla(271,91%,65%,0.08)' }}>
+                  style={{ background: 'hsla(216,91%,65%,0.08)' }}>
                   <BookOpen size={36} className="opacity-30" />
                 </div>
                 <p className="font-semibold text-sm">কোনো পোস্ট পাওয়া যায়নি</p>
@@ -311,8 +311,8 @@ const Blog = () => {
                       boxShadow: '0 2px 16px hsla(226,35%,12%,0.06)'
                     }}
                     onMouseEnter={e => {
-                      (e.currentTarget as HTMLElement).style.borderColor = 'hsla(271,91%,65%,0.35)';
-                      (e.currentTarget as HTMLElement).style.boxShadow = '0 16px 48px hsla(271,91%,65%,0.12)';
+                      (e.currentTarget as HTMLElement).style.borderColor = 'hsla(216,91%,65%,0.35)';
+                      (e.currentTarget as HTMLElement).style.boxShadow = '0 16px 48px hsla(216,91%,65%,0.12)';
                     }}
                     onMouseLeave={e => {
                       (e.currentTarget as HTMLElement).style.borderColor = 'hsl(var(--border))';
@@ -328,14 +328,14 @@ const Blog = () => {
                     ) : (
                       <div className={`h-44 relative overflow-hidden flex items-center justify-center bg-gradient-to-br ${gradients[idx % gradients.length]}`}>
                         <div className="absolute inset-0"
-                          style={{ backgroundImage: 'radial-gradient(circle at 30% 50%, hsla(271,91%,65%,0.2) 0%, transparent 60%)' }} />
+                          style={{ backgroundImage: 'radial-gradient(circle at 30% 50%, hsla(216,91%,65%,0.2) 0%, transparent 60%)' }} />
                         <BookOpen size={44} className="text-primary opacity-25 group-hover:scale-110 group-hover:opacity-40 transition-all duration-500" />
                       </div>
                     )}
 
                     {/* Shine effect */}
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                      style={{ background: 'linear-gradient(135deg, transparent 0%, hsla(271,91%,65%,0.03) 50%, transparent 100%)' }} />
+                      style={{ background: 'linear-gradient(135deg, transparent 0%, hsla(216,91%,65%,0.03) 50%, transparent 100%)' }} />
 
                     <div className="p-5 flex flex-col flex-1">
                       {post.blog_categories && (
@@ -360,8 +360,8 @@ const Blog = () => {
                         style={{ borderColor: 'hsla(226,35%,12%,0.06)' }}>
                         <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
                           <div className="w-5 h-5 rounded-full flex items-center justify-center"
-                            style={{ background: 'hsla(271,91%,65%,0.1)' }}>
-                            <User size={9} style={{ color: 'hsl(271,91%,65%)' }} />
+                            style={{ background: 'hsla(216,91%,65%,0.1)' }}>
+                            <User size={9} style={{ color: 'hsl(216,91%,65%)' }} />
                           </div>
                           <span className="font-medium inline-flex items-center gap-0.5">
                             {post.author_name || 'Admin'}
@@ -372,8 +372,8 @@ const Blog = () => {
                           <span>{post.reading_time}m পড়া</span>
                         </div>
                         <div className="w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300 group-hover:translate-x-1 group-hover:scale-110"
-                          style={{ background: 'hsla(271,91%,65%,0.1)' }}>
-                          <ArrowRight size={12} style={{ color: 'hsl(271,91%,65%)' }} />
+                          style={{ background: 'hsla(216,91%,65%,0.1)' }}>
+                          <ArrowRight size={12} style={{ color: 'hsl(216,91%,65%)' }} />
                         </div>
                       </div>
                     </div>
@@ -394,8 +394,8 @@ const Blog = () => {
                 style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
                 <h3 className="font-bold text-foreground text-sm mb-4 flex items-center gap-2">
                   <div className="w-5 h-5 rounded-lg flex items-center justify-center"
-                    style={{ background: 'hsla(271,91%,65%,0.15)' }}>
-                    <ChevronRight size={12} style={{ color: 'hsl(271,91%,65%)' }} />
+                    style={{ background: 'hsla(216,91%,65%,0.15)' }}>
+                    <ChevronRight size={12} style={{ color: 'hsl(216,91%,65%)' }} />
                   </div>
                   ক্যাটাগরি
                 </h3>
@@ -450,9 +450,9 @@ const Blog = () => {
                       onClick={() => setSelectedTag(selectedTag === tag ? '' : tag)}
                       className="px-3 py-1.5 rounded-xl text-[11px] font-semibold transition-all duration-200 hover:scale-105"
                       style={selectedTag === tag ? {
-                        background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(200,90%,55%))',
+                        background: 'linear-gradient(135deg, hsl(216,91%,65%), hsl(200,90%,55%))',
                         color: 'white',
-                        boxShadow: '0 3px 10px hsla(271,91%,65%,0.35)'
+                        boxShadow: '0 3px 10px hsla(216,91%,65%,0.35)'
                       } : {
                         background: 'hsl(var(--muted))',
                         color: 'hsl(var(--muted-foreground))',
@@ -470,14 +470,14 @@ const Blog = () => {
             <Link to="/link"
               className="group block rounded-3xl p-5 border relative overflow-hidden transition-all duration-300 hover:-translate-y-1"
               style={{
-                background: 'linear-gradient(135deg, hsla(271,91%,65%,0.08), hsla(200,90%,55%,0.06))',
-                borderColor: 'hsla(271,91%,65%,0.2)'
+                background: 'linear-gradient(135deg, hsla(216,91%,65%,0.08), hsla(200,90%,55%,0.06))',
+                borderColor: 'hsla(216,91%,65%,0.2)'
               }}
-              onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = 'hsla(271,91%,65%,0.5)'}
-              onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = 'hsla(271,91%,65%,0.2)'}
+              onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = 'hsla(216,91%,65%,0.5)'}
+              onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = 'hsla(216,91%,65%,0.2)'}
             >
               <div className="absolute top-0 right-0 w-20 h-20 rounded-full opacity-10 -translate-y-4 translate-x-4"
-                style={{ background: 'radial-gradient(circle, hsl(271,91%,65%), transparent)' }} />
+                style={{ background: 'radial-gradient(circle, hsl(216,91%,65%), transparent)' }} />
               <div className="relative">
                 <div className="text-2xl mb-2">🆘</div>
                 <h3 className="font-bold text-foreground text-sm mb-1 group-hover:text-primary transition-colors">
@@ -485,7 +485,7 @@ const Blog = () => {
                 </h3>
                 <p className="text-xs text-muted-foreground mb-3 leading-relaxed">সাধারণ প্রশ্ন ও সমাধান পান</p>
                 <span className="text-xs font-semibold flex items-center gap-1.5 transition-all group-hover:gap-2.5"
-                  style={{ color: 'hsl(271,91%,65%)' }}>
+                  style={{ color: 'hsl(216,91%,65%)' }}>
                   Help দেখুন <ArrowRight size={12} />
                 </span>
               </div>

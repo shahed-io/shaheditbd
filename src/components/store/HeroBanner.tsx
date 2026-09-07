@@ -25,7 +25,7 @@ const STATIC_SLIDES: Slide[] = [
     subtitle: 'Design & Development',
     desc: 'আপনার প্রতিষ্ঠানের জন্য আধুনিক, মোবাইল ফ্রেন্ডলি ও SEO-রেডি প্রফেশনাল ওয়েবসাইট।',
     price: '৳15,000', original: '৳20,000', off: '-25%', badge: 'MOST POPULAR',
-    accentFrom: 'hsl(258,78%,55%)', accentTo: 'hsl(200,90%,48%)',
+    accentFrom: 'hsl(192,78%,55%)', accentTo: 'hsl(200,90%,48%)',
     emoji: '💻', features: ['৫–৮ পেজ', 'মোবাইল রেসপনসিভ', '১ মাস ফ্রি সাপোর্ট'],
     productSlug: 'business-website-development',
   },
@@ -35,7 +35,7 @@ const STATIC_SLIDES: Slide[] = [
     subtitle: 'অনলাইন শপ সলিউশন',
     desc: 'কার্ট, চেকআউট, bKash/Nagad পেমেন্ট ও অর্ডার ম্যানেজমেন্ট সহ সম্পূর্ণ অনলাইন শপ।',
     price: '৳35,000', original: '৳45,000', off: '-22%', badge: 'BEST VALUE',
-    accentFrom: 'hsl(258,78%,55%)', accentTo: 'hsl(200,90%,48%)',
+    accentFrom: 'hsl(192,78%,55%)', accentTo: 'hsl(200,90%,48%)',
     emoji: '🛍️', features: ['পেমেন্ট গেটওয়ে', 'অ্যাডমিন ড্যাশবোর্ড', '৩ মাস সাপোর্ট'],
     productSlug: 'ecommerce-website-development',
   },
@@ -45,7 +45,7 @@ const STATIC_SLIDES: Slide[] = [
     subtitle: 'মাসিক গ্রোথ প্যাকেজ',
     desc: 'গুগলে র‍্যাংক বাড়ান — কীওয়ার্ড রিসার্চ, অন-পেজ SEO, কনটেন্ট প্ল্যান ও মাসিক রিপোর্ট।',
     price: '৳8,000', original: '৳12,000', off: '-33%', badge: 'MONTHLY PLAN',
-    accentFrom: 'hsl(258,78%,55%)', accentTo: 'hsl(200,90%,48%)',
+    accentFrom: 'hsl(192,78%,55%)', accentTo: 'hsl(200,90%,48%)',
     emoji: '🚀', features: ['কীওয়ার্ড রিসার্চ', 'অন-পেজ SEO', 'মাসিক রিপোর্ট'],
     productSlug: 'seo-service-monthly',
   },
@@ -74,7 +74,7 @@ const dbSlideToSlide = (s: SlideData): Slide => ({
   tag: s.tag, tagIcon: s.tagIcon || '', title: s.title, titleAccent: s.titleAccent,
   subtitle: s.subtitle, desc: s.desc, price: s.price,
   original: s.original, off: s.off.startsWith('-') ? s.off : `-${s.off}`, badge: s.badge,
-  accentFrom: s.accentFrom || 'hsl(258,78%,55%)', accentTo: s.accentTo || 'hsl(200,90%,48%)',
+  accentFrom: s.accentFrom || 'hsl(192,78%,55%)', accentTo: s.accentTo || 'hsl(200,90%,48%)',
   emoji: s.emoji, logoImg: LOGO_MAP[s.id] || s.logoImg || undefined,
   bgImage: s.bgImage || undefined,
   features: s.features, productSlug: s.productSlug || '',
@@ -177,8 +177,8 @@ const HeroBanner = () => {
                 <span
                   className="inline-flex items-center gap-1 text-[8px] sm:text-[9.5px] font-black uppercase tracking-[0.16em] px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-white"
                   style={{
-                    background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(215,82%,52%))',
-                    boxShadow: '0 4px 16px hsla(258,78%,55%,0.32)',
+                    background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(215,82%,52%))',
+                    boxShadow: '0 4px 16px hsla(192,78%,55%,0.32)',
                   }}
                 >
                   <span className="text-[10px] sm:text-[11px]">{slide.tagIcon || '✦'}</span>
@@ -187,9 +187,9 @@ const HeroBanner = () => {
                 <span
                   className="hidden sm:inline-flex items-center text-[9px] font-bold tracking-widest uppercase px-2.5 py-1.5 rounded-full"
                   style={{
-                    background: 'hsla(258,78%,55%,0.10)',
-                    border: '1px solid hsla(258,78%,55%,0.20)',
-                    color: 'hsl(258,78%,45%)',
+                    background: 'hsla(192,78%,55%,0.10)',
+                    border: '1px solid hsla(192,78%,55%,0.20)',
+                    color: 'hsl(192,78%,45%)',
                   }}
                 >
                   {slide.badge}
@@ -209,7 +209,7 @@ const HeroBanner = () => {
                   <span
                     className="block"
                     style={{
-                      background: 'linear-gradient(135deg, hsl(258,78%,52%) 0%, hsl(215,82%,52%) 50%, hsl(200,90%,46%) 100%)',
+                      background: 'linear-gradient(135deg, hsl(192,78%,52%) 0%, hsl(215,82%,52%) 50%, hsl(200,90%,46%) 100%)',
                       WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
                       backgroundClip: 'text',
@@ -243,9 +243,9 @@ const HeroBanner = () => {
                     style={{
                       background: 'rgba(255,255,255,0.9)',
                       backdropFilter: 'blur(10px)',
-                      border: '1px solid hsla(258,78%,55%,0.18)',
-                      color: 'hsl(258,78%,48%)',
-                      boxShadow: '0 2px 8px hsla(258,78%,55%,0.10)',
+                      border: '1px solid hsla(192,78%,55%,0.18)',
+                      color: 'hsl(192,78%,48%)',
+                      boxShadow: '0 2px 8px hsla(192,78%,55%,0.10)',
                     }}
                   >
                     <CheckCircle2 size={10} style={{ color: 'hsl(200,90%,46%)' }} />
@@ -271,8 +271,8 @@ const HeroBanner = () => {
                 <span
                   className="text-[9px] sm:text-[10.5px] font-black text-white px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full"
                   style={{
-                    background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,48%))',
-                    boxShadow: '0 3px 10px hsla(258,78%,55%,0.32)',
+                    background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(200,90%,48%))',
+                    boxShadow: '0 3px 10px hsla(192,78%,55%,0.32)',
                   }}
                 >
                   {slide.off} OFF
@@ -285,8 +285,8 @@ const HeroBanner = () => {
                   href={href}
                   className="inline-flex items-center gap-1.5 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full text-white text-[11px] sm:text-[12.5px] font-bold active:scale-95 transition-transform"
                   style={{
-                    background: 'linear-gradient(135deg, hsl(258,78%,52%), hsl(215,82%,50%))',
-                    boxShadow: '0 8px 22px hsla(258,78%,55%,0.35)',
+                    background: 'linear-gradient(135deg, hsl(192,78%,52%), hsl(215,82%,50%))',
+                    boxShadow: '0 8px 22px hsla(192,78%,55%,0.35)',
                   }}
                 >
                   <ShoppingBag size={12} strokeWidth={2.5} />
@@ -298,8 +298,8 @@ const HeroBanner = () => {
                   className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full text-[12.5px] font-bold"
                   style={{
                     background: 'rgba(255,255,255,0.9)',
-                    border: '1.5px solid hsla(258,78%,55%,0.22)',
-                    color: 'hsl(258,78%,45%)',
+                    border: '1.5px solid hsla(192,78%,55%,0.22)',
+                    color: 'hsl(192,78%,45%)',
                     backdropFilter: 'blur(10px)',
                   }}
                 >
@@ -315,7 +315,7 @@ const HeroBanner = () => {
                     className="flex items-center gap-1.5 text-[10.5px] font-semibold"
                     style={{ color: 'hsl(226,20%,45%)' }}
                   >
-                    <span style={{ color: 'hsl(258,78%,55%)' }}>{t.icon}</span>
+                    <span style={{ color: 'hsl(192,78%,55%)' }}>{t.icon}</span>
                     {t.text}
                   </span>
                 ))}
@@ -333,9 +333,9 @@ const HeroBanner = () => {
                 style={{
                   background: 'rgba(255,255,255,0.92)',
                   backdropFilter: 'blur(12px)',
-                  border: '1.5px solid hsla(258,78%,55%,0.20)',
+                  border: '1.5px solid hsla(192,78%,55%,0.20)',
                   boxShadow: '0 4px 14px hsla(226,35%,12%,0.10)',
-                  color: 'hsl(258,78%,50%)',
+                  color: 'hsl(192,78%,50%)',
                 }}
               >
                 <ChevronLeft size={16} />
@@ -347,9 +347,9 @@ const HeroBanner = () => {
                 style={{
                   background: 'rgba(255,255,255,0.92)',
                   backdropFilter: 'blur(12px)',
-                  border: '1.5px solid hsla(258,78%,55%,0.20)',
+                  border: '1.5px solid hsla(192,78%,55%,0.20)',
                   boxShadow: '0 4px 14px hsla(226,35%,12%,0.10)',
-                  color: 'hsl(258,78%,50%)',
+                  color: 'hsl(192,78%,50%)',
                 }}
               >
                 <ChevronRight size={16} />
@@ -380,9 +380,9 @@ const HeroBanner = () => {
                 height: '7px',
                 background:
                   i === active
-                    ? 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,48%))'
+                    ? 'linear-gradient(135deg, hsl(192,78%,55%), hsl(200,90%,48%))'
                     : 'hsla(220,15%,78%,1)',
-                boxShadow: i === active ? '0 0 8px hsla(258,78%,55%,0.55)' : 'none',
+                boxShadow: i === active ? '0 0 8px hsla(192,78%,55%,0.55)' : 'none',
               }}
             />
           ))}

@@ -7,7 +7,7 @@ interface Props {
   color?: string;
 }
 
-const AdminSeoPlaceholder = ({ title, description, icon: Icon, color = 'hsl(258,78%,55%)' }: Props) => (
+const AdminSeoPlaceholder = ({ title, description, icon: Icon, color = 'hsl(192,78%,55%)' }: Props) => (
   <div className="space-y-6">
     <div>
       <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: 'Rajdhani, sans-serif' }}>

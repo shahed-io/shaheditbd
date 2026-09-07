@@ -380,7 +380,7 @@ const AdminLayout = () => {
             </div>
           ) : (
             <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-              style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(258,78%,42%))', boxShadow: '0 4px 14px hsla(258,78%,55%,0.30)' }}>
+              style={{ background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(192,78%,42%))', boxShadow: '0 4px 14px hsla(192,78%,55%,0.30)' }}>
               <span className="text-white text-xs font-black" style={{ fontFamily: 'Sora, sans-serif' }}>S</span>
             </div>
           )}
@@ -486,7 +486,7 @@ const AdminLayout = () => {
           {showLabel ? (
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
-                style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(258,78%,42%))', boxShadow: '0 4px 14px hsla(258,78%,55%,0.30)' }}>
+                style={{ background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(192,78%,42%))', boxShadow: '0 4px 14px hsla(192,78%,55%,0.30)' }}>
                 A
               </div>
               <div className="flex-1 min-w-0">
@@ -560,7 +560,7 @@ const AdminLayout = () => {
               <div className="hidden sm:flex items-center gap-2 text-[10px] font-semibold text-cyan-500/80 uppercase tracking-[1.2px]">
                 <span>{pageMeta.section}</span>
                 <ChevronRight size={10} />
-                <span style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(258,78%,42%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{pageMeta.title}</span>
+                <span style={{ background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(192,78%,42%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{pageMeta.title}</span>
               </div>
             )}
             <h1 className="text-base sm:text-lg font-bold text-foreground truncate leading-tight" style={{ fontFamily: 'Sora, sans-serif', letterSpacing: '-0.01em' }}>
@@ -596,7 +596,7 @@ const AdminLayout = () => {
               <Bell size={18} />
               {notifCount > 0 && (
                 <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold text-white flex items-center justify-center shadow-md ring-2 ring-white"
-                  style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(258,78%,42%))' }}>
+                  style={{ background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(192,78%,42%))' }}>
                   {notifCount > 9 ? '9+' : notifCount}
                 </span>
               )}

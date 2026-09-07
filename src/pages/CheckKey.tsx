@@ -264,7 +264,7 @@ const CheckKey = () => {
       />
       <Navbar />
       <div className="min-h-screen pt-24 pb-16 px-4" style={{
-        background: 'linear-gradient(180deg, hsl(258,40%,97%) 0%, hsl(0,0%,100%) 50%)',
+        background: 'linear-gradient(180deg, hsl(192,40%,97%) 0%, hsl(0,0%,100%) 50%)',
       }}>
         <div className="max-w-4xl mx-auto">
           {/* Header */}
@@ -274,8 +274,8 @@ const CheckKey = () => {
             </button>
             <div className="flex items-center gap-3 mb-2">
               <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{
-                background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(258,78%,42%))',
-                boxShadow: '0 4px 16px hsla(258,78%,55%,0.3)',
+                background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(192,78%,42%))',
+                boxShadow: '0 4px 16px hsla(192,78%,55%,0.3)',
               }}>
                 <KeyRound size={22} className="text-white" />
               </div>
@@ -291,7 +291,7 @@ const CheckKey = () => {
             <TabsList className="grid w-full grid-cols-2 mb-6 h-auto p-1.5 rounded-2xl" style={{
               background: 'rgba(255,255,255,0.7)',
               backdropFilter: 'blur(24px)',
-              border: '1px solid hsla(258,78%,75%,0.22)',
+              border: '1px solid hsla(192,78%,75%,0.22)',
             }}>
               <TabsTrigger value="key" className="rounded-xl py-2.5 data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-white data-[state=active]:shadow-lg gap-2">
                 <KeyRound size={16} /> Product Key
@@ -306,7 +306,7 @@ const CheckKey = () => {
               {/* How it works */}
               <div className="rounded-2xl p-5" style={{
                 background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(24px)',
-                border: '1px solid hsla(258,78%,75%,0.18)',
+                border: '1px solid hsla(192,78%,75%,0.18)',
               }}>
                 <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
                   <Sparkles size={14} className="text-primary" /> How It Works
@@ -325,8 +325,8 @@ const CheckKey = () => {
               <div className="rounded-2xl p-5" style={{
                 background: 'linear-gradient(135deg, rgba(255,255,255,0.92), rgba(255,255,255,0.72))',
                 backdropFilter: 'blur(28px) saturate(180%)',
-                border: '1px solid hsla(258,78%,75%,0.28)',
-                boxShadow: '0 8px 32px hsla(258,78%,55%,0.10)',
+                border: '1px solid hsla(192,78%,75%,0.28)',
+                boxShadow: '0 8px 32px hsla(192,78%,55%,0.10)',
               }}>
                 <label className="block text-sm font-semibold text-foreground mb-2">Product Key(s)</label>
                 <textarea
@@ -343,8 +343,8 @@ const CheckKey = () => {
                   disabled={checking || authLoading}
                   className="w-full mt-4 py-3 rounded-xl font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-60"
                   style={{
-                    background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(258,78%,42%))',
-                    boxShadow: '0 6px 20px hsla(258,78%,55%,0.35)',
+                    background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(192,78%,42%))',
+                    boxShadow: '0 6px 20px hsla(192,78%,55%,0.35)',
                   }}
                 >
                   {checking ? <><Loader2 size={18} className="animate-spin" /> Checking…</> : <><Search size={18} /> Check Key</>}
@@ -354,7 +354,7 @@ const CheckKey = () => {
               {/* Error Codes Legend */}
               <div className="rounded-2xl p-5" style={{
                 background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(24px)',
-                border: '1px solid hsla(258,78%,75%,0.18)',
+                border: '1px solid hsla(192,78%,75%,0.18)',
               }}>
                 <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
                   <AlertCircle size={14} className="text-primary" /> Error Codes
@@ -373,7 +373,7 @@ const CheckKey = () => {
               {results.length > 0 && (
                 <div className="rounded-2xl p-5" style={{
                   background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(28px)',
-                  border: '1px solid hsla(258,78%,75%,0.22)',
+                  border: '1px solid hsla(192,78%,75%,0.22)',
                 }}>
                   <h3 className="text-sm font-bold text-foreground mb-4 flex items-center justify-between">
                     <span>Results ({results.length})</span>
@@ -465,7 +465,7 @@ const CheckKey = () => {
               {user && (
                 <div className="rounded-2xl p-5" style={{
                   background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(24px)',
-                  border: '1px solid hsla(258,78%,75%,0.18)',
+                  border: '1px solid hsla(192,78%,75%,0.18)',
                 }}>
                   <div className="flex items-center justify-between mb-3">
                     <button onClick={() => setShowHistory(s => !s)} className="text-sm font-bold text-foreground flex items-center gap-2">
@@ -530,7 +530,7 @@ const CheckKey = () => {
               {/* How it works */}
               <div className="rounded-2xl p-5" style={{
                 background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(24px)',
-                border: '1px solid hsla(258,78%,75%,0.18)',
+                border: '1px solid hsla(192,78%,75%,0.18)',
               }}>
                 <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
                   <Sparkles size={14} className="text-primary" /> How It Works
@@ -550,8 +550,8 @@ const CheckKey = () => {
               <div className="rounded-2xl p-5" style={{
                 background: 'linear-gradient(135deg, rgba(255,255,255,0.92), rgba(255,255,255,0.72))',
                 backdropFilter: 'blur(28px) saturate(180%)',
-                border: '1px solid hsla(258,78%,75%,0.28)',
-                boxShadow: '0 8px 32px hsla(258,78%,55%,0.10)',
+                border: '1px solid hsla(192,78%,75%,0.28)',
+                boxShadow: '0 8px 32px hsla(192,78%,55%,0.10)',
               }}>
                 <label className="block text-sm font-semibold text-foreground mb-2">Office 365 Accounts</label>
                 <textarea
@@ -567,8 +567,8 @@ const CheckKey = () => {
                   disabled={checkingOffice || authLoading}
                   className="w-full mt-4 py-3 rounded-xl font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-60"
                   style={{
-                    background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(258,78%,42%))',
-                    boxShadow: '0 6px 20px hsla(258,78%,55%,0.35)',
+                    background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(192,78%,42%))',
+                    boxShadow: '0 6px 20px hsla(192,78%,55%,0.35)',
                   }}
                 >
                   {checkingOffice ? <><Loader2 size={18} className="animate-spin" /> Checking accounts…</> : <><Search size={18} /> Check Accounts</>}
@@ -578,7 +578,7 @@ const CheckKey = () => {
               {/* Status Legend */}
               <div className="rounded-2xl p-5" style={{
                 background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(24px)',
-                border: '1px solid hsla(258,78%,75%,0.18)',
+                border: '1px solid hsla(192,78%,75%,0.18)',
               }}>
                 <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
                   <AlertCircle size={14} className="text-primary" /> Status Meanings
@@ -595,7 +595,7 @@ const CheckKey = () => {
               {officeResults.length > 0 && (
                 <div className="rounded-2xl p-5" style={{
                   background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(28px)',
-                  border: '1px solid hsla(258,78%,75%,0.22)',
+                  border: '1px solid hsla(192,78%,75%,0.22)',
                 }}>
                   <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
                     <h3 className="text-sm font-bold text-foreground">Results ({officeResults.length})</h3>
@@ -636,7 +636,7 @@ const CheckKey = () => {
               {user && (
                 <div className="rounded-2xl p-5" style={{
                   background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(24px)',
-                  border: '1px solid hsla(258,78%,75%,0.18)',
+                  border: '1px solid hsla(192,78%,75%,0.18)',
                 }}>
                   <div className="flex items-center justify-between mb-3">
                     <button onClick={() => setShowOfficeHistory(s => !s)} className="text-sm font-bold text-foreground flex items-center gap-2">

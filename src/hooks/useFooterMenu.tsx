@@ -25,7 +25,7 @@ const DEFAULT_SECTIONS: FooterSection[] = [
     id: 'sec-products',
     title: 'Services',
     icon: 'Package',
-    accent: 'hsl(258,78%,55%)',
+    accent: 'hsl(192,78%,55%)',
     is_active: true,
     sort_order: 1,
     links: [

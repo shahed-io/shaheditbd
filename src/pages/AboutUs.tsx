@@ -5,7 +5,7 @@ import SEOHead from '@/components/seo/SEOHead';
 import { FloatingButtons } from '@/components/store/Extras';
 import { GlassCard, SectionCard } from '@/components/store/PolicyLayout';
 
-const A = 'hsl(258,78%,55%)';
+const A = 'hsl(192,78%,55%)';
 const B = 'hsl(200,90%,45%)';
 
 const STATS = [
@@ -19,7 +19,7 @@ const VALUES = [
   { icon: <Shield size={20} />, title: 'বিশ্বস্ততা', desc: 'শুধুমাত্র অরিজিনাল ও যাচাইকৃত পণ্য বিক্রি করি। কোনো নকল বা মেয়াদোত্তীর্ণ লাইসেন্স নেই।', color: 'hsl(142,72%,38%)' },
   { icon: <Zap size={20} />, title: 'দ্রুত সেবা', desc: 'বেশিরভাগ অর্ডার ৫–৩০ মিনিটের মধ্যে ডেলিভার করা হয়। আপনার সময় আমাদের কাছে মূল্যবান।', color: A },
   { icon: <HeadphonesIcon size={20} />, title: '২৪/৭ সাপোর্ট', desc: 'যেকোনো সমস্যায় আমাদের টিম সর্বদা প্রস্তুত। WhatsApp, ইমেইল বা সাপোর্ট টিকেটের মাধ্যমে যোগাযোগ করুন।', color: B },
-  { icon: <Heart size={20} />, title: 'গ্রাহক প্রথম', desc: 'আমাদের প্রতিটি সিদ্ধান্তের কেন্দ্রে আপনি। সর্বোত্তম অভিজ্ঞতা নিশ্চিত করাই আমাদের লক্ষ্য।', color: 'hsl(329,86%,56%)' },
+  { icon: <Heart size={20} />, title: 'গ্রাহক প্রথম', desc: 'আমাদের প্রতিটি সিদ্ধান্তের কেন্দ্রে আপনি। সর্বোত্তম অভিজ্ঞতা নিশ্চিত করাই আমাদের লক্ষ্য।', color: 'hsl(24,86%,56%)' },
 ];
 
 const TEAM = [
@@ -37,7 +37,7 @@ const TEAM = [
     emoji: '🎧',
     badge: 'গড় রেসপন্স < ৫ মিনিট',
     desc: 'যেকোনো সমস্যায় আমরা মাত্র কয়েক মিনিটের মধ্যে সাড়া দিই। WhatsApp, লাইভ চ্যাট বা ইমেইলে — আমরা সর্বদা আপনার পাশে আছি।',
-    highlight: 'hsl(258,78%,55%)',
+    highlight: 'hsl(192,78%,55%)',
   },
   {
     name: 'টেক টিম',
@@ -53,7 +53,7 @@ const TEAM = [
     emoji: '✅',
     badge: '১০০% যাচাইকৃত পণ্য',
     desc: 'প্রতিটি পণ্য বিক্রির আগে আমাদের কোয়ালিটি টিম যাচাই করে নেয়। কোনো মেয়াদোত্তীর্ণ বা নকল কী আমাদের কাছে নেই — গ্যারান্টি।',
-    highlight: 'hsl(329,86%,56%)',
+    highlight: 'hsl(24,86%,56%)',
   },
 ];
 
@@ -68,7 +68,7 @@ export default function AboutUs() {
   return (
     <div
       className="min-h-screen text-foreground"
-      style={{ background: 'linear-gradient(145deg, hsl(258,55%,97%) 0%, hsl(220,40%,96%) 40%, hsl(200,50%,96%) 100%)' }}
+      style={{ background: 'linear-gradient(145deg, hsl(192,55%,97%) 0%, hsl(220,40%,96%) 40%, hsl(200,50%,96%) 100%)' }}
     >
       <SEOHead
         title="About Shahed IT"
@@ -118,8 +118,8 @@ export default function AboutUs() {
               style={{
                 background: 'linear-gradient(155deg, rgba(255,255,255,0.80), rgba(255,255,255,0.55))',
                 backdropFilter: 'blur(20px)',
-                border: '1px solid hsla(258,78%,75%,0.22)',
-                boxShadow: '0 4px 20px hsla(258,78%,55%,0.08)',
+                border: '1px solid hsla(192,78%,75%,0.22)',
+                boxShadow: '0 4px 20px hsla(192,78%,55%,0.08)',
               }}>
               <div className="text-3xl mb-2">{s.icon}</div>
               <p className="font-sora font-black text-xl" style={{ background: `linear-gradient(135deg, ${A}, ${B})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{s.value}</p>
@@ -130,7 +130,7 @@ export default function AboutUs() {
 
         {/* Who We Are */}
         <GlassCard className="p-6 sm:p-8">
-          <div className="flex items-center gap-3 mb-5 pb-4" style={{ borderBottom: '1px solid hsla(258,78%,75%,0.15)' }}>
+          <div className="flex items-center gap-3 mb-5 pb-4" style={{ borderBottom: '1px solid hsla(192,78%,75%,0.15)' }}>
             <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
               style={{ background: `linear-gradient(135deg, ${A}, ${B})`, boxShadow: `0 4px 12px ${A}50` }}>
               <Package size={16} className="text-white" />
@@ -139,7 +139,7 @@ export default function AboutUs() {
           </div>
           <div className="space-y-4 text-[13.5px] leading-relaxed" style={{ color: 'hsl(226,25%,38%)' }}>
             <p>
-              <strong style={{ color: 'hsl(226,35%,18%)' }}>Shahed IT</strong> বাংলাদেশের একটি বিশ্বস্ত ডিজিটাল সফটওয়্যার মার্কেটপ্লেস। আমরা <strong style={{ color: 'hsl(258,78%,50%)' }}>২০২২ সাল</strong> থেকে গ্রাহকদের কাছে অরিজিনাল উইন্ডোজ, অফিস, অ্যাডোবি, স্ট্রিমিং সাবস্ক্রিপশন, ভিপিএন এবং এআই টুলস সরবরাহ করে আসছি।
+              <strong style={{ color: 'hsl(226,35%,18%)' }}>Shahed IT</strong> বাংলাদেশের একটি বিশ্বস্ত ডিজিটাল সফটওয়্যার মার্কেটপ্লেস। আমরা <strong style={{ color: 'hsl(192,78%,50%)' }}>২০২২ সাল</strong> থেকে গ্রাহকদের কাছে অরিজিনাল উইন্ডোজ, অফিস, অ্যাডোবি, স্ট্রিমিং সাবস্ক্রিপশন, ভিপিএন এবং এআই টুলস সরবরাহ করে আসছি।
             </p>
             <p>
               আমাদের লক্ষ্য সহজ — প্রতিটি বাংলাদেশি ব্যবহারকারীর কাছে অরিজিনাল সফটওয়্যার সাশ্রয়ী মূল্যে এবং তাৎক্ষণিকভাবে পৌঁছে দেওয়া। কোনো হ্যাসেল নেই, কোনো ঝামেলা নেই — শুধু দ্রুত, নিরাপদ ও নির্ভরযোগ্য সেবা।
@@ -165,9 +165,9 @@ export default function AboutUs() {
             },
           ].map(item => (
             <div key={item.title} className="rounded-2xl overflow-hidden"
-              style={{ background: 'linear-gradient(155deg, rgba(255,255,255,0.70), rgba(255,255,255,0.45))', backdropFilter: 'blur(20px)', border: '1px solid hsla(258,78%,75%,0.22)', boxShadow: '0 2px 16px hsla(258,78%,55%,0.06)' }}>
+              style={{ background: 'linear-gradient(155deg, rgba(255,255,255,0.70), rgba(255,255,255,0.45))', backdropFilter: 'blur(20px)', border: '1px solid hsla(192,78%,75%,0.22)', boxShadow: '0 2px 16px hsla(192,78%,55%,0.06)' }}>
               <div className="flex items-center gap-3 px-6 py-4"
-                style={{ background: `linear-gradient(135deg, hsla(258,78%,55%,0.07), hsla(200,90%,45%,0.05))`, borderBottom: '1px solid hsla(258,78%,75%,0.15)' }}>
+                style={{ background: `linear-gradient(135deg, hsla(192,78%,55%,0.07), hsla(200,90%,45%,0.05))`, borderBottom: '1px solid hsla(192,78%,75%,0.15)' }}>
                 <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
                   style={{ background: `linear-gradient(135deg, ${item.color}, ${B})`, boxShadow: `0 4px 12px ${item.color}50` }}>
                   <span className="text-white">{item.icon}</span>
@@ -186,7 +186,7 @@ export default function AboutUs() {
           <div className="grid sm:grid-cols-2 gap-3 mt-1">
             {VALUES.map(v => (
               <div key={v.title} className="flex items-start gap-3 rounded-xl p-4"
-                style={{ background: 'hsla(258,78%,55%,0.04)', border: '1px solid hsla(258,78%,75%,0.14)' }}>
+                style={{ background: 'hsla(192,78%,55%,0.04)', border: '1px solid hsla(192,78%,75%,0.14)' }}>
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
                   style={{ background: `${v.color}15`, border: `1px solid ${v.color}30` }}>
                   <span style={{ color: v.color }}>{v.icon}</span>
@@ -235,7 +235,7 @@ export default function AboutUs() {
                     {i + 1}
                   </div>
                   <div className="rounded-xl px-4 py-3 flex-1"
-                    style={{ background: 'hsla(258,78%,55%,0.05)', border: '1px solid hsla(258,78%,75%,0.15)' }}>
+                    style={{ background: 'hsla(192,78%,55%,0.05)', border: '1px solid hsla(192,78%,75%,0.15)' }}>
                     <div className="flex items-center gap-2 mb-0.5">
                       <span className="font-bold text-[11px] px-2 py-0.5 rounded-full" style={{ background: `${A}15`, color: A }}>{m.year}</span>
                       <span className="font-sora font-bold text-[13px]" style={{ color: 'hsl(226,35%,16%)' }}>{m.title}</span>

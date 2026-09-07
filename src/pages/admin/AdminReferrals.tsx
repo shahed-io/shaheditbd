@@ -8,7 +8,7 @@ const TIERS = [
   { name: 'silver',   min: 5,  max: 14, reward: 75,  label: 'সিলভার',     emoji: '🥈', color: 'hsl(220,15%,70%)' },
   { name: 'gold',     min: 15, max: 29, reward: 100, label: 'গোল্ড',      emoji: '🥇', color: 'hsl(45,90%,52%)' },
   { name: 'platinum', min: 30, max: 49, reward: 150, label: 'প্লাটিনাম', emoji: '💎', color: 'hsl(185,90%,52%)' },
-  { name: 'diamond',  min: 50, max: Infinity, reward: 200, label: 'ডায়মন্ড', emoji: '💠', color: 'hsl(271,91%,65%)' },
+  { name: 'diamond',  min: 50, max: Infinity, reward: 200, label: 'ডায়মন্ড', emoji: '💠', color: 'hsl(216,91%,65%)' },
 ];
 
 const getTier = (count: number) => TIERS.find(t => count >= t.min && count <= t.max) || TIERS[0];

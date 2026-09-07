@@ -37,7 +37,7 @@ const MaintenanceScreen = ({ settings }: { settings: MaintenanceSettings }) => {
       {/* Soft ambient blobs */}
       <div
         className="absolute -top-32 -left-24 w-[52vw] h-[52vw] max-w-[620px] max-h-[620px] rounded-full pointer-events-none blur-3xl opacity-70"
-        style={{ background: 'radial-gradient(circle, hsla(258,90%,70%,0.18) 0%, transparent 68%)' }}
+        style={{ background: 'radial-gradient(circle, hsla(192,90%,70%,0.18) 0%, transparent 68%)' }}
       />
       <div
         className="absolute -bottom-40 -right-24 w-[52vw] h-[52vw] max-w-[620px] max-h-[620px] rounded-full pointer-events-none blur-3xl opacity-70"
@@ -67,7 +67,7 @@ const MaintenanceScreen = ({ settings }: { settings: MaintenanceSettings }) => {
         {/* Gradient hairline */}
         <div
           className="absolute top-0 left-1/2 -translate-x-1/2 h-[2px] w-2/3 rounded-full"
-          style={{ background: 'linear-gradient(90deg, transparent, hsl(258,85%,66%), hsl(186,85%,55%), transparent)' }}
+          style={{ background: 'linear-gradient(90deg, transparent, hsl(192,85%,66%), hsl(186,85%,55%), transparent)' }}
         />
 
         {/* Animated cartoon */}
@@ -86,7 +86,7 @@ const MaintenanceScreen = ({ settings }: { settings: MaintenanceSettings }) => {
             draggable={false}
           />
           <Sparkles size={18} className="absolute top-2 -left-1 text-[hsl(42,96%,55%)] maint-twinkle" />
-          <Sparkles size={14} className="absolute top-10 -right-1 text-[hsl(258,80%,68%)] maint-twinkle maint-delay-1" />
+          <Sparkles size={14} className="absolute top-10 -right-1 text-[hsl(192,80%,68%)] maint-twinkle maint-delay-1" />
           <Sparkles size={12} className="absolute bottom-14 -left-3 text-[hsl(186,80%,50%)] maint-twinkle maint-delay-2" />
         </div>
 
@@ -94,12 +94,12 @@ const MaintenanceScreen = ({ settings }: { settings: MaintenanceSettings }) => {
           <div
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] font-bold tracking-[0.18em] uppercase mb-5"
             style={{
-              background: 'hsla(258,85%,66%,0.10)',
-              border: '1px solid hsla(258,85%,66%,0.28)',
-              color: 'hsl(258,70%,52%)',
+              background: 'hsla(192,85%,66%,0.10)',
+              border: '1px solid hsla(192,85%,66%,0.28)',
+              color: 'hsl(192,70%,52%)',
             }}
           >
-            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: 'hsl(258,85%,62%)' }} />
+            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: 'hsl(192,85%,62%)' }} />
             {settings.badge}
           </div>
         )}
@@ -132,7 +132,7 @@ const MaintenanceScreen = ({ settings }: { settings: MaintenanceSettings }) => {
               <div
                 className="h-full w-1/3 rounded-full"
                 style={{
-                  background: 'linear-gradient(90deg, transparent, hsl(258,85%,66%), hsl(186,85%,55%), transparent)',
+                  background: 'linear-gradient(90deg, transparent, hsl(192,85%,66%), hsl(186,85%,55%), transparent)',
                   animation: 'maintenance-sweep 2.2s ease-in-out infinite',
                 }}
               />

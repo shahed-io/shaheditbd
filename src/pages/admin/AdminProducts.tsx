@@ -987,8 +987,8 @@ const AdminProducts = () => {
             title="AI দিয়ে সব প্রোডাক্টের SEO Title ও Meta Description অটো-জেনারেট করুন"
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed"
             style={{
-              background: 'linear-gradient(135deg, hsl(265 85% 60%), hsl(200 90% 55%))',
-              boxShadow: '0 8px 24px hsl(265 85% 60% / 0.35)',
+              background: 'linear-gradient(135deg, hsl(192 85% 60%), hsl(200 90% 55%))',
+              boxShadow: '0 8px 24px hsl(192 85% 60% / 0.35)',
             }}
           >
             {autoSeoRunning
@@ -1023,7 +1023,7 @@ const AdminProducts = () => {
           <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
             <div className="glass-card rounded-2xl w-full max-w-md p-6 space-y-4">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl" style={{ background: 'linear-gradient(135deg, hsl(265 85% 60% / 0.2), hsl(200 90% 55% / 0.2))' }}>
+                <div className="p-2.5 rounded-xl" style={{ background: 'linear-gradient(135deg, hsl(192 85% 60% / 0.2), hsl(200 90% 55% / 0.2))' }}>
                   <Sparkles size={22} className="text-primary" />
                 </div>
                 <div>
@@ -1057,7 +1057,7 @@ const AdminProducts = () => {
                   onClick={runAutoSeoAll}
                   disabled={targetCount === 0}
                   className="px-5 py-2 rounded-lg text-sm font-semibold text-white shadow-lg disabled:opacity-50"
-                  style={{ background: 'linear-gradient(135deg, hsl(265 85% 60%), hsl(200 90% 55%))' }}
+                  style={{ background: 'linear-gradient(135deg, hsl(192 85% 60%), hsl(200 90% 55%))' }}
                 >
                   ✨ শুরু করুন ({targetCount})
                 </button>
@@ -1087,7 +1087,7 @@ const AdminProducts = () => {
               className="h-full transition-all duration-300"
               style={{
                 width: `${(autoSeoProgress.done / Math.max(autoSeoProgress.total, 1)) * 100}%`,
-                background: 'linear-gradient(90deg, hsl(265 85% 60%), hsl(200 90% 55%))',
+                background: 'linear-gradient(90deg, hsl(192 85% 60%), hsl(200 90% 55%))',
               }}
             />
           </div>
@@ -1861,8 +1861,8 @@ const AdminProducts = () => {
                           className="relative rounded-2xl overflow-hidden p-5 space-y-4"
                           style={{
                             background: '#ffffff',
-                            border: '1px solid hsl(240, 6%, 90%)',
-                            boxShadow: '0 1px 3px hsla(240,10%,20%,0.06), 0 8px 24px -12px hsla(240,10%,20%,0.08)',
+                            border: '1px solid hsl(192, 6%, 90%)',
+                            boxShadow: '0 1px 3px hsla(192,10%,20%,0.06), 0 8px 24px -12px hsla(192,10%,20%,0.08)',
                           }}
                         >
 
@@ -1871,8 +1871,8 @@ const AdminProducts = () => {
                             <div
                               className="flex-shrink-0 w-11 h-11 rounded-2xl flex items-center justify-center text-xl shadow-lg"
                               style={{
-                                background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(217,91%,60%))',
-                                boxShadow: '0 8px 24px -6px hsla(271,91%,65%,0.55), inset 0 1px 0 hsla(0,0%,100%,0.5)',
+                                background: 'linear-gradient(135deg, hsl(216,91%,65%), hsl(217,91%,60%))',
+                                boxShadow: '0 8px 24px -6px hsla(216,91%,65%,0.55), inset 0 1px 0 hsla(0,0%,100%,0.5)',
                               }}
                             >
                               <Wand2 size={20} className="text-white" />
@@ -1881,7 +1881,7 @@ const AdminProducts = () => {
                               <div className="flex items-center gap-2">
                                 <p className="text-base font-bold text-foreground leading-none tracking-tight">AI Card Generator</p>
                                 <span className="px-1.5 py-0.5 rounded-md text-[9px] font-bold tracking-wider text-white"
-                                  style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(217,91%,60%))' }}>
+                                  style={{ background: 'linear-gradient(135deg, hsl(216,91%,65%), hsl(217,91%,60%))' }}>
                                   PREMIUM
                                 </span>
                               </div>
@@ -1906,13 +1906,13 @@ const AdminProducts = () => {
                                     className="relative flex items-center gap-2.5 p-2 rounded-xl text-left transition-all hover:scale-[1.02] active:scale-[0.98] overflow-hidden"
                                     style={{
                                       background: active
-                                        ? 'linear-gradient(135deg, hsla(271,91%,65%,0.12), hsla(217,91%,60%,0.12))'
+                                        ? 'linear-gradient(135deg, hsla(216,91%,65%,0.12), hsla(217,91%,60%,0.12))'
                                         : 'hsla(0,0%,100%,0.6)',
                                       border: active
-                                        ? '1.5px solid hsl(271,91%,65%)'
+                                        ? '1.5px solid hsl(216,91%,65%)'
                                         : '1px solid hsla(0,0%,0%,0.06)',
                                       boxShadow: active
-                                        ? '0 6px 20px -6px hsla(271,91%,65%,0.35), inset 0 1px 0 hsla(0,0%,100%,0.6)'
+                                        ? '0 6px 20px -6px hsla(216,91%,65%,0.35), inset 0 1px 0 hsla(0,0%,100%,0.6)'
                                         : '0 2px 6px -2px hsla(0,0%,0%,0.06)',
                                     }}
                                   >
@@ -1932,7 +1932,7 @@ const AdminProducts = () => {
                                     </div>
                                     {active && (
                                       <div className="absolute top-1 right-1 w-4 h-4 rounded-full flex items-center justify-center text-white text-[10px] font-bold"
-                                        style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(217,91%,60%))' }}>
+                                        style={{ background: 'linear-gradient(135deg, hsl(216,91%,65%), hsl(217,91%,60%))' }}>
                                         ✓
                                       </div>
                                     )}
@@ -1946,8 +1946,8 @@ const AdminProducts = () => {
                           <div
                             className="relative rounded-xl px-3 py-2.5 text-[11.5px] flex items-start gap-2"
                             style={{
-                              background: 'linear-gradient(135deg, hsla(271,91%,65%,0.06), hsla(217,91%,60%,0.06))',
-                              border: '1px solid hsla(271,91%,65%,0.18)',
+                              background: 'linear-gradient(135deg, hsla(216,91%,65%,0.06), hsla(217,91%,60%,0.06))',
+                              border: '1px solid hsla(216,91%,65%,0.18)',
                             }}
                           >
                             <span className="text-base leading-none mt-0.5">💡</span>
@@ -1967,8 +1967,8 @@ const AdminProducts = () => {
                             disabled={aiCardLoading || imageUploading}
                             className="relative w-full overflow-hidden flex items-center justify-center gap-2 px-4 py-3.5 rounded-2xl text-sm font-bold text-white disabled:opacity-60 disabled:cursor-not-allowed transition-all hover:scale-[1.01] active:scale-[0.98] group/btn"
                             style={{
-                              background: 'linear-gradient(135deg, hsl(271,91%,60%) 0%, hsl(245,85%,58%) 50%, hsl(217,91%,55%) 100%)',
-                              boxShadow: '0 12px 32px -8px hsla(271,91%,60%,0.55), inset 0 1px 0 hsla(0,0%,100%,0.3)',
+                              background: 'linear-gradient(135deg, hsl(216,91%,60%) 0%, hsl(192,85%,58%) 50%, hsl(217,91%,55%) 100%)',
+                              boxShadow: '0 12px 32px -8px hsla(216,91%,60%,0.55), inset 0 1px 0 hsla(0,0%,100%,0.3)',
                             }}
                           >
                             {!aiCardLoading && (
@@ -1990,11 +1990,11 @@ const AdminProducts = () => {
 
                           {aiCardLoading && (
                             <div className="relative rounded-xl px-3 py-2.5 flex items-center gap-2.5 text-[11.5px] text-foreground/80"
-                              style={{ background: 'hsla(271,91%,65%,0.08)', border: '1px dashed hsla(271,91%,65%,0.30)' }}>
+                              style={{ background: 'hsla(216,91%,65%,0.08)', border: '1px dashed hsla(216,91%,65%,0.30)' }}>
                               <div className="flex gap-1.5">
                                 {[0, 0.15, 0.3].map((d, i) => (
                                   <div key={i} className="w-1.5 h-1.5 rounded-full animate-bounce"
-                                    style={{ animationDelay: `${d}s`, background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(217,91%,60%))' }} />
+                                    style={{ animationDelay: `${d}s`, background: 'linear-gradient(135deg, hsl(216,91%,65%), hsl(217,91%,60%))' }} />
                                 ))}
                               </div>
                               <span>AI ছবি জেনারেট, WEBP কনভার্ট ও সেভ করছে…</span>
@@ -2005,9 +2005,9 @@ const AdminProducts = () => {
                           {aiCardPreview && (
                             <div className="relative rounded-2xl overflow-hidden space-y-3"
                               style={{
-                                background: 'linear-gradient(180deg, hsla(0,0%,100%,0.7), hsla(250,40%,98%,0.7))',
-                                border: '1px solid hsla(271,91%,65%,0.30)',
-                                boxShadow: '0 10px 30px -10px hsla(271,91%,40%,0.25)',
+                                background: 'linear-gradient(180deg, hsla(0,0%,100%,0.7), hsla(192,40%,98%,0.7))',
+                                border: '1px solid hsla(216,91%,65%,0.30)',
+                                boxShadow: '0 10px 30px -10px hsla(216,91%,40%,0.25)',
                               }}>
                               <div className="p-3 pb-0">
                                 <div className="flex items-center gap-2 mb-2">

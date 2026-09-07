@@ -155,7 +155,7 @@ export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
           padding: '24px',
           overflow: 'hidden',
           background:
-            'radial-gradient(1200px 600px at 15% 10%, hsla(258,78%,35%,0.55), transparent 60%),' +
+            'radial-gradient(1200px 600px at 15% 10%, hsla(192,78%,35%,0.55), transparent 60%),' +
             'radial-gradient(1000px 700px at 90% 90%, hsla(42,96%,50%,0.18), transparent 55%),' +
             'linear-gradient(160deg, #05060d 0%, #0a0b1a 45%, #0f0a24 100%)',
           color: '#f8fafc',
@@ -179,7 +179,7 @@ export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
         <div aria-hidden style={{
           position: 'absolute', top: '-120px', left: '-120px', width: 420, height: 420,
           borderRadius: '50%', filter: 'blur(90px)',
-          background: 'radial-gradient(circle, hsla(258,78%,55%,0.55), transparent 70%)',
+          background: 'radial-gradient(circle, hsla(192,78%,55%,0.55), transparent 70%)',
           animation: 'shield-float 12s ease-in-out infinite',
         }} />
         <div aria-hidden style={{
@@ -200,7 +200,7 @@ export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
             backdropFilter: 'blur(28px) saturate(140%)',
             WebkitBackdropFilter: 'blur(28px) saturate(140%)',
             boxShadow:
-              '0 30px 80px -20px hsla(258,80%,10%,0.7),' +
+              '0 30px 80px -20px hsla(192,80%,10%,0.7),' +
               '0 0 0 1px hsla(0,0%,100%,0.04) inset,' +
               '0 1px 0 hsla(0,0%,100%,0.15) inset',
           }}
@@ -212,7 +212,7 @@ export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
           }}>
             <div style={{
               position: 'absolute', inset: -14, borderRadius: '50%',
-              background: 'conic-gradient(from 0deg, hsla(258,80%,60%,0.9), hsla(42,96%,58%,0.6), hsla(258,80%,60%,0.9))',
+              background: 'conic-gradient(from 0deg, hsla(192,80%,60%,0.9), hsla(42,96%,58%,0.6), hsla(192,80%,60%,0.9))',
               filter: 'blur(2px)', animation: 'shield-ring 6s linear infinite',
               opacity: 0.75,
             }} />
@@ -221,7 +221,7 @@ export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
               background: 'linear-gradient(145deg, #0b0b1e, #14122e)',
             }} />
             <svg width="52" height="52" viewBox="0 0 24 24" fill="none"
-              style={{ position: 'relative', filter: 'drop-shadow(0 6px 20px hsla(258,80%,60%,0.6))' }}>
+              style={{ position: 'relative', filter: 'drop-shadow(0 6px 20px hsla(192,80%,60%,0.6))' }}>
               <defs>
                 <linearGradient id="sg" x1="0" y1="0" x2="1" y2="1">
                   <stop offset="0%" stopColor="#f0fdff" />
@@ -229,7 +229,7 @@ export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
                 </linearGradient>
               </defs>
               <path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3Z"
-                fill="url(#sg)" stroke="hsla(258,80%,75%,0.9)" strokeWidth="0.6" />
+                fill="url(#sg)" stroke="hsla(192,80%,75%,0.9)" strokeWidth="0.6" />
               <path d="m9 12 2.2 2.2L15.5 10" stroke="#1e1b4b" strokeWidth="1.8"
                 strokeLinecap="round" strokeLinejoin="round" fill="none" />
             </svg>
@@ -239,8 +239,8 @@ export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
             padding: '6px 14px', borderRadius: 999, marginBottom: 18,
-            background: 'hsla(258,80%,60%,0.14)',
-            border: '1px solid hsla(258,80%,70%,0.28)',
+            background: 'hsla(192,80%,60%,0.14)',
+            border: '1px solid hsla(192,80%,70%,0.28)',
             fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase',
             color: '#cffafe', fontWeight: 700,
           }}>
@@ -299,7 +299,7 @@ export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
               color: '#fff', textDecoration: 'none', fontWeight: 700, fontSize: 15,
               letterSpacing: '0.01em',
               boxShadow:
-                '0 10px 30px -8px hsla(280,80%,55%,0.7),' +
+                '0 10px 30px -8px hsla(216,80%,55%,0.7),' +
                 '0 0 0 1px hsla(0,0%,100%,0.2) inset',
               transition: 'transform 0.2s ease',
             }}

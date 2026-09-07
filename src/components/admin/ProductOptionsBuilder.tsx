@@ -397,10 +397,10 @@ const ProductOptionsBuilder = ({ productId, basePrice }: Props) => {
                 {/* Price preview */}
                 {visibleValues.some(v => v.price_adjustment > 0) && (
                   <div className="mt-2 p-2 rounded-lg text-xs border"
-                    style={{ background: 'hsla(271,91%,65%,0.06)', borderColor: 'hsla(271,91%,65%,0.2)' }}>
+                    style={{ background: 'hsla(216,91%,65%,0.06)', borderColor: 'hsla(216,91%,65%,0.2)' }}>
                     <span className="text-muted-foreground">Price preview: </span>
                     {visibleValues.filter(v => v.price_adjustment > 0).map(v => (
-                      <span key={v.label} className="mr-2 font-semibold" style={{ color: 'hsl(271,91%,75%)' }}>
+                      <span key={v.label} className="mr-2 font-semibold" style={{ color: 'hsl(216,91%,75%)' }}>
                         {v.label}: ৳{v.price_adjustment.toLocaleString()}
                       </span>
                     ))}
@@ -420,7 +420,7 @@ const ProductOptionsBuilder = ({ productId, basePrice }: Props) => {
           disabled={saving}
           className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all"
           style={{
-            background: saving ? 'hsla(271,91%,65%,0.3)' : 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
+            background: saving ? 'hsla(216,91%,65%,0.3)' : 'linear-gradient(135deg, hsl(216,91%,65%), hsl(185,90%,52%))',
             color: 'white',
             opacity: saving ? 0.7 : 1,
           }}

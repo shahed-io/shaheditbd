@@ -78,7 +78,7 @@ const Footer = () => {
     </div>
 
     {/* CTA Strip */}
-    <div className="relative z-10 border-b" style={{ borderColor: 'hsla(258,78%,75%,0.15)' }}>
+    <div className="relative z-10 border-b" style={{ borderColor: 'hsla(192,78%,75%,0.15)' }}>
       <div className="container-fluid py-7"
         style={{
           background: 'hsla(0,0%,100%,0.50)',
@@ -88,7 +88,7 @@ const Footer = () => {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-5">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
-              style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', boxShadow: '0 4px 16px hsla(258,78%,55%,0.30)' }}>
+              style={{ background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(200,90%,45%))', boxShadow: '0 4px 16px hsla(192,78%,55%,0.30)' }}>
               <Zap size={18} className="text-white" />
             </div>
             <div>
@@ -103,14 +103,14 @@ const Footer = () => {
                 color: 'hsl(226,35%,28%)',
                 background: 'hsla(0,0%,100%,0.75)',
                 backdropFilter: 'blur(12px)',
-                border: '1.5px solid hsla(258,78%,75%,0.25)',
+                border: '1.5px solid hsla(192,78%,75%,0.25)',
                 boxShadow: '0 2px 12px hsla(226,35%,12%,0.06)',
               }}>
               <MessageCircle size={15} /> WhatsApp
             </a>
             <a href="/shop"
               className="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold text-white transition-all hover:scale-105"
-              style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', boxShadow: '0 4px 16px hsla(258,78%,55%,0.30)' }}>
+              style={{ background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(200,90%,45%))', boxShadow: '0 4px 16px hsla(192,78%,55%,0.30)' }}>
               Shop Now <ArrowUpRight size={15} />
             </a>
           </div>
@@ -127,9 +127,9 @@ const Footer = () => {
           background: 'linear-gradient(135deg, hsla(0,0%,100%,0.72) 0%, hsla(0,0%,100%,0.50) 100%)',
           backdropFilter: 'blur(24px) saturate(180%)',
           WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-          border: '1px solid hsla(258,78%,75%,0.20)',
+          border: '1px solid hsla(192,78%,75%,0.20)',
           borderRadius: '20px',
-          boxShadow: '0 4px 24px hsla(258,78%,55%,0.07), 0 1px 0 rgba(255,255,255,0.9) inset',
+          boxShadow: '0 4px 24px hsla(192,78%,55%,0.07), 0 1px 0 rgba(255,255,255,0.9) inset',
           padding: '24px 20px',
         }}>
         <a href="/" className="flex items-center justify-center">
@@ -143,7 +143,7 @@ const Footer = () => {
         {/* Contact pills — centered */}
         <div className="flex flex-col items-center gap-2 w-full">
           {[
-            { icon: <Phone size={13} />, href: `tel:${settings.phone.replace(/\D/g, '')}`, label: settings.phone, color: 'hsl(258,78%,55%)' },
+            { icon: <Phone size={13} />, href: `tel:${settings.phone.replace(/\D/g, '')}`, label: settings.phone, color: 'hsl(192,78%,55%)' },
             { icon: <Mail size={13} />,  href: `mailto:${settings.email}`, label: settings.email, color: 'hsl(200,90%,45%)' },
             { icon: <MapPin size={13} />, href: '#', label: settings.address, color: 'hsl(162,72%,38%)' },
           ].map((c, i) => (
@@ -168,9 +168,9 @@ const Footer = () => {
         {/* Social icons — centered */}
         <div className="flex gap-3 justify-center">
           {[
-            { icon: <Facebook size={17} />,      href: settings.facebook_url,  label: 'Facebook',  color: 'hsl(258,78%,55%)' },
+            { icon: <Facebook size={17} />,      href: settings.facebook_url,  label: 'Facebook',  color: 'hsl(192,78%,55%)' },
             { icon: <MessageCircle size={17} />, href: settings.whatsapp_url,  label: 'WhatsApp',  color: 'hsl(162,72%,38%)' },
-            { icon: <Instagram size={17} />,     href: settings.instagram_url, label: 'Instagram', color: 'hsl(330,85%,55%)' },
+            { icon: <Instagram size={17} />,     href: settings.instagram_url, label: 'Instagram', color: 'hsl(24,85%,55%)' },
             { icon: <Send size={17} />,          href: settings.telegram_url,  label: 'Telegram',  color: 'hsl(200,80%,50%)' },
           ].map((s, i) => (
             <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
@@ -179,7 +179,7 @@ const Footer = () => {
               style={{
                 background: 'hsla(0,0%,100%,0.65)',
                 backdropFilter: 'blur(12px)',
-                border: '1.5px solid hsla(258,78%,75%,0.22)',
+                border: '1.5px solid hsla(192,78%,75%,0.22)',
                 color: 'hsl(226,35%,42%)',
                 boxShadow: '0 2px 8px hsla(226,35%,12%,0.06)',
               }}
@@ -193,7 +193,7 @@ const Footer = () => {
               onMouseLeave={e => {
                 const el = e.currentTarget as HTMLElement;
                 el.style.color = 'hsl(226,35%,42%)';
-                el.style.borderColor = 'hsla(258,78%,75%,0.22)';
+                el.style.borderColor = 'hsla(192,78%,75%,0.22)';
                 el.style.boxShadow = '0 2px 8px hsla(226,35%,12%,0.06)';
               }}>
               {s.icon}
@@ -206,7 +206,7 @@ const Footer = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {sections.map((col) => {
           const IconComp = ICON_MAP[col.icon] ?? Info;
-          const accent = col.accent || 'hsl(258,78%,55%)';
+          const accent = col.accent || 'hsl(192,78%,55%)';
           return (
             <div key={col.id} className="rounded-2xl p-5 space-y-4"
               style={{
@@ -277,8 +277,8 @@ const Footer = () => {
         background: 'hsla(0,0%,100%,0.55)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
-        border: '1px solid hsla(258,78%,75%,0.18)',
-        boxShadow: '0 4px 24px hsla(258,78%,55%,0.06)',
+        border: '1px solid hsla(192,78%,75%,0.18)',
+        boxShadow: '0 4px 24px hsla(192,78%,55%,0.06)',
       }}>
       <div className="container-fluid py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
         {/* Cert badge */}
@@ -286,14 +286,14 @@ const Footer = () => {
           <div className="relative flex-shrink-0">
             {/* outer glow ring */}
             <span aria-hidden className="absolute -inset-1 rounded-2xl opacity-70 blur-md transition-all duration-500 group-hover:opacity-100 group-hover:blur-lg"
-              style={{ background: 'conic-gradient(from 0deg, hsla(258,78%,60%,0.55), hsla(200,90%,55%,0.45), hsla(162,72%,45%,0.45), hsla(330,85%,60%,0.45), hsla(258,78%,60%,0.55))' }} />
+              style={{ background: 'conic-gradient(from 0deg, hsla(192,78%,60%,0.55), hsla(200,90%,55%,0.45), hsla(162,72%,45%,0.45), hsla(24,85%,60%,0.45), hsla(192,78%,60%,0.55))' }} />
             {/* spinning gradient border */}
             <span aria-hidden className="absolute -inset-[2px] rounded-[14px]"
-              style={{ background: 'conic-gradient(from 180deg, hsl(258,78%,60%), hsl(200,90%,55%), hsl(162,72%,45%), hsl(258,78%,60%))' }} />
+              style={{ background: 'conic-gradient(from 180deg, hsl(192,78%,60%), hsl(200,90%,55%), hsl(162,72%,45%), hsl(192,78%,60%))' }} />
             <div className="relative w-12 h-12 rounded-[12px] flex items-center justify-center overflow-hidden transition-transform duration-300 group-hover:scale-105"
               style={{
-                background: 'linear-gradient(135deg, hsl(0,0%,100%) 0%, hsla(258,78%,98%,1) 100%)',
-                boxShadow: '0 6px 18px hsla(258,78%,55%,0.22), inset 0 1px 0 hsla(0,0%,100%,0.9)',
+                background: 'linear-gradient(135deg, hsl(0,0%,100%) 0%, hsla(192,78%,98%,1) 100%)',
+                boxShadow: '0 6px 18px hsla(192,78%,55%,0.22), inset 0 1px 0 hsla(0,0%,100%,0.9)',
               }}>
               <img src={dbidLogo} alt="DBID Logo" className="w-8 h-8 object-contain drop-shadow-sm" />
               {/* subtle shine */}
@@ -308,11 +308,11 @@ const Footer = () => {
           </div>
           <div className="min-w-0">
             <p className="text-[11px] font-black font-sora tracking-widest leading-tight bg-clip-text text-transparent"
-              style={{ backgroundImage: 'linear-gradient(90deg, hsl(258,78%,40%) 0%, hsl(200,90%,38%) 50%, hsl(162,72%,32%) 100%)' }}>
+              style={{ backgroundImage: 'linear-gradient(90deg, hsl(192,78%,40%) 0%, hsl(200,90%,38%) 50%, hsl(162,72%,32%) 100%)' }}>
               {settings.cert_title}
             </p>
             <p className="text-[10px] font-fira mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
-              style={{ background: 'hsla(258,78%,55%,0.08)', color: 'hsl(258,78%,38%)', border: '1px solid hsla(258,78%,65%,0.18)' }}>
+              style={{ background: 'hsla(192,78%,55%,0.08)', color: 'hsl(192,78%,38%)', border: '1px solid hsla(192,78%,65%,0.18)' }}>
               <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
               {settings.cert_id}
             </p>
@@ -329,8 +329,8 @@ const Footer = () => {
               style={{
                 background: 'hsla(0,0%,100%,0.70)',
                 backdropFilter: 'blur(10px)',
-                color: 'hsl(258,78%,45%)',
-                border: '1px solid hsla(258,78%,75%,0.22)',
+                color: 'hsl(192,78%,45%)',
+                border: '1px solid hsla(192,78%,75%,0.22)',
                 boxShadow: '0 1px 4px hsla(226,35%,12%,0.05)',
               }}>
               {pm}
@@ -348,19 +348,19 @@ const Footer = () => {
     </div>
 
     {/* ── Copyright ── */}
-    <div className="relative z-10 border-t" style={{ borderColor: 'hsla(258,78%,75%,0.12)' }}>
+    <div className="relative z-10 border-t" style={{ borderColor: 'hsla(192,78%,75%,0.12)' }}>
       <div className="container-fluid py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
         <div
           className="inline-flex items-center px-4 py-1.5 rounded-full backdrop-blur-md transition-all hover:scale-[1.02]"
           style={{
-            background: 'linear-gradient(135deg, hsla(0,0%,100%,0.85), hsla(258,78%,98%,0.75))',
-            border: '1px solid hsla(258,78%,75%,0.25)',
-            boxShadow: '0 4px 16px -4px hsla(258,78%,50%,0.12), inset 0 1px 0 hsla(0,0%,100%,0.6)',
+            background: 'linear-gradient(135deg, hsla(0,0%,100%,0.85), hsla(192,78%,98%,0.75))',
+            border: '1px solid hsla(192,78%,75%,0.25)',
+            boxShadow: '0 4px 16px -4px hsla(192,78%,50%,0.12), inset 0 1px 0 hsla(0,0%,100%,0.6)',
           }}
         >
           <p className="text-[11px] font-fira tracking-wide">
             <span style={{
-              background: 'linear-gradient(90deg, hsl(258,78%,45%), hsl(290,70%,50%))',
+              background: 'linear-gradient(90deg, hsl(192,78%,45%), hsl(216,70%,50%))',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
@@ -368,14 +368,14 @@ const Footer = () => {
             }}>© {new Date().getFullYear()}</span>
             {' '}
             <strong style={{
-              background: 'linear-gradient(90deg, hsl(226,75%,30%), hsl(258,78%,40%))',
+              background: 'linear-gradient(90deg, hsl(226,75%,30%), hsl(192,78%,40%))',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
             }}>{settings.store_name}</strong>
             <span style={{ color: 'hsl(226,30%,45%)' }}>. </span>
             <span style={{
-              background: 'linear-gradient(90deg, hsl(190,75%,40%), hsl(258,70%,50%))',
+              background: 'linear-gradient(90deg, hsl(190,75%,40%), hsl(192,70%,50%))',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
@@ -386,12 +386,12 @@ const Footer = () => {
         <a href={settings.website_url} target="_blank" rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full backdrop-blur-md transition-all hover:scale-[1.02]"
           style={{
-            background: 'linear-gradient(135deg, hsla(0,0%,100%,0.85), hsla(258,78%,98%,0.75))',
-            border: '1px solid hsla(258,78%,75%,0.25)',
-            boxShadow: '0 4px 16px -4px hsla(258,78%,50%,0.12), inset 0 1px 0 hsla(0,0%,100%,0.6)',
+            background: 'linear-gradient(135deg, hsla(0,0%,100%,0.85), hsla(192,78%,98%,0.75))',
+            border: '1px solid hsla(192,78%,75%,0.25)',
+            boxShadow: '0 4px 16px -4px hsla(192,78%,50%,0.12), inset 0 1px 0 hsla(0,0%,100%,0.6)',
           }}>
           <span className="text-[11px] font-fira tracking-wide" style={{
-            background: 'linear-gradient(90deg, hsl(258,78%,45%), hsl(290,70%,50%), hsl(190,75%,45%))',
+            background: 'linear-gradient(90deg, hsl(192,78%,45%), hsl(216,70%,50%), hsl(190,75%,45%))',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
@@ -399,7 +399,7 @@ const Footer = () => {
           }}>
             {settings.website_url.replace('https://','').replace('http://','')}
           </span>
-          <ExternalLink size={10} style={{ color: 'hsl(258,78%,50%)' }} />
+          <ExternalLink size={10} style={{ color: 'hsl(192,78%,50%)' }} />
         </a>
       </div>
     </div>
