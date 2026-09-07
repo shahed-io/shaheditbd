@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { ArrowRight, ShoppingBag, TrendingUp, Zap, Shield, Clock, Star, ChevronLeft, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import bannerWebDev from '@/assets/banner-web-development.jpg';
 import bannerEcommerce from '@/assets/banner-ecommerce.jpg';
 import bannerSeo from '@/assets/banner-seo-marketing.jpg';
