@@ -5,8 +5,8 @@
 - [x] Verify the unchanged homepage structure on desktop and mobile
 
 ## Color-only premium theme
-- [ ] Keep the header, footer, product pages, options, sizes, positions, and content unchanged
-- [ ] Apply and verify color changes only across the storefront
+- [x] Keep the header, footer, product pages, options, sizes, positions, and content unchanged
+- [x] Apply and verify color changes only across the storefront
 
 ## Rebrand to Shahed IT (shahedit.com)
 - [x] Replace store name with "Shahed IT" across app, edge functions, manifest, index.html, emails, memory rules
