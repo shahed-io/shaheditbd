@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import bannerWebDev from '@/assets/banner-web-development.jpg';
-import bannerEcommerce from '@/assets/banner-ecommerce.jpg';
-import bannerSeo from '@/assets/banner-seo-marketing.jpg';
+import bannerWebDev from '@/assets/banner-web-development.webp';
+import bannerGraphics from '@/assets/banner-graphics-design.webp';
+import bannerBusiness from '@/assets/banner-business-solution.webp';
 
 import { useHeroBanner, type SlideData } from '@/hooks/useHeroBanner';
 
