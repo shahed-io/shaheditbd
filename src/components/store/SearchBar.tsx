@@ -364,7 +364,7 @@ const useGoogleSearch = () => {
 };
 
 // ── Popular search terms ─────────────────────────────────────────────
-const POPULAR_SEARCHES = ['Windows 11', 'Office 365', 'Netflix', 'Adobe', 'Antivirus', 'VPN', 'Spotify', 'Canva Pro'];
+const POPULAR_SEARCHES = ['Web Development', 'Website Maintenance', 'Graphics Design', 'Facebook Services', 'Digital Marketing', 'Business Solutions', 'Logo Design', 'SEO'];
 
 // ══════════════════════════════════════════════════════════════════════
 // DESKTOP: Google-style Command Palette
@@ -438,7 +438,7 @@ const DesktopSearchPalette = ({ onClose }: { onClose: () => void }) => {
             value={s.query}
             onChange={(e) => s.handleChange(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="প্রোডাক্ট সার্চ করুন..."
+            placeholder="সার্ভিস সার্চ করুন..."
             className="flex-1 bg-transparent text-base outline-none placeholder:text-muted-foreground text-foreground"
           />
           {s.query && (
@@ -703,7 +703,7 @@ const MobileSearchOverlay = ({ onClose }: { onClose: () => void }) => {
               value={s.query}
               onChange={(e) => s.handleChange(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="প্রোডাক্ট সার্চ করুন..."
+              placeholder="সার্ভিস সার্চ করুন..."
               className="flex-1 bg-transparent text-base outline-none placeholder:text-muted-foreground text-foreground"
               autoComplete="off"
             />
@@ -1043,7 +1043,7 @@ const SearchBar = ({ className = '', variant = 'standalone', onClose }: SearchBa
               onChange={handleChange}
               onFocus={() => setOpen(true)}
               onKeyDown={handleKeyDown}
-              placeholder="প্রোডাক্ট সার্চ করুন..."
+              placeholder="সার্ভিস সার্চ করুন..."
               className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground text-foreground"
             />
             {query && (
