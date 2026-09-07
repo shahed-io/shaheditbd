@@ -903,8 +903,8 @@ const AdminLiveChat = () => {
                         onChange={e => updateLiveSet(set.id, 'value', e.target.value)}
                         placeholder={
                           set.type === 'custom_link' ? 'https://...' :
-                          set.type === 'messenger' ? 'shahedstore' :
-                          set.type === 'telegram' ? '@shahedstore' :
+                          set.type === 'messenger' ? 'shahedit' :
+                          set.type === 'telegram' ? '@shahedit' :
                           '8801XXXXXXXXX'
                         }
                       />

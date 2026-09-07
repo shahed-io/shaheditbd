@@ -217,7 +217,7 @@ const FAQs = () => {
         title="Frequently Asked Questions – Orders, Payment, Delivery & Refund"
         description="Find answers to all your questions about orders, payment methods, delivery, license keys and refunds at Shahed IT – Bangladesh's trusted digital software shop."
         canonical="https://shahedit.com/faqs"
-        keywords="shahed store faq, digital software faq bangladesh, order help, payment help"
+        keywords="shahed it faq, digital software faq bangladesh, order help, payment help"
         schema={faqSchema(allFaqItems)}
       />
       <Navbar />

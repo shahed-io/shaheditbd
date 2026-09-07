@@ -346,7 +346,7 @@ const AdminQuickSale = () => {
 
       if ((deliveryMethod === 'whatsapp' || deliveryMethod === 'both') && customerPhone.trim()) {
         const phone = customerPhone.replace(/\D/g, '').replace(/^0/, '880');
-        let msg = `SHAHED STORE\n`;
+        let msg = `SHAHED IT\n`;
         msg += `________________________\n\n`;
         msg += `Order Confirmation\n\n`;
         msg += `Order: #${orderNumber}\n`;

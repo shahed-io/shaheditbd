@@ -4,7 +4,7 @@
 
 This project was built with [Lovable](https://lovable.dev).
 
-**Live app**: https://shahedstore.lovable.app
+**Live app**: https://shahedit.com
 
 ## Build with Lovable
 

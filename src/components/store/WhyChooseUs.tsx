@@ -26,7 +26,7 @@ const FEATURES = [
   {
     Icon: Building2,
     title: 'Govt. Registered',
-    desc: 'DBID: 586772174 — সরকার নিবন্ধিত ব্যবসা।',
+    desc: 'DBID: 623962552 — সরকার নিবন্ধিত ব্যবসা।',
     from: '158, 76%, 50%',
     to:   '199, 89%, 60%',
   },

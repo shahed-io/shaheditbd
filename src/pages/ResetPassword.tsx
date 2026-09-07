@@ -52,7 +52,7 @@ const ResetPassword = () => {
           <a href="/" className="flex items-center gap-2.5">
             <img src={logoIcon} alt="Logo" className="w-10 h-10 rounded-xl" />
             <span className="font-black tracking-widest" style={{ fontFamily: 'Orbitron, sans-serif', color: 'hsl(var(--primary))' }}>
-              SHAHED STORE
+              SHAHED IT
             </span>
           </a>
         </div>

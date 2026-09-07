@@ -8,12 +8,12 @@ const corsHeaders = {
 };
 
 // ─── SHARED DESIGN BLUEPRINT (LOCKED SIGNATURE — DO NOT CHANGE) ─────────────
-// Signature SHAHED STORE house style:
+// Signature SHAHED IT house style:
 //   1. Soft pale-blue / off-white airy background
 //   2. Floating 3D bubbles (sky-blue + mint ONLY) around the card
 //   3. Large white frosted glass card centered (~82% of canvas)
 //   4. Top-left: WHITE OUTER PILL containing an INNER RED rectangle badge (#e63946)
-//      with "SHAHED STORE" in WHITE bold uppercase
+//      with "SHAHED IT" in WHITE bold uppercase
 //   5. Top-right: white pill with brand logo + name in dark charcoal
 //   6. Center: very large clean app icon / official brand logo
 //   7. Bottom: thin separator + contact row (globe + phone) inside the card
@@ -31,7 +31,7 @@ You MUST create a PREMIUM, GLOSSY, square (1:1) product promotional card in the 
 - The background (gradient + spheres) must show THROUGH the frosted card
 
 ═══ TOP ROW INSIDE CARD (32px padding) ═══
-- LEFT — "SHAHED STORE" badge pill: a rounded pill containing the words "SHAHED STORE" in bold uppercase sans-serif. Use SOLID RED (#e63946) pill with WHITE text when the background is light/cool; use a frosted translucent white-glass pill with white bold text when the background is a saturated pastel gradient. Glossy, premium, crisp.
+- LEFT — "SHAHED IT" badge pill: a rounded pill containing the words "SHAHED IT" in bold uppercase sans-serif. Use SOLID RED (#e63946) pill with WHITE text when the background is light/cool; use a frosted translucent white-glass pill with white bold text when the background is a saturated pastel gradient. Glossy, premium, crisp.
 - RIGHT — BRAND PILL: solid WHITE rounded pill (rgba(255,255,255,0.96), ~26px radius) containing the official small square brand logo (original colors) + the product name "${brand || name}" in dark charcoal (#1f2937) bold sans-serif (~15px)
 
 ═══ CENTER OF CARD (the hero) ═══
@@ -78,7 +78,7 @@ const BG_PASTEL_AURORA = `
 - Full-canvas smooth pastel gradient: lavender-purple (#b48be0) top-left → soft pink (#f3a8c4) top-right → peach (#f7b98f) bottom-right → sky blue (#a8c8ee) bottom-left
 - Faint translucent glass bubbles of varying sizes floating over the gradient (barely visible outlines, glossy rims)
 - Rich, saturated but soft — dreamy aurora glow
-- Because the background is colorful, the SHAHED STORE badge is a frosted translucent glass pill with WHITE bold text`;
+- Because the background is colorful, the SHAHED IT badge is a frosted translucent glass pill with WHITE bold text`;
 
 const bg = (background: string) => (name: string, brand: string) =>
   `${sharedBlueprint(name, brand)}\n\n${background}`;

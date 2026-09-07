@@ -28,7 +28,7 @@ interface CurrencyContextValue {
   refresh: () => Promise<void>;
 }
 
-const STORAGE_KEY = "shahedstore_currency_code";
+const STORAGE_KEY = "shahedit_currency_code";
 
 const CurrencyContext = createContext<CurrencyContextValue | undefined>(undefined);
 

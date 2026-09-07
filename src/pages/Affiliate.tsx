@@ -460,7 +460,7 @@ const Affiliate = () => {
       <SEOHead
         title="Affiliate Program — Earn Commission"
         description="Join the Shahed IT Affiliate Program. Share your referral link, earn commission on every sale, and withdraw via bKash/Nagad. Best digital affiliate program in Bangladesh."
-        keywords="affiliate program bangladesh, earn online bangladesh, referral program, shahed store affiliate, digital affiliate"
+        keywords="affiliate program bangladesh, earn online bangladesh, referral program, shahed it affiliate, digital affiliate"
       />
       <Navbar />
       <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">

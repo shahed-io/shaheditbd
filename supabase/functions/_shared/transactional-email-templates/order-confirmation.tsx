@@ -87,7 +87,7 @@ const OrderConfirmation = ({
               Your product will be delivered after payment verification. Delivery is usually completed within 1-24 hours.
             </Text>
 
-            <Button style={buttonStyle} href="https://shahedstore.lovable.app/dashboard">
+            <Button style={buttonStyle} href="https://shahedit.com/dashboard">
               View My Orders
             </Button>
 

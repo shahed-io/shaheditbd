@@ -111,7 +111,7 @@ serve(async (req) => {
 
     const bdCities = "ঢাকা, চট্টগ্রাম, সিলেট, রাজশাহী, খুলনা, বরিশাল, ময়মনসিংহ, কুমিল্লা";
 
-    const systemPrompt = `You are a senior SEO content strategist for Shahed IT (DBID: 586772174) — Bangladesh's #1 digital software & subscription store (shahedit.com).
+    const systemPrompt = `You are a senior SEO content strategist for Shahed IT (DBID: 623962552) — Bangladesh's #1 digital software & subscription store (shahedit.com).
 
 GOAL: Write a comprehensive, deeply informational blog post in Bangla-English mix that ranks #1 on Google Bangladesh AND gets cited by ChatGPT, Perplexity, and Google AI Overview.
 
@@ -163,7 +163,7 @@ Clear recommendation with reasoning. Mention Shahed IT products naturally where 
 4-6 bullet points of pitfalls.
 
 ## কেন Shahed IT থেকে কিনবেন? (Why Buy From Shahed IT)
-3-5 bullets: genuine license, instant delivery, bKash/Nagad/Rocket, 24/7 support, DBID 586772174 official registration.
+3-5 bullets: genuine license, instant delivery, bKash/Nagad/Rocket, 24/7 support, DBID 623962552 official registration.
 
 ## উপসংহার (Conclusion)
 2-3 paragraph wrap-up + a clear call to action linking to https://shahedit.com/shop.

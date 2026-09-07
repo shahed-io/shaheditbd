@@ -114,7 +114,7 @@ A: Shahed IT is a PWA — install it from the browser via /install or the mobile
 
 - Legal / brand name: Shahed IT
 - Bengali name: Shahed IT
-- Aliases: Shahed IT BD, Shahed IT Bangladesh, Shahedstore
+- Aliases: Shahed IT BD, Shahed IT Bangladesh
 - Domain: shahedit.com
 - Logo: https://shahedit.com/favicon.png
 - Type: Online digital software store (Organization / OnlineStore)

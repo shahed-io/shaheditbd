@@ -1255,7 +1255,7 @@ const AdminOrders = () => {
     if (!phone) { toast.error('কাস্টমারের ফোন নম্বর নেই'); return; }
     const items = order.order_items?.map((i: any) => `- ${i.product_name} x${i.quantity}`).join('\n') || '';
     const msg = encodeURIComponent(
-      `SHAHED STORE\n` +
+      `SHAHED IT\n` +
       `________________________\n\n` +
       `Order Confirmation\n\n` +
       `Order: #${order.order_number}\n` +
@@ -1289,7 +1289,7 @@ const AdminOrders = () => {
               onClick: () => {
                 const phone = newOrder.customer_phone?.replace(/\D/g, '').replace(/^0/, '880');
                 const msg = encodeURIComponent(
-                  `SHAHED STORE\n\nOrder: #${newOrder.order_number}\nName: ${newOrder.customer_name}\nTotal: ${Number(newOrder.total).toLocaleString()} BDT\nPayment: ${PM_LABELS[newOrder.payment_method] || newOrder.payment_method}${newOrder.transaction_id ? '\nTrxID: ' + newOrder.transaction_id : ''}\n\nThank you!\n-- Shahed IT`
+                  `SHAHED IT\n\nOrder: #${newOrder.order_number}\nName: ${newOrder.customer_name}\nTotal: ${Number(newOrder.total).toLocaleString()} BDT\nPayment: ${PM_LABELS[newOrder.payment_method] || newOrder.payment_method}${newOrder.transaction_id ? '\nTrxID: ' + newOrder.transaction_id : ''}\n\nThank you!\n-- Shahed IT`
                 );
                 window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
               }

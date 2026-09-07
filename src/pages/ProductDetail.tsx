@@ -652,10 +652,10 @@ const ProductDetail = () => {
                 }}
               >
                 <a
-                  href="https://dbid.gov.bd/verify/586772174"
+                  href="https://dbid.gov.bd/verify/623962552"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Verify DBID 586772174 — Government of Bangladesh"
+                  aria-label="Verify DBID 623962552 — Government of Bangladesh"
                   className="group relative flex items-stretch rounded-[18px] overflow-visible"
                   style={{
                     background: '#ffffff',
@@ -709,7 +709,7 @@ const ProductDetail = () => {
                           className="text-[10px] lg:text-[12px] font-extrabold tabular-nums tracking-normal"
                           style={{ color: '#f97316', fontFamily: 'Sora, sans-serif' }}
                         >
-                          586772174
+                          623962552
                         </span>
                       </div>
                     </div>

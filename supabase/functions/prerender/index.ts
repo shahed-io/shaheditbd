@@ -190,7 +190,7 @@ Deno.serve(async (req) => {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${escape(title)}</title>
   <meta name="description" content="${escape(description)}">
-  <meta name="keywords" content="${escape(product.name)}, buy ${escape(product.name)} bangladesh, ${escape(product.name)} price bd, ${escape(categoryName)}, digital software bangladesh, shahed store">
+  <meta name="keywords" content="${escape(product.name)}, buy ${escape(product.name)} bangladesh, ${escape(product.name)} price bd, ${escape(categoryName)}, digital software bangladesh, shahed it">
   <meta name="author" content="${SITE_NAME}">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
   <meta name="geo.region" content="BD">

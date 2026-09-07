@@ -313,42 +313,42 @@ const Shop = () => {
     'windows': {
       title: 'Buy Windows 10 & 11 License Keys in Bangladesh | Shahed IT',
       desc: 'Buy genuine Windows 10 & Windows 11 Pro/Home license keys in Bangladesh at the lowest price. 100% original activation, instant email delivery, bKash accepted.',
-      keywords: 'buy windows in bangladesh, windows 11 pro key bd, windows 10 license bangladesh, windows key price bd, shahed store',
+      keywords: 'buy windows in bangladesh, windows 11 pro key bd, windows 10 license bangladesh, windows key price bd, shahed it',
     },
     'microsoft-office': {
       title: 'Buy Microsoft Office 365 in Bangladesh | Genuine License',
       desc: 'Buy Microsoft Office 365 and Office 2021 in Bangladesh at best price. Original license, 1 to 5 users, instant activation, lifetime plans available. Shahed IT BD.',
-      keywords: 'buy microsoft office in bangladesh, office 365 bd price, ms office 2021 bangladesh, office 365 subscription bd, shahed store',
+      keywords: 'buy microsoft office in bangladesh, office 365 bd price, ms office 2021 bangladesh, office 365 subscription bd, shahed it',
     },
     'office': {
       title: 'Buy Microsoft Office 365 in Bangladesh | Genuine License',
       desc: 'Buy Microsoft Office 365 and Office 2021 in Bangladesh at best price. Original license, 1 to 5 users, instant activation, lifetime plans available. Shahed IT BD.',
-      keywords: 'buy microsoft office in bangladesh, office 365 bd price, ms office 2021 bangladesh, office 365 subscription bd, shahed store',
+      keywords: 'buy microsoft office in bangladesh, office 365 bd price, ms office 2021 bangladesh, office 365 subscription bd, shahed it',
     },
     'adobe': {
       title: 'Buy Adobe Creative Cloud in Bangladesh | All Apps',
       desc: 'Buy Adobe Creative Cloud, Photoshop, Illustrator, Premiere Pro in Bangladesh at cheapest price. Genuine subscription, monthly/yearly plans, instant delivery.',
-      keywords: 'buy adobe in bangladesh, adobe creative cloud bd, photoshop subscription bangladesh, adobe cc price bd, shahed store',
+      keywords: 'buy adobe in bangladesh, adobe creative cloud bd, photoshop subscription bangladesh, adobe cc price bd, shahed it',
     },
     'antivirus': {
       title: 'Buy Antivirus Software in Bangladesh | ESET, Bitdefender, Kaspersky',
       desc: 'Buy genuine antivirus software in Bangladesh — ESET, Bitdefender, Kaspersky, Norton at the lowest price. 1-3 year licenses, instant activation, 100% original.',
-      keywords: 'buy antivirus in bangladesh, eset bd price, bitdefender bangladesh, kaspersky bd, antivirus cheap bd, shahed store',
+      keywords: 'buy antivirus in bangladesh, eset bd price, bitdefender bangladesh, kaspersky bd, antivirus cheap bd, shahed it',
     },
     'vpn': {
       title: 'Buy VPN in Bangladesh | NordVPN, ExpressVPN, Surfshark',
       desc: 'Buy premium VPN subscriptions in Bangladesh — NordVPN, ExpressVPN, Surfshark at the best price. Fast servers, secure browsing, instant delivery. Shahed IT.',
-      keywords: 'buy vpn in bangladesh, nordvpn bd price, expressvpn bangladesh, surfshark bd, vpn subscription bangladesh, shahed store',
+      keywords: 'buy vpn in bangladesh, nordvpn bd price, expressvpn bangladesh, surfshark bd, vpn subscription bangladesh, shahed it',
     },
     'streaming': {
       title: 'Buy Streaming Subscriptions in Bangladesh | Netflix, Spotify, YouTube',
       desc: 'Buy Netflix Premium, Spotify Premium, YouTube Premium and Disney+ subscriptions in Bangladesh at cheapest price. Instant delivery, verified accounts.',
-      keywords: 'buy streaming in bangladesh, netflix bd price, spotify premium bd, youtube premium bangladesh, shahed store',
+      keywords: 'buy streaming in bangladesh, netflix bd price, spotify premium bd, youtube premium bangladesh, shahed it',
     },
     'ai-tools': {
       title: 'Buy AI Tools in Bangladesh | ChatGPT Plus, Claude, Midjourney',
       desc: 'Buy premium AI tool subscriptions in Bangladesh — ChatGPT Plus, Claude Pro, Midjourney, Perplexity at the lowest price. Instant activation, genuine access.',
-      keywords: 'buy ai tools in bangladesh, chatgpt plus bd, claude pro bangladesh, midjourney bd, ai subscription bangladesh, shahed store',
+      keywords: 'buy ai tools in bangladesh, chatgpt plus bd, claude pro bangladesh, midjourney bd, ai subscription bangladesh, shahed it',
     },
   };
   const catSeo = activeCategory ? CATEGORY_SEO[activeCategory.slug] : undefined;
@@ -367,8 +367,8 @@ const Shop = () => {
         canonical={activeCatSlug ? `https://shahedit.com/shop?category=${activeCatSlug}` : 'https://shahedit.com/shop'}
         keywords={catSeo?.keywords
           ?? (activeCategory
-            ? `buy ${activeCategory.name} in bangladesh, ${activeCategory.name} price bd, ${activeCategory.name} bangladesh, shahed store`
-            : 'digital software bangladesh, license key bangladesh, windows 11 key, office 365 bangladesh, adobe bangladesh, netflix subscription bd, shahed store')}
+            ? `buy ${activeCategory.name} in bangladesh, ${activeCategory.name} price bd, ${activeCategory.name} bangladesh, shahed it`
+            : 'digital software bangladesh, license key bangladesh, windows 11 key, office 365 bangladesh, adobe bangladesh, netflix subscription bd, shahed it')}
         schema={[
           ...(products.length > 0 ? [itemListSchema(products.map(p => ({ name: p.name, slug: p.slug, image: p.image_url, price: p.price })))] : []),
           breadcrumbSchema([

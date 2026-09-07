@@ -44,7 +44,7 @@ const ALLOWED_BOT_SIGNATURES = [
   'slackbot', 'discordbot', 'pinterest', 'pinterestbot',
   'redditbot', 'embedly', 'quora link preview', 'tumblr',
   // Our own prerenderer (build-time static HTML generation)
-  'shahedstoreprerender',
+  'shaheditprerender',
   // Monitoring / uptime — harmless
   'uptimerobot', 'pingdom', 'statuscake',
 ];
