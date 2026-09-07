@@ -1,14 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { ArrowRight, ShoppingBag, TrendingUp, Zap, Shield, Clock, Star, ChevronLeft, ChevronRight, CheckCircle2 } from 'lucide-react';
-import idmLogo from '@/assets/idm.webp';
-import ms365Logo from '@/assets/ms365-logo.png';
-import winLogo from '@/assets/windows-logo.png';
-import bannerWin11Asset from '@/assets/banner-win11.webp.asset.json';
-import bannerMs365Asset from '@/assets/banner-ms365.webp.asset.json';
-import bannerIdmAsset from '@/assets/banner-idm.webp.asset.json';
-const bannerWin11 = bannerWin11Asset.url;
-const bannerMs365 = bannerMs365Asset.url;
-const bannerIdm = bannerIdmAsset.url;
+import bannerWebDev from '@/assets/banner-web-development.jpg';
+import bannerEcommerce from '@/assets/banner-ecommerce.jpg';
+import bannerSeo from '@/assets/banner-seo-marketing.jpg';
+
 import { useHeroBanner, type SlideData } from '@/hooks/useHeroBanner';
 
 type Slide = {
