@@ -4,14 +4,13 @@ import { supabase } from '@/integrations/supabase/client';
 import { useReveal } from '@/hooks/useReveal';
 
 const CAT_META: Record<string, { icon: string; glow: string; accent: string }> = {
-  'Windows':      { icon: '🪟', glow: 'hsla(210,90%,60%,0.18)', accent: 'hsl(210,90%,60%)' },
-  'Office':       { icon: '📦', glow: 'hsla(25,90%,60%,0.18)',  accent: 'hsl(25,90%,60%)' },
-  'Software':     { icon: '💻', glow: 'hsla(263,70%,62%,0.18)', accent: 'hsl(263,70%,62%)' },
-  'VPN':          { icon: '🔒', glow: 'hsla(190,70%,48%,0.18)', accent: 'hsl(190,70%,48%)' },
-  'Subscription': { icon: '🎬', glow: 'hsla(283,65%,62%,0.18)', accent: 'hsl(283,65%,62%)' },
-  'Antivirus':    { icon: '🛡️', glow: 'hsla(158,64%,45%,0.18)', accent: 'hsl(158,64%,45%)' },
-  'Streaming':    { icon: '📺', glow: 'hsla(0,80%,62%,0.18)',   accent: 'hsl(0,80%,62%)' },
-  'default':      { icon: '🛒', glow: 'hsla(243,75%,62%,0.18)', accent: 'hsl(243,75%,62%)' },
+  'Web Development':     { icon: '💻', glow: 'hsla(243,75%,62%,0.18)', accent: 'hsl(243,75%,62%)' },
+  'Website Maintenance': { icon: '🛠️', glow: 'hsla(190,70%,48%,0.18)', accent: 'hsl(190,70%,48%)' },
+  'Graphics Design':     { icon: '🎨', glow: 'hsla(283,65%,62%,0.18)', accent: 'hsl(283,65%,62%)' },
+  'Facebook Services':   { icon: '📣', glow: 'hsla(210,90%,60%,0.18)', accent: 'hsl(210,90%,60%)' },
+  'Digital Marketing':   { icon: '📈', glow: 'hsla(158,64%,45%,0.18)', accent: 'hsl(158,64%,45%)' },
+  'Business Solutions':  { icon: '🏢', glow: 'hsla(25,90%,60%,0.18)',  accent: 'hsl(25,90%,60%)' },
+  'default':             { icon: '🚀', glow: 'hsla(243,75%,62%,0.18)', accent: 'hsl(243,75%,62%)' },
 };
 
 interface CatData {
@@ -38,7 +37,7 @@ const Categories = () => {
 
     if (!categories?.length) { setLoading(false); return; }
 
-    const HIDDEN_CATS = ['Adobe', 'Antivirus', 'Streaming'];
+    const HIDDEN_CATS: string[] = [];
     setCats(
       categories
         .map(c => ({

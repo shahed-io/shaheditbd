@@ -24,21 +24,19 @@ const CAT_TTL = 5 * 60 * 1000; // 5 minutes
 
 const NAV_LINKS = [
   { label: 'Home',         href: '/' },
-  { label: 'All Products', href: '/shop' },
+  { label: 'All Services', href: '/shop' },
   { label: 'Blog',         href: '/blog' },
   { label: 'Free Tools',   href: '/free-tools' },
 ];
 
 const CAT_ICON_MAP: Record<string, { icon: string; color: string }> = {
-  'Windows':      { icon: '🪟', color: 'hsla(210,90%,60%,0.12)' },
-  'Office':       { icon: '📦', color: 'hsla(25,90%,60%,0.12)' },
-  'Microsoft Office': { icon: '📦', color: 'hsla(258,78%,55%,0.12)' },
-  'Software':     { icon: '💻', color: 'hsla(263,70%,62%,0.12)' },
-  'VPN':          { icon: '🔒', color: 'hsla(200,90%,45%,0.12)' },
-  'Subscription': { icon: '🎬', color: 'hsla(283,65%,62%,0.12)' },
-  'Antivirus':    { icon: '🛡️', color: 'hsla(162,72%,38%,0.12)' },
-  'Streaming':    { icon: '📺', color: 'hsla(0,80%,62%,0.12)' },
-  'default':      { icon: '🛒', color: 'hsla(243,75%,62%,0.12)' },
+  'Web Development':     { icon: '💻', color: 'hsla(243,75%,62%,0.12)' },
+  'Website Maintenance': { icon: '🛠️', color: 'hsla(190,70%,48%,0.12)' },
+  'Graphics Design':     { icon: '🎨', color: 'hsla(283,65%,62%,0.12)' },
+  'Facebook Services':   { icon: '📣', color: 'hsla(210,90%,60%,0.12)' },
+  'Digital Marketing':   { icon: '📈', color: 'hsla(158,64%,45%,0.12)' },
+  'Business Solutions':  { icon: '🏢', color: 'hsla(25,90%,60%,0.12)' },
+  'default':             { icon: '🚀', color: 'hsla(243,75%,62%,0.12)' },
 };
 
 interface NavCategory {
@@ -103,7 +101,7 @@ const Navbar = () => {
       .eq('is_active', true)
       .order('sort_order', { ascending: true });
     if (!categories) return;
-    const HIDDEN = ['Adobe', 'Antivirus', 'Streaming'];
+    const HIDDEN: string[] = [];
     const mapped = categories
       .map(c => ({
         id: c.id,
