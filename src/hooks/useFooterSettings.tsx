@@ -28,7 +28,7 @@ const DEFAULTS: FooterSettings = {
   address: 'Rajshahi, Bangladesh',
   website_url: 'https://www.shahedit.com',
   store_name: 'Shahed IT',
-  tagline: 'বাংলাদেশের সবচেয়ে বিশ্বস্ত ডিজিটাল সফটওয়্যার স্টোর। অরিজিনাল সফটওয়্যার, সেরা দামে, ইনস্ট্যান্ট ডেলিভারি।',
+  tagline: 'বাংলাদেশের বিশ্বস্ত ডিজিটাল আইটি সলিউশন পার্টনার। ওয়েব ডেভেলপমেন্ট, ডিজাইন ও ডিজিটাল মার্কেটিং — এক জায়গায়।',
   facebook_url: 'https://www.facebook.com/shahed.it.co',
   whatsapp_url: 'https://wa.me/8801820060046',
   instagram_url: 'https://www.instagram.com/shahedstore.com.bd/',

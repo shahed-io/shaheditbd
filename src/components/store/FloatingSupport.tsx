@@ -80,7 +80,7 @@ const DEFAULTS: LiveChatConfig = {
   phone_subtitle: 'সরাসরি কল করুন',
   ai_label: 'AI Support',
   ai_subtitle: 'তাৎক্ষণিক উত্তর পান',
-  ai_welcome_message: 'হ্যালো! 👋 আমি Shahed IT AI সহকারী। Windows, Office, Adobe, Netflix, Spotify সহ যেকোনো প্রোডাক্ট সম্পর্কে প্রশ্ন করুন!',
+  ai_welcome_message: 'হ্যালো! 👋 আমি Shahed IT AI সহকারী। ওয়েব ডেভেলপমেন্ট, ডিজাইন, ডিজিটাল মার্কেটিং সহ যেকোনো সার্ভিস সম্পর্কে প্রশ্ন করুন!',
   ai_placeholder: 'আপনার প্রশ্ন লিখুন...',
   quick_suggestions: [
     '🔥 আজকের সেরা অফার দেখাও',
@@ -93,11 +93,11 @@ const DEFAULTS: LiveChatConfig = {
     '💰 ওয়ালেটে টাকা যোগ করব কীভাবে?',
     '🆕 নতুন ইউজারদের জন্য অফার আছে?',
     '🎊 বান্ডেল প্যাকেজে ছাড় আছে?',
-    '🪟 Windows 11 এর দাম কত?',
-    '📊 Office 365 অফার দেখাও',
-    '🎬 Netflix সাবস্ক্রিপশন',
-    '🎵 Spotify Premium অফার',
-    '🎨 Adobe Creative Cloud',
+    '🌐 ওয়েবসাইট বানাতে কত খরচ?',
+    '🛠️ ওয়েবসাইট মেইনটেনেন্স প্যাকেজ',
+    '🎨 লোগো ও গ্রাফিক্স ডিজাইন',
+    '📣 ফেসবুক পেজ বুস্টিং সার্ভিস',
+    '📈 ডিজিটাল মার্কেটিং ও SEO',
     '💳 পেমেন্ট কিভাবে করব?',
     '🚚 কতক্ষণে ডেলিভারি পাব?',
     '✅ লাইসেন্স কি অরিজিনাল?',
@@ -135,7 +135,7 @@ const FloatingSupport = () => {
   const configLoaded = useRef(false);
   const sessionIdRef = useRef(crypto.randomUUID());
 
-  const WELCOME_EN = "Hi! 👋 I'm the Shahed IT AI assistant. Ask me anything about Windows, Office, Adobe, Netflix, Spotify or any other product!";
+  const WELCOME_EN = "Hi! 👋 I'm the Shahed IT AI assistant. Ask me anything about web development, design, digital marketing or any of our IT services!";
   const PLACEHOLDER_EN = 'Type your question...';
 
   const switchLanguage = (lang: 'bn' | 'en') => {

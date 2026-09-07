@@ -200,7 +200,7 @@ export const organizationSchema = () => ({
     height: 512,
   },
   image: `${SITE_URL}/favicon.png`,
-  description: "Bangladesh's most trusted digital software shop. Buy Windows 11, Microsoft Office 365, Adobe Creative Cloud, Antivirus, VPN at the lowest price. 100% genuine. Instant delivery.",
+  description: "Shahed IT — Bangladesh's trusted digital IT partner. Web development, website maintenance, graphics design, Facebook services, digital marketing and business solutions.",
   foundingDate: '2020',
   areaServed: {
     '@type': 'Country',
@@ -210,8 +210,8 @@ export const organizationSchema = () => ({
   address: {
     '@type': 'PostalAddress',
     addressCountry: 'BD',
-    addressLocality: 'Dhaka',
-    addressRegion: 'Dhaka',
+    addressLocality: 'Rajshahi',
+    addressRegion: 'Rajshahi',
   },
   contactPoint: [
     {
@@ -226,7 +226,7 @@ export const organizationSchema = () => ({
   sameAs: [
     'https://www.facebook.com/shahed.it.co',
     'https://wa.me/8801820060046',
-    'https://www.instagram.com/shahedstore',
+    'https://www.instagram.com/shahedit',
     'https://www.youtube.com/@shahedit',
     'https://www.linkedin.com/company/shahedit',
     'https://www.tiktok.com/@shahedit',
@@ -234,16 +234,16 @@ export const organizationSchema = () => ({
   ],
   hasOfferCatalog: {
     '@type': 'OfferCatalog',
-    name: 'Digital Software Products',
+    name: 'Digital IT Services',
     itemListElement: [
       {
         '@type': 'Offer',
         priceCurrency: 'BDT',
         itemOffered: {
           '@type': 'Product',
-          name: 'Windows 11 License Key Bangladesh',
+          name: 'Web Development Service Bangladesh',
           image: `${SITE_URL}/favicon.png`,
-          url: `${SITE_URL}/shop?category=windows`,
+          url: `${SITE_URL}/shop?category=web-development`,
         },
       },
       {
@@ -251,9 +251,9 @@ export const organizationSchema = () => ({
         priceCurrency: 'BDT',
         itemOffered: {
           '@type': 'Product',
-          name: 'Microsoft Office 365 Bangladesh',
+          name: 'Graphics Design Service Bangladesh',
           image: `${SITE_URL}/favicon.png`,
-          url: `${SITE_URL}/shop?category=office`,
+          url: `${SITE_URL}/shop?category=graphics-design`,
         },
       },
       {
@@ -261,9 +261,9 @@ export const organizationSchema = () => ({
         priceCurrency: 'BDT',
         itemOffered: {
           '@type': 'Product',
-          name: 'Adobe Creative Cloud Bangladesh',
+          name: 'Digital Marketing Service Bangladesh',
           image: `${SITE_URL}/favicon.png`,
-          url: `${SITE_URL}/shop?category=adobe`,
+          url: `${SITE_URL}/shop?category=digital-marketing`,
         },
       },
     ],
