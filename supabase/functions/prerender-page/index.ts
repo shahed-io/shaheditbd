@@ -112,7 +112,6 @@ const orgSchema = {
   logo: `${SITE_URL}/favicon.png`,
   sameAs: [
     'https://www.facebook.com/shahed.it.co',
-    'https://www.facebook.com/shahed.it.co',
     'https://wa.me/8801820060046',
   ],
   contactPoint: {

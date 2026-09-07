@@ -225,7 +225,6 @@ export const organizationSchema = () => ({
   ],
   sameAs: [
     'https://www.facebook.com/shahed.it.co',
-    'https://www.facebook.com/shahed.it.co',
     'https://wa.me/8801820060046',
     'https://www.instagram.com/shahedstore',
     'https://www.youtube.com/@shahedit',

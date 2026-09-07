@@ -55,7 +55,7 @@ const CONTACT_INFO = [
 
 const SOCIAL = [
   { icon: <Facebook size={20} />, label: 'Facebook', href: 'https://www.facebook.com/shahed.it.co', color: 'hsl(221,44%,41%)', ext: true },
-  { icon: <MessageCircle size={20} />, label: 'WhatsApp', href: 'https://wa.me/shahedstore', color: 'hsl(142,58%,40%)', ext: true },
+  { icon: <MessageCircle size={20} />, label: 'WhatsApp', href: 'https://wa.me/8801820060046', color: 'hsl(142,58%,40%)', ext: true },
   { icon: <Instagram size={20} />, label: 'Instagram', href: 'https://www.instagram.com/shahedstore.com.bd/', color: 'hsl(329,86%,56%)', ext: true },
 ];
 
