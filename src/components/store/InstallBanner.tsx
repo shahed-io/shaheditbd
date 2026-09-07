@@ -67,10 +67,10 @@ const InstallBanner = () => {
       <div
         className="relative mx-auto max-w-md rounded-2xl p-3.5 flex items-center gap-3 shadow-xl"
         style={{
-          background: 'hsla(192, 78%, 18%, 0.85)',
+          background: 'hsla(258, 78%, 18%, 0.85)',
           backdropFilter: 'blur(16px) saturate(1.6)',
           WebkitBackdropFilter: 'blur(16px) saturate(1.6)',
-          border: '1px solid hsla(192, 78%, 55%, 0.25)',
+          border: '1px solid hsla(258, 78%, 55%, 0.25)',
         }}
       >
         {/* App icon */}
@@ -78,7 +78,7 @@ const InstallBanner = () => {
           src="/pwa-192.png"
           alt="Shahed IT"
           className="w-11 h-11 rounded-xl flex-shrink-0"
-          style={{ boxShadow: '0 2px 12px hsla(192,78%,55%,0.4)' }}
+          style={{ boxShadow: '0 2px 12px hsla(258,78%,55%,0.4)' }}
         />
 
         {/* Text */}
@@ -96,8 +96,8 @@ const InstallBanner = () => {
           onClick={handleInstall}
           className="flex-shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[12px] font-bold text-white transition-transform active:scale-95"
           style={{
-            background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(192,78%,45%))',
-            boxShadow: '0 2px 10px hsla(192,78%,55%,0.4)',
+            background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(258,78%,45%))',
+            boxShadow: '0 2px 10px hsla(258,78%,55%,0.4)',
           }}
         >
           <Download size={13} />
@@ -119,9 +119,9 @@ const InstallBanner = () => {
         <div
           className="mx-auto max-w-md mt-2 rounded-xl p-3 text-white text-[12px] leading-relaxed animate-in fade-in duration-300"
           style={{
-            background: 'hsla(192, 78%, 15%, 0.92)',
+            background: 'hsla(258, 78%, 15%, 0.92)',
             backdropFilter: 'blur(12px)',
-            border: '1px solid hsla(192, 78%, 55%, 0.2)',
+            border: '1px solid hsla(258, 78%, 55%, 0.2)',
           }}
         >
           <p className="font-semibold mb-1.5 flex items-center gap-1.5">

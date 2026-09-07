@@ -19,17 +19,17 @@ export interface ThemeInfo {
 export const THEMES: ThemeInfo[] = [
   {
     id: 'clean-white',
-    name: 'Aqua Steel',
-    nameBn: 'অ্যাকুয়া স্টিল',
-    description: 'প্রিমিয়াম গ্লসি লুক — ডিপ সায়ান-টিল, কোবাল্ট ও কপার অ্যাকসেন্ট',
-    preview: { bg: '#f5fafd', primary: '#0b8fb8', accent: '#f97316', text: '#0f1e2e' },
+    name: 'Clean White',
+    nameBn: 'ক্লিন হোয়াইট',
+    description: 'পরিষ্কার সাদা ব্যাকগ্রাউন্ড, রয়্যাল ইন্ডিগো প্রাইমারি',
+    preview: { bg: '#ffffff', primary: '#7c3aed', accent: '#f59e0b', text: '#1e293b' },
   },
   {
     id: 'dark-cyber',
     name: 'Dark Cyber',
     nameBn: 'ডার্ক সাইবার',
     description: 'গাঢ় কালো ব্যাকগ্রাউন্ড, নিয়ন ভায়োলেট গ্লো ইফেক্ট',
-    preview: { bg: '#0f0a1a', primary: '#67e8f9', accent: '#06b6d4', text: '#e2e8f0' },
+    preview: { bg: '#0f0a1a', primary: '#a78bfa', accent: '#06b6d4', text: '#e2e8f0' },
   },
   {
     id: 'ocean-blue',
@@ -50,7 +50,7 @@ export const THEMES: ThemeInfo[] = [
     name: 'Midnight Purple',
     nameBn: 'মিডনাইট পার্পল',
     description: 'গভীর বেগুনি রাত্রি, এলিগ্যান্ট ও মিস্টেরিয়াস',
-    preview: { bg: '#1a1025', primary: '#38bdf8', accent: '#fb923c', text: '#e8e0f0' },
+    preview: { bg: '#1a1025', primary: '#c084fc', accent: '#f472b6', text: '#e8e0f0' },
   },
   {
     id: 'forest-green',

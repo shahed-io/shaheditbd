@@ -237,7 +237,7 @@ const GetCID = () => {
       />
       <Navbar />
       <div className="min-h-screen pt-24 pb-16 px-4" style={{
-        background: 'linear-gradient(180deg, hsl(192,40%,97%) 0%, hsl(0,0%,100%) 50%)',
+        background: 'linear-gradient(180deg, hsl(258,40%,97%) 0%, hsl(0,0%,100%) 50%)',
       }}>
         <div className="max-w-4xl mx-auto">
           {/* Header */}
@@ -247,8 +247,8 @@ const GetCID = () => {
             </button>
             <div className="flex items-center gap-3 mb-2">
               <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{
-                background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(192,78%,42%))',
-                boxShadow: '0 4px 16px hsla(192,78%,55%,0.3)',
+                background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(258,78%,42%))',
+                boxShadow: '0 4px 16px hsla(258,78%,55%,0.3)',
               }}>
                 <KeyRound size={22} className="text-white" />
               </div>
@@ -264,11 +264,11 @@ const GetCID = () => {
             <div className="md:col-span-2 rounded-2xl p-4 flex items-center justify-between" style={{
               background: 'linear-gradient(135deg, rgba(255,255,255,0.92), rgba(255,255,255,0.72))',
               backdropFilter: 'blur(28px) saturate(180%)',
-              border: '1px solid hsla(192,78%,75%,0.28)',
-              boxShadow: '0 8px 32px hsla(192,78%,55%,0.10)',
+              border: '1px solid hsla(258,78%,75%,0.28)',
+              boxShadow: '0 8px 32px hsla(258,78%,55%,0.10)',
             }}>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'hsla(192,78%,55%,0.1)' }}>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'hsla(258,78%,55%,0.1)' }}>
                   <Wallet size={18} className="text-primary" />
                 </div>
                 <div>
@@ -280,7 +280,7 @@ const GetCID = () => {
               </div>
               {user && balance < 1 && !balanceLoading && (
                 <Link to="/shop?category=cid-credits" className="px-4 py-2 rounded-lg text-sm font-bold text-white" style={{
-                  background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(192,78%,42%))',
+                  background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(258,78%,42%))',
                 }}>
                   Buy Credits
                 </Link>
@@ -290,9 +290,9 @@ const GetCID = () => {
               className="rounded-2xl p-4 flex items-center gap-3 transition-transform active:scale-[0.98]" style={{
               background: 'rgba(255,255,255,0.7)',
               backdropFilter: 'blur(24px)',
-              border: '1px solid hsla(192,78%,75%,0.22)',
+              border: '1px solid hsla(258,78%,75%,0.22)',
             }}>
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'hsla(192,78%,55%,0.1)' }}>
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'hsla(258,78%,55%,0.1)' }}>
                 <History size={18} className="text-primary" />
               </div>
               <div className="text-left">
@@ -306,7 +306,7 @@ const GetCID = () => {
           <div className="rounded-2xl p-5 mb-6" style={{
             background: 'rgba(255,255,255,0.6)',
             backdropFilter: 'blur(24px)',
-            border: '1px solid hsla(192,78%,75%,0.18)',
+            border: '1px solid hsla(258,78%,75%,0.18)',
           }}>
             <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
               <Sparkles size={14} className="text-primary" /> How It Works
@@ -325,7 +325,7 @@ const GetCID = () => {
           <div className="rounded-2xl p-5 mb-6" style={{
             background: 'rgba(255,255,255,0.6)',
             backdropFilter: 'blur(24px)',
-            border: '1px solid hsla(192,78%,75%,0.18)',
+            border: '1px solid hsla(258,78%,75%,0.18)',
           }}>
             <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
               <ShieldCheck size={14} className="text-primary" /> Error Codes
@@ -364,8 +364,8 @@ const GetCID = () => {
           <div className="rounded-2xl p-5 md:p-6 mb-6" style={{
             background: 'linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.78))',
             backdropFilter: 'blur(32px) saturate(200%)',
-            border: '1px solid hsla(192,78%,75%,0.28)',
-            boxShadow: '0 8px 32px hsla(192,78%,55%,0.12)',
+            border: '1px solid hsla(258,78%,75%,0.28)',
+            boxShadow: '0 8px 32px hsla(258,78%,55%,0.12)',
           }}>
             <div className="flex items-center justify-between mb-2">
               <label className="text-sm font-bold text-foreground">Enter Your Installation ID *</label>
@@ -400,7 +400,7 @@ const GetCID = () => {
               className="w-full min-h-[120px] rounded-xl px-4 py-3 text-sm font-mono resize-none focus:outline-none focus:ring-2 focus:ring-primary/40 transition"
               style={{
                 background: 'rgba(255,255,255,0.85)',
-                border: '1px solid hsla(192,78%,75%,0.25)',
+                border: '1px solid hsla(258,78%,75%,0.25)',
               }}
             />
 
@@ -422,8 +422,8 @@ const GetCID = () => {
               disabled={generating || parsing || authLoading}
               className="w-full mt-4 flex items-center justify-center gap-2 py-3.5 rounded-xl text-white font-bold text-sm transition-transform active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
               style={{
-                background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(192,78%,42%))',
-                boxShadow: '0 6px 20px hsla(192,78%,55%,0.4)',
+                background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(258,78%,42%))',
+                boxShadow: '0 6px 20px hsla(258,78%,55%,0.4)',
               }}
             >
               {generating ? (
@@ -535,7 +535,7 @@ const GetCID = () => {
           <div className="w-full max-w-lg max-h-[80vh] rounded-2xl p-5 overflow-y-auto" style={{
             background: 'linear-gradient(135deg, rgba(255,255,255,0.98), rgba(255,255,255,0.92))',
             backdropFilter: 'blur(32px)',
-            border: '1px solid hsla(192,78%,75%,0.3)',
+            border: '1px solid hsla(258,78%,75%,0.3)',
           }} onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
@@ -552,7 +552,7 @@ const GetCID = () => {
                 {history.map(g => (
                   <div key={g.id} className="rounded-xl p-3" style={{
                     background: 'rgba(255,255,255,0.7)',
-                    border: '1px solid hsla(192,78%,75%,0.18)',
+                    border: '1px solid hsla(258,78%,75%,0.18)',
                   }}>
                     <div className="flex items-center justify-between mb-1.5">
                       <span className="text-xs text-muted-foreground">

@@ -115,7 +115,7 @@ const FlashSale = () => {
                 <Flame size={13} fill="white" /> Flash Sale
               </span>
               <span className="text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-full font-fira"
-                style={{ background: 'hsla(0,0%,100%,0.55)', backdropFilter: 'blur(16px)', border: '1px solid hsla(192,78%,75%,0.2)', color: 'hsl(var(--muted-foreground))' }}>
+                style={{ background: 'hsla(0,0%,100%,0.55)', backdropFilter: 'blur(16px)', border: '1px solid hsla(258,78%,75%,0.2)', color: 'hsl(var(--muted-foreground))' }}>
                 LIMITED TIME
               </span>
             </div>
@@ -139,11 +139,11 @@ const FlashSale = () => {
                 <div key={i} className="flex items-center gap-3">
                   <div className="flex flex-col items-center justify-center w-[68px] h-[68px] rounded-[18px]"
                     style={{
-                      background: 'linear-gradient(145deg, hsl(192,78%,38%), hsl(216,80%,28%))',
-                      boxShadow: '0 4px 18px hsla(192,78%,45%,0.45), inset 0 1px 0 hsla(192,100%,85%,0.15)',
+                      background: 'linear-gradient(145deg, hsl(258,78%,38%), hsl(270,80%,28%))',
+                      boxShadow: '0 4px 18px hsla(258,78%,45%,0.45), inset 0 1px 0 hsla(258,100%,85%,0.15)',
                     }}>
                     <span className="text-[1.55rem] font-fira font-black leading-none text-white tabular-nums tracking-tight">{item.v}</span>
-                    <span className="text-[9px] font-bold uppercase tracking-[0.12em] mt-1" style={{ color: 'hsl(192,60%,80%)' }}>{item.l}</span>
+                    <span className="text-[9px] font-bold uppercase tracking-[0.12em] mt-1" style={{ color: 'hsl(258,60%,80%)' }}>{item.l}</span>
                   </div>
                   {i < TIME_UNITS.length - 1 && (
                     <div className="flex flex-col gap-1.5 mb-1">
@@ -238,7 +238,7 @@ const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) 
         background: hovered ? 'hsla(0,0%,100%,0.75)' : 'hsla(0,0%,100%,0.55)',
         backdropFilter: 'blur(20px) saturate(180%)',
         WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-        border: hovered ? '1px solid hsla(15,100%,60%,0.45)' : '1px solid hsla(192,78%,75%,0.18)',
+        border: hovered ? '1px solid hsla(15,100%,60%,0.45)' : '1px solid hsla(258,78%,75%,0.18)',
         transform: hovered ? 'translateY(-5px)' : 'none',
         boxShadow: hovered
           ? '0 16px 40px hsla(15,100%,60%,0.18), 0 4px 16px hsla(226,35%,12%,0.08), inset 0 1px 0 hsla(0,0%,100%,0.8)'

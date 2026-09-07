@@ -6,7 +6,7 @@ import SEOHead from '@/components/seo/SEOHead';
 import { FloatingButtons } from '@/components/store/Extras';
 import { faqSchema } from '@/components/seo/schemas';
 
-const A = 'hsl(192,78%,55%)';
+const A = 'hsl(258,78%,55%)';
 const B = 'hsl(200,90%,45%)';
 
 interface FAQItem {
@@ -107,7 +107,7 @@ const FAQ_CATS: FAQCategory[] = [
     id: 'returns',
     label: 'রিফান্ড ও রিটার্ন',
     icon: <RotateCcw size={18} />,
-    color: 'hsl(24,86%,56%)',
+    color: 'hsl(329,86%,56%)',
     items: [
       {
         q: 'রিফান্ড পাওয়া যাবে কি?',
@@ -156,7 +156,7 @@ const AccordionItem = ({ item, isOpen, onToggle, color }: { item: FAQItem; isOpe
       background: isOpen ? 'hsla(0,0%,100%,0.75)' : 'hsla(0,0%,100%,0.55)',
       backdropFilter: 'blur(16px)',
       WebkitBackdropFilter: 'blur(16px)',
-      border: `1px solid ${isOpen ? color.replace(')', ',0.30)').replace('hsl(', 'hsla(') : 'hsla(192,78%,75%,0.18)'}`,
+      border: `1px solid ${isOpen ? color.replace(')', ',0.30)').replace('hsl(', 'hsla(') : 'hsla(258,78%,75%,0.18)'}`,
       boxShadow: isOpen ? `0 8px 32px ${color.replace(')', ',0.10)').replace('hsl(', 'hsla(')}` : '0 2px 8px hsla(226,35%,12%,0.04)',
     }}
   >
@@ -228,11 +228,11 @@ const FAQs = () => {
         <section className="relative overflow-hidden pt-28 pb-16">
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-0 right-0 w-[600px] h-[400px]"
-              style={{ background: 'radial-gradient(ellipse at 80% 0%, hsla(192,78%,55%,0.08), transparent 60%)' }} />
+              style={{ background: 'radial-gradient(ellipse at 80% 0%, hsla(258,78%,55%,0.08), transparent 60%)' }} />
             <div className="absolute bottom-0 left-0 w-[400px] h-[300px]"
               style={{ background: 'radial-gradient(ellipse at 0% 100%, hsla(200,90%,45%,0.06), transparent 60%)' }} />
             <div className="absolute inset-0"
-              style={{ backgroundImage: 'radial-gradient(circle, hsla(192,78%,55%,0.04) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
+              style={{ backgroundImage: 'radial-gradient(circle, hsla(258,78%,55%,0.04) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
           </div>
 
           <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
@@ -240,7 +240,7 @@ const FAQs = () => {
               style={{
                 background: 'hsla(0,0%,100%,0.70)',
                 backdropFilter: 'blur(12px)',
-                border: '1px solid hsla(192,78%,75%,0.25)',
+                border: '1px solid hsla(258,78%,75%,0.25)',
                 color: A,
               }}>
               <HelpCircle size={12} /> সচরাচর জিজ্ঞাসা
@@ -276,7 +276,7 @@ const FAQs = () => {
                       ? cat.color.replace(')', ',0.12)').replace('hsl(', 'hsla(')
                       : 'hsla(0,0%,100%,0.65)',
                     backdropFilter: 'blur(12px)',
-                    border: `1.5px solid ${isActive ? cat.color.replace(')', ',0.40)').replace('hsl(', 'hsla(') : 'hsla(192,78%,75%,0.20)'}`,
+                    border: `1.5px solid ${isActive ? cat.color.replace(')', ',0.40)').replace('hsl(', 'hsla(') : 'hsla(258,78%,75%,0.20)'}`,
                     color: isActive ? cat.color : 'hsl(226,35%,42%)',
                     boxShadow: isActive ? `0 4px 16px ${cat.color.replace(')', ',0.15)').replace('hsl(', 'hsla(')}` : 'none',
                     transform: isActive ? 'translateY(-1px)' : 'none',
@@ -305,7 +305,7 @@ const FAQs = () => {
               background: 'hsla(0,0%,100%,0.40)',
               backdropFilter: 'blur(24px)',
               WebkitBackdropFilter: 'blur(24px)',
-              border: '1px solid hsla(192,78%,75%,0.18)',
+              border: '1px solid hsla(258,78%,75%,0.18)',
               boxShadow: '0 8px 40px hsla(226,35%,12%,0.06)',
             }}
           >
@@ -346,7 +346,7 @@ const FAQs = () => {
             style={{
               background: `linear-gradient(135deg, ${A.replace(')', ',0.08)').replace('hsl(', 'hsla(')}, ${B.replace(')', ',0.08)').replace('hsl(', 'hsla(')})`,
               backdropFilter: 'blur(16px)',
-              border: '1px solid hsla(192,78%,75%,0.22)',
+              border: '1px solid hsla(258,78%,75%,0.22)',
             }}
           >
             <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center"
@@ -375,7 +375,7 @@ const FAQs = () => {
                 style={{
                   background: 'hsla(0,0%,100%,0.75)',
                   backdropFilter: 'blur(12px)',
-                  border: '1px solid hsla(192,78%,75%,0.25)',
+                  border: '1px solid hsla(258,78%,75%,0.25)',
                   color: 'hsl(226,35%,28%)',
                 }}
               >

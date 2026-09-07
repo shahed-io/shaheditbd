@@ -4,13 +4,13 @@ import { supabase } from '@/integrations/supabase/client';
 import { useReveal } from '@/hooks/useReveal';
 
 const CAT_META: Record<string, { icon: string; glow: string; accent: string }> = {
-  'Web Development':     { icon: '💻', glow: 'hsla(192,75%,62%,0.18)', accent: 'hsl(192,75%,62%)' },
+  'Web Development':     { icon: '💻', glow: 'hsla(243,75%,62%,0.18)', accent: 'hsl(243,75%,62%)' },
   'Website Maintenance': { icon: '🛠️', glow: 'hsla(190,70%,48%,0.18)', accent: 'hsl(190,70%,48%)' },
-  'Graphics Design':     { icon: '🎨', glow: 'hsla(216,65%,62%,0.18)', accent: 'hsl(216,65%,62%)' },
+  'Graphics Design':     { icon: '🎨', glow: 'hsla(283,65%,62%,0.18)', accent: 'hsl(283,65%,62%)' },
   'Facebook Services':   { icon: '📣', glow: 'hsla(210,90%,60%,0.18)', accent: 'hsl(210,90%,60%)' },
   'Digital Marketing':   { icon: '📈', glow: 'hsla(158,64%,45%,0.18)', accent: 'hsl(158,64%,45%)' },
   'Business Solutions':  { icon: '🏢', glow: 'hsla(25,90%,60%,0.18)',  accent: 'hsl(25,90%,60%)' },
-  'default':             { icon: '🚀', glow: 'hsla(192,75%,62%,0.18)', accent: 'hsl(192,75%,62%)' },
+  'default':             { icon: '🚀', glow: 'hsla(243,75%,62%,0.18)', accent: 'hsl(243,75%,62%)' },
 };
 
 interface CatData {
@@ -85,7 +85,7 @@ const Categories = () => {
     <section className="py-20 relative overflow-hidden bg-transparent">
       {/* Background blobs */}
       <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full pointer-events-none"
-        style={{ background: 'radial-gradient(circle, hsla(192,75%,62%,0.06), transparent)', filter: 'blur(80px)' }} />
+        style={{ background: 'radial-gradient(circle, hsla(243,75%,62%,0.06), transparent)', filter: 'blur(80px)' }} />
       <div className="absolute bottom-0 right-1/4 w-80 h-80 rounded-full pointer-events-none"
         style={{ background: 'radial-gradient(circle, hsla(15,100%,60%,0.05), transparent)', filter: 'blur(80px)' }} />
 
@@ -97,7 +97,7 @@ const Categories = () => {
             <span className="section-label">Browse Store</span>
             <h2 className="section-heading text-3xl sm:text-4xl mt-3 text-foreground">
               Shop by{' '}
-              <span style={{ background: 'linear-gradient(135deg, hsl(192,75%,65%), hsl(192,70%,62%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+              <span style={{ background: 'linear-gradient(135deg, hsl(243,75%,65%), hsl(263,70%,62%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                 Category
               </span>
             </h2>
@@ -106,10 +106,10 @@ const Categories = () => {
             </p>
           </div>
           <a href="/shop" className="inline-flex items-center gap-2 text-sm font-bold hover:gap-3 transition-all flex-shrink-0 group"
-            style={{ color: 'hsl(192,75%,65%)' }}>
+            style={{ color: 'hsl(243,75%,65%)' }}>
             View All
             <span className="w-7 h-7 rounded-full flex items-center justify-center transition-all group-hover:scale-110"
-              style={{ background: 'hsla(192,75%,62%,0.15)', border: '1px solid hsla(192,75%,62%,0.25)' }}>
+              style={{ background: 'hsla(243,75%,62%,0.15)', border: '1px solid hsla(243,75%,62%,0.25)' }}>
               <ArrowRight size={13} className="text-foreground" />
             </span>
           </a>

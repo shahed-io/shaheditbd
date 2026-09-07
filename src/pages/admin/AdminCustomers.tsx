@@ -80,7 +80,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
   delivered:  { label: 'ডেলিভার্ড', color: 'bg-cyan-500/15 text-cyan-500 border-cyan-500/30' },
   completed:  { label: 'সম্পন্ন',    color: 'bg-emerald-500/15 text-emerald-500 border-emerald-500/30' },
   cancelled:  { label: 'বাতিল',      color: 'bg-red-500/15 text-red-500 border-red-500/30' },
-  refunded:   { label: 'রিফান্ড',    color: 'bg-sky-500/15 text-sky-500 border-sky-500/30' },
+  refunded:   { label: 'রিফান্ড',    color: 'bg-purple-500/15 text-purple-500 border-purple-500/30' },
   failed:     { label: 'ব্যর্থ',     color: 'bg-rose-500/15 text-rose-500 border-rose-500/30' },
 };
 

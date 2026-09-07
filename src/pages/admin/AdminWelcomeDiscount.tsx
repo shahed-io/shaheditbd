@@ -543,7 +543,7 @@ export default function AdminWelcomeDiscount() {
             </CardHeader>
             <CardContent>
               <div className="rounded-2xl overflow-hidden border border-border bg-background">
-                <div className="bg-gradient-to-br from-[hsl(var(--primary))] via-[hsl(192,78%,45%)] to-[hsl(var(--accent))] p-4 text-center text-white">
+                <div className="bg-gradient-to-br from-[hsl(var(--primary))] via-[hsl(258,78%,45%)] to-[hsl(var(--accent))] p-4 text-center text-white">
                   <h3 className="text-lg font-bold drop-shadow-md">{settings.popup_title || '🎡 Lucky Spin!'}</h3>
                   <p className="text-white/85 text-xs mt-0.5">{settings.popup_subtitle}</p>
                 </div>

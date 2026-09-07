@@ -69,7 +69,7 @@ const EMPTY_SLIDE = (): Slide => ({
   tag: 'New Deal', tagIcon: '🔥', title: 'Product', titleAccent: 'Name',
   subtitle: 'Short subtitle here', desc: 'Describe the product briefly.',
   price: '৳999', original: '৳2,999', off: '67%', badge: 'HOT DEAL',
-  accentFrom: 'hsl(192,75%,55%)', accentTo: 'hsl(192,70%,52%)',
+  accentFrom: 'hsl(243,75%,55%)', accentTo: 'hsl(263,70%,52%)',
   emoji: '🛍️', logoImg: '', bgImage: '', features: ['Feature 1', 'Feature 2', 'Feature 3'],
   enabled: true, productSlug: '',
 });
@@ -551,7 +551,7 @@ const SmartField = ({ label, value, onChange, small }: { label: string; value: s
 
 /* ── Live Preview (simplified hero card) ── */
 const MiniSlidePreview = ({ slide }: { slide: Slide }) => {
-  const bgFrom = slide.accentFrom || 'hsl(192,78%,55%)';
+  const bgFrom = slide.accentFrom || 'hsl(258,78%,55%)';
   const bgTo = slide.accentTo || 'hsl(200,90%,48%)';
 
   return (
@@ -632,13 +632,13 @@ const MiniSlidePreview = ({ slide }: { slide: Slide }) => {
 function hslToHex(hsl: string): string {
   try {
     const match = hsl.match(/hsl\((\d+(?:\.\d+)?),\s*(\d+(?:\.\d+)?)%,\s*(\d+(?:\.\d+)?)%\)/);
-    if (!match) return '#0891b2';
+    if (!match) return '#7c3aed';
     const h = parseFloat(match[1]) / 360, s = parseFloat(match[2]) / 100, l = parseFloat(match[3]) / 100;
     const a = s * Math.min(l, 1 - l);
     const f = (n: number) => { const k = (n + h * 12) % 12; return l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1); };
     const toHex = (x: number) => Math.round(x * 255).toString(16).padStart(2, '0');
     return `#${toHex(f(0))}${toHex(f(8))}${toHex(f(4))}`;
-  } catch { return '#0891b2'; }
+  } catch { return '#7c3aed'; }
 }
 
 function hexToHsl(hex: string): string {
@@ -656,7 +656,7 @@ function hexToHsl(hex: string): string {
       }
     }
     return `hsl(${Math.round(h * 360)},${Math.round(s * 100)}%,${Math.round(l * 100)}%)`;
-  } catch { return 'hsl(192,78%,55%)'; }
+  } catch { return 'hsl(258,78%,55%)'; }
 }
 
 export default AdminHeroBanner;

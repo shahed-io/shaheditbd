@@ -135,11 +135,11 @@ export default function OAuthConsent() {
 
   if (!hasSession) {
     return (
-      <main className="min-h-screen grid place-items-center p-6 bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-slate-950 dark:to-slate-900">
+      <main className="min-h-screen grid place-items-center p-6 bg-gradient-to-br from-violet-50 to-fuchsia-50 dark:from-slate-950 dark:to-slate-900">
         <Card className="max-w-md w-full shadow-xl">
           <CardHeader className="text-center">
-            <div className="mx-auto w-12 h-12 rounded-full bg-cyan-500/10 flex items-center justify-center mb-2">
-              <LogIn className="w-6 h-6 text-cyan-600" />
+            <div className="mx-auto w-12 h-12 rounded-full bg-violet-500/10 flex items-center justify-center mb-2">
+              <LogIn className="w-6 h-6 text-violet-600" />
             </div>
             <CardTitle>Sign in to continue</CardTitle>
             <CardDescription>An external app wants to connect to your Shahed IT account. Sign in to review the request.</CardDescription>
@@ -185,11 +185,11 @@ export default function OAuthConsent() {
   const scopes: string[] = Array.isArray(details.scopes) ? details.scopes : (typeof details.scope === "string" ? details.scope.split(/\s+/).filter(Boolean) : []);
 
   return (
-    <main className="min-h-screen grid place-items-center p-6 bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-slate-950 dark:to-slate-900">
+    <main className="min-h-screen grid place-items-center p-6 bg-gradient-to-br from-violet-50 to-fuchsia-50 dark:from-slate-950 dark:to-slate-900">
       <Card className="max-w-md w-full shadow-xl">
         <CardHeader className="text-center">
-          <div className="mx-auto w-12 h-12 rounded-full bg-cyan-500/10 flex items-center justify-center mb-2">
-            <ShieldCheck className="w-6 h-6 text-cyan-600" />
+          <div className="mx-auto w-12 h-12 rounded-full bg-violet-500/10 flex items-center justify-center mb-2">
+            <ShieldCheck className="w-6 h-6 text-violet-600" />
           </div>
           <CardTitle>Connect {clientName} to Shahed IT</CardTitle>
           <CardDescription>This lets {clientName} use Shahed IT as you.</CardDescription>

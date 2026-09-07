@@ -359,7 +359,7 @@ const AdminInvoiceGenerator = () => {
             <div className="flex justify-between text-sm text-muted-foreground"><span>Subtotal:</span><span>৳{subtotal.toLocaleString()}</span></div>
             {discount > 0 && <div className="flex justify-between text-sm text-green-500"><span>Discount:</span><span>-৳{discount.toLocaleString()}</span></div>}
             <div className="flex justify-between text-lg font-bold text-primary border-t border-border pt-3"><span>Total:</span><span>৳{total.toLocaleString()}</span></div>
-            <button onClick={handlePreview} className="w-full mt-2 rounded-xl py-3 text-sm font-bold flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-sky-600 text-white shadow-lg shadow-primary/40 hover:shadow-primary/60 hover:scale-[1.01] active:scale-[0.99] transition-all">
+            <button onClick={handlePreview} className="w-full mt-2 rounded-xl py-3 text-sm font-bold flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-purple-600 text-white shadow-lg shadow-primary/40 hover:shadow-primary/60 hover:scale-[1.01] active:scale-[0.99] transition-all">
               <Printer size={16} /> প্রিভিউ ও প্রিন্ট
             </button>
             <button onClick={handleDownloadPdf} className="w-full rounded-xl py-3 text-sm font-semibold flex items-center justify-center gap-2 glass-card border border-primary/40 text-primary hover:bg-primary/10 transition-colors">
@@ -368,10 +368,10 @@ const AdminInvoiceGenerator = () => {
             <button
               onClick={handleSaveAsOrder}
               disabled={saving || !!savedOrderId}
-              className="w-full rounded-xl py-3 text-sm font-semibold flex items-center justify-center gap-2 bg-white border-2 border-sky-500 text-sky-600 hover:bg-sky-50 hover:shadow-lg hover:shadow-sky-500/20 hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="w-full rounded-xl py-3 text-sm font-semibold flex items-center justify-center gap-2 bg-white border-2 border-purple-500 text-purple-600 hover:bg-purple-50 hover:shadow-lg hover:shadow-purple-500/20 hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
-              <Database size={16} className="text-sky-600" />
-              <span className="text-sky-600">{savedOrderId ? 'অর্ডারে সেভ হয়েছে ✓' : saving ? 'সেভ হচ্ছে...' : 'অর্ডার হিসেবে সেভ করুন'}</span>
+              <Database size={16} className="text-purple-600" />
+              <span className="text-purple-600">{savedOrderId ? 'অর্ডারে সেভ হয়েছে ✓' : saving ? 'সেভ হচ্ছে...' : 'অর্ডার হিসেবে সেভ করুন'}</span>
             </button>
 
             {savedOrderId && (

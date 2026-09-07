@@ -11,7 +11,7 @@ import { useAuth } from '@/hooks/useAuth';
 import AuthModal from '@/components/store/AuthModal';
 import PhoneInput from '@/components/store/PhoneInput';
 
-const A = 'hsl(192,78%,55%)';
+const A = 'hsl(258,78%,55%)';
 const B = 'hsl(200,90%,45%)';
 
 const REFUND_REASONS = [
@@ -274,11 +274,11 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
     }
   };
 
-  const inputCls = `w-full rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white/70 border border-white/60 focus:border-blue-400/60 focus:ring-2 focus:ring-blue-400/15 placeholder:text-slate-400`;
+  const inputCls = `w-full rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white/70 border border-white/60 focus:border-indigo-400/60 focus:ring-2 focus:ring-indigo-400/15 placeholder:text-slate-400`;
   const labelCls = `block text-[12.5px] font-semibold mb-1.5`;
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(145deg, hsl(192,55%,97%) 0%, hsl(220,40%,96%) 40%, hsl(200,50%,96%) 100%)' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(145deg, hsl(258,55%,97%) 0%, hsl(220,40%,96%) 40%, hsl(200,50%,96%) 100%)' }}>
       <SEOHead title="Refund Request — Shahed IT" description="রিফান্ড রিকোয়েস্ট করুন। Shahed IT রিফান্ড পলিসি দেখুন এবং আবেদন ফর্ম পূরণ করুন।" />
       <Navbar />
 
@@ -704,7 +704,7 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
                 <p className="text-[11px] font-black uppercase tracking-widest mb-1" style={{ color: A }}>রিফান্ড প্রাপ্তির তথ্য *</p>
                 <p className="text-[12px] mb-3" style={{ color: 'hsl(226,25%,52%)' }}>আপনি কোন নম্বরে রিফান্ডের টাকা পেতে চান তা উল্লেখ করুন</p>
                 <div className="rounded-2xl p-5 space-y-4"
-                  style={{ background: 'hsla(192,78%,55%,0.06)', border: '1.5px solid hsla(192,78%,55%,0.25)' }}>
+                  style={{ background: 'hsla(258,78%,55%,0.06)', border: '1.5px solid hsla(258,78%,55%,0.25)' }}>
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
                       <label className={labelCls} style={{ color: 'hsl(226,35%,28%)' }}>
@@ -716,7 +716,7 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
                         value={form.refund_account_type}
                         onChange={e => set('refund_account_type', e.target.value)}
                         className={inputCls}
-                        style={{ borderColor: !form.refund_account_type ? 'hsla(192,78%,55%,0.45)' : undefined }}
+                        style={{ borderColor: !form.refund_account_type ? 'hsla(258,78%,55%,0.45)' : undefined }}
                       >
                         <option value="">-- নির্বাচন করুন --</option>
                         {['BKash', 'Nagad', 'Rocket', 'Upay', 'Dutch Bangla Bank', 'Brac Bank', 'Dutch-Bangla Nexus', 'অন্যান্য ব্যাংক'].map(m => (
@@ -736,7 +736,7 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
                         placeholder={form.refund_account_type?.includes('Bank') || form.refund_account_type === 'অন্যান্য ব্যাংক' ? 'ব্যাংক অ্যাকাউন্ট নম্বর' : '01XXXXXXXXX'}
                         className={inputCls}
                         maxLength={50}
-                        style={{ borderColor: !form.refund_account_number ? 'hsla(192,78%,55%,0.45)' : undefined }}
+                        style={{ borderColor: !form.refund_account_number ? 'hsla(258,78%,55%,0.45)' : undefined }}
                       />
                     </div>
                   </div>

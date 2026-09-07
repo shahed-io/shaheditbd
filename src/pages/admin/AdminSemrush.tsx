@@ -53,12 +53,12 @@ export default function AdminSemrush() {
   const limits = data?.limits?.rows?.[0] || data?.limits?.raw || {};
 
   const stats = [
-    { label: 'Authority Score', value: bl.ascore ?? '—', icon: Activity, color: 'from-blue-500 to-cyan-600' },
+    { label: 'Authority Score', value: bl.ascore ?? '—', icon: Activity, color: 'from-fuchsia-500 to-violet-600' },
     { label: 'Organic Keywords', value: ov.Or ? Number(ov.Or).toLocaleString() : '—', icon: Search, color: 'from-emerald-500 to-teal-600' },
     { label: 'Est. Traffic / mo', value: ov.Ot ? Number(ov.Ot).toLocaleString() : '—', icon: TrendingUp, color: 'from-amber-500 to-orange-600' },
     { label: 'Total Backlinks', value: bl.total ? Number(bl.total).toLocaleString() : '—', icon: Link2, color: 'from-sky-500 to-blue-600' },
-    { label: 'Referring Domains', value: bl.domains_num ? Number(bl.domains_num).toLocaleString() : '—', icon: Globe, color: 'from-rose-500 to-orange-600' },
-    { label: 'Traffic Cost (USD)', value: ov.Oc ? `$${Number(ov.Oc).toLocaleString()}` : '—', icon: TrendingUp, color: 'from-blue-500 to-sky-600' },
+    { label: 'Referring Domains', value: bl.domains_num ? Number(bl.domains_num).toLocaleString() : '—', icon: Globe, color: 'from-rose-500 to-pink-600' },
+    { label: 'Traffic Cost (USD)', value: ov.Oc ? `$${Number(ov.Oc).toLocaleString()}` : '—', icon: TrendingUp, color: 'from-indigo-500 to-purple-600' },
   ];
 
   return (
@@ -66,7 +66,7 @@ export default function AdminSemrush() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
-            <span className="inline-block w-2 h-8 bg-gradient-to-b from-blue-500 to-cyan-600 rounded" />
+            <span className="inline-block w-2 h-8 bg-gradient-to-b from-fuchsia-500 to-violet-600 rounded" />
             Semrush SEO Dashboard
           </h1>
           <p className="text-sm text-muted-foreground mt-1">Live SEO performance, keywords & backlinks for ranking</p>

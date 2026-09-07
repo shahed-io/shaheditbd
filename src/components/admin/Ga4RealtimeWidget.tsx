@@ -198,14 +198,14 @@ const Ga4RealtimeWidget = ({ gaId }: { gaId: string }) => {
           />
           <Stat
             icon={UserPlus}
-            iconBg="linear-gradient(135deg, #3b82f6, #2563eb)"
+            iconBg="linear-gradient(135deg, #6366f1, #4f46e5)"
             label="Sign-ups (24h)"
             value={m.signups24h}
             sub={`${m.signups7d} in last 7 days`}
           />
           <Stat
             icon={TrendingUp}
-            iconBg="linear-gradient(135deg, #f97316, #ea580c)"
+            iconBg="linear-gradient(135deg, #ec4899, #db2777)"
             label="Conv. Rate (est.)"
             value={`${convRate.toFixed(1)}%`}
             sub="Purchases ÷ Sign-ups"

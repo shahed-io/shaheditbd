@@ -1,7 +1,7 @@
 import { ShoppingCart, CreditCard, Clock, Package, AlertTriangle, CheckCircle } from 'lucide-react';
 import PolicyLayout, { SectionCard, Bullet, ContactCard } from '@/components/store/PolicyLayout';
 
-const A = 'hsl(192,78%,55%)';
+const A = 'hsl(258,78%,55%)';
 const B = 'hsl(200,90%,45%)';
 
 const OrderPolicy = () => (

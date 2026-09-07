@@ -56,7 +56,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any; d
   delivered:  { label: 'ডেলিভার্ড', color: 'text-cyan-500 bg-cyan-500/10 border-cyan-500/30',             icon: Truck,         dot: 'bg-cyan-500' },
   completed:  { label: 'সম্পন্ন',    color: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/30',   icon: CheckCircle2,  dot: 'bg-emerald-500' },
   cancelled:  { label: 'বাতিল',      color: 'text-red-500 bg-red-500/10 border-red-500/30',               icon: XCircle,       dot: 'bg-red-500' },
-  refunded:   { label: 'রিফান্ড',    color: 'text-sky-500 bg-sky-500/10 border-sky-500/30',      icon: RotateCcw,     dot: 'bg-sky-500' },
+  refunded:   { label: 'রিফান্ড',    color: 'text-purple-500 bg-purple-500/10 border-purple-500/30',      icon: RotateCcw,     dot: 'bg-purple-500' },
   failed:     { label: 'ব্যর্থ',      color: 'text-rose-600 bg-rose-600/10 border-rose-600/30',            icon: AlertTriangle, dot: 'bg-rose-600' },
 };
 
@@ -140,9 +140,9 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
   const dateEn = new Date(order.created_at).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
   const statusCfg = STATUS_CONFIG[order.status] || STATUS_CONFIG['pending'];
 
-  const brandColor = '#0891b2';
+  const brandColor = '#7c3aed';
   const brandLight = '#f3f0ff';
-  const brandDark = '#164e63';
+  const brandDark = '#4c1d95';
   const hdr = getInvoiceHeaderTheme(brandColor);
 
   return (
@@ -671,7 +671,7 @@ const OrderDetailModal = ({
                     )}
                     {order.status === 'cancelled' && (
                       <button onClick={() => { if (confirm('রিফান্ড মার্ক?')) doUpdate({ status: 'refunded' }, '↩️ রিফান্ড মার্ক'); }}
-                        disabled={updatingId} className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold glass-card border border-sky-500/30 text-sky-500 hover:bg-sky-500/10 transition-colors disabled:opacity-50">
+                        disabled={updatingId} className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold glass-card border border-purple-500/30 text-purple-500 hover:bg-purple-500/10 transition-colors disabled:opacity-50">
                         <RotateCcw size={12} /> রিফান্ড
                       </button>
                     )}
@@ -763,13 +763,13 @@ const OrderDetailModal = ({
                     {/* bKash online transactions — full details */}
                     {bkashTxns.length > 0 && (
                       <div className="space-y-2">
-                        <p className="text-[11px] font-bold text-orange-500 uppercase tracking-wider flex items-center gap-1.5">
+                        <p className="text-[11px] font-bold text-pink-500 uppercase tracking-wider flex items-center gap-1.5">
                           💳 bKash Online Transactions ({bkashTxns.length})
                         </p>
                         {bkashTxns.map(tx => (
-                          <div key={tx.id} className="glass-card rounded-xl p-3 border border-orange-500/30 space-y-2">
+                          <div key={tx.id} className="glass-card rounded-xl p-3 border border-pink-500/30 space-y-2">
                             <div className="flex items-center justify-between flex-wrap gap-1">
-                              <span className="text-[11px] font-semibold text-orange-500 flex items-center gap-1 whitespace-nowrap">
+                              <span className="text-[11px] font-semibold text-pink-500 flex items-center gap-1 whitespace-nowrap">
                                 💳 bKash · {tx.mode === 'live' ? 'Live' : 'Sandbox'}
                               </span>
                               <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium whitespace-nowrap ${

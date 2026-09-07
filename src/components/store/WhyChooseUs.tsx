@@ -69,7 +69,7 @@ const GlassCard: React.FC<{ from: string; to: string; className?: string; childr
       backdropFilter: 'blur(28px) saturate(180%)',
       WebkitBackdropFilter: 'blur(28px) saturate(180%)',
       border: '1px solid hsla(0,0%,100%,0.6)',
-      boxShadow: '0 8px 32px hsla(192,60%,40%,0.08), inset 0 1px 0 hsla(0,0%,100%,0.9)',
+      boxShadow: '0 8px 32px hsla(243,60%,40%,0.08), inset 0 1px 0 hsla(0,0%,100%,0.9)',
     }}
   >
     {/* Animated gradient border on hover */}
@@ -130,7 +130,7 @@ const FeatureCard = ({ feature: f, index }: { feature: typeof FEATURES[0]; index
           border: '1px solid hsla(220,20%,80%,0.45)',
           boxShadow: hovered
             ? `0 20px 40px -12px hsla(${f.from},0.28)`
-            : '0 1px 2px hsla(192,40%,30%,0.05)',
+            : '0 1px 2px hsla(243,40%,30%,0.05)',
         }}
       >
         {/* Top hairline accent on hover */}
@@ -219,12 +219,12 @@ const StatsBar = ({ stats, visible }: { stats: typeof STATS; visible: boolean })
       backdropFilter: 'blur(28px) saturate(180%)',
       WebkitBackdropFilter: 'blur(28px) saturate(180%)',
       border: '1px solid hsla(0,0%,100%,0.6)',
-      boxShadow: '0 12px 40px hsla(192,60%,40%,0.1), inset 0 1px 0 hsla(0,0%,100%,0.9)',
+      boxShadow: '0 12px 40px hsla(243,60%,40%,0.1), inset 0 1px 0 hsla(0,0%,100%,0.9)',
     }}
   >
     {/* Floating ambient blobs */}
     <div className="absolute -top-20 -left-10 w-72 h-72 rounded-full pointer-events-none"
-      style={{ background: 'radial-gradient(circle, hsla(192,90%,66%,0.18), transparent 70%)', filter: 'blur(40px)' }} />
+      style={{ background: 'radial-gradient(circle, hsla(258,90%,66%,0.18), transparent 70%)', filter: 'blur(40px)' }} />
     <div className="absolute -bottom-20 -right-10 w-72 h-72 rounded-full pointer-events-none"
       style={{ background: 'radial-gradient(circle, hsla(199,89%,60%,0.18), transparent 70%)', filter: 'blur(40px)' }} />
 
@@ -276,11 +276,11 @@ const WhyChooseUs = () => {
       {/* Subtle gradient mesh background */}
       <div className="absolute inset-0 pointer-events-none -z-0">
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full"
-          style={{ background: 'radial-gradient(circle, hsla(192,90%,66%,0.08), transparent 60%)', filter: 'blur(80px)' }} />
+          style={{ background: 'radial-gradient(circle, hsla(258,90%,66%,0.08), transparent 60%)', filter: 'blur(80px)' }} />
         <div className="absolute top-1/3 right-0 w-[500px] h-[500px] rounded-full"
           style={{ background: 'radial-gradient(circle, hsla(199,89%,60%,0.07), transparent 60%)', filter: 'blur(90px)' }} />
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full"
-          style={{ background: 'radial-gradient(circle, hsla(24,85%,65%,0.06), transparent 60%)', filter: 'blur(90px)' }} />
+          style={{ background: 'radial-gradient(circle, hsla(335,85%,65%,0.06), transparent 60%)', filter: 'blur(90px)' }} />
         <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full"
           style={{ background: 'radial-gradient(circle, hsla(158,76%,50%,0.05), transparent 60%)', filter: 'blur(80px)' }} />
       </div>
@@ -296,7 +296,7 @@ const WhyChooseUs = () => {
             title={
               <>Why{' '}
                 <span style={{
-                  background: 'linear-gradient(135deg, hsl(192,90%,66%), hsl(199,89%,60%))',
+                  background: 'linear-gradient(135deg, hsl(258,90%,66%), hsl(199,89%,60%))',
                   WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent',
                 }}>Choose Us?</span>
               </>

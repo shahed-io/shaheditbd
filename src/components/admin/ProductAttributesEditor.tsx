@@ -424,7 +424,7 @@ const ProductAttributesEditor = ({ productId }: Props) => {
         <button onClick={handleSave} disabled={saving}
           className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold text-white transition-all"
           style={{
-            background: saving ? 'hsla(216,91%,65%,0.4)' : 'linear-gradient(135deg, hsl(216,91%,65%), hsl(185,90%,52%))',
+            background: saving ? 'hsla(271,91%,65%,0.4)' : 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
           }}>
           {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
           {saving ? 'Saving…' : 'Save Attributes'}

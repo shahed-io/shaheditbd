@@ -420,13 +420,13 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
   const bkashOnlineOption: PaymentOption = {
     id: 'bkash_online' as PaymentMethod,
     label: 'bKash (Online)',
-    color: 'from-orange-600 to-rose-700',
+    color: 'from-pink-600 to-rose-700',
     logo: bkashLogoSrc,
     isWallet: false,
   };
 
   const allMethods: PaymentOption[] = user
-    ? [bkashOnlineOption, ...dynamicMethods, { id: 'wallet' as PaymentMethod, label: 'Wallet', color: 'from-cyan-600 to-sky-700', isWallet: true }]
+    ? [bkashOnlineOption, ...dynamicMethods, { id: 'wallet' as PaymentMethod, label: 'Wallet', color: 'from-violet-600 to-purple-700', isWallet: true }]
     : [bkashOnlineOption, ...dynamicMethods];
 
   // Auto-correct payment method if current one is disabled/unavailable in admin config
@@ -480,8 +480,8 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
                   অর্ডার নম্বর: <span className="text-primary font-mono font-bold">{orderNumber}</span>
                 </p>
                 {paymentMethod === 'wallet' ? (
-                  <div className="mt-3 p-3 rounded-xl bg-cyan-500/10 border border-cyan-400/30 text-left space-y-1">
-                    <p className="text-sm font-bold text-cyan-600 flex items-center gap-2"><Wallet size={14}/> ওয়ালেট পেমেন্ট সম্পন্ন</p>
+                  <div className="mt-3 p-3 rounded-xl bg-violet-500/10 border border-violet-400/30 text-left space-y-1">
+                    <p className="text-sm font-bold text-violet-600 flex items-center gap-2"><Wallet size={14}/> ওয়ালেট পেমেন্ট সম্পন্ন</p>
                     <p className="text-xs text-muted-foreground">আপনার ওয়ালেট থেকে ৳{finalTotal.toLocaleString()} কেটে নেওয়া হয়েছে।</p>
                     <p className="text-xs text-muted-foreground">লাইসেন্স কি শীঘ্রই আপনার ড্যাশবোর্ডে দেখা যাবে।</p>
                   </div>
@@ -673,7 +673,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
                     }`}
                   >
                     {pm.isWallet ? (
-                      <div className="h-8 w-10 rounded-md flex items-center justify-center bg-gradient-to-br from-cyan-600 to-sky-700">
+                      <div className="h-8 w-10 rounded-md flex items-center justify-center bg-gradient-to-br from-violet-600 to-purple-700">
                         <Wallet size={16} className="text-white" />
                       </div>
                     ) : (
@@ -686,16 +686,16 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
 
               {/* Wallet payment UI */}
               {paymentMethod === 'wallet' && (
-                <div className={`rounded-2xl p-4 space-y-3 border ${walletBalance >= finalTotal ? 'bg-cyan-500/8 border-cyan-400/30' : 'bg-destructive/8 border-destructive/30'}`}>
+                <div className={`rounded-2xl p-4 space-y-3 border ${walletBalance >= finalTotal ? 'bg-violet-500/8 border-violet-400/30' : 'bg-destructive/8 border-destructive/30'}`}>
                   {/* Balance row */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-600 to-sky-700 flex items-center justify-center">
+                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-purple-700 flex items-center justify-center">
                         <Wallet size={16} className="text-white" />
                       </div>
                       <div>
                         <p className="text-xs text-muted-foreground">আপনার ওয়ালেট</p>
-                        <p className={`text-lg font-black ${walletBalance >= finalTotal ? 'text-cyan-600' : 'text-destructive'}`}>
+                        <p className={`text-lg font-black ${walletBalance >= finalTotal ? 'text-violet-600' : 'text-destructive'}`}>
                           ৳{walletBalance.toLocaleString()}
                         </p>
                       </div>
@@ -708,10 +708,10 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
 
                   {/* Status */}
                   {walletBalance >= finalTotal ? (
-                    <div className="flex items-center gap-2 bg-cyan-500/10 border border-cyan-400/20 rounded-xl px-3 py-2.5">
-                      <CheckCircle size={14} className="text-cyan-500 flex-shrink-0" />
+                    <div className="flex items-center gap-2 bg-violet-500/10 border border-violet-400/20 rounded-xl px-3 py-2.5">
+                      <CheckCircle size={14} className="text-violet-500 flex-shrink-0" />
                       <div>
-                        <p className="text-xs font-bold text-cyan-700">পর্যাপ্ত ব্যালেন্স আছে ✓</p>
+                        <p className="text-xs font-bold text-violet-700">পর্যাপ্ত ব্যালেন্স আছে ✓</p>
                         <p className="text-[11px] text-muted-foreground">অর্ডার কনফার্ম করলেই তাৎক্ষণিক পেমেন্ট হবে — কোনো TrxID লাগবে না</p>
                       </div>
                     </div>
@@ -724,7 +724,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
                       </div>
                       <button
                         onClick={() => { onClose(); navigate('/dashboard?tab=wallet'); }}
-                        className="w-full py-2.5 rounded-xl border border-cyan-400/50 text-cyan-600 text-xs font-bold hover:bg-cyan-500/10 transition-colors flex items-center justify-center gap-2"
+                        className="w-full py-2.5 rounded-xl border border-violet-400/50 text-violet-600 text-xs font-bold hover:bg-violet-500/10 transition-colors flex items-center justify-center gap-2"
                       >
                         <Wallet size={13}/> Dashboard থেকে Wallet টপ-আপ করুন
                       </button>
@@ -735,7 +735,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
 
               {/* bKash Online (PGW) info block */}
               {paymentMethod === 'bkash_online' && (
-                <div className="rounded-2xl p-4 space-y-2 border border-orange-400/30 bg-orange-500/8">
+                <div className="rounded-2xl p-4 space-y-2 border border-pink-400/30 bg-pink-500/8">
                   <div className="flex items-center gap-2">
                     <img src={bkashLogoSrc} alt="bKash" className="h-6 w-auto" />
                     <span className="text-sm font-bold text-foreground">{bkashContent.title}</span>
@@ -863,8 +863,8 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
               ) : (() => {
                 const isWallet = paymentMethod === 'wallet';
                 const gradient = isWallet
-                  ? 'linear-gradient(135deg, #22d3ee 0%, #0e7490 45%, #164e63 100%)'
-                  : 'linear-gradient(135deg, #0891b2 0%, #2563eb 45%, #1e3a8a 100%)';
+                  ? 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 45%, #4c1d95 100%)'
+                  : 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 45%, #1e3a8a 100%)';
                 const shadow = isWallet
                   ? 'shadow-[0_12px_40px_-8px_rgba(139,92,246,0.55)] hover:shadow-[0_18px_55px_-8px_rgba(139,92,246,0.75)]'
                   : 'shadow-[0_12px_40px_-8px_rgba(79,70,229,0.55)] hover:shadow-[0_18px_55px_-8px_rgba(79,70,229,0.75)]';
@@ -883,7 +883,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
                       ) : (
                         <>
                           <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-white/40">
-                            {isWallet ? <Wallet size={14} className="text-cyan-700" /> : <CreditCard size={14} className="text-blue-700" />}
+                            {isWallet ? <Wallet size={14} className="text-violet-700" /> : <CreditCard size={14} className="text-indigo-700" />}
                           </span>
                           <span className="tracking-wide">
                             {isWallet ? 'ওয়ালেট দিয়ে পরিশোধ করুন' : 'অর্ডার কনফার্ম করুন'}

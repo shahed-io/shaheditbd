@@ -166,7 +166,7 @@ export default function AdminOffers() {
           <Button variant="outline" size="sm" onClick={load} className="gap-2 flex-1 sm:flex-none">
             <RefreshCw size={14} /> Refresh
           </Button>
-          <Button size="sm" onClick={createNew} className="gap-2 flex-1 sm:flex-none bg-gradient-to-r from-cyan-600 to-blue-600 hover:opacity-90 text-white">
+          <Button size="sm" onClick={createNew} className="gap-2 flex-1 sm:flex-none bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:opacity-90 text-white">
             <Plus size={14} /> New Offer
           </Button>
         </div>
@@ -198,8 +198,8 @@ export default function AdminOffers() {
       {/* Secondary metrics */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         <div className="glass-card rounded-xl border border-border/50 p-3 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-blue-500/10 flex items-center justify-center">
-            <Users size={16} className="text-blue-500" />
+          <div className="w-9 h-9 rounded-lg bg-fuchsia-500/10 flex items-center justify-center">
+            <Users size={16} className="text-fuchsia-500" />
           </div>
           <div>
             <div className="text-lg font-bold">{counts.entries}</div>
@@ -218,8 +218,8 @@ export default function AdminOffers() {
           </div>
         </div>
         <div className="glass-card rounded-xl border border-border/50 p-3 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-cyan-500/10 flex items-center justify-center">
-            <Sparkles size={16} className="text-cyan-500" />
+          <div className="w-9 h-9 rounded-lg bg-violet-500/10 flex items-center justify-center">
+            <Sparkles size={16} className="text-violet-500" />
           </div>
           <div>
             <div className="text-lg font-bold">
@@ -281,7 +281,7 @@ export default function AdminOffers() {
               <Gift size={26} className="text-primary" />
             </div>
             <p className="text-muted-foreground text-sm">No offers found</p>
-            <Button size="sm" onClick={createNew} className="gap-2 bg-gradient-to-r from-cyan-600 to-blue-600 text-white">
+            <Button size="sm" onClick={createNew} className="gap-2 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white">
               <Plus size={14} /> Create your first offer
             </Button>
           </div>
@@ -316,11 +316,11 @@ export default function AdminOffers() {
                       <tr key={o.id} className={`border-b border-border/30 transition-colors hover:bg-muted/20 ${i % 2 === 0 ? '' : 'bg-muted/10'}`}>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-3 min-w-[220px] max-w-[320px]">
-                            <div className="w-10 h-10 rounded-lg overflow-hidden bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center shrink-0">
+                            <div className="w-10 h-10 rounded-lg overflow-hidden bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 flex items-center justify-center shrink-0">
                               {o.banner_url ? (
                                 <img src={o.banner_url} alt="" className="w-full h-full object-cover" loading="lazy" />
                               ) : (
-                                <Trophy size={16} className="text-cyan-600" />
+                                <Trophy size={16} className="text-violet-600" />
                               )}
                             </div>
                             <div className="min-w-0 flex-1">
@@ -338,7 +338,7 @@ export default function AdminOffers() {
                         </td>
                         <td className="px-4 py-3">
                           <span className="inline-flex items-center gap-1.5 text-xs font-semibold">
-                            <Users size={12} className="text-blue-500" /> {o.submission_count}
+                            <Users size={12} className="text-fuchsia-500" /> {o.submission_count}
                           </span>
                         </td>
                         <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
@@ -369,7 +369,7 @@ export default function AdminOffers() {
                             <Button size="sm" variant="outline" onClick={() => duplicate(o)} className="h-7 w-7 p-0" title="Duplicate">
                               <Eye size={12} />
                             </Button>
-                            <Button size="sm" variant="outline" onClick={() => setNotifyOffer(o)} className="h-7 w-7 p-0 text-cyan-600" title="Send notification">
+                            <Button size="sm" variant="outline" onClick={() => setNotifyOffer(o)} className="h-7 w-7 p-0 text-violet-600" title="Send notification">
                               <BellRing size={12} />
                             </Button>
                             <Button size="sm" variant="outline" onClick={() => remove(o.id)} className="h-7 w-7 p-0 text-rose-600 hover:bg-rose-500/10" title="Delete">
@@ -403,11 +403,11 @@ export default function AdminOffers() {
                 return (
                   <div key={o.id} className="p-3 sm:p-4 space-y-3">
                     <div className="flex items-start gap-3">
-                      <div className="w-11 h-11 rounded-lg overflow-hidden bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center shrink-0">
+                      <div className="w-11 h-11 rounded-lg overflow-hidden bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 flex items-center justify-center shrink-0">
                         {o.banner_url ? (
                           <img src={o.banner_url} alt="" className="w-full h-full object-cover" loading="lazy" />
                         ) : (
-                          <Trophy size={18} className="text-cyan-600" />
+                          <Trophy size={18} className="text-violet-600" />
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -417,7 +417,7 @@ export default function AdminOffers() {
                             <StatusIcon size={10} />{cfg.label}
                           </span>
                           {timing}
-                          <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 border border-blue-500/20">
+                          <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-fuchsia-500/10 text-fuchsia-600 border border-fuchsia-500/20">
                             <Users size={10} /> {o.submission_count}
                           </span>
                         </div>
@@ -456,7 +456,7 @@ export default function AdminOffers() {
                       <Button size="sm" variant="outline" onClick={() => duplicate(o)} className="h-8 text-[11px] gap-1">
                         <Eye size={12} /> Copy
                       </Button>
-                      <Button size="sm" variant="outline" onClick={() => setNotifyOffer(o)} className="h-8 text-[11px] gap-1 text-cyan-600">
+                      <Button size="sm" variant="outline" onClick={() => setNotifyOffer(o)} className="h-8 text-[11px] gap-1 text-violet-600">
                         <BellRing size={12} /> Notify
                       </Button>
                       <Button size="sm" variant="outline" onClick={() => remove(o.id)} className="h-8 text-[11px] gap-1 text-rose-600 hover:bg-rose-500/10">

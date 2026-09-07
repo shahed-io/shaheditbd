@@ -84,7 +84,7 @@ const PopupBanner = () => {
         <button
           onClick={handleClose}
           className="absolute top-2 right-2 sm:-top-3 sm:-right-3 z-20 w-10 h-10 sm:w-9 sm:h-9 flex items-center justify-center rounded-full shadow-xl transition-all active:scale-95 hover:scale-110"
-          style={{ background: 'hsl(192,78%,55%)', color: 'white', boxShadow: '0 4px 14px rgba(0,0,0,0.45), 0 0 0 2px rgba(255,255,255,0.9)' }}
+          style={{ background: 'hsl(258,78%,55%)', color: 'white', boxShadow: '0 4px 14px rgba(0,0,0,0.45), 0 0 0 2px rgba(255,255,255,0.9)' }}
           aria-label="Close"
         >
           <X size={20} strokeWidth={2.6} />
@@ -92,7 +92,7 @@ const PopupBanner = () => {
 
         {/* Banner image */}
         <div className="rounded-2xl overflow-hidden shadow-2xl"
-          style={{ border: '2px solid hsla(192,78%,75%,0.25)' }}>
+          style={{ border: '2px solid hsla(258,78%,75%,0.25)' }}>
           {linkUrl ? (
             <a href={linkUrl} onClick={handleClose} target={linkUrl.startsWith('http') ? '_blank' : '_self'} rel="noopener noreferrer">
               <img

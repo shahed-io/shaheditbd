@@ -50,7 +50,7 @@ const KEY_TYPES = [
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
   available:           { label: 'Available',           color: 'hsl(162,72%,46%)',  icon: CheckCircle2 },
-  assigned:            { label: 'Assigned',            color: 'hsl(192,78%,68%)',  icon: User },
+  assigned:            { label: 'Assigned',            color: 'hsl(258,78%,68%)',  icon: User },
   whatsapp_delivered:  { label: 'WhatsApp Delivered',  color: 'hsl(142,70%,45%)',  icon: MessageCircle },
   reserved:            { label: 'Reserved',            color: 'hsl(42,96%,58%)',   icon: Clock },
   revoked:             { label: 'Revoked',             color: 'hsl(0,72%,51%)',    icon: XCircle },
@@ -378,10 +378,10 @@ const AdminLicenses = () => {
       <title>License Keys - Shahed IT</title>
       <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; padding: 30px; color: #1a1a2e; }
-        h1 { font-size: 20px; color: hsl(192,78%,55%); margin-bottom: 5px; }
+        h1 { font-size: 20px; color: hsl(258,78%,55%); margin-bottom: 5px; }
         .subtitle { color: #888; font-size: 12px; margin-bottom: 20px; }
         table { width: 100%; border-collapse: collapse; font-size: 12px; }
-        th { background: hsl(192,78%,55%); color: white; padding: 8px 12px; text-align: left; font-size: 11px; }
+        th { background: hsl(258,78%,55%); color: white; padding: 8px 12px; text-align: left; font-size: 11px; }
         td { padding: 8px 12px; border-bottom: 1px solid #eee; }
         tr:nth-child(even) { background: #faf8ff; }
         .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; }
@@ -423,8 +423,8 @@ const AdminLicenses = () => {
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font-family: 'Segoe UI', Arial, sans-serif; padding: 40px; color: #1a1a2e; background: #fff; }
       .invoice { max-width: 700px; margin: 0 auto; }
-      .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 35px; padding-bottom: 20px; border-bottom: 3px solid #0891b2; }
-      .brand h1 { font-size: 22px; color: #0891b2; font-weight: 900; }
+      .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 35px; padding-bottom: 20px; border-bottom: 3px solid #7c3aed; }
+      .brand h1 { font-size: 22px; color: #7c3aed; font-weight: 900; }
       .brand p { font-size: 11px; color: #888; margin-top: 3px; }
       .invoice-info { text-align: right; }
       .invoice-info h2 { font-size: 24px; font-weight: 900; color: #1a1a2e; text-transform: uppercase; letter-spacing: 2px; }
@@ -432,16 +432,16 @@ const AdminLicenses = () => {
       .invoice-info .meta span { font-weight: 700; color: #1a1a2e; }
       .parties { display: flex; justify-content: space-between; margin-bottom: 30px; }
       .party { flex: 1; }
-      .party h4 { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; color: #0891b2; font-weight: 800; margin-bottom: 8px; }
+      .party h4 { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; color: #7c3aed; font-weight: 800; margin-bottom: 8px; }
       .party p { font-size: 12px; color: #444; line-height: 1.6; }
       .party .name { font-weight: 700; color: #1a1a2e; font-size: 14px; }
       .license-box { background: #f8f5ff; border: 2px solid #e9e0ff; border-radius: 12px; padding: 24px; margin-bottom: 25px; }
-      .license-box h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #0891b2; font-weight: 800; margin-bottom: 15px; }
+      .license-box h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #7c3aed; font-weight: 800; margin-bottom: 15px; }
       .license-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e9e0ff; }
       .license-row:last-child { border-bottom: none; }
       .license-row .label { font-size: 11px; color: #888; font-weight: 600; }
       .license-row .value { font-size: 13px; color: #1a1a2e; font-weight: 700; text-align: right; max-width: 65%; word-break: break-all; }
-      .license-row .value.mono { font-family: 'Courier New', monospace; color: #0891b2; font-size: 14px; }
+      .license-row .value.mono { font-family: 'Courier New', monospace; color: #7c3aed; font-size: 14px; }
       .footer { margin-top: 35px; padding-top: 20px; border-top: 2px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
       .footer .note { font-size: 10px; color: #999; max-width: 60%; line-height: 1.5; }
       .footer .stamp { text-align: center; }
@@ -801,7 +801,7 @@ const AdminLicenses = () => {
           <button
             onClick={() => setShowForm(!showForm)}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all"
-            style={{ background: 'linear-gradient(135deg, hsl(216,91%,65%), hsl(200,90%,55%))', color: 'white' }}
+            style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(200,90%,55%))', color: 'white' }}
           >
             <Plus size={14} /> Add License
           </button>
@@ -810,7 +810,7 @@ const AdminLicenses = () => {
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
         {[
-          { label: 'মোট Keys',            value: stats.total,              color: 'hsl(192,78%,68%)',  bg: 'hsla(192,78%,68%,0.1)', filter: 'all' },
+          { label: 'মোট Keys',            value: stats.total,              color: 'hsl(258,78%,68%)',  bg: 'hsla(258,78%,68%,0.1)', filter: 'all' },
           { label: 'Available',            value: stats.available,          color: 'hsl(162,72%,46%)',  bg: 'hsla(162,72%,46%,0.1)', filter: 'available' },
           { label: 'Assigned',             value: stats.assigned,           color: 'hsl(200,90%,55%)',  bg: 'hsla(200,90%,55%,0.1)', filter: 'assigned' },
           { label: 'WhatsApp Delivered',   value: stats.whatsapp_delivered, color: 'hsl(142,70%,45%)',  bg: 'hsla(142,70%,45%,0.1)', filter: 'whatsapp_delivered' },
@@ -956,7 +956,7 @@ const AdminLicenses = () => {
           <div className="flex gap-3 mt-4">
             <button onClick={handleSave} disabled={saving}
               className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold transition-all"
-              style={{ background: 'linear-gradient(135deg, hsl(216,91%,65%), hsl(200,90%,55%))', color: 'white' }}>
+              style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(200,90%,55%))', color: 'white' }}>
               {saving ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
               Save License
             </button>
@@ -1173,7 +1173,7 @@ const AdminLicenses = () => {
                 onClick={handleAiParse}
                 disabled={aiParsing || !aiDemoKey.trim() || !aiRawText.trim()}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-primary-foreground transition-all disabled:opacity-50"
-                style={{ background: 'linear-gradient(135deg, hsl(192,78%,58%), hsl(200,90%,55%))' }}
+                style={{ background: 'linear-gradient(135deg, hsl(258,78%,58%), hsl(200,90%,55%))' }}
               >
                 {aiParsing ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
                 {aiParsing ? 'AI পার্স করছে...' : 'AI দিয়ে পার্স করুন'}
@@ -1280,7 +1280,7 @@ const AdminLicenses = () => {
                     className="px-4 py-2 rounded-xl text-sm border border-border text-muted-foreground">বাতিল</button>
                   <button onClick={handleBulkImport} disabled={bulkSaving}
                     className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold"
-                    style={{ background: 'linear-gradient(135deg, hsl(42,96%,58%), hsl(24,85%,62%))', color: 'white' }}>
+                    style={{ background: 'linear-gradient(135deg, hsl(42,96%,58%), hsl(330,85%,62%))', color: 'white' }}>
                     {bulkSaving ? <Loader2 size={13} className="animate-spin" /> : <Upload size={13} />}
                     Import করুন
                   </button>
@@ -1298,7 +1298,7 @@ const AdminLicenses = () => {
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(24,85%,62%))' }}>
+              style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(330,85%,62%))' }}>
               <Package size={15} className="text-white" />
             </div>
             <div>
@@ -1458,7 +1458,7 @@ const AdminLicenses = () => {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap mb-1">
                         <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-                          style={{ background: 'hsla(192,78%,68%,0.12)', color: 'hsl(192,78%,68%)' }}>
+                          style={{ background: 'hsla(258,78%,68%,0.12)', color: 'hsl(258,78%,68%)' }}>
                           {typeLabel}
                         </span>
                         <span className="flex items-center gap-1 text-[11px] font-semibold" style={{ color: st.color }}>
@@ -1579,7 +1579,7 @@ const AdminLicenses = () => {
                       </td>
                       <td className="px-4 py-3">
                         <span className="text-[11px] font-bold px-2 py-0.5 rounded-full"
-                          style={{ background: 'hsla(192,78%,68%,0.12)', color: 'hsl(192,78%,68%)' }}>
+                          style={{ background: 'hsla(258,78%,68%,0.12)', color: 'hsl(258,78%,68%)' }}>
                           {typeLabel}
                         </span>
                       </td>
@@ -1763,7 +1763,7 @@ const AdminLicenses = () => {
             <div className="flex gap-3">
               <button onClick={handleSendEmail} disabled={sendingEmail || !emailModal.email}
                 className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-50"
-                style={{ background: 'linear-gradient(135deg, hsl(216,91%,65%), hsl(200,90%,55%))', color: 'white' }}>
+                style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(200,90%,55%))', color: 'white' }}>
                 {sendingEmail ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
                 ইমেইল পাঠান
               </button>
@@ -2038,7 +2038,7 @@ const AdminLicenses = () => {
             <div className="flex gap-3 mt-5">
               <button onClick={handleEditSave} disabled={editSaving}
                 className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-50"
-                style={{ background: 'linear-gradient(135deg, hsl(216,91%,65%), hsl(200,90%,55%))', color: 'white' }}>
+                style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(200,90%,55%))', color: 'white' }}>
                 {editSaving ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
                 সেভ করুন
               </button>

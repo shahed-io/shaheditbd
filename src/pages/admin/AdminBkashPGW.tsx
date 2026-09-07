@@ -165,7 +165,7 @@ export default function AdminBkashPGW() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
-            <ShieldCheck className="h-6 w-6 text-orange-600" />
+            <ShieldCheck className="h-6 w-6 text-pink-600" />
             bKash PGW Settings
           </h1>
           <p className="text-sm text-muted-foreground">Tokenized Checkout (Online Payment) configuration</p>
@@ -293,7 +293,7 @@ export default function AdminBkashPGW() {
 
       <div className="flex justify-end gap-2">
         <Button variant="outline" onClick={() => data && setForm(data)} disabled={save.isPending}>Reset</Button>
-        <Button onClick={() => save.mutate(form)} disabled={save.isPending} className="bg-orange-600 hover:bg-orange-700">
+        <Button onClick={() => save.mutate(form)} disabled={save.isPending} className="bg-pink-600 hover:bg-pink-700">
           {save.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
           Save Settings
         </Button>
@@ -303,7 +303,7 @@ export default function AdminBkashPGW() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5 text-orange-600" />
+            <FileText className="h-5 w-5 text-pink-600" />
             Checkout Display Content
           </CardTitle>
           <CardDescription>
@@ -462,7 +462,7 @@ export default function AdminBkashPGW() {
             <Button
               onClick={() => saveContent.mutate(content)}
               disabled={saveContent.isPending}
-              className="bg-orange-600 hover:bg-orange-700"
+              className="bg-pink-600 hover:bg-pink-700"
             >
               {saveContent.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
               Save Content

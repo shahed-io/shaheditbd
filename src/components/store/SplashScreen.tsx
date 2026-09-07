@@ -17,7 +17,7 @@ const SplashScreen = ({ onFinish }: { onFinish: () => void }) => {
         phase === 'fade' ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}
       style={{
-        background: 'linear-gradient(145deg, hsl(192, 78%, 18%) 0%, hsl(226, 40%, 8%) 50%, hsl(192, 78%, 14%) 100%)',
+        background: 'linear-gradient(145deg, hsl(258, 78%, 18%) 0%, hsl(226, 40%, 8%) 50%, hsl(258, 78%, 14%) 100%)',
       }}
     >
       {/* Animated glow orbs */}
@@ -26,7 +26,7 @@ const SplashScreen = ({ onFinish }: { onFinish: () => void }) => {
           className="absolute rounded-full blur-3xl transition-all duration-1000"
           style={{
             width: '320px', height: '320px',
-            background: 'radial-gradient(circle, hsla(192, 78%, 55%, 0.35), transparent 70%)',
+            background: 'radial-gradient(circle, hsla(258, 78%, 55%, 0.35), transparent 70%)',
             top: '25%', left: '50%',
             transform: `translate(-50%, -50%) scale(${phase === 'enter' ? 0.5 : 1})`,
             opacity: phase === 'enter' ? 0 : 0.6,
@@ -59,7 +59,7 @@ const SplashScreen = ({ onFinish }: { onFinish: () => void }) => {
             inset: '-14px',
             border: '2px solid transparent',
             borderTopColor: 'hsla(42, 96%, 58%, 0.6)',
-            borderRightColor: 'hsla(192, 78%, 65%, 0.3)',
+            borderRightColor: 'hsla(258, 78%, 65%, 0.3)',
             borderRadius: '50%',
             animation: 'splash-ring-spin 2s linear infinite',
           }}
@@ -69,7 +69,7 @@ const SplashScreen = ({ onFinish }: { onFinish: () => void }) => {
           className="absolute rounded-2xl"
           style={{
             inset: '-6px',
-            background: 'linear-gradient(135deg, hsla(192, 78%, 55%, 0.4), hsla(42, 96%, 58%, 0.2))',
+            background: 'linear-gradient(135deg, hsla(258, 78%, 55%, 0.4), hsla(42, 96%, 58%, 0.2))',
             filter: 'blur(16px)',
             animation: 'splash-pulse 2s ease-in-out infinite',
           }}
@@ -79,7 +79,7 @@ const SplashScreen = ({ onFinish }: { onFinish: () => void }) => {
           alt="Shahed IT"
           className="relative w-[80px] h-[80px] rounded-2xl object-cover"
           style={{
-            boxShadow: '0 0 30px hsla(192, 78%, 55%, 0.5), 0 0 60px hsla(192, 78%, 55%, 0.2)',
+            boxShadow: '0 0 30px hsla(258, 78%, 55%, 0.5), 0 0 60px hsla(258, 78%, 55%, 0.2)',
           }}
         />
       </div>
@@ -121,7 +121,7 @@ const SplashScreen = ({ onFinish }: { onFinish: () => void }) => {
             className="rounded-full"
             style={{
               width: '3px',
-              background: `linear-gradient(to top, hsla(192, 78%, 65%, 0.8), hsla(42, 96%, 58%, 0.6))`,
+              background: `linear-gradient(to top, hsla(258, 78%, 65%, 0.8), hsla(42, 96%, 58%, 0.6))`,
               animation: 'splash-wave 1s ease-in-out infinite',
               animationDelay: `${i * 0.12}s`,
             }}

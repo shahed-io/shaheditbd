@@ -45,7 +45,7 @@ const ISSUE_COLOR: Record<Issue, string> = {
   "empty-alt": "bg-orange-500/10 text-orange-600 border-orange-500/30",
   "missing-title": "bg-yellow-500/10 text-yellow-700 border-yellow-500/30",
   "missing-lazy": "bg-blue-500/10 text-blue-600 border-blue-500/30",
-  "missing-dimensions": "bg-sky-500/10 text-sky-600 border-sky-500/30",
+  "missing-dimensions": "bg-purple-500/10 text-purple-600 border-purple-500/30",
   "non-webp": "bg-slate-500/10 text-slate-600 border-slate-500/30",
 };
 

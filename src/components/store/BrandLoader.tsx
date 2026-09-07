@@ -9,7 +9,7 @@ const BrandLoader = ({ size = 'md', className = '' }: { size?: 'sm' | 'md' | 'lg
           className="absolute inset-0 rounded-full"
           style={{
             border: '2px solid transparent',
-            borderTopColor: 'hsl(192,78%,55%)',
+            borderTopColor: 'hsl(258,78%,55%)',
             borderRightColor: 'hsla(42,96%,58%,0.4)',
             animation: 'brand-orbit 1s linear infinite',
           }}
@@ -26,7 +26,7 @@ const BrandLoader = ({ size = 'md', className = '' }: { size?: 'sm' | 'md' | 'lg
             left: '50%',
             transform: 'translate(-50%, -50%)',
             animation: 'brand-breathe 1.6s ease-in-out infinite',
-            filter: 'drop-shadow(0 0 8px hsla(192,78%,55%,0.25))',
+            filter: 'drop-shadow(0 0 8px hsla(258,78%,55%,0.25))',
           }}
         />
       </div>

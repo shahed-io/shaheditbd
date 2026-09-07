@@ -12,12 +12,12 @@ import {
 import { toast } from 'sonner';
 
 const CATEGORY_CONFIG: Record<string, { icon: any; color: string; label: string }> = {
-  general:   { icon: BookOpen,     color: '#0891b2', label: 'সাধারণ' },
+  general:   { icon: BookOpen,     color: '#7c3aed', label: 'সাধারণ' },
   orders:    { icon: Package,      color: '#06b6d4', label: 'অর্ডার' },
   payment:   { icon: CreditCard,   color: '#22c55e', label: 'পেমেন্ট' },
   refund:    { icon: RefreshCw,    color: '#f59e0b', label: 'রিফান্ড' },
-  security:  { icon: Shield,       color: '#f97316', label: 'নিরাপত্তা' },
-  support:   { icon: Headphones,   color: '#22d3ee', label: 'সাপোর্ট' },
+  security:  { icon: Shield,       color: '#ec4899', label: 'নিরাপত্তা' },
+  support:   { icon: Headphones,   color: '#8b5cf6', label: 'সাপোর্ট' },
 };
 
 // Reuse the same markdown renderer
@@ -260,7 +260,7 @@ const HelpCenter = () => {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <a href="#software-downloads" className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-bold mb-5 cursor-pointer hover:opacity-90 transition-opacity"
             style={{
-              background: 'linear-gradient(135deg, hsl(185,90%,42%), hsl(192,78%,55%))',
+              background: 'linear-gradient(135deg, hsl(185,90%,42%), hsl(258,78%,55%))',
               color: '#fff',
               boxShadow: '0 4px 18px hsla(185,90%,42%,0.35), 0 1px 0 rgba(255,255,255,0.2) inset',
               textDecoration: 'none',
@@ -304,7 +304,7 @@ const HelpCenter = () => {
                   className="glass-card rounded-2xl p-4 flex flex-col items-center gap-3 hover:border-primary/30 transition-all hover:-translate-y-1 group"
                 >
                   <div className="w-16 h-16 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0"
-                    style={{ background: 'hsla(192,78%,55%,0.07)' }}>
+                    style={{ background: 'hsla(258,78%,55%,0.07)' }}>
                     {sw.image_url ? (
                       <img src={sw.image_url} alt={`${sw.name} — Software Download for Bangladesh`} title={sw.name} loading="lazy" decoding="async" className="w-full h-full object-contain p-1" />
                     ) : (
@@ -319,7 +319,7 @@ const HelpCenter = () => {
                   </div>
                   <div className="mt-auto w-full">
                     <div className="flex items-center justify-center gap-1.5 py-1.5 rounded-xl text-[11px] font-bold text-white"
-                      style={{ background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(200,90%,45%))' }}>
+                      style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' }}>
                       <Download size={11} /> ডাউনলোড
                     </div>
                   </div>

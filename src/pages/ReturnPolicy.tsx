@@ -1,7 +1,7 @@
 import { RotateCcw, CheckCircle, XCircle, Clock, AlertTriangle } from 'lucide-react';
 import PolicyLayout, { SectionCard, Bullet, ContactCard } from '@/components/store/PolicyLayout';
 
-const A = 'hsl(192,78%,55%)';
+const A = 'hsl(258,78%,55%)';
 const B = 'hsl(200,90%,45%)';
 
 const ReturnPolicy = () => (
@@ -52,7 +52,7 @@ const ReturnPolicy = () => (
           { icon: '♻️', title: 'পণ্য বিনিময়', desc: 'সমতুল্য মূল্যের ভিন্ন পণ্যের সাথে বিনিময়' },
         ].map(item => (
           <div key={item.title} className="flex items-start gap-2.5 rounded-xl p-3"
-            style={{ background: 'hsla(192,78%,55%,0.05)', border: '1px solid hsla(192,78%,55%,0.12)' }}>
+            style={{ background: 'hsla(258,78%,55%,0.05)', border: '1px solid hsla(258,78%,55%,0.12)' }}>
             <span className="text-lg">{item.icon}</span>
             <div>
               <p className="font-bold text-[12px]" style={{ color: 'hsl(226,35%,18%)' }}>{item.title}</p>

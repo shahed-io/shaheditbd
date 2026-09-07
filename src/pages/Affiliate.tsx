@@ -334,7 +334,7 @@ const Affiliate = () => {
           <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="gap-2"><ArrowLeft size={14} /> Back to Dashboard</Button>
 
           <div className="text-center space-y-2">
-            <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-cyan-500 to-sky-600 flex items-center justify-center">
+            <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
               <Sparkles className="text-white" size={36} />
             </div>
             <h1 className="text-3xl font-bold">অ্যাফিলিয়েট প্রোগ্রামে আবেদন করুন</h1>
@@ -492,14 +492,14 @@ const Affiliate = () => {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <StatBox icon={Wallet} label="Available" value={`৳${Number(account.available_balance).toFixed(0)}`} color="from-emerald-500 to-green-600" />
-          <StatBox icon={TrendingUp} label="Total Earned" value={`৳${Number(account.total_earned).toFixed(0)}`} color="from-cyan-500 to-sky-600" />
+          <StatBox icon={TrendingUp} label="Total Earned" value={`৳${Number(account.total_earned).toFixed(0)}`} color="from-violet-500 to-purple-600" />
           <StatBox icon={DollarSign} label="Total Paid" value={`৳${Number(account.total_paid).toFixed(0)}`} color="from-blue-500 to-cyan-600" />
-          <StatBox icon={MousePointerClick} label="Clicks / Conv." value={`${account.total_clicks} / ${account.total_conversions}`} color="from-orange-500 to-rose-600" />
+          <StatBox icon={MousePointerClick} label="Clicks / Conv." value={`${account.total_clicks} / ${account.total_conversions}`} color="from-pink-500 to-rose-600" />
         </div>
 
         {account.status === 'approved' && (
           <>
-            <div className="bg-gradient-to-br from-cyan-500/10 to-sky-500/10 border border-cyan-500/30 rounded-2xl p-5 space-y-3">
+            <div className="bg-gradient-to-br from-violet-500/10 to-purple-500/10 border border-violet-500/30 rounded-2xl p-5 space-y-3">
               <h3 className="font-semibold flex items-center gap-2"><Share2 size={16} /> আপনার রেফারেল লিংক</h3>
               <div className="flex gap-2">
                 <Input readOnly value={referralLink} className="font-mono text-xs" />

@@ -183,13 +183,13 @@ export default function SendToNotificationsDialog({
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <BellRing className="w-5 h-5 text-cyan-600" />
+            <BellRing className="w-5 h-5 text-violet-600" />
             Send to Account Notifications
           </DialogTitle>
           <DialogDescription>
             Users এদের dashboard-এর 🔔 notification list-এ এই message দেখতে পাবে।
             {sourceLabel && (
-              <Badge variant="outline" className="ml-2 border-cyan-300 text-cyan-700">{sourceLabel}</Badge>
+              <Badge variant="outline" className="ml-2 border-violet-300 text-violet-700">{sourceLabel}</Badge>
             )}
           </DialogDescription>
         </DialogHeader>
@@ -209,13 +209,13 @@ export default function SendToNotificationsDialog({
                     key={a.value}
                     htmlFor={`aud-${a.value}`}
                     className={`flex items-start gap-3 rounded-lg border p-2.5 cursor-pointer transition ${
-                      audience === a.value ? 'border-cyan-500 bg-cyan-500/5' : 'border-border hover:bg-muted/40'
+                      audience === a.value ? 'border-violet-500 bg-violet-500/5' : 'border-border hover:bg-muted/40'
                     }`}
                   >
                     <RadioGroupItem id={`aud-${a.value}`} value={a.value} className="mt-1" />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 font-medium text-sm">
-                        <Icon className="w-4 h-4 text-cyan-600" />
+                        <Icon className="w-4 h-4 text-violet-600" />
                         {a.label}
                         {typeof activeCount === 'number' && (
                           <Badge variant="secondary" className="text-[10px]">{activeCount}</Badge>

@@ -87,9 +87,9 @@ const AdminSoftwareDownloads = () => {
 
       {/* Info banner */}
       <div className="glass-card rounded-2xl p-4 border border-primary/20 flex items-start gap-3"
-        style={{ background: 'linear-gradient(135deg, hsla(192,78%,55%,0.06), hsla(200,90%,45%,0.04))' }}>
+        style={{ background: 'linear-gradient(135deg, hsla(258,78%,55%,0.06), hsla(200,90%,45%,0.04))' }}>
         <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-          style={{ background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(200,90%,45%))' }}>
+          style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' }}>
           <Link2 size={16} className="text-white" />
         </div>
         <div className="text-xs text-muted-foreground leading-relaxed">
@@ -102,7 +102,7 @@ const AdminSoftwareDownloads = () => {
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3">
         {[
-          { label: 'মোট প্রোডাক্ট', value: stats.total, icon: Package, color: 'hsl(192,78%,55%)' },
+          { label: 'মোট প্রোডাক্ট', value: stats.total, icon: Package, color: 'hsl(258,78%,55%)' },
           { label: 'লিংক সেট আছে', value: stats.withLink, icon: CheckCircle2, color: 'hsl(160,70%,42%)' },
           { label: 'লিংক নেই', value: stats.withoutLink, icon: AlertCircle, color: 'hsl(20,90%,55%)' },
         ].map(s => (
@@ -150,7 +150,7 @@ const AdminSoftwareDownloads = () => {
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 filter === f.k ? 'text-white' : 'text-muted-foreground hover:text-foreground'
               }`}
-              style={filter === f.k ? { background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(200,90%,45%))' } : {}}
+              style={filter === f.k ? { background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' } : {}}
             >
               {f.label}
             </button>
@@ -180,7 +180,7 @@ const AdminSoftwareDownloads = () => {
                 {/* Image + name */}
                 <div className="flex items-center gap-3 sm:w-72 flex-shrink-0">
                   <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 border border-border flex items-center justify-center"
-                    style={{ background: 'hsla(192,78%,55%,0.06)' }}>
+                    style={{ background: 'hsla(258,78%,55%,0.06)' }}>
                     {p.image_url
                       ? <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
                       : <Package size={18} className="text-muted-foreground" />}
@@ -228,7 +228,7 @@ const AdminSoftwareDownloads = () => {
                       onClick={() => save(p)}
                       disabled={!dirty || savingId === p.id}
                       className="px-3 py-2 rounded-xl text-xs font-bold text-white flex items-center gap-1.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90"
-                      style={{ background: dirty ? 'linear-gradient(135deg, hsl(192,78%,55%), hsl(200,90%,45%))' : 'hsl(var(--muted))' }}
+                      style={{ background: dirty ? 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' : 'hsl(var(--muted))' }}
                     >
                       {savingId === p.id
                         ? <Loader2 size={12} className="animate-spin" />

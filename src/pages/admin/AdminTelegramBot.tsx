@@ -175,7 +175,7 @@ const AdminTelegramBot = () => {
           { icon: ShoppingCart, label: 'অ্যাক্টিভ কার্ট', value: stats.totalCarts, color: 'text-blue-500', bg: 'bg-blue-500/10' },
           { icon: MessageCircle, label: 'চেকআউট চলছে', value: stats.activeCheckouts, color: 'text-orange-500', bg: 'bg-orange-500/10' },
           { icon: Package, label: 'টেলিগ্রাম অর্ডার', value: stats.totalOrders, color: 'text-green-500', bg: 'bg-green-500/10' },
-          { icon: Users, label: 'ইউনিক ইউজার', value: stats.uniqueUsers, color: 'text-sky-500', bg: 'bg-sky-500/10' },
+          { icon: Users, label: 'ইউনিক ইউজার', value: stats.uniqueUsers, color: 'text-purple-500', bg: 'bg-purple-500/10' },
         ].map((stat) => (
           <div key={stat.label} className="glass-card rounded-2xl p-4">
             <div className={`w-10 h-10 rounded-xl ${stat.bg} flex items-center justify-center mb-3`}>

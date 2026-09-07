@@ -682,7 +682,7 @@ const MobileSearchOverlay = ({ onClose }: { onClose: () => void }) => {
   return (
     <div className="fixed inset-0 z-[998] flex flex-col" style={{ background: 'hsl(var(--background))' }}>
       {/* Top accent line */}
-      <div className="h-[3px] w-full flex-shrink-0" style={{ background: 'linear-gradient(90deg, hsl(var(--primary)), hsl(192,70%,58%))' }} />
+      <div className="h-[3px] w-full flex-shrink-0" style={{ background: 'linear-gradient(90deg, hsl(var(--primary)), hsl(263,70%,58%))' }} />
 
       {/* Header: Google-style rounded search bar */}
       <div className="flex-shrink-0 px-3 pt-3 pb-2" style={{ background: 'hsl(var(--card))' }}>
@@ -889,7 +889,7 @@ const MobileSearchOverlay = ({ onClose }: { onClose: () => void }) => {
         <div className="flex-shrink-0 px-4 py-3 border-t border-border/50" style={{ background: 'hsl(var(--card))' }}>
           <button onClick={() => s.handleSubmit(close)}
             className="w-full py-3.5 rounded-full text-base font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
-            style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(192,70%,58%))', boxShadow: '0 4px 16px hsl(var(--primary)/0.3)' }}>
+            style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(263,70%,58%))', boxShadow: '0 4px 16px hsl(var(--primary)/0.3)' }}>
             <Search size={18} />
             &ldquo;{s.query}&rdquo; সার্চ করুন
           </button>
@@ -1055,7 +1055,7 @@ const SearchBar = ({ className = '', variant = 'standalone', onClose }: SearchBa
           <button
             onClick={() => { if (query.trim()) { addRecent(query); search(query); } }}
             className="px-6 py-3 rounded-full text-sm font-semibold text-white flex items-center gap-2 flex-shrink-0 transition-all hover:scale-105"
-            style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(192,70%,58%))' }}
+            style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(263,70%,58%))' }}
           >
             <Search size={16} />
             <span className="hidden lg:inline">সার্চ</span>

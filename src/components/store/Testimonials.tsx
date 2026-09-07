@@ -54,33 +54,33 @@ const HARDCODED_REVIEWS: Review[] = [
 
 
 const PALETTES = [
-  { from: 'hsl(192,75%,59%)', to: 'hsl(192,70%,62%)' },
+  { from: 'hsl(243,75%,59%)', to: 'hsl(263,70%,62%)' },
   { from: 'hsl(158,64%,40%)', to: 'hsl(180,70%,42%)' },
   { from: 'hsl(15,100%,56%)',  to: 'hsl(38,100%,52%)' },
-  { from: 'hsl(192,70%,58%)', to: 'hsl(216,65%,56%)' },
+  { from: 'hsl(263,70%,58%)', to: 'hsl(283,65%,56%)' },
   { from: 'hsl(200,90%,45%)', to: 'hsl(220,85%,56%)' },
-  { from: 'hsl(24,82%,55%)', to: 'hsl(358,88%,60%)' },
+  { from: 'hsl(330,82%,55%)', to: 'hsl(358,88%,60%)' },
   { from: 'hsl(38,100%,52%)',  to: 'hsl(50,100%,52%)' },
-  { from: 'hsl(158,64%,40%)', to: 'hsl(192,75%,59%)' },
-  { from: 'hsl(220,85%,56%)', to: 'hsl(192,70%,58%)' },
-  { from: 'hsl(15,100%,56%)',  to: 'hsl(24,82%,55%)' },
+  { from: 'hsl(158,64%,40%)', to: 'hsl(243,75%,59%)' },
+  { from: 'hsl(220,85%,56%)', to: 'hsl(263,70%,58%)' },
+  { from: 'hsl(15,100%,56%)',  to: 'hsl(330,82%,55%)' },
   { from: 'hsl(158,64%,40%)', to: 'hsl(200,90%,45%)' },
-  { from: 'hsl(192,75%,59%)', to: 'hsl(15,100%,56%)' },
+  { from: 'hsl(243,75%,59%)', to: 'hsl(15,100%,56%)' },
 ];
 
 const AVATAR_GRADIENTS = [
-  ['hsl(192,78%,55%)', 'hsl(200,90%,45%)'],
+  ['hsl(258,78%,55%)', 'hsl(200,90%,45%)'],
   ['hsl(158,64%,42%)', 'hsl(180,70%,42%)'],
-  ['hsl(24,82%,53%)', 'hsl(15,100%,58%)'],
+  ['hsl(330,82%,53%)', 'hsl(15,100%,58%)'],
   ['hsl(38,100%,52%)', 'hsl(50,100%,48%)'],
   ['hsl(200,90%,46%)', 'hsl(220,85%,56%)'],
-  ['hsl(192,70%,60%)', 'hsl(216,65%,56%)'],
+  ['hsl(263,70%,60%)', 'hsl(283,65%,56%)'],
   ['hsl(158,64%,46%)', 'hsl(180,70%,42%)'],
   ['hsl(15,100%,60%)',  'hsl(38,100%,56%)'],
-  ['hsl(192,75%,55%)', 'hsl(192,70%,58%)'],
-  ['hsl(24,82%,53%)', 'hsl(200,90%,46%)'],
+  ['hsl(243,75%,55%)', 'hsl(263,70%,58%)'],
+  ['hsl(330,82%,53%)', 'hsl(200,90%,46%)'],
   ['hsl(38,100%,52%)',  'hsl(158,64%,42%)'],
-  ['hsl(192,70%,60%)', 'hsl(15,100%,58%)'],
+  ['hsl(263,70%,60%)', 'hsl(15,100%,58%)'],
 ];
 
 const StarRating = ({ rating, color }: { rating: number; color: string }) => (
@@ -251,7 +251,7 @@ const Testimonials = () => {
 
   const statsData = [
     { value: avgRating, label: 'গড় রেটিং', suffix: '★', from: 'hsl(38,100%,52%)', to: 'hsl(50,100%,50%)' },
-    { value: '99,000+', label: 'সন্তুষ্ট গ্রাহক', suffix: '', from: 'hsl(192,75%,59%)', to: 'hsl(192,70%,62%)' },
+    { value: '99,000+', label: 'সন্তুষ্ট গ্রাহক', suffix: '', from: 'hsl(243,75%,59%)', to: 'hsl(263,70%,62%)' },
     { value: '99%',    label: 'পজিটিভ রিভিউ', suffix: '', from: 'hsl(158,64%,40%)', to: 'hsl(180,70%,42%)' },
   ];
 
@@ -261,7 +261,7 @@ const Testimonials = () => {
     <section ref={sectionRef} className="py-10 overflow-hidden relative bg-transparent">
       {/* Ambient blobs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-1/4 -left-32 w-80 h-80 rounded-full blur-3xl" style={{ background: 'hsla(192,75%,62%,0.05)' }} />
+        <div className="absolute top-1/4 -left-32 w-80 h-80 rounded-full blur-3xl" style={{ background: 'hsla(243,75%,62%,0.05)' }} />
         <div className="absolute bottom-1/4 -right-32 w-80 h-80 rounded-full blur-3xl" style={{ background: 'hsla(15,100%,58%,0.04)' }} />
       </div>
 
@@ -272,9 +272,9 @@ const Testimonials = () => {
             style={{
               background: 'rgba(255,255,255,0.85)',
               backdropFilter: 'blur(16px)',
-              border: '1.5px solid hsla(192,75%,59%,0.38)',
-              color: 'hsl(192,75%,55%)',
-              boxShadow: '0 2px 14px hsla(192,75%,59%,0.14)',
+              border: '1.5px solid hsla(243,75%,59%,0.38)',
+              color: 'hsl(243,75%,55%)',
+              boxShadow: '0 2px 14px hsla(243,75%,59%,0.14)',
             }}>
             ⭐ Customer Reviews
           </div>

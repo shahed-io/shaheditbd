@@ -298,11 +298,11 @@ export default function OfferPage() {
       <Navbar />
       <main className="min-h-screen container max-w-3xl mx-auto px-4 pt-24 md:pt-32 pb-6 md:pb-8 space-y-6">
         {offer.show_notice && offer.notice && offer.notice.trim() && (
-          <div className="rounded-2xl border border-cyan-200 dark:border-cyan-900 bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-950/40 dark:to-blue-950/40 p-4 flex items-start gap-3 shadow-sm">
-            <div className="shrink-0 rounded-full bg-cyan-500/10 p-2">
-              <Megaphone className="w-5 h-5 text-cyan-600 dark:text-cyan-300" />
+          <div className="rounded-2xl border border-violet-200 dark:border-violet-900 bg-gradient-to-br from-violet-50 to-fuchsia-50 dark:from-violet-950/40 dark:to-fuchsia-950/40 p-4 flex items-start gap-3 shadow-sm">
+            <div className="shrink-0 rounded-full bg-violet-500/10 p-2">
+              <Megaphone className="w-5 h-5 text-violet-600 dark:text-violet-300" />
             </div>
-            <div className="flex-1 min-w-0 text-sm leading-relaxed whitespace-pre-wrap text-cyan-900 dark:text-cyan-100">
+            <div className="flex-1 min-w-0 text-sm leading-relaxed whitespace-pre-wrap text-violet-900 dark:text-violet-100">
               {offer.notice}
             </div>
           </div>

@@ -123,7 +123,7 @@ const MobileBottomNav = () => {
       icon: Home,
       path: '/',
       match: (p) => p === '/',
-      gradient: 'linear-gradient(135deg, hsl(192 78% 55%), hsl(216 80% 60%))',
+      gradient: 'linear-gradient(135deg, hsl(258 78% 55%), hsl(280 80% 60%))',
     },
     {
       label: 'Shop',
@@ -231,7 +231,7 @@ const MobileBottomNav = () => {
                     background: navItems[activeIndex].gradient,
                     boxShadow: `0 10px 28px -6px ${
                       navItems[activeIndex].gradient
-                        .match(/hsl\([^)]+\)/)?.[0] || 'hsla(192,78%,55%,0.55)'
+                        .match(/hsl\([^)]+\)/)?.[0] || 'hsla(258,78%,55%,0.55)'
                     }, 0 4px 12px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -1px 0 rgba(0,0,0,0.12)`,
                     opacity: 1,
                     transform: 'scale(1)',

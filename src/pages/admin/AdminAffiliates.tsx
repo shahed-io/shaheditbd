@@ -335,11 +335,11 @@ const AdminAffiliates = () => {
           onClick={() => { setTab('accounts'); setStatusFilter('pending'); setAccountSearch(''); }} />
         <StatCard icon={CheckCircle2} label="Pending Conv." value={stats.pendingConversions} color="text-blue-600"
           onClick={() => setTab('conversions')} />
-        <StatCard icon={Wallet} label="Pending Payouts" value={`৳${stats.pendingPayouts.toFixed(0)}`} color="text-sky-600"
+        <StatCard icon={Wallet} label="Pending Payouts" value={`৳${stats.pendingPayouts.toFixed(0)}`} color="text-purple-600"
           onClick={() => setTab('withdrawals')} />
         <StatCard icon={DollarSign} label="Total Paid" value={`৳${stats.totalCommissionPaid.toFixed(0)}`} color="text-green-600"
           onClick={() => setTab('withdrawals')} />
-        <StatCard icon={MousePointerClick} label="Total Clicks" value={stats.totalClicks} color="text-orange-600"
+        <StatCard icon={MousePointerClick} label="Total Clicks" value={stats.totalClicks} color="text-pink-600"
           onClick={() => { setTab('accounts'); setStatusFilter('all'); }} />
       </div>
 

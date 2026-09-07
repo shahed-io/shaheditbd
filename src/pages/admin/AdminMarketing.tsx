@@ -135,7 +135,7 @@ const AdminMarketing = () => {
           className="w-full flex items-center justify-between p-5 hover:bg-muted/10 transition-colors"
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(200,90%,45%))' }}>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' }}>
               <Mail size={18} className="text-white" />
             </div>
             <div className="text-left">

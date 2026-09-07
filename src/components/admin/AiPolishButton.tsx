@@ -98,7 +98,7 @@ export default function AiPolishButton({
           variant="outline"
           size={size === 'icon' ? 'icon' : 'sm'}
           className={
-            'gap-1 text-cyan-600 border-cyan-200 hover:bg-cyan-50 hover:text-cyan-700 dark:border-cyan-900 dark:hover:bg-cyan-950 ' +
+            'gap-1 text-violet-600 border-violet-200 hover:bg-violet-50 hover:text-violet-700 dark:border-violet-900 dark:hover:bg-violet-950 ' +
             (className || '')
           }
           title={hasValue ? 'Improve with AI' : 'Generate with AI'}
@@ -116,7 +116,7 @@ export default function AiPolishButton({
       <PopoverContent align="end" className="w-80 space-y-3">
         <div>
           <div className="flex items-center gap-1.5 font-semibold text-sm mb-1">
-            <Sparkles className="w-4 h-4 text-cyan-500" />
+            <Sparkles className="w-4 h-4 text-violet-500" />
             {hasValue ? 'Improve this text' : 'Generate this text'}
           </div>
           <p className="text-xs text-muted-foreground">

@@ -330,7 +330,7 @@ const AdminSEOMonitor = () => {
               <div key={`${p.entity}-${p.id}`} className="flex items-center justify-between gap-3 p-3 rounded-xl border border-border/60 bg-background/50">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <span className={`text-[10px] px-1.5 py-0.5 rounded uppercase font-mono ${p.entity === 'product' ? 'bg-blue-500/15 text-blue-600 dark:text-blue-400' : 'bg-sky-500/15 text-sky-600 dark:text-sky-400'}`}>{p.entity}</span>
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded uppercase font-mono ${p.entity === 'product' ? 'bg-blue-500/15 text-blue-600 dark:text-blue-400' : 'bg-purple-500/15 text-purple-600 dark:text-purple-400'}`}>{p.entity}</span>
                     <span className="text-sm font-medium truncate">{p.title}</span>
                   </div>
                   <div className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">

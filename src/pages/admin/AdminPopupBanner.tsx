@@ -124,7 +124,7 @@ const AdminPopupBanner = () => {
             onClick={handleSave}
             disabled={saving}
             className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-all"
-            style={{ background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(200,90%,45%))' }}
+            style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' }}
           >
             {saving ? <RefreshCw size={15} className="animate-spin" /> : null}
             {saving ? 'সেভ হচ্ছে...' : 'সেভ করুন'}
@@ -174,7 +174,7 @@ const AdminPopupBanner = () => {
                 onClick={() => fileRef.current?.click()}
                 className="border-2 border-dashed border-border/60 rounded-xl p-10 flex flex-col items-center gap-3 cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all"
               >
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'hsl(192,78%,55%,0.12)' }}>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'hsl(258,78%,55%,0.12)' }}>
                   <Upload size={22} className="text-primary" />
                 </div>
                 <p className="text-sm font-medium text-foreground">ছবি আপলোড করতে ক্লিক করুন</p>

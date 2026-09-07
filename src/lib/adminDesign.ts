@@ -49,15 +49,15 @@ export const ADMIN_TOKENS: TokenDef[] = [
   { name: 'ad-radius-pill', label: 'Radius pill',  group: 'Shape', kind: 'raw', value: '9999px' },
 
   { name: 'ad-shadow-sm',       label: 'Shadow sm',       group: 'Depth', kind: 'raw', value: '0 1px 2px hsla(226, 35%, 12%, 0.05), 0 1px 1px hsla(226, 35%, 12%, 0.03)' },
-  { name: 'ad-shadow-md',       label: 'Shadow md',       group: 'Depth', kind: 'raw', value: '0 4px 18px hsla(192, 78%, 55%, 0.10), 0 1px 3px hsla(226, 35%, 12%, 0.04)' },
-  { name: 'ad-shadow-lg',       label: 'Shadow lg',       group: 'Depth', kind: 'raw', value: '0 12px 36px hsla(192, 78%, 55%, 0.14), 0 2px 6px hsla(226, 35%, 12%, 0.05)' },
-  { name: 'ad-shadow-xl',       label: 'Shadow xl',       group: 'Depth', kind: 'raw', value: '0 28px 56px hsla(192, 78%, 55%, 0.20), 0 8px 16px hsla(226, 35%, 12%, 0.06)' },
-  { name: 'ad-shadow-pill',     label: 'Shadow pill',     group: 'Depth', kind: 'raw', value: '0 6px 18px hsla(192, 78%, 55%, 0.28), 0 1px 3px hsla(192, 78%, 55%, 0.12)' },
-  { name: 'ad-shadow-gradient', label: 'Shadow gradient', group: 'Depth', kind: 'raw', value: '0 8px 24px hsla(192, 78%, 55%, 0.18), 0 4px 12px hsla(200, 90%, 45%, 0.10)' },
+  { name: 'ad-shadow-md',       label: 'Shadow md',       group: 'Depth', kind: 'raw', value: '0 4px 18px hsla(258, 78%, 55%, 0.10), 0 1px 3px hsla(226, 35%, 12%, 0.04)' },
+  { name: 'ad-shadow-lg',       label: 'Shadow lg',       group: 'Depth', kind: 'raw', value: '0 12px 36px hsla(258, 78%, 55%, 0.14), 0 2px 6px hsla(226, 35%, 12%, 0.05)' },
+  { name: 'ad-shadow-xl',       label: 'Shadow xl',       group: 'Depth', kind: 'raw', value: '0 28px 56px hsla(258, 78%, 55%, 0.20), 0 8px 16px hsla(226, 35%, 12%, 0.06)' },
+  { name: 'ad-shadow-pill',     label: 'Shadow pill',     group: 'Depth', kind: 'raw', value: '0 6px 18px hsla(258, 78%, 55%, 0.28), 0 1px 3px hsla(258, 78%, 55%, 0.12)' },
+  { name: 'ad-shadow-gradient', label: 'Shadow gradient', group: 'Depth', kind: 'raw', value: '0 8px 24px hsla(258, 78%, 55%, 0.18), 0 4px 12px hsla(200, 90%, 45%, 0.10)' },
 
-  { name: 'ad-gradient-brand',  label: 'Brand gradient',  group: 'Gradients', kind: 'raw', value: 'linear-gradient(135deg, hsl(192, 78%, 55%) 0%, hsl(216, 75%, 58%) 50%, hsl(200, 90%, 50%) 100%)' },
-  { name: 'ad-gradient-warm',   label: 'Warm gradient',   group: 'Gradients', kind: 'raw', value: 'linear-gradient(135deg, hsl(24, 85%, 58%) 0%, hsl(42, 96%, 58%) 100%)' },
-  { name: 'ad-gradient-border', label: 'Border gradient', group: 'Gradients', kind: 'raw', value: 'linear-gradient(135deg, hsla(192, 78%, 55%, 0.35) 0%, hsla(200, 90%, 50%, 0.30) 100%)' },
+  { name: 'ad-gradient-brand',  label: 'Brand gradient',  group: 'Gradients', kind: 'raw', value: 'linear-gradient(135deg, hsl(258, 78%, 55%) 0%, hsl(280, 75%, 58%) 50%, hsl(200, 90%, 50%) 100%)' },
+  { name: 'ad-gradient-warm',   label: 'Warm gradient',   group: 'Gradients', kind: 'raw', value: 'linear-gradient(135deg, hsl(330, 85%, 58%) 0%, hsl(42, 96%, 58%) 100%)' },
+  { name: 'ad-gradient-border', label: 'Border gradient', group: 'Gradients', kind: 'raw', value: 'linear-gradient(135deg, hsla(258, 78%, 55%, 0.35) 0%, hsla(200, 90%, 50%, 0.30) 100%)' },
 ];
 
 export const TOKEN_GROUPS = Array.from(new Set(ADMIN_TOKENS.map(t => t.group)));

@@ -162,7 +162,7 @@ const AdminScrollController = () => {
 
   return (
     <div
-      className="fixed z-50 flex items-center gap-1 rounded-full border border-cyan-200/70 dark:border-cyan-800/50 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md shadow-lg px-1 py-1"
+      className="fixed z-50 flex items-center gap-1 rounded-full border border-violet-200/70 dark:border-violet-800/50 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md shadow-lg px-1 py-1"
       style={{
         right: 'max(12px, env(safe-area-inset-right))',
         bottom: 'calc(max(84px, env(safe-area-inset-bottom)) + 8px)',
@@ -175,7 +175,7 @@ const AdminScrollController = () => {
         onClick={() => scrollBy(-1)}
         disabled={!canLeft}
         aria-label="Scroll left"
-        className="w-9 h-9 rounded-full flex items-center justify-center text-cyan-700 dark:text-cyan-300 hover:bg-cyan-100 dark:hover:bg-cyan-900/40 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+        className="w-9 h-9 rounded-full flex items-center justify-center text-violet-700 dark:text-violet-300 hover:bg-violet-100 dark:hover:bg-violet-900/40 disabled:opacity-30 disabled:pointer-events-none transition-colors"
       >
         <ChevronLeft size={18} strokeWidth={2.5} />
       </button>
@@ -184,7 +184,7 @@ const AdminScrollController = () => {
         onClick={() => scrollBy(1)}
         disabled={!canRight}
         aria-label="Scroll right"
-        className="w-9 h-9 rounded-full flex items-center justify-center text-cyan-700 dark:text-cyan-300 hover:bg-cyan-100 dark:hover:bg-cyan-900/40 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+        className="w-9 h-9 rounded-full flex items-center justify-center text-violet-700 dark:text-violet-300 hover:bg-violet-100 dark:hover:bg-violet-900/40 disabled:opacity-30 disabled:pointer-events-none transition-colors"
       >
         <ChevronRight size={18} strokeWidth={2.5} />
       </button>

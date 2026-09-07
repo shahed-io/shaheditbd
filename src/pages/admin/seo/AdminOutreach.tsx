@@ -29,7 +29,7 @@ interface Prospect {
 const STATUSES = [
   { value: 'prospect',    label: 'Prospect',    color: 'hsl(220 15% 60%)', icon: Search },
   { value: 'contacted',   label: 'Contacted',   color: 'hsl(220 90% 60%)', icon: Send },
-  { value: 'replied',     label: 'Replied',     color: 'hsl(216 80% 65%)', icon: MessageSquare },
+  { value: 'replied',     label: 'Replied',     color: 'hsl(280 80% 65%)', icon: MessageSquare },
   { value: 'negotiating', label: 'Negotiating', color: 'hsl(40 95% 55%)',  icon: Clock },
   { value: 'published',   label: 'Published',   color: 'hsl(150 70% 45%)', icon: CheckCircle2 },
   { value: 'declined',    label: 'Declined',    color: 'hsl(0 80% 60%)',   icon: XCircle },
