@@ -117,7 +117,7 @@ CRITICAL PUNCTUATION RULE: After any English word, number, or alphanumeric conte
 
     } else if (type === "description") {
       maxTokens = 2800;
-      systemPrompt = `You are an expert eCommerce SEO content writer for Shahed IT — a certified Digital E-commerce Platform, officially registered under the Ministry of Commerce, People's Republic of Bangladesh (DBID: 586772174).
+      systemPrompt = `You are an expert eCommerce SEO content writer for Shahed IT — a certified Digital E-commerce Platform, officially registered under the Ministry of Commerce, People's Republic of Bangladesh (DBID: 623962552).
 
 ${bdSeoContext}
 
@@ -207,7 +207,7 @@ Meta Description MUST include exact ৳ price, "price in BD"/"in Bangladesh", "1
 
     } else if (type === "all") {
       maxTokens = 2800;
-      systemPrompt = `You are a product copywriter and Bangladesh SEO expert for Shahed IT (DBID: 586772174) — Bangladesh's #1 digital software shop.
+      systemPrompt = `You are a product copywriter and Bangladesh SEO expert for Shahed IT (DBID: 623962552) — Bangladesh's #1 digital software shop.
 
 ${bdSeoContext}
 
@@ -253,7 +253,7 @@ In description's SEO section: include these naturally: "${productName} বাং
         });
       }
       maxTokens = 3000;
-      systemPrompt = `You are an expert eCommerce SEO content writer for Shahed IT (DBID: 586772174) — Bangladesh's #1 digital software shop.
+      systemPrompt = `You are an expert eCommerce SEO content writer for Shahed IT (DBID: 623962552) — Bangladesh's #1 digital software shop.
 
 ${bdSeoContext}
 
@@ -293,7 +293,7 @@ Now write the full description for the NEW PRODUCT following the EXACT SAME styl
       // Long-form SEO-rich product body (700-1500 words) + structured FAQ array.
       // Used by the bulk Product Content Enrichment admin tool.
       maxTokens = 4500;
-      systemPrompt = `You are a senior eCommerce SEO content strategist for Shahed IT (DBID: 586772174) — Bangladesh's #1 digital software shop.
+      systemPrompt = `You are a senior eCommerce SEO content strategist for Shahed IT (DBID: 623962552) — Bangladesh's #1 digital software shop.
 
 ${bdSeoContext}
 
@@ -334,7 +334,7 @@ List ALL duration plans with exact BDT prices clearly. Mention Personal/Shared/a
 3-4 sentences naturally weaving 6-8 strategic keywords: "[product] বাংলাদেশ", "[product] কিনুন", "[product] price in bd", "[product] সেরা দাম", "[product] online shop bangladesh", and at least 2 city names from: ${bdCities}.
 
 ### 🏪 কেন Shahed IT? (Trust & Authority)
-4-5 trust points: genuine license, instant delivery, 24/7 support, secure bKash/Nagad/Rocket payment, official DBID 586772174 registration.
+4-5 trust points: genuine license, instant delivery, 24/7 support, secure bKash/Nagad/Rocket payment, official DBID 623962552 registration.
 
 ### 🚀 এখনই কিনুন (Call To Action)
 2-3 action-oriented lines with urgency and the price.
@@ -373,7 +373,7 @@ The description MUST be 700–1500 words and contain ALL 11 sections in the exac
     } else if (type === "faq") {
       // Generate FAQ ONLY — grounded in the existing product description + metadata
       maxTokens = 2500;
-      systemPrompt = `You are a senior eCommerce SEO content strategist for Shahed IT (DBID: 586772174) — Bangladesh's #1 digital software shop.
+      systemPrompt = `You are a senior eCommerce SEO content strategist for Shahed IT (DBID: 623962552) — Bangladesh's #1 digital software shop.
 
 ${bdSeoContext}
 

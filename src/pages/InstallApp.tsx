@@ -67,7 +67,7 @@ const InstallApp = () => {
         title="Install Shahed IT App – PWA"
         description="Shahed IT অ্যাপটি আপনার ফোনে ইনস্টল করুন। দ্রুত লোডিং, অফলাইন সাপোর্ট এবং নেটিভ অ্যাপের মতো অভিজ্ঞতা পান।"
         canonical="https://shahedit.com/install"
-        keywords="shahed store app install, pwa bangladesh, digital store app download"
+        keywords="shahed it app install, pwa bangladesh, digital store app download"
       />
       <Navbar />
 

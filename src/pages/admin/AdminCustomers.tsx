@@ -233,7 +233,7 @@ export default function AdminCustomers() {
     const items = order.order_items.map(i => `- ${i.product_name} x${i.quantity}`).join('\n');
     const status = STATUS_CONFIG[order.status]?.label || order.status;
     const msg = encodeURIComponent(
-      `SHAHED STORE\n________________________\n\nOrder: #${order.order_number}\nCustomer: ${customerName}\nStatus: ${status}\n\nProducts:\n${items}\n\nTotal: ${Number(order.total).toLocaleString()} BDT\n\nThank you!\n-- Shahed IT\nwww.shahedit.com`
+      `SHAHED IT\n________________________\n\nOrder: #${order.order_number}\nCustomer: ${customerName}\nStatus: ${status}\n\nProducts:\n${items}\n\nTotal: ${Number(order.total).toLocaleString()} BDT\n\nThank you!\n-- Shahed IT\nwww.shahedit.com`
     );
     window.open(`https://wa.me/${p}?text=${msg}`, '_blank');
   };

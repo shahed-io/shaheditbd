@@ -449,7 +449,7 @@ const AdminLicenses = () => {
       .watermark { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); font-size: 80px; color: rgba(124,58,237,0.04); font-weight: 900; pointer-events: none; z-index: 0; }
       @media print { body { padding: 20px; } .invoice { max-width: 100%; } }
     </style></head><body>
-    <div class="watermark">SHAHED STORE</div>
+    <div class="watermark">SHAHED IT</div>
     <div class="invoice">
       <div class="header">
         <div class="brand">
@@ -560,7 +560,7 @@ const AdminLicenses = () => {
     const phone = waModal.phone.replace(/\D/g, '').replace(/^0/, '880');
     const typeLabel = KEY_TYPES.find(t => t.value === lic.key_type)?.label?.replace(/^[^\w\s]+\s*/, '') || lic.key_type;
     
-    let msg = `*SHAHED STORE*\n`;
+    let msg = `*SHAHED IT*\n`;
     msg += `________________________\n\n`;
     msg += `*License Delivery*\n\n`;
     msg += `Product: *${lic.product_name}*\n`;
@@ -607,7 +607,7 @@ const AdminLicenses = () => {
     const batchId = (crypto as any).randomUUID ? (crypto as any).randomUUID() : `batch-${Date.now()}`;
 
     // Build single combined WhatsApp message
-    let msg = `*SHAHED STORE*\n`;
+    let msg = `*SHAHED IT*\n`;
     msg += `________________________\n\n`;
     msg += `*Bulk License Delivery*\n`;
     if (bulkWaCustomerName.trim()) msg += `Customer: *${bulkWaCustomerName.trim()}*\n`;

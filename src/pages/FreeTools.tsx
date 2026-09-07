@@ -521,7 +521,7 @@ const HashtagGenerator = () => {
         setTags(extracted);
       }
     } catch {
-      setTags([`#${topic.replace(/\s+/g, '')}`, `#${platform}`, '#trending', '#viral', '#shahedstore', `#${topic.split(' ')[0]}tips`]);
+      setTags([`#${topic.replace(/\s+/g, '')}`, `#${platform}`, '#trending', '#viral', '#shahedit', `#${topic.split(' ')[0]}tips`]);
     }
     setLoading(false);
   };

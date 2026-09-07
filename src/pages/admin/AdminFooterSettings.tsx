@@ -109,7 +109,7 @@ const AdminFooterSettings = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Field label="ফোন নম্বর" k="phone" placeholder="01840-099853" />
           <Field label="ইমেইল" k="email" placeholder="info@shahedit.com" />
-          <Field label="ঠিকানা" k="address" placeholder="Ishwardi, Pabna" />
+          <Field label="ঠিকানা" k="address" placeholder="Rajshahi, Bangladesh" />
         </div>
       </Section>
 
@@ -117,7 +117,7 @@ const AdminFooterSettings = () => {
       <Section title="Trust Badge / সার্টিফিকেশন" icon={Shield}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Field label="সার্টিফিকেশন টাইটেল" k="cert_title" placeholder=" Certificate of Digital Business Identity (DBID)" />
-          <Field label="সার্টিফিকেশন আইডি" k="cert_id" placeholder="DBID: 586772174" />
+          <Field label="সার্টিফিকেশন আইডি" k="cert_id" placeholder="DBID: 623962552" />
           <Field label="স্ট্যাটাস টেক্সট" k="status_text" placeholder="Trusted Digital Product Store" />
         </div>
       </Section>

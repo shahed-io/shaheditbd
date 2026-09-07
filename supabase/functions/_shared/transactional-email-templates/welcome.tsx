@@ -71,7 +71,7 @@ const WelcomeEmail = ({
               </Text>
             </Section>
 
-            <Button style={buttonStyle} href="https://shahedstore.lovable.app/shop">
+            <Button style={buttonStyle} href="https://shahedit.com/shop">
               Browse Products
             </Button>
 

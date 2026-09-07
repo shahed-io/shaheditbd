@@ -240,7 +240,7 @@ export default function AdminEpsGateway() {
           </div>
           <div className="space-y-2">
             <Label>Store ID</Label>
-            <Input value={form.store_id} onChange={e => set('store_id', e.target.value)} placeholder="e.g. shahedstore" />
+            <Input value={form.store_id} onChange={e => set('store_id', e.target.value)} placeholder="e.g. shahedit" />
           </div>
           <div className="space-y-2">
             <Label>Username</Label>
