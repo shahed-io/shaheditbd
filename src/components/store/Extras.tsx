@@ -24,9 +24,9 @@ const DEFAULT_SETTINGS: AnnouncementSettings = {
   useLiveProducts: true,
   speedSeconds: 60,
   bgFrom: 'hsl(220,20%,97%)',
-  bgTo: 'hsl(258,40%,96%)',
+  bgTo: 'hsl(192,40%,96%)',
   textColor: 'hsl(226,35%,18%)',
-  accentColor: 'hsl(258,78%,55%)',
+  accentColor: 'hsl(192,78%,55%)',
   liveLabel: 'LIVE',
   items: [
     { label: 'Business Website', price: '৳15,000', off: '-25%' },

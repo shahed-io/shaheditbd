@@ -15,9 +15,9 @@ const KNOWN_PROVIDERS: Record<string, { name: string; icon: string; color: strin
   'openai': { name: 'OpenAI (ChatGPT)', icon: '💬', color: '#10A37F', bgColor: 'bg-emerald-500/10', borderColor: 'border-emerald-500/20', testType: 'openai', link: 'https://platform.openai.com/api-keys', description: 'OpenAI Dashboard থেকে API Key নিন' },
   'anthropic': { name: 'Anthropic Claude', icon: '🧠', color: '#D97757', bgColor: 'bg-orange-500/10', borderColor: 'border-orange-500/20', testType: 'anthropic', link: 'https://console.anthropic.com/settings/keys', description: 'Anthropic Console থেকে API Key নিন' },
   'telegram': { name: 'Telegram Bot', icon: '📱', color: '#0088CC', bgColor: 'bg-sky-500/10', borderColor: 'border-sky-500/20', testType: 'telegram', description: 'Telegram Bot Token (BotFather থেকে নিন)' },
-  'bkash': { name: 'BKash Payment', icon: '💳', color: '#E2136E', bgColor: 'bg-pink-500/10', borderColor: 'border-pink-500/20', description: 'BKash Merchant API Credentials' },
+  'bkash': { name: 'BKash Payment', icon: '💳', color: '#E2136E', bgColor: 'bg-orange-500/10', borderColor: 'border-orange-500/20', description: 'BKash Merchant API Credentials' },
   'grahok': { name: 'Grahok SMS', icon: '📨', color: '#FF6B35', bgColor: 'bg-orange-500/10', borderColor: 'border-orange-500/20', testType: 'http_url', description: 'Grahok SMS API Credentials' },
-  'admin': { name: 'Admin Credentials', icon: '🔐', color: '#8B5CF6', bgColor: 'bg-purple-500/10', borderColor: 'border-purple-500/20', description: 'Admin login credentials' },
+  'admin': { name: 'Admin Credentials', icon: '🔐', color: '#22d3ee', bgColor: 'bg-sky-500/10', borderColor: 'border-sky-500/20', description: 'Admin login credentials' },
   'supabase': { name: 'Supabase / System', icon: '⚙️', color: '#3ECF8E', bgColor: 'bg-green-500/10', borderColor: 'border-green-500/20', description: 'সিস্টেম লেভেল কনফিগারেশন (পরিবর্তন সাবধানে করুন)' },
   'other': { name: 'অন্যান্য API Keys', icon: '🔑', color: '#F59E0B', bgColor: 'bg-amber-500/10', borderColor: 'border-amber-500/20', description: 'কাস্টম API Key ও কনফিগারেশন' },
 };
@@ -399,9 +399,9 @@ const AdminAiConfig = () => {
           })}
 
           {/* Info */}
-          <div className="glass-card rounded-2xl p-6 border border-purple-500/20">
+          <div className="glass-card rounded-2xl p-6 border border-sky-500/20">
             <div className="flex items-center gap-3 mb-4">
-              <Brain size={18} className="text-purple-400" />
+              <Brain size={18} className="text-sky-400" />
               <h3 className="font-bold text-foreground">কীভাবে কাজ করে?</h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

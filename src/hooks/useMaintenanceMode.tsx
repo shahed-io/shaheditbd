@@ -107,7 +107,7 @@ export const MAINTENANCE_DEFAULT: MaintenanceSettings = {
   customCardBg: 'rgba(255,255,255,0.06)',
   customTextColor: '#ffffff',
   customMutedColor: 'rgba(255,255,255,0.72)',
-  customAccent: '#8b5cf6',
+  customAccent: '#22d3ee',
   customFont: "'Inter', system-ui, sans-serif",
   customRadius: 28,
   customLogo: '',

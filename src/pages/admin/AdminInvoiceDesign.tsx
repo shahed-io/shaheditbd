@@ -47,7 +47,7 @@ const ColorField = ({
       <div className="flex items-center gap-2">
         <input
           type="color"
-          value={isAuto ? '#7c3aed' : value}
+          value={isAuto ? '#0891b2' : value}
           onChange={(e) => onChange(e.target.value)}
           className="h-10 w-12 rounded-lg border border-border bg-transparent cursor-pointer"
         />
@@ -56,7 +56,7 @@ const ColorField = ({
           className={inputCls}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          placeholder="#7c3aed"
+          placeholder="#0891b2"
         />
         {allowAuto && (
           <button
@@ -146,7 +146,7 @@ const AdminInvoiceDesign = () => {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="px-5 py-2 rounded-xl bg-gradient-to-r from-primary to-purple-600 text-white text-sm font-semibold shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all disabled:opacity-60 flex items-center gap-2"
+            className="px-5 py-2 rounded-xl bg-gradient-to-r from-primary to-sky-600 text-white text-sm font-semibold shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all disabled:opacity-60 flex items-center gap-2"
           >
             <Save size={14} /> {saving ? 'Saving...' : 'Save Design'}
           </button>

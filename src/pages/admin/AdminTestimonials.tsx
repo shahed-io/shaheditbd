@@ -16,7 +16,7 @@ type Testimonial = {
   color: string;
 };
 
-const COLORS = ['hsl(258,78%,55%)', 'hsl(15,100%,58%)', 'hsl(158,64%,40%)', 'hsl(38,100%,50%)', 'hsl(200,90%,50%)', 'hsl(330,85%,55%)'];
+const COLORS = ['hsl(192,78%,55%)', 'hsl(15,100%,58%)', 'hsl(158,64%,40%)', 'hsl(38,100%,50%)', 'hsl(200,90%,50%)', 'hsl(24,85%,55%)'];
 const EMPTY = (): Testimonial => ({
   id: crypto.randomUUID(),
   name: 'নতুন গ্রাহক',
@@ -176,7 +176,7 @@ const AdminTestimonials = () => {
                         className="w-8 h-8 rounded-full border-2 transition-all"
                         style={{ background: c, borderColor: item.color === c ? 'white' : 'transparent', transform: item.color === c ? 'scale(1.2)' : 'scale(1)' }} />
                     ))}
-                    <input type="color" value={item.color.startsWith('hsl') ? '#7c3aed' : item.color}
+                    <input type="color" value={item.color.startsWith('hsl') ? '#0891b2' : item.color}
                       onChange={e => update(item.id, 'color', e.target.value)}
                       className="w-8 h-8 rounded-full border border-border cursor-pointer" title="কাস্টম রঙ" />
                   </div>

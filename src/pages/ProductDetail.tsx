@@ -553,7 +553,7 @@ const ProductDetail = () => {
               >
                 {/* Gradient top border */}
                 <div className="h-[2px] w-full absolute top-0 left-0 z-10"
-                  style={{ background: 'linear-gradient(90deg, hsl(258,78%,55%), hsl(200,90%,45%))' }} />
+                  style={{ background: 'linear-gradient(90deg, hsl(192,78%,55%), hsl(200,90%,45%))' }} />
 
                 {/* Shimmer sweep on load */}
                 {entered && <div className="neon-sweep-line" />}
@@ -595,12 +595,12 @@ const ProductDetail = () => {
                   <>
                     <button onClick={prevImg} aria-label="Previous image"
                       className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 z-10"
-                      style={{ background: 'rgba(255,255,255,0.80)', border: '1px solid hsla(258,78%,60%,0.25)', color: 'hsl(258,78%,50%)', backdropFilter: 'blur(12px)', boxShadow: '0 2px 12px hsla(258,78%,55%,0.15)' }}>
+                      style={{ background: 'rgba(255,255,255,0.80)', border: '1px solid hsla(192,78%,60%,0.25)', color: 'hsl(192,78%,50%)', backdropFilter: 'blur(12px)', boxShadow: '0 2px 12px hsla(192,78%,55%,0.15)' }}>
                       <ChevronLeft size={18} />
                     </button>
                     <button onClick={nextImg} aria-label="Next image"
                       className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 z-10"
-                      style={{ background: 'rgba(255,255,255,0.80)', border: '1px solid hsla(258,78%,60%,0.25)', color: 'hsl(258,78%,50%)', backdropFilter: 'blur(12px)', boxShadow: '0 2px 12px hsla(258,78%,55%,0.15)' }}>
+                      style={{ background: 'rgba(255,255,255,0.80)', border: '1px solid hsla(192,78%,60%,0.25)', color: 'hsl(192,78%,50%)', backdropFilter: 'blur(12px)', boxShadow: '0 2px 12px hsla(192,78%,55%,0.15)' }}>
                       <ChevronRight size={18} />
                     </button>
                   </>
@@ -613,12 +613,12 @@ const ProductDetail = () => {
                   onClick={() => toggleWishlist(cartItem)}
                   className="absolute top-4 right-4 w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:scale-110 z-10"
                   style={{
-                    background: wishlisted ? 'hsla(320,90%,62%,0.15)' : 'rgba(255,255,255,0.80)',
-                    border: `1px solid ${wishlisted ? 'hsla(320,90%,62%,0.45)' : 'hsla(258,78%,60%,0.20)'}`,
+                    background: wishlisted ? 'hsla(24,90%,62%,0.15)' : 'rgba(255,255,255,0.80)',
+                    border: `1px solid ${wishlisted ? 'hsla(24,90%,62%,0.45)' : 'hsla(192,78%,60%,0.20)'}`,
                     backdropFilter: 'blur(12px)',
-                    boxShadow: '0 2px 12px hsla(258,78%,55%,0.10)',
+                    boxShadow: '0 2px 12px hsla(192,78%,55%,0.10)',
                   }}>
-                  <Heart size={16} fill={wishlisted ? 'hsl(320,90%,62%)' : 'none'} color={wishlisted ? 'hsl(320,90%,62%)' : 'hsl(var(--muted-foreground))'} />
+                  <Heart size={16} fill={wishlisted ? 'hsl(24,90%,62%)' : 'none'} color={wishlisted ? 'hsl(24,90%,62%)' : 'hsl(var(--muted-foreground))'} />
                 </button>
               </div>
 
@@ -634,7 +634,7 @@ const ProductDetail = () => {
                 >
                   {images.map((img, i) => (
                     <button key={i} onClick={() => { setActiveImg(i); setImgLoaded(false); }}
-                      className={`flex-shrink-0 w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all hover:scale-105 ${activeImg === i ? 'border-primary shadow-[0_0_16px_hsla(271,91%,65%,0.5)]' : 'border-border hover:border-primary/50'}`}>
+                      className={`flex-shrink-0 w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all hover:scale-105 ${activeImg === i ? 'border-primary shadow-[0_0_16px_hsla(216,91%,65%,0.5)]' : 'border-border hover:border-primary/50'}`}>
                       <img src={img} alt={(product as any).image_alt || `${productDisplayName} price in Bangladesh - Shahed IT`} title={`${productDisplayName} gallery image ${i + 1}`} width={160} height={160} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                     </button>
                   ))}
@@ -664,7 +664,7 @@ const ProductDetail = () => {
                       '0 1px 0 #ffffff inset, 0 0 0 1px rgba(255,255,255,0.9) inset, 0 8px 28px rgba(124,58,237,0.12), 0 2px 6px rgba(168,85,247,0.08)',
                     border: '2px solid transparent',
                     backgroundImage:
-                      'linear-gradient(#ffffff,#ffffff), linear-gradient(135deg, hsl(280,85%,65%) 0%, hsl(258,90%,55%) 50%, hsl(300,75%,60%) 100%)',
+                      'linear-gradient(#ffffff,#ffffff), linear-gradient(135deg, hsl(216,85%,65%) 0%, hsl(192,90%,55%) 50%, hsl(24,75%,60%) 100%)',
                     backgroundOrigin: 'border-box',
                     backgroundClip: 'padding-box, border-box',
                   }}
@@ -777,7 +777,7 @@ const ProductDetail = () => {
                       background: '#ffffff',
                       border: '2px solid transparent',
                       backgroundImage:
-                        'linear-gradient(#ffffff,#ffffff), linear-gradient(135deg, hsl(280,85%,65%) 0%, hsl(258,90%,55%) 50%, hsl(300,75%,60%) 100%)',
+                        'linear-gradient(#ffffff,#ffffff), linear-gradient(135deg, hsl(216,85%,65%) 0%, hsl(192,90%,55%) 50%, hsl(24,75%,60%) 100%)',
                       backgroundOrigin: 'border-box',
                       backgroundClip: 'padding-box, border-box',
                       boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.9), 0 2px 8px rgba(124,58,237,0.10)',
@@ -808,8 +808,8 @@ const ProductDetail = () => {
                   background: 'linear-gradient(155deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.68) 100%)',
                   backdropFilter: 'blur(28px) saturate(180%)',
                   WebkitBackdropFilter: 'blur(28px) saturate(180%)',
-                  border: '1px solid hsla(258,78%,60%,0.22)',
-                  boxShadow: '0 8px 40px hsla(258,78%,55%,0.12), 0 1px 0 rgba(255,255,255,0.95) inset',
+                  border: '1px solid hsla(192,78%,60%,0.22)',
+                  boxShadow: '0 8px 40px hsla(192,78%,55%,0.12), 0 1px 0 rgba(255,255,255,0.95) inset',
                   opacity: entered ? 1 : 0,
                   transform: entered ? 'none' : 'translateY(28px)',
                   transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1) 0.15s',
@@ -817,7 +817,7 @@ const ProductDetail = () => {
               >
                 {/* Top shimmer line */}
                 <div className="h-[2px] w-full absolute top-0 left-0 z-10"
-                  style={{ background: 'linear-gradient(90deg, hsl(258,78%,55%), hsl(185,90%,52%), hsl(258,78%,55%))' }} />
+                  style={{ background: 'linear-gradient(90deg, hsl(192,78%,55%), hsl(185,90%,52%), hsl(192,78%,55%))' }} />
 
                 <div className="px-5 pt-5 pb-4">
                   {/* Category + Share row */}
@@ -828,7 +828,7 @@ const ProductDetail = () => {
                     </span>
                     <button onClick={handleCopy}
                       className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl transition-all hover:scale-105"
-                      style={{ color: copied ? 'hsl(158,80%,45%)' : 'hsl(226,25%,45%)', background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid hsla(258,78%,60%,0.18)', boxShadow: '0 2px 8px hsla(258,78%,55%,0.08)' }}>
+                      style={{ color: copied ? 'hsl(158,80%,45%)' : 'hsl(226,25%,45%)', background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid hsla(192,78%,60%,0.18)', boxShadow: '0 2px 8px hsla(192,78%,55%,0.08)' }}>
                       {copied ? <><Check size={12} /> Copied!</> : <><Copy size={12} /> Share</>}
                     </button>
                   </div>
@@ -850,8 +850,8 @@ const ProductDetail = () => {
                         {lines.map((line, i) => (
                           <li key={i} className="flex items-start gap-2.5 text-sm leading-relaxed">
                             <span className="mt-[3px] flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center"
-                              style={{ background: 'hsla(258,78%,55%,0.12)', border: '1px solid hsla(258,78%,55%,0.28)' }}>
-                              <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'hsl(258,78%,55%)' }} />
+                              style={{ background: 'hsla(192,78%,55%,0.12)', border: '1px solid hsla(192,78%,55%,0.28)' }}>
+                              <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'hsl(192,78%,55%)' }} />
                             </span>
                             <span style={{ color: 'hsl(226,25%,38%)' }}>{line}</span>
                           </li>
@@ -865,7 +865,7 @@ const ProductDetail = () => {
                   })()}
 
                   {/* Thin divider */}
-                  <div className="h-px mb-3" style={{ background: 'linear-gradient(90deg, hsla(258,78%,60%,0.15), hsla(185,90%,52%,0.15), transparent)' }} />
+                  <div className="h-px mb-3" style={{ background: 'linear-gradient(90deg, hsla(192,78%,60%,0.15), hsla(185,90%,52%,0.15), transparent)' }} />
 
                   {/* Rating + Sales + Stock */}
                   <div className="flex items-center flex-wrap gap-3 mb-4">
@@ -893,8 +893,8 @@ const ProductDetail = () => {
 
                   {/* Price row — always single line on every device */}
                   <div className="flex items-end flex-nowrap gap-2 sm:gap-3 py-3 px-3 sm:px-4 rounded-2xl overflow-hidden"
-                    style={{ background: 'linear-gradient(135deg, hsla(258,78%,55%,0.07) 0%, hsla(185,90%,52%,0.05) 100%)', border: '1px solid hsla(258,78%,60%,0.14)' }}>
-                    <span className="font-sora font-black whitespace-nowrap text-[26px] sm:text-3xl md:text-4xl flex-shrink-0" style={{ color: 'hsl(258,78%,42%)' }}>
+                    style={{ background: 'linear-gradient(135deg, hsla(192,78%,55%,0.07) 0%, hsla(185,90%,52%,0.05) 100%)', border: '1px solid hsla(192,78%,60%,0.14)' }}>
+                    <span className="font-sora font-black whitespace-nowrap text-[26px] sm:text-3xl md:text-4xl flex-shrink-0" style={{ color: 'hsl(192,78%,42%)' }}>
                       {fmtPrice(displayPrice)}
                     </span>
                     {displayOriginalPrice && displayOriginalPrice > displayPrice && (
@@ -949,9 +949,9 @@ const ProductDetail = () => {
                           onClick={() => setSelectedPlanIdx(idx)}
                           className="w-full flex items-center justify-between gap-2 px-3 sm:px-4 py-3 rounded-2xl border-2 text-left transition-all hover:scale-[1.01] active:scale-[0.99]"
                           style={isSel ? {
-                            borderColor: 'hsl(258,78%,55%)',
-                            background: 'linear-gradient(135deg, hsla(258,78%,55%,0.10) 0%, hsla(185,90%,52%,0.07) 100%)',
-                            boxShadow: '0 0 0 3px hsla(258,78%,55%,0.12)',
+                            borderColor: 'hsl(192,78%,55%)',
+                            background: 'linear-gradient(135deg, hsla(192,78%,55%,0.10) 0%, hsla(185,90%,52%,0.07) 100%)',
+                            boxShadow: '0 0 0 3px hsla(192,78%,55%,0.12)',
                           } : {
                             borderColor: 'hsla(220,20%,82%,0.9)',
                             background: 'rgba(255,255,255,0.65)',
@@ -961,10 +961,10 @@ const ProductDetail = () => {
                           {/* Left: duration + check */}
                           <div className="flex items-center gap-2 min-w-0">
                             <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors"
-                              style={{ borderColor: isSel ? 'hsl(258,78%,55%)' : 'hsl(220,20%,75%)' }}>
-                              {isSel && <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'hsl(258,78%,55%)' }} />}
+                              style={{ borderColor: isSel ? 'hsl(192,78%,55%)' : 'hsl(220,20%,75%)' }}>
+                              {isSel && <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'hsl(192,78%,55%)' }} />}
                             </div>
-                            <span className="font-bold text-[13px] sm:text-sm truncate" style={{ color: isSel ? 'hsl(258,78%,42%)' : 'hsl(226,35%,22%)' }}>
+                            <span className="font-bold text-[13px] sm:text-sm truncate" style={{ color: isSel ? 'hsl(192,78%,42%)' : 'hsl(226,35%,22%)' }}>
                               {plan.duration}
                             </span>
                           </div>
@@ -973,7 +973,7 @@ const ProductDetail = () => {
                             {planOriginal && planOriginal > planPrice && (
                               <span className="text-[11px] sm:text-xs line-through" style={{ color: 'hsl(226,25%,65%)' }}>{fmtPrice(planOriginal)}</span>
                             )}
-                            <span className="font-black text-sm sm:text-base font-sora" style={{ color: 'hsl(258,78%,42%)' }}>
+                            <span className="font-black text-sm sm:text-base font-sora" style={{ color: 'hsl(192,78%,42%)' }}>
                               {fmtPrice(planPrice)}
                             </span>
                             {planDiscount > 0 && (
@@ -1023,7 +1023,7 @@ const ProductDetail = () => {
                       <span>{group.name}</span>
                       {isMulti && (
                         <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                          style={{ background: 'hsla(258,78%,55%,0.10)', color: 'hsl(258,78%,55%)', border: '1px solid hsla(258,78%,55%,0.25)' }}>
+                          style={{ background: 'hsla(192,78%,55%,0.10)', color: 'hsl(192,78%,55%)', border: '1px solid hsla(192,78%,55%,0.25)' }}>
                           একাধিক নির্বাচন করা যাবে
                         </span>
                       )}
@@ -1176,7 +1176,7 @@ const ProductDetail = () => {
                 <div className="cta-card-inner space-y-2.5">
                   {/* Shimmer line */}
                   <div className="h-px w-full rounded-full"
-                    style={{ background: 'linear-gradient(90deg, transparent 0%, hsla(258,78%,65%,0.70) 30%, hsla(200,90%,65%,0.70) 70%, transparent 100%)' }} />
+                    style={{ background: 'linear-gradient(90deg, transparent 0%, hsla(192,78%,65%,0.70) 30%, hsla(200,90%,65%,0.70) 70%, transparent 100%)' }} />
 
                   {outOfStock && (
                     <div className="flex items-center justify-center gap-2 py-2.5 rounded-2xl text-sm font-black tracking-wide text-white"
@@ -1218,8 +1218,8 @@ const ProductDetail = () => {
                         backdropFilter: 'blur(20px)',
                         WebkitBackdropFilter: 'blur(20px)',
                         border: '1.5px solid rgba(255,255,255,0.95)',
-                        boxShadow: '0 4px 24px hsla(258,78%,55%,0.18), 0 1px 0 rgba(255,255,255,1) inset, 0 -1px 0 hsla(258,78%,55%,0.08) inset',
-                        color: 'hsl(258,78%,48%)',
+                        boxShadow: '0 4px 24px hsla(192,78%,55%,0.18), 0 1px 0 rgba(255,255,255,1) inset, 0 -1px 0 hsla(192,78%,55%,0.08) inset',
+                        color: 'hsl(192,78%,48%)',
                         letterSpacing: '0.02em',
                       }}
                     >
@@ -1238,8 +1238,8 @@ const ProductDetail = () => {
                         backdropFilter: 'blur(20px)',
                         WebkitBackdropFilter: 'blur(20px)',
                         border: '1.5px solid rgba(255,255,255,0.90)',
-                        boxShadow: '0 2px 16px hsla(258,78%,55%,0.12), 0 1px 0 rgba(255,255,255,1) inset',
-                        color: 'hsl(258,78%,48%)',
+                        boxShadow: '0 2px 16px hsla(192,78%,55%,0.12), 0 1px 0 rgba(255,255,255,1) inset',
+                        color: 'hsl(192,78%,48%)',
                       }}>
                       <MessageCircle size={15} strokeWidth={2.5} /> WhatsApp
                     </button>
@@ -1278,15 +1278,15 @@ const ProductDetail = () => {
                     background: 'linear-gradient(155deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.58) 100%)',
                     backdropFilter: 'blur(24px)',
                     WebkitBackdropFilter: 'blur(24px)',
-                    border: '1px solid hsla(258,78%,75%,0.22)',
-                    boxShadow: '0 4px 24px hsla(258,78%,55%,0.08), 0 1px 0 rgba(255,255,255,0.9) inset',
+                    border: '1px solid hsla(192,78%,75%,0.22)',
+                    boxShadow: '0 4px 24px hsla(192,78%,55%,0.08), 0 1px 0 rgba(255,255,255,0.9) inset',
                     opacity: entered ? 1 : 0,
                     transform: entered ? 'none' : 'translateY(20px)',
                     transition: 'all 0.65s cubic-bezier(0.22,1,0.36,1) 0.64s',
                   }}
                 >
                   <h3 className="font-sora font-bold text-base flex items-center gap-2 mb-4" style={{ color: 'hsl(226,35%,18%)' }}>
-                    <Package size={16} style={{ color: 'hsl(258,78%,55%)' }} /> What You'll Get
+                    <Package size={16} style={{ color: 'hsl(192,78%,55%)' }} /> What You'll Get
                   </h3>
                   <ul className="space-y-2.5">
                     {product.what_you_get.map((item, i) => (
@@ -1357,7 +1357,7 @@ const ProductDetail = () => {
               }}
             >
               <h2 className="font-sora font-bold text-xl text-foreground flex items-center gap-2 mb-5">
-                <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
+                <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(216,91%,65%), hsl(185,90%,52%))' }} />
                 {description ? 'Product Description' : 'Why Choose This Product?'}
               </h2>
               <div
@@ -1366,8 +1366,8 @@ const ProductDetail = () => {
                   background: 'linear-gradient(155deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.58) 100%)',
                   backdropFilter: 'blur(24px)',
                   WebkitBackdropFilter: 'blur(24px)',
-                  border: '1px solid hsla(258,78%,75%,0.22)',
-                  boxShadow: '0 4px 24px hsla(258,78%,55%,0.08), 0 1px 0 rgba(255,255,255,0.9) inset',
+                  border: '1px solid hsla(192,78%,75%,0.22)',
+                  boxShadow: '0 4px 24px hsla(192,78%,55%,0.08), 0 1px 0 rgba(255,255,255,0.9) inset',
                   color: 'hsl(226,25%,40%)',
                 }}
               >
@@ -1412,7 +1412,7 @@ const ProductDetail = () => {
             {faqs.length > 0 && (
               <div className="animate-fade-in">
                 <h2 className="font-sora font-bold text-xl text-foreground flex items-center gap-2 mb-5">
-                  <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
+                  <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(216,91%,65%), hsl(185,90%,52%))' }} />
                   FAQ
                 </h2>
                 <div className="space-y-3">
@@ -1606,7 +1606,7 @@ const RelatedProducts = ({ categoryId, currentProductId }: { categoryId: string 
               style={{
                 width: i === page ? '24px' : '10px',
                 height: '10px',
-                background: i === page ? 'hsl(258,78%,55%)' : 'hsl(220,13%,82%)',
+                background: i === page ? 'hsl(192,78%,55%)' : 'hsl(220,13%,82%)',
               }}
             />
           ))}
@@ -1625,18 +1625,18 @@ const FAQItem = ({ q, a, delay = 0, revealed = true }: { q: string; a: string; d
         background: 'linear-gradient(155deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.58) 100%)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
-        border: `1px solid ${open ? 'hsla(258,78%,60%,0.35)' : 'hsla(258,78%,75%,0.22)'}`,
-        boxShadow: open ? '0 4px 24px hsla(258,78%,55%,0.12)' : '0 2px 12px hsla(258,78%,55%,0.06)',
+        border: `1px solid ${open ? 'hsla(192,78%,60%,0.35)' : 'hsla(192,78%,75%,0.22)'}`,
+        boxShadow: open ? '0 4px 24px hsla(192,78%,55%,0.12)' : '0 2px 12px hsla(192,78%,55%,0.06)',
         opacity: revealed ? 1 : 0,
         transform: revealed ? 'none' : 'translateY(16px)',
         transition: `opacity 0.5s cubic-bezier(0.22,1,0.36,1) ${delay}s, transform 0.5s cubic-bezier(0.22,1,0.36,1) ${delay}s, border-color 0.3s, box-shadow 0.3s`,
       }}>
       <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between px-5 py-4 text-sm font-semibold text-left gap-3" style={{ color: 'hsl(226,35%,18%)' }}>
         <span>{q}</span>
-        <ChevronDown size={16} className="flex-shrink-0 transition-transform duration-300" style={{ color: 'hsl(258,78%,55%)', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+        <ChevronDown size={16} className="flex-shrink-0 transition-transform duration-300" style={{ color: 'hsl(192,78%,55%)', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }} />
       </button>
       <div className="overflow-hidden transition-all duration-400" style={{ maxHeight: open ? '300px' : '0', opacity: open ? 1 : 0 }}>
-        <div className="px-5 pb-4 text-sm leading-relaxed border-t" style={{ borderColor: 'hsla(258,78%,75%,0.18)', paddingTop: '12px', color: 'hsl(226,25%,42%)' }}>{a}</div>
+        <div className="px-5 pb-4 text-sm leading-relaxed border-t" style={{ borderColor: 'hsla(192,78%,75%,0.18)', paddingTop: '12px', color: 'hsl(226,25%,42%)' }}>{a}</div>
       </div>
     </div>
   );
@@ -1668,7 +1668,7 @@ const ProductSpecsTable = ({ productId }: { productId: string }) => {
   return (
     <div className="mt-10">
       <h2 className="font-sora font-bold text-xl text-foreground flex items-center gap-2 mb-5">
-        <span className="w-1 h-5 rounded-full flex-shrink-0" style={{ background: 'linear-gradient(180deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
+        <span className="w-1 h-5 rounded-full flex-shrink-0" style={{ background: 'linear-gradient(180deg, hsl(216,91%,65%), hsl(185,90%,52%))' }} />
         Specifications
       </h2>
       <div className="rounded-2xl overflow-hidden"
@@ -1676,18 +1676,18 @@ const ProductSpecsTable = ({ productId }: { productId: string }) => {
           background: 'linear-gradient(155deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.58) 100%)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid hsla(258,78%,75%,0.22)',
-          boxShadow: '0 4px 24px hsla(258,78%,55%,0.08)',
+          border: '1px solid hsla(192,78%,75%,0.22)',
+          boxShadow: '0 4px 24px hsla(192,78%,55%,0.08)',
         }}>
         <table className="w-full text-sm">
           <tbody>
             {specs.map((s, i) => (
               <tr key={i} style={{ background: i % 2 === 0 ? 'rgba(255,255,255,0.40)' : 'transparent' }}>
-                <td className="px-5 py-3 font-semibold w-1/3 border-r" style={{ color: 'hsl(226,35%,22%)', borderColor: 'hsla(258,78%,75%,0.18)' }}>{s.name}</td>
+                <td className="px-5 py-3 font-semibold w-1/3 border-r" style={{ color: 'hsl(226,35%,22%)', borderColor: 'hsla(192,78%,75%,0.18)' }}>{s.name}</td>
                 <td className="px-5 py-3" style={{ color: 'hsl(226,25%,42%)' }}>
                   <div className="flex flex-wrap gap-1.5">
                     {s.values.map(v => (
-                      <span key={v} className="px-2.5 py-0.5 rounded-full text-xs" style={{ background: 'hsla(258,78%,55%,0.08)', border: '1px solid hsla(258,78%,75%,0.25)', color: 'hsl(258,78%,45%)' }}>{v}</span>
+                      <span key={v} className="px-2.5 py-0.5 rounded-full text-xs" style={{ background: 'hsla(192,78%,55%,0.08)', border: '1px solid hsla(192,78%,75%,0.25)', color: 'hsl(192,78%,45%)' }}>{v}</span>
                     ))}
                   </div>
                 </td>
@@ -1802,8 +1802,8 @@ const ProductReviews = ({ productId, productSlug }: { productId: string; product
     background: 'linear-gradient(155deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.68) 100%)',
     backdropFilter: 'blur(20px)',
     WebkitBackdropFilter: 'blur(20px)',
-    border: '1px solid hsla(258,78%,75%,0.22)',
-    boxShadow: '0 4px 24px hsla(258,78%,55%,0.08)',
+    border: '1px solid hsla(192,78%,75%,0.22)',
+    boxShadow: '0 4px 24px hsla(192,78%,55%,0.08)',
   };
 
   return (
@@ -1821,7 +1821,7 @@ const ProductReviews = ({ productId, productSlug }: { productId: string; product
       {/* Header */}
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
         <h2 className="font-sora font-bold text-xl text-foreground flex items-center gap-2">
-          <span className="w-1 h-5 rounded-full flex-shrink-0" style={{ background: 'linear-gradient(180deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
+          <span className="w-1 h-5 rounded-full flex-shrink-0" style={{ background: 'linear-gradient(180deg, hsl(216,91%,65%), hsl(185,90%,52%))' }} />
           গ্রাহক রিভিউ
           <span className="text-sm font-normal text-muted-foreground">({reviews.length})</span>
         </h2>
@@ -1829,7 +1829,7 @@ const ProductReviews = ({ productId, productSlug }: { productId: string; product
           <button
             onClick={() => setShowForm(!showForm)}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all hover:scale-105"
-            style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(271,91%,65%))', color: 'white', boxShadow: '0 4px 16px hsla(258,78%,55%,0.30)' }}
+            style={{ background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(216,91%,65%))', color: 'white', boxShadow: '0 4px 16px hsla(192,78%,55%,0.30)' }}
           >
             <Star size={14} fill="white" color="white" />
             রিভিউ লিখুন
@@ -1846,7 +1846,7 @@ const ProductReviews = ({ productId, productSlug }: { productId: string; product
         <div className="rounded-2xl p-5 mb-6 flex flex-col sm:flex-row gap-6" style={glassStyle}>
           {/* Avg score */}
           <div className="flex flex-col items-center justify-center min-w-[100px]">
-            <div className="text-5xl font-sora font-black" style={{ color: 'hsl(258,78%,42%)' }}>
+            <div className="text-5xl font-sora font-black" style={{ color: 'hsl(192,78%,42%)' }}>
               {avgRating.toFixed(1)}
             </div>
             <StarRating value={Math.round(avgRating)} size={16} />
@@ -1858,12 +1858,12 @@ const ProductReviews = ({ productId, productSlug }: { productId: string; product
               <div key={star} className="flex items-center gap-2">
                 <span className="text-xs w-4 text-right font-semibold" style={{ color: 'hsl(226,35%,25%)' }}>{star}</span>
                 <Star size={11} fill="hsl(38,100%,55%)" color="hsl(38,100%,55%)" />
-                <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: 'hsla(258,78%,55%,0.10)' }}>
+                <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: 'hsla(192,78%,55%,0.10)' }}>
                   <div
                     className="h-full rounded-full transition-all duration-700"
                     style={{
                       width: reviews.length ? `${(count / reviews.length) * 100}%` : '0%',
-                      background: 'linear-gradient(90deg, hsl(258,78%,55%), hsl(271,91%,65%))',
+                      background: 'linear-gradient(90deg, hsl(192,78%,55%), hsl(216,91%,65%))',
                     }}
                   />
                 </div>
@@ -1928,7 +1928,7 @@ const ProductReviews = ({ productId, productSlug }: { productId: string; product
               type="submit"
               disabled={submitting || !name.trim() || !body.trim()}
               className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:scale-105 disabled:opacity-60 disabled:cursor-not-allowed"
-              style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(271,91%,65%))', boxShadow: '0 4px 16px hsla(258,78%,55%,0.30)' }}
+              style={{ background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(216,91%,65%))', boxShadow: '0 4px 16px hsla(192,78%,55%,0.30)' }}
             >
               <Send size={14} />
               {submitting ? 'পাঠানো হচ্ছে...' : 'রিভিউ পাঠান'}

@@ -424,7 +424,7 @@ const AdminFacebookPixel = () => {
       </div>
 
       {/* Info */}
-      <div className="p-4 rounded-2xl text-xs space-y-1.5" style={{ background: 'hsla(243,75%,59%,0.08)', border: '1px solid hsla(243,75%,59%,0.2)' }}>
+      <div className="p-4 rounded-2xl text-xs space-y-1.5" style={{ background: 'hsla(192,75%,59%,0.08)', border: '1px solid hsla(192,75%,59%,0.2)' }}>
         <p className="font-semibold text-primary">💡 একাধিক Pixel ব্যবহারের সুবিধা</p>
         <ul className="text-muted-foreground space-y-1 list-disc list-inside">
           <li>বিভিন্ন Ad Account-এর জন্য আলাদা Pixel ব্যবহার করতে পারবেন</li>

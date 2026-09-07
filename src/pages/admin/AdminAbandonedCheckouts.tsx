@@ -496,7 +496,7 @@ function DetailDrawer({
               <span className="px-3 py-1 rounded-full text-xs bg-amber-500/15 text-amber-500 border border-amber-500/30">⏳ Pending recovery</span>
             )}
             {row.contacted && <span className="px-3 py-1 rounded-full text-xs bg-blue-500/15 text-blue-500 border border-blue-500/30">📞 Contacted</span>}
-            {row.user_id && <span className="px-3 py-1 rounded-full text-xs bg-purple-500/15 text-purple-500 border border-purple-500/30">👤 Logged-in user</span>}
+            {row.user_id && <span className="px-3 py-1 rounded-full text-xs bg-sky-500/15 text-sky-500 border border-sky-500/30">👤 Logged-in user</span>}
           </div>
 
           {/* Customer */}
@@ -674,7 +674,7 @@ function ConvertModal({
     { v: 'pending',    label: 'Pending',    color: 'bg-amber-500/15 text-amber-600 border-amber-500/40' },
     { v: 'processing', label: 'Processing', color: 'bg-blue-500/15 text-blue-600 border-blue-500/40' },
     { v: 'completed',  label: 'Completed',  color: 'bg-emerald-500/15 text-emerald-600 border-emerald-500/40' },
-    { v: 'delivered',  label: 'Delivered',  color: 'bg-purple-500/15 text-purple-600 border-purple-500/40' },
+    { v: 'delivered',  label: 'Delivered',  color: 'bg-sky-500/15 text-sky-600 border-sky-500/40' },
     { v: 'cancelled',  label: 'Cancelled',  color: 'bg-rose-500/15 text-rose-600 border-rose-500/40' },
     { v: 'failed',     label: 'Failed',     color: 'bg-red-500/15 text-red-600 border-red-500/40' },
   ];

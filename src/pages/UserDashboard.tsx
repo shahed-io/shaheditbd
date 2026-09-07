@@ -44,7 +44,7 @@ const TIERS = [
   { name: 'silver',   min: 5,  max: 14, reward: 75,  label: 'Silver',   emoji: '🥈', color: 'hsl(220,15%,65%)', glow: 'hsla(220,15%,65%,0.3)' },
   { name: 'gold',     min: 15, max: 29, reward: 100, label: 'Gold',     emoji: '🥇', color: 'hsl(45,90%,52%)',  glow: 'hsla(45,90%,52%,0.35)' },
   { name: 'platinum', min: 30, max: 49, reward: 150, label: 'Platinum', emoji: '💎', color: 'hsl(185,90%,52%)', glow: 'hsla(185,90%,52%,0.35)' },
-  { name: 'diamond',  min: 50, max: Infinity, reward: 200, label: 'Diamond', emoji: '💠', color: 'hsl(271,91%,65%)', glow: 'hsla(271,91%,65%,0.4)' },
+  { name: 'diamond',  min: 50, max: Infinity, reward: 200, label: 'Diamond', emoji: '💠', color: 'hsl(216,91%,65%)', glow: 'hsla(216,91%,65%,0.4)' },
 ];
 
 const getCurrentTier = (count: number) => TIERS.find(t => count >= t.min && count <= t.max) || TIERS[0];
@@ -115,16 +115,16 @@ const glassCard = {
   background: 'linear-gradient(135deg, rgba(255,255,255,0.80) 0%, rgba(255,255,255,0.55) 100%)',
   backdropFilter: 'blur(24px) saturate(180%)',
   WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-  border: '1px solid hsla(258,78%,75%,0.22)',
-  boxShadow: '0 4px 24px hsla(258,78%,55%,0.08), 0 1px 0 rgba(255,255,255,0.9) inset',
+  border: '1px solid hsla(192,78%,75%,0.22)',
+  boxShadow: '0 4px 24px hsla(192,78%,55%,0.08), 0 1px 0 rgba(255,255,255,0.9) inset',
 };
 
 const glassCardStrong = {
   background: 'linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.72) 100%)',
   backdropFilter: 'blur(32px) saturate(200%)',
   WebkitBackdropFilter: 'blur(32px) saturate(200%)',
-  border: '1px solid hsla(258,78%,75%,0.28)',
-  boxShadow: '0 8px 32px hsla(258,78%,55%,0.10), 0 1px 0 rgba(255,255,255,0.95) inset',
+  border: '1px solid hsla(192,78%,75%,0.28)',
+  boxShadow: '0 8px 32px hsla(192,78%,55%,0.10), 0 1px 0 rgba(255,255,255,0.95) inset',
 };
 interface BIPEvent extends Event {
   prompt: () => Promise<void>;
@@ -170,15 +170,15 @@ const InstallAppTab = () => {
     <div className="space-y-5">
       {/* Hero */}
       <div className="rounded-2xl p-6 text-center" style={{
-        background: 'linear-gradient(145deg, hsla(258,78%,55%,0.12), hsla(258,78%,55%,0.04))',
-        border: '1px solid hsla(258,78%,55%,0.2)',
+        background: 'linear-gradient(145deg, hsla(192,78%,55%,0.12), hsla(192,78%,55%,0.04))',
+        border: '1px solid hsla(192,78%,55%,0.2)',
       }}>
         <div className="w-20 h-20 mx-auto mb-4 rounded-2xl overflow-hidden flex items-center justify-center"
           style={{
             background: 'linear-gradient(135deg, rgba(255,255,255,0.80) 0%, rgba(255,255,255,0.55) 100%)',
             backdropFilter: 'blur(24px) saturate(180%)',
-            border: '1px solid hsla(258,78%,75%,0.25)',
-            boxShadow: '0 4px 20px hsla(258,78%,55%,0.15)',
+            border: '1px solid hsla(192,78%,75%,0.25)',
+            boxShadow: '0 4px 20px hsla(192,78%,55%,0.15)',
           }}>
           <img src="/favicon.png" alt="Shahed IT" className="w-14 h-14 object-contain" />
         </div>
@@ -196,9 +196,9 @@ const InstallAppTab = () => {
         ].map((b, i) => (
           <div key={i} className="flex items-start gap-3 p-3.5 rounded-xl" style={{
             background: 'rgba(255,255,255,0.65)',
-            border: '1px solid hsla(258,78%,75%,0.18)',
+            border: '1px solid hsla(192,78%,75%,0.18)',
           }}>
-            <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'hsla(258,78%,55%,0.1)' }}>
+            <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'hsla(192,78%,55%,0.1)' }}>
               <b.icon size={16} className="text-primary" />
             </div>
             <div>
@@ -214,15 +214,15 @@ const InstallAppTab = () => {
         <button onClick={handleInstall}
           className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-white font-bold text-sm transition-transform active:scale-[0.98]"
           style={{
-            background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(258,78%,42%))',
-            boxShadow: '0 4px 16px hsla(258,78%,55%,0.35)',
+            background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(192,78%,42%))',
+            boxShadow: '0 4px 16px hsla(192,78%,55%,0.35)',
           }}>
           <Download size={16} /> Install Now
         </button>
       ) : isIOS ? (
         <div className="rounded-xl p-4 space-y-2" style={{
           background: 'rgba(255,255,255,0.7)',
-          border: '1px solid hsla(258,78%,75%,0.2)',
+          border: '1px solid hsla(192,78%,75%,0.2)',
         }}>
           <p className="text-sm font-bold text-foreground flex items-center gap-2"><Share2 size={14} className="text-primary" /> Install on iOS:</p>
           <p className="text-xs text-muted-foreground flex items-center gap-2">1. Tap the <Share2 size={12} className="text-blue-500" /> Share button in Safari</p>
@@ -231,7 +231,7 @@ const InstallAppTab = () => {
       ) : (
         <div className="rounded-xl p-4 text-center" style={{
           background: 'rgba(255,255,255,0.7)',
-          border: '1px solid hsla(258,78%,75%,0.2)',
+          border: '1px solid hsla(192,78%,75%,0.2)',
         }}>
           <p className="text-sm text-muted-foreground">Open in Chrome/Edge browser to install</p>
         </div>
@@ -723,7 +723,7 @@ const UserDashboard = () => {
   };
 
   const TOPUP_PAYMENT_METHODS = [
-    { id: 'bkash_online', label: 'bKash (Online)', number: '', type: 'bKash PGW', logo: bkashLogoSrc, color: 'from-pink-600 to-rose-700' },
+    { id: 'bkash_online', label: 'bKash (Online)', number: '', type: 'bKash PGW', logo: bkashLogoSrc, color: 'from-orange-600 to-rose-700' },
     ...paymentConfigs
       .filter(c => c.isActive)
       .sort((a, b) => a.sortOrder - b.sortOrder)
@@ -1008,20 +1008,20 @@ const UserDashboard = () => {
   const inputCls = "w-full rounded-xl pl-10 pr-4 py-3 text-sm outline-none transition-all border bg-white/60 text-foreground border-border focus:border-primary focus:bg-white/80 placeholder:text-muted-foreground";
   const labelCls = "block text-xs font-semibold uppercase tracking-wide mb-2 text-muted-foreground";
   const gradBtn = "text-white font-semibold rounded-xl transition-all hover:opacity-90 active:scale-[0.98]";
-  const gradBtnStyle = { background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' };
+  const gradBtnStyle = { background: 'linear-gradient(135deg, hsl(192,75%,59%), hsl(192,70%,58%))' };
 
   return (
-    <div className="min-h-screen relative overflow-hidden" style={{ background: 'linear-gradient(135deg, hsl(240,30%,96%) 0%, hsl(260,25%,94%) 50%, hsl(280,20%,95%) 100%)' }}>
+    <div className="min-h-screen relative overflow-hidden" style={{ background: 'linear-gradient(135deg, hsl(192,30%,96%) 0%, hsl(192,25%,94%) 50%, hsl(216,20%,95%) 100%)' }}>
       <SEOHead title="My Dashboard" description="Manage your orders, wallet, and account at Shahed IT." noIndex />
 
       {/* Ambient gradient blobs - desktop only for visual richness */}
       <div className="hidden md:block pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
         <div className="absolute -top-40 -left-32 w-[520px] h-[520px] rounded-full opacity-50"
-          style={{ background: 'radial-gradient(circle, hsla(258,85%,70%,0.35) 0%, transparent 70%)', filter: 'blur(60px)' }} />
+          style={{ background: 'radial-gradient(circle, hsla(192,85%,70%,0.35) 0%, transparent 70%)', filter: 'blur(60px)' }} />
         <div className="absolute top-1/3 -right-40 w-[600px] h-[600px] rounded-full opacity-40"
           style={{ background: 'radial-gradient(circle, hsla(190,90%,65%,0.3) 0%, transparent 70%)', filter: 'blur(80px)' }} />
         <div className="absolute -bottom-40 left-1/3 w-[500px] h-[500px] rounded-full opacity-30"
-          style={{ background: 'radial-gradient(circle, hsla(280,80%,70%,0.25) 0%, transparent 70%)', filter: 'blur(70px)' }} />
+          style={{ background: 'radial-gradient(circle, hsla(216,80%,70%,0.25) 0%, transparent 70%)', filter: 'blur(70px)' }} />
       </div>
 
       <div className="relative z-10">
@@ -1034,18 +1034,18 @@ const UserDashboard = () => {
               href="/"
               aria-label="Home"
               className="group relative flex items-center gap-2 h-9 px-3 rounded-full transition-all duration-300 active:scale-[0.97]"
-              style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid hsla(258,78%,75%,0.25)', boxShadow: '0 2px 8px hsla(243,75%,59%,0.08)' }}
+              style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid hsla(192,78%,75%,0.25)', boxShadow: '0 2px 8px hsla(192,75%,59%,0.08)' }}
             >
-              <span className="flex items-center justify-center w-6 h-6 rounded-full text-white shadow-[0_0_10px_hsla(243,75%,59%,0.35)] group-hover:shadow-[0_0_14px_hsla(243,75%,59%,0.55)] transition-shadow"
-                style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+              <span className="flex items-center justify-center w-6 h-6 rounded-full text-white shadow-[0_0_10px_hsla(192,75%,59%,0.35)] group-hover:shadow-[0_0_14px_hsla(192,75%,59%,0.55)] transition-shadow"
+                style={{ background: 'linear-gradient(135deg, hsl(192,75%,59%), hsl(192,70%,58%))' }}>
                 <Home size={13} strokeWidth={2.5} />
               </span>
               <span className="hidden sm:inline text-[13px] font-semibold tracking-wide text-foreground/80 group-hover:text-foreground transition-colors">Home</span>
             </a>
 
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl" style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid hsla(258,78%,75%,0.25)' }}>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl" style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid hsla(192,78%,75%,0.25)' }}>
               <div className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
-                style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                style={{ background: 'linear-gradient(135deg, hsl(192,75%,59%), hsl(192,70%,58%))' }}>
                 {profile.avatar_url ? <img src={profile.avatar_url} alt="avatar" className="w-full h-full object-cover" /> : initials}
               </div>
               <span className="text-sm font-semibold max-w-[120px] truncate hidden sm:flex items-center gap-1 text-foreground">
@@ -1055,7 +1055,7 @@ const UserDashboard = () => {
               {unreadCount > 0 && <span className="w-5 h-5 rounded-full text-[10px] font-bold text-white flex items-center justify-center" style={{ background: 'hsl(var(--destructive))' }}>{unreadCount}</span>}
             </div>
             {isAdmin && (
-              <button onClick={() => navigate('/ceo')} className="flex items-center gap-1.5 text-sm font-semibold px-3 py-1.5 rounded-xl transition-all" style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(263,70%,58%))', color: 'white', boxShadow: '0 2px 8px hsla(243,75%,59%,0.4)' }}>
+              <button onClick={() => navigate('/ceo')} className="flex items-center gap-1.5 text-sm font-semibold px-3 py-1.5 rounded-xl transition-all" style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(192,70%,58%))', color: 'white', boxShadow: '0 2px 8px hsla(192,75%,59%,0.4)' }}>
                 <ShieldCheck size={14} /><span className="hidden sm:inline">Admin Panel</span>
               </button>
             )}
@@ -1072,17 +1072,17 @@ const UserDashboard = () => {
         <div className="hidden md:block relative mb-8">
           {/* Floating ambient halo behind hero */}
           <div className="absolute -inset-x-6 -top-6 h-[260px] pointer-events-none opacity-70" aria-hidden="true"
-            style={{ background: 'radial-gradient(60% 100% at 20% 0%, hsla(258,85%,70%,0.30) 0%, transparent 60%), radial-gradient(60% 100% at 90% 30%, hsla(190,90%,65%,0.25) 0%, transparent 60%)', filter: 'blur(40px)' }} />
+            style={{ background: 'radial-gradient(60% 100% at 20% 0%, hsla(192,85%,70%,0.30) 0%, transparent 60%), radial-gradient(60% 100% at 90% 30%, hsla(190,90%,65%,0.25) 0%, transparent 60%)', filter: 'blur(40px)' }} />
 
           <div className="relative rounded-[28px] overflow-hidden" style={glassCardStrong}>
             {/* Gradient top accent bar */}
-            <div className="h-1.5 w-full" style={{ background: 'linear-gradient(90deg, hsl(243,75%,59%), hsl(263,70%,58%) 35%, hsl(190,90%,60%) 70%, hsl(330,82%,60%))' }} />
+            <div className="h-1.5 w-full" style={{ background: 'linear-gradient(90deg, hsl(192,75%,59%), hsl(192,70%,58%) 35%, hsl(190,90%,60%) 70%, hsl(24,82%,60%))' }} />
 
             {/* Inner content */}
             <div className="relative p-6 lg:p-8">
               {/* Decorative inner glow */}
               <div className="absolute -top-16 right-10 w-64 h-64 rounded-full opacity-50 pointer-events-none"
-                style={{ background: 'radial-gradient(circle, hsla(258,85%,75%,0.35) 0%, transparent 70%)', filter: 'blur(40px)' }} aria-hidden="true" />
+                style={{ background: 'radial-gradient(circle, hsla(192,85%,75%,0.35) 0%, transparent 70%)', filter: 'blur(40px)' }} aria-hidden="true" />
 
               <div className="relative flex items-start justify-between gap-8 flex-wrap">
                 {/* Identity block */}
@@ -1090,11 +1090,11 @@ const UserDashboard = () => {
                   <div className="relative flex-shrink-0">
                     {/* Animated gradient ring */}
                     <div className="absolute inset-0 rounded-3xl opacity-70 blur-md"
-                      style={{ background: 'conic-gradient(from 180deg, hsl(243,75%,59%), hsl(263,70%,58%), hsl(190,90%,60%), hsl(330,82%,60%), hsl(243,75%,59%))' }} aria-hidden="true" />
+                      style={{ background: 'conic-gradient(from 180deg, hsl(192,75%,59%), hsl(192,70%,58%), hsl(190,90%,60%), hsl(24,82%,60%), hsl(192,75%,59%))' }} aria-hidden="true" />
                     <div className="relative p-[2.5px] rounded-3xl"
-                      style={{ background: 'conic-gradient(from 180deg, hsl(243,75%,59%), hsl(263,70%,58%), hsl(190,90%,60%), hsl(330,82%,60%), hsl(243,75%,59%))' }}>
+                      style={{ background: 'conic-gradient(from 180deg, hsl(192,75%,59%), hsl(192,70%,58%), hsl(190,90%,60%), hsl(24,82%,60%), hsl(192,75%,59%))' }}>
                       <div className="w-24 h-24 lg:w-28 lg:h-28 rounded-[22px] overflow-hidden flex items-center justify-center text-3xl font-black text-white ring-4 ring-white/80"
-                        style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                        style={{ background: 'linear-gradient(135deg, hsl(192,75%,59%), hsl(192,70%,58%))' }}>
                         {profile.avatar_url ? <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" /> : initials}
                       </div>
                     </div>
@@ -1102,7 +1102,7 @@ const UserDashboard = () => {
                     <button onClick={() => fileInputRef.current?.click()} disabled={avatarUploading}
                       title="Change photo"
                       className="absolute -bottom-2 -right-2 w-9 h-9 rounded-2xl flex items-center justify-center shadow-lg ring-2 ring-white transition-all hover:scale-110 active:scale-95"
-                      style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))', boxShadow: '0 6px 16px hsla(258,78%,55%,0.45)' }}>
+                      style={{ background: 'linear-gradient(135deg, hsl(192,75%,59%), hsl(192,70%,58%))', boxShadow: '0 6px 16px hsla(192,78%,55%,0.45)' }}>
                       {avatarUploading ? <RefreshCw size={14} className="text-white animate-spin" /> : <Camera size={14} className="text-white" />}
                     </button>
                   </div>
@@ -1110,7 +1110,7 @@ const UserDashboard = () => {
                   <div className="min-w-0 flex-1">
                     <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-primary/70 mb-1">Welcome back</p>
                     <h1 className="text-3xl lg:text-[34px] font-black leading-tight truncate flex items-center gap-2.5"
-                      style={{ background: 'linear-gradient(135deg, hsl(230,30%,15%), hsl(258,40%,30%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                      style={{ background: 'linear-gradient(135deg, hsl(192,30%,15%), hsl(192,40%,30%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                       <span className="truncate">{displayName}</span>
                       <VerifiedBadge size={24} />
                     </h1>
@@ -1125,13 +1125,13 @@ const UserDashboard = () => {
                       </span>
                       {completedOrders > 0 && (
                         <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full"
-                          style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(10px)', border: '1px solid hsla(258,78%,65%,0.35)', color: 'hsl(var(--primary))' }}>
+                          style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(10px)', border: '1px solid hsla(192,78%,65%,0.35)', color: 'hsl(var(--primary))' }}>
                           <Star size={10} fill="currentColor" /> {completedOrders} Completed
                         </span>
                       )}
                       {profile.username && (
                         <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-3 py-1.5 rounded-full text-foreground/70"
-                          style={{ background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(10px)', border: '1px solid hsla(258,78%,75%,0.25)' }}>
+                          style={{ background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(10px)', border: '1px solid hsla(192,78%,75%,0.25)' }}>
                           <AtSign size={10} />{profile.username}
                         </span>
                       )}
@@ -1142,15 +1142,15 @@ const UserDashboard = () => {
                 {/* Stat cards — premium floating tiles */}
                 <div className="grid grid-cols-3 gap-3 lg:gap-4">
                   {[
-                    { icon: Package, label: t(selectedLang, 'order'), value: orders.length.toString(), accent: 'hsl(243,75%,59%)', glow: 'hsla(243,75%,59%,0.35)' },
-                    { icon: TrendingUp, label: t(selectedLang, 'total'), value: `৳${totalSpent.toLocaleString()}`, accent: 'hsl(263,70%,58%)', glow: 'hsla(263,70%,58%,0.35)' },
-                    { icon: Heart, label: t(selectedLang, 'tab_wishlist'), value: wishlistItems.length.toString(), accent: 'hsl(340,82%,55%)', glow: 'hsla(340,82%,55%,0.35)' },
+                    { icon: Package, label: t(selectedLang, 'order'), value: orders.length.toString(), accent: 'hsl(192,75%,59%)', glow: 'hsla(192,75%,59%,0.35)' },
+                    { icon: TrendingUp, label: t(selectedLang, 'total'), value: `৳${totalSpent.toLocaleString()}`, accent: 'hsl(192,70%,58%)', glow: 'hsla(192,70%,58%,0.35)' },
+                    { icon: Heart, label: t(selectedLang, 'tab_wishlist'), value: wishlistItems.length.toString(), accent: 'hsl(24,82%,55%)', glow: 'hsla(24,82%,55%,0.35)' },
                   ].map((stat, i) => (
                     <div key={i} className="group relative px-4 lg:px-5 py-3.5 lg:py-4 rounded-2xl min-w-[120px] lg:min-w-[140px] transition-all duration-300 hover:-translate-y-1 cursor-default overflow-hidden"
                       style={{
                         background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.75) 100%)',
                         backdropFilter: 'blur(20px) saturate(180%)',
-                        border: '1px solid hsla(258,78%,75%,0.30)',
+                        border: '1px solid hsla(192,78%,75%,0.30)',
                         boxShadow: `0 6px 20px ${stat.glow}, 0 1px 0 rgba(255,255,255,0.95) inset`,
                       }}>
                       <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-0 group-hover:opacity-60 transition-opacity"
@@ -1177,16 +1177,16 @@ const UserDashboard = () => {
                   onClick={() => window.dispatchEvent(new CustomEvent('ss:welcome-open'))}
                   className="group mt-4 w-full flex items-center gap-3 p-3.5 lg:p-4 rounded-2xl text-left transition-all hover:-translate-y-0.5 active:scale-[0.99] overflow-hidden relative"
                   style={{
-                    background: 'linear-gradient(135deg, hsla(258,80%,60%,0.10) 0%, hsla(340,82%,60%,0.08) 50%, hsla(38,95%,55%,0.10) 100%)',
-                    border: '1px solid hsla(258,78%,65%,0.30)',
-                    boxShadow: '0 6px 20px hsla(258,78%,55%,0.18), 0 1px 0 rgba(255,255,255,0.85) inset',
+                    background: 'linear-gradient(135deg, hsla(192,80%,60%,0.10) 0%, hsla(24,82%,60%,0.08) 50%, hsla(38,95%,55%,0.10) 100%)',
+                    border: '1px solid hsla(192,78%,65%,0.30)',
+                    boxShadow: '0 6px 20px hsla(192,78%,55%,0.18), 0 1px 0 rgba(255,255,255,0.85) inset',
                   }}
                   aria-label="Claim welcome offer"
                 >
                   <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:rotate-12 group-hover:scale-110"
                     style={{
-                      background: 'linear-gradient(135deg, hsl(258,80%,60%), hsl(340,82%,55%))',
-                      boxShadow: '0 6px 16px hsla(258,78%,55%,0.45), inset 0 1px 0 rgba(255,255,255,0.4)',
+                      background: 'linear-gradient(135deg, hsl(192,80%,60%), hsl(24,82%,55%))',
+                      boxShadow: '0 6px 16px hsla(192,78%,55%,0.45), inset 0 1px 0 rgba(255,255,255,0.4)',
                     }}>
                     <Gift size={20} color="#ffffff" strokeWidth={2.4} />
                   </div>
@@ -1203,7 +1203,7 @@ const UserDashboard = () => {
                     </p>
                   </div>
                   <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold text-white flex-shrink-0"
-                    style={{ background: 'linear-gradient(135deg, hsl(258,80%,60%), hsl(340,82%,55%))', boxShadow: '0 4px 12px hsla(258,78%,55%,0.4)' }}>
+                    style={{ background: 'linear-gradient(135deg, hsl(192,80%,60%), hsl(24,82%,55%))', boxShadow: '0 4px 12px hsla(192,78%,55%,0.4)' }}>
                     Claim Now <ChevronRight size={13} />
                   </div>
                 </button>
@@ -1239,7 +1239,7 @@ const UserDashboard = () => {
                       backdropFilter: 'blur(28px) saturate(180%)',
                       WebkitBackdropFilter: 'blur(28px) saturate(180%)',
                       border: '1px solid rgba(255,255,255,0.9)',
-                      boxShadow: '0 10px 28px hsla(258,40%,40%,0.12), 0 1px 0 rgba(255,255,255,1) inset, 0 0 0 1px hsla(258,78%,75%,0.18)',
+                      boxShadow: '0 10px 28px hsla(192,40%,40%,0.12), 0 1px 0 rgba(255,255,255,1) inset, 0 0 0 1px hsla(192,78%,75%,0.18)',
                     } : { background: 'transparent' }}
                     onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.6)'; }}
                     onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}>
@@ -1257,15 +1257,15 @@ const UserDashboard = () => {
                       isActive ? 'scale-105' : 'group-hover:scale-110 group-hover:rotate-3'
                     }`}
                       style={isActive
-                        ? { background: 'linear-gradient(135deg, rgba(255,255,255,1), rgba(255,255,255,0.85))', border: '1px solid rgba(255,255,255,1)', boxShadow: '0 4px 12px hsla(258,78%,55%,0.18), 0 1px 0 rgba(255,255,255,1) inset' }
-                        : { background: 'linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.7))', border: '1px solid hsla(258,78%,75%,0.30)', boxShadow: '0 2px 6px hsla(258,78%,55%,0.08)' }
+                        ? { background: 'linear-gradient(135deg, rgba(255,255,255,1), rgba(255,255,255,0.85))', border: '1px solid rgba(255,255,255,1)', boxShadow: '0 4px 12px hsla(192,78%,55%,0.18), 0 1px 0 rgba(255,255,255,1) inset' }
+                        : { background: 'linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.7))', border: '1px solid hsla(192,78%,75%,0.30)', boxShadow: '0 2px 6px hsla(192,78%,55%,0.08)' }
                       }>
                       <Icon size={15} className="text-primary" />
                     </span>
                     <span className="relative flex-1 text-left truncate">{label}</span>
                     {badge !== undefined && badge > 0 && (
                       <span className="relative text-[10px] font-black px-2 min-w-[20px] h-[20px] rounded-full flex items-center justify-center text-white shadow-sm"
-                        style={{ background: id === 'notifications' ? 'linear-gradient(135deg, hsl(0,84%,60%), hsl(355,80%,55%))' : 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>{badge}</span>
+                        style={{ background: id === 'notifications' ? 'linear-gradient(135deg, hsl(0,84%,60%), hsl(355,80%,55%))' : 'linear-gradient(135deg, hsl(192,75%,59%), hsl(192,70%,58%))' }}>{badge}</span>
                     )}
                   </button>
                 );
@@ -1279,17 +1279,17 @@ const UserDashboard = () => {
                       <div key={section.title} className={sIdx > 0 ? 'mt-4' : ''}>
                         <div className="flex items-center gap-2 px-2.5 mb-1.5">
                           <p className="text-[9px] font-black uppercase tracking-[0.18em] text-primary/60">{section.title}</p>
-                          <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, hsla(258,78%,65%,0.25), transparent)' }} />
+                          <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, hsla(192,78%,65%,0.25), transparent)' }} />
                         </div>
                         {items.map(renderItem)}
                       </div>
                     );
                   })}
-                  <div className="h-px my-4 mx-2" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,65%,0.30), transparent)' }} />
+                  <div className="h-px my-4 mx-2" style={{ background: 'linear-gradient(90deg, transparent, hsla(192,78%,65%,0.30), transparent)' }} />
                   <button onClick={() => navigate('/affiliate')} className="group relative w-full flex items-center gap-3 pl-3 pr-2.5 py-2.5 rounded-2xl text-[13px] font-bold transition-all duration-300 mb-1 overflow-hidden"
-                    style={{ background: 'linear-gradient(135deg, hsla(258,78%,65%,0.18), hsla(280,70%,60%,0.12))', border: '1px solid hsla(258,78%,55%,0.30)', color: 'hsl(258,78%,40%)' }}>
+                    style={{ background: 'linear-gradient(135deg, hsla(192,78%,65%,0.18), hsla(216,70%,60%,0.12))', border: '1px solid hsla(192,78%,55%,0.30)', color: 'hsl(192,78%,40%)' }}>
                     <span className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110 group-hover:rotate-12"
-                      style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(280,70%,52%))', boxShadow: '0 4px 12px hsla(258,78%,55%,0.40)' }}>
+                      style={{ background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(216,70%,52%))', boxShadow: '0 4px 12px hsla(192,78%,55%,0.40)' }}>
                       <Gift size={15} className="text-white" />
                     </span>
                     <span className="flex-1 text-left">Affiliate Program</span>
@@ -1305,7 +1305,7 @@ const UserDashboard = () => {
                     <ChevronRight size={14} className="opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
                   </button>
                   {isAdmin && (
-                    <button onClick={() => navigate('/ceo')} className="group w-full flex items-center gap-3 pl-3 pr-2.5 py-2.5 rounded-2xl text-[13px] font-bold transition-all mb-1 text-white" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))', boxShadow: '0 8px 20px hsla(243,75%,59%,0.42), 0 1px 0 rgba(255,255,255,0.4) inset' }}>
+                    <button onClick={() => navigate('/ceo')} className="group w-full flex items-center gap-3 pl-3 pr-2.5 py-2.5 rounded-2xl text-[13px] font-bold transition-all mb-1 text-white" style={{ background: 'linear-gradient(135deg, hsl(192,75%,59%), hsl(192,70%,58%))', boxShadow: '0 8px 20px hsla(192,75%,59%,0.42), 0 1px 0 rgba(255,255,255,0.4) inset' }}>
                       <span className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)' }}>
                         <ShieldCheck size={15} className="text-white" />
                       </span>
@@ -1332,18 +1332,18 @@ const UserDashboard = () => {
             <button
               onClick={() => { navigate('/?openMenu=1'); }}
               className="md:hidden flex items-center gap-2 px-4 py-3 text-sm font-semibold text-primary w-full"
-              style={{ borderBottom: '1px solid hsla(258,78%,75%,0.15)', background: 'rgba(255,255,255,0.5)' }}>
+              style={{ borderBottom: '1px solid hsla(192,78%,75%,0.15)', background: 'rgba(255,255,255,0.5)' }}>
               <ChevronRight size={16} className="rotate-180" /> Back to Menu
             </button>
 
             {/* Tab Header */}
             <div className="relative px-5 sm:px-7 py-5 sm:py-6 flex items-center justify-between gap-3 overflow-hidden"
-              style={{ borderBottom: '1px solid hsla(258,78%,75%,0.18)', background: 'linear-gradient(135deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.35) 100%)' }}>
+              style={{ borderBottom: '1px solid hsla(192,78%,75%,0.18)', background: 'linear-gradient(135deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.35) 100%)' }}>
               <div className="absolute -top-12 -left-8 w-40 h-40 rounded-full opacity-50 pointer-events-none"
-                style={{ background: 'radial-gradient(circle, hsla(258,85%,70%,0.18) 0%, transparent 70%)', filter: 'blur(30px)' }} aria-hidden="true" />
+                style={{ background: 'radial-gradient(circle, hsla(192,85%,70%,0.18) 0%, transparent 70%)', filter: 'blur(30px)' }} aria-hidden="true" />
               <div className="relative flex items-center gap-3 min-w-0">
                 <div className="hidden sm:flex w-11 h-11 rounded-2xl items-center justify-center flex-shrink-0 shadow-md"
-                  style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))', boxShadow: '0 6px 16px hsla(243,75%,59%,0.35)' }}>
+                  style={{ background: 'linear-gradient(135deg, hsl(192,75%,59%), hsl(192,70%,58%))', boxShadow: '0 6px 16px hsla(192,75%,59%,0.35)' }}>
                   {(() => {
                     const ActiveIcon = tabsWithBadges.find(t => t.id === activeTab)?.icon;
                     return ActiveIcon ? <ActiveIcon size={20} className="text-white" /> : null;
@@ -1351,7 +1351,7 @@ const UserDashboard = () => {
                 </div>
                 <div className="min-w-0">
                   <h2 className="text-xl sm:text-2xl font-black truncate"
-                    style={{ background: 'linear-gradient(135deg, hsl(243,75%,45%), hsl(263,70%,48%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                    style={{ background: 'linear-gradient(135deg, hsl(192,75%,45%), hsl(192,70%,48%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                     {t(selectedLang, `tab_${activeTab}`)}
                   </h2>
                   <p className="text-xs mt-0.5 text-muted-foreground truncate">
@@ -1367,7 +1367,7 @@ const UserDashboard = () => {
                 )}
                 {activeTab === 'profile' && editing && (
                   <div className="flex gap-2">
-                    <button onClick={() => setEditing(false)} className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-muted-foreground hover:bg-white/60 transition-colors" style={{ border: '1px solid hsla(258,78%,75%,0.3)' }}>
+                    <button onClick={() => setEditing(false)} className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-muted-foreground hover:bg-white/60 transition-colors" style={{ border: '1px solid hsla(192,78%,75%,0.3)' }}>
                       <X size={13} /> {t(selectedLang, 'cancel')}
                     </button>
                     <button onClick={handleSaveProfile} disabled={saving} className={`flex items-center gap-1.5 px-4 py-2 text-sm disabled:opacity-60 ${gradBtn}`} style={gradBtnStyle}>
@@ -1382,7 +1382,7 @@ const UserDashboard = () => {
                   </button>
                 )}
                 {activeTab === 'notifications' && unreadCount > 0 && (
-                  <button onClick={handleMarkAllRead} className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-muted-foreground hover:bg-white/60 transition-colors" style={{ border: '1px solid hsla(258,78%,75%,0.3)' }}>
+                  <button onClick={handleMarkAllRead} className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-muted-foreground hover:bg-white/60 transition-colors" style={{ border: '1px solid hsla(192,78%,75%,0.3)' }}>
                     <BellOff size={13} /> {t(selectedLang, 'mark_all_read')}
                   </button>
                 )}
@@ -1395,9 +1395,9 @@ const UserDashboard = () => {
               {activeTab === 'profile' && (
                 <div className="space-y-4 max-w-lg">
                   {/* Avatar section - always visible on mobile, only in edit mode on desktop */}
-                  <div className={`flex items-center gap-4 p-4 rounded-2xl ${!editing ? 'md:hidden' : ''}`} style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
+                  <div className={`flex items-center gap-4 p-4 rounded-2xl ${!editing ? 'md:hidden' : ''}`} style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(192,78%,75%,0.2)' }}>
                     <div className="relative flex-shrink-0">
-                      <div className="w-16 h-16 rounded-xl overflow-hidden flex items-center justify-center text-lg font-black text-white" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                      <div className="w-16 h-16 rounded-xl overflow-hidden flex items-center justify-center text-lg font-black text-white" style={{ background: 'linear-gradient(135deg, hsl(192,75%,59%), hsl(192,70%,58%))' }}>
                         {profile.avatar_url ? <img src={profile.avatar_url} alt="av" className="w-full h-full object-cover" /> : initials}
                       </div>
                       <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
@@ -1426,7 +1426,7 @@ const UserDashboard = () => {
                           <input type={item.type} value={item.value} onChange={e => setProfile(p => ({ ...p, [item.field]: e.target.value }))} className={inputCls} placeholder={item.placeholder} />
                         </div>
                       ) : (
-                        <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
+                        <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(192,78%,75%,0.2)' }}>
                           <item.icon size={15} className="text-muted-foreground" />
                           <span className="text-sm font-medium text-foreground">{item.value || '—'}</span>
                         </div>
@@ -1466,7 +1466,7 @@ const UserDashboard = () => {
                         </p>
                       </>
                     ) : (
-                      <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
+                      <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(192,78%,75%,0.2)' }}>
                         <AtSign size={15} className="text-muted-foreground" />
                         <span className="text-sm font-medium text-foreground">
                           {profile.username ? `@${profile.username}` : <span className="text-muted-foreground italic">এডিট চাপুন এবং কাস্টম ইউজারনেম সেট করুন</span>}
@@ -1477,7 +1477,7 @@ const UserDashboard = () => {
 
                   <div>
                     <label className={labelCls}>{t(selectedLang, 'email')}</label>
-                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(192,78%,75%,0.2)' }}>
                       <Mail size={15} className="text-muted-foreground" />
                       <span className="text-sm font-medium flex-1 text-foreground">{user?.email}</span>
                       <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">✓ Verified</span>
@@ -1491,7 +1491,7 @@ const UserDashboard = () => {
                         <PhoneInput value={profile.phone || ''} onChange={v => setProfile(p => ({ ...p, phone: v }))} placeholder="1XXXXXXXXX" />
                       </div>
                     ) : (
-                      <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
+                      <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(192,78%,75%,0.2)' }}>
                         <Phone size={15} className="text-muted-foreground" />
                         <span className="text-sm font-medium" style={{ color: profile.phone ? 'hsl(var(--foreground))' : 'hsl(var(--muted-foreground))' }}>{profile.phone || t(selectedLang, 'phone_not_added')}</span>
                       </div>
@@ -1510,7 +1510,7 @@ const UserDashboard = () => {
                     </div>
                   ) : orders.length === 0 ? (
                     <div className="text-center py-16">
-                      <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'hsl(243,75%,97%)' }}>
+                      <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'hsl(192,75%,97%)' }}>
                         <Package size={28} style={{ color: 'hsl(var(--primary))' }} />
                       </div>
                       <p className="font-bold text-base mb-1 text-foreground">{t(selectedLang, 'no_orders')}</p>
@@ -1526,7 +1526,7 @@ const UserDashboard = () => {
                         const pmLabel: Record<string, string> = { bkash: 'BKash', nagad: 'Nagad', rocket: 'Rocket', upay: 'উপায়', bkash_merchant: 'BKash Merchant', wallet: '💜 Wallet' };
                         return (
                           <div key={order.id} className="rounded-2xl overflow-hidden transition-all"
-                            style={{ background: 'rgba(255,255,255,0.72)', border: isExpanded ? '1.5px solid hsla(258,78%,65%,0.4)' : '1px solid hsla(258,78%,75%,0.2)', backdropFilter: 'blur(12px)', boxShadow: isExpanded ? '0 4px 20px hsla(258,78%,55%,0.10)' : 'none' }}>
+                            style={{ background: 'rgba(255,255,255,0.72)', border: isExpanded ? '1.5px solid hsla(192,78%,65%,0.4)' : '1px solid hsla(192,78%,75%,0.2)', backdropFilter: 'blur(12px)', boxShadow: isExpanded ? '0 4px 20px hsla(192,78%,55%,0.10)' : 'none' }}>
                             {/* Order Header Row */}
                             <button
                               className="w-full flex items-center justify-between px-4 sm:px-5 py-4 hover:bg-white/40 transition-colors text-left"
@@ -1536,14 +1536,14 @@ const UserDashboard = () => {
                               }}
                             >
                               <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
-                                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'hsl(243,75%,97%)' }}>
+                                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'hsl(192,75%,97%)' }}>
                                   <Package size={18} style={{ color: 'hsl(var(--primary))' }} />
                                 </div>
                                 <div className="min-w-0 flex-1">
                                   <div className="flex items-center gap-2 flex-wrap">
                                     <span className="text-sm font-bold text-foreground">#{order.order_number}</span>
                                     {isWallet && (
-                                      <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-violet-500/15 text-violet-600 border border-violet-400/30">
+                                      <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-600 border border-cyan-400/30">
                                         <Wallet size={9} /> Wallet
                                       </span>
                                     )}
@@ -1567,16 +1567,16 @@ const UserDashboard = () => {
 
                             {/* Expanded Detail */}
                             {isExpanded && (
-                              <div className="border-t px-4 sm:px-5 py-4 space-y-4" style={{ borderColor: 'hsla(258,78%,75%,0.2)', background: 'rgba(255,255,255,0.45)' }}>
+                              <div className="border-t px-4 sm:px-5 py-4 space-y-4" style={{ borderColor: 'hsla(192,78%,75%,0.2)', background: 'rgba(255,255,255,0.45)' }}>
                                 {/* Payment Info */}
                                 <div className="flex flex-wrap gap-3">
-                                  <div className="flex items-center gap-2 text-xs px-3 py-2 rounded-xl" style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
+                                  <div className="flex items-center gap-2 text-xs px-3 py-2 rounded-xl" style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid hsla(192,78%,75%,0.2)' }}>
                                     <CreditCard size={13} className="text-primary" />
                                     <span className="text-muted-foreground">{t(selectedLang, 'payment_status')}:</span>
                                     <span className="font-semibold text-foreground">{pmLabel[order.payment_method || ''] || order.payment_method || '—'}</span>
                                   </div>
                                   {order.transaction_id && !order.transaction_id.startsWith('WALLET-') && (
-                                    <div className="flex items-center gap-2 text-xs px-3 py-2 rounded-xl" style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
+                                    <div className="flex items-center gap-2 text-xs px-3 py-2 rounded-xl" style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid hsla(192,78%,75%,0.2)' }}>
                                       <Receipt size={13} className="text-primary" />
                                       <span className="text-muted-foreground">TrxID:</span>
                                       <span className="font-mono font-semibold text-foreground">{order.transaction_id}</span>
@@ -1602,7 +1602,7 @@ const UserDashboard = () => {
                                   ) : (
                                     <div className="space-y-2">
                                       {order.items.map(item => (
-                                        <div key={item.id} className="flex items-center justify-between px-3 py-2.5 rounded-xl" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(258,78%,75%,0.15)' }}>
+                                        <div key={item.id} className="flex items-center justify-between px-3 py-2.5 rounded-xl" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(192,78%,75%,0.15)' }}>
                                           <div className="flex items-center gap-2.5 min-w-0 flex-1">
                                             <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-primary/10">
                                               <Package size={13} className="text-primary" />
@@ -1642,7 +1642,7 @@ const UserDashboard = () => {
                                 )}
 
                                 {/* Price Breakdown */}
-                                <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm pt-2 border-t" style={{ borderColor: 'hsla(258,78%,75%,0.15)' }}>
+                                <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm pt-2 border-t" style={{ borderColor: 'hsla(192,78%,75%,0.15)' }}>
                                   <span className="text-muted-foreground">Subtotal: <span className="font-semibold text-foreground">৳{(order.subtotal || 0).toLocaleString()}</span></span>
                                   {(order.discount_amount || 0) > 0 && <span className="text-emerald-600 font-semibold">{t(selectedLang, 'discount_off')}: -৳{(order.discount_amount || 0).toLocaleString()}</span>}
                                   <span className="font-bold text-primary">{t(selectedLang, 'total')}: ৳{order.total.toLocaleString()}</span>
@@ -1650,7 +1650,7 @@ const UserDashboard = () => {
                                     onClick={() => handleDownloadInvoice(order)}
                                     disabled={downloadingInvoice === order.id}
                                     className="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white transition-all hover:scale-[1.02] disabled:opacity-60 disabled:cursor-not-allowed"
-                                    style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsla(258,78%,65%,0.85))', boxShadow: '0 4px 14px hsla(258,78%,55%,0.25)' }}
+                                    style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsla(192,78%,65%,0.85))', boxShadow: '0 4px 14px hsla(192,78%,55%,0.25)' }}
                                   >
                                     {downloadingInvoice === order.id ? (
                                       <><Loader2 size={13} className="animate-spin" /> তৈরি হচ্ছে…</>
@@ -1673,7 +1673,7 @@ const UserDashboard = () => {
                                   <div>
                                     <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">📋 অর্ডার ট্র্যাকিং</p>
                                     <div className="relative pl-5">
-                                      <div className="absolute left-[7px] top-1 bottom-1 w-0.5 rounded-full" style={{ background: 'linear-gradient(to bottom, hsl(var(--primary)), hsla(258,78%,75%,0.3))' }} />
+                                      <div className="absolute left-[7px] top-1 bottom-1 w-0.5 rounded-full" style={{ background: 'linear-gradient(to bottom, hsl(var(--primary)), hsla(192,78%,75%,0.3))' }} />
                                       {order.timeline.map((event, idx) => {
                                         const evStatus = STATUS_MAP[event.status] || { label: event.status, color: 'text-muted-foreground bg-muted border-border', icon: <Clock size={11} /> };
                                         const isLast = idx === order.timeline!.length - 1;
@@ -1725,8 +1725,8 @@ const UserDashboard = () => {
                     <div className="grid sm:grid-cols-2 gap-3">
                       {wishlistItems.map(item => (
                         <div key={item.product_id} className="flex items-center gap-3 p-3 rounded-2xl transition-all hover:shadow-sm"
-                          style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(258,78%,75%,0.2)', backdropFilter: 'blur(8px)' }}>
-                          <div className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0" style={{ background: 'hsl(240,20%,96%)' }}>
+                          style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(192,78%,75%,0.2)', backdropFilter: 'blur(8px)' }}>
+                          <div className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0" style={{ background: 'hsl(192,20%,96%)' }}>
                             {item.product_image ? <img src={item.product_image} alt={item.product_name} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><Heart size={16} className="text-muted-foreground" /></div>}
                           </div>
                           <div className="flex-1 min-w-0">
@@ -1776,7 +1776,7 @@ const UserDashboard = () => {
                         <span className="text-sm text-foreground">{t(selectedLang, 'set_default')}</span>
                       </label>
                       <div className="flex gap-3">
-                        <button onClick={() => setShowAddressForm(false)} className="flex-1 py-3 rounded-xl text-sm font-semibold text-muted-foreground hover:bg-white/60 transition-colors" style={{ border: '1px solid hsla(258,78%,75%,0.3)' }}>{t(selectedLang, 'cancel')}</button>
+                        <button onClick={() => setShowAddressForm(false)} className="flex-1 py-3 rounded-xl text-sm font-semibold text-muted-foreground hover:bg-white/60 transition-colors" style={{ border: '1px solid hsla(192,78%,75%,0.3)' }}>{t(selectedLang, 'cancel')}</button>
                         <button onClick={handleSaveAddress} className={`flex-1 py-3 text-sm ${gradBtn}`} style={gradBtnStyle}>{t(selectedLang, 'save')}</button>
                       </div>
                     </div>
@@ -1784,7 +1784,7 @@ const UserDashboard = () => {
                     <div className="flex justify-center py-12"><BrandLoader size="sm" /></div>
                   ) : addresses.length === 0 ? (
                     <div className="text-center py-16">
-                      <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'hsl(243,75%,97%)' }}><MapPin size={28} style={{ color: 'hsl(var(--primary))' }} /></div>
+                      <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'hsl(192,75%,97%)' }}><MapPin size={28} style={{ color: 'hsl(var(--primary))' }} /></div>
                       <p className="font-bold text-base mb-1 text-foreground">{t(selectedLang, 'no_addresses')}</p>
                       <p className="text-sm mb-4 text-muted-foreground">{t(selectedLang, 'no_addresses_sub')}</p>
                       <button onClick={() => setShowAddressForm(true)} className={`inline-flex items-center gap-2 px-5 py-2.5 text-sm ${gradBtn}`} style={gradBtnStyle}>
@@ -1795,10 +1795,10 @@ const UserDashboard = () => {
                     <div className="space-y-3">
                       {addresses.map(addr => (
                         <div key={addr.id} className="p-4 rounded-2xl transition-all hover:shadow-sm"
-                          style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(258,78%,75%,0.2)', backdropFilter: 'blur(8px)' }}>
+                          style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(192,78%,75%,0.2)', backdropFilter: 'blur(8px)' }}>
                           <div className="flex items-start justify-between mb-2">
                             <div className="flex items-center gap-2">
-                              <span className="text-xs font-bold px-2.5 py-1 rounded-full border" style={addr.is_default ? { background: 'hsl(243,75%,97%)', color: 'hsl(var(--primary))', borderColor: 'hsl(243,75%,88%)' } : { background: 'rgba(255,255,255,0.6)', color: 'hsl(var(--muted-foreground))', borderColor: 'hsl(var(--border))' }}>
+                              <span className="text-xs font-bold px-2.5 py-1 rounded-full border" style={addr.is_default ? { background: 'hsl(192,75%,97%)', color: 'hsl(var(--primary))', borderColor: 'hsl(192,75%,88%)' } : { background: 'rgba(255,255,255,0.6)', color: 'hsl(var(--muted-foreground))', borderColor: 'hsl(var(--border))' }}>
                                 {addr.label} {addr.is_default && `✓ ${t(selectedLang, 'default_label')}`}
                               </span>
                             </div>
@@ -1825,7 +1825,7 @@ const UserDashboard = () => {
                     <div className="flex justify-center py-12"><BrandLoader size="sm" /></div>
                   ) : notifications.length === 0 ? (
                     <div className="text-center py-16">
-                      <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'hsl(243,75%,97%)' }}><Bell size={28} style={{ color: 'hsl(var(--primary))' }} /></div>
+                      <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'hsl(192,75%,97%)' }}><Bell size={28} style={{ color: 'hsl(var(--primary))' }} /></div>
                       <p className="font-bold text-base mb-1 text-foreground">{t(selectedLang, 'no_notifications')}</p>
                       <p className="text-sm text-muted-foreground">{t(selectedLang, 'no_notifications_sub')}</p>
                     </div>
@@ -1838,11 +1838,11 @@ const UserDashboard = () => {
                           }}
                           className="p-4 rounded-2xl transition-all cursor-pointer"
                           style={!n.is_read
-                            ? { background: 'rgba(99,82,234,0.07)', border: '1px solid hsla(258,78%,65%,0.28)', backdropFilter: 'blur(8px)' }
-                            : { background: 'rgba(255,255,255,0.55)', border: '1px solid hsla(258,78%,75%,0.18)', backdropFilter: 'blur(8px)' }}>
+                            ? { background: 'rgba(99,82,234,0.07)', border: '1px solid hsla(192,78%,65%,0.28)', backdropFilter: 'blur(8px)' }
+                            : { background: 'rgba(255,255,255,0.55)', border: '1px solid hsla(192,78%,75%,0.18)', backdropFilter: 'blur(8px)' }}>
                           <div className="flex items-start gap-3">
-                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${!n.is_read ? '' : 'opacity-50'}`} style={{ background: n.type === 'order' ? 'hsl(243,75%,97%)' : n.type === 'promo' ? 'hsl(38,100%,95%)' : n.type === 'notice' ? 'hsl(258,78%,96%)' : 'rgba(255,255,255,0.7)' }}>
-                              {n.type === 'order' ? <Package size={14} style={{ color: 'hsl(var(--primary))' }} /> : n.type === 'promo' ? <Gift size={14} style={{ color: 'hsl(38,80%,50%)' }} /> : n.type === 'notice' ? <Megaphone size={14} style={{ color: 'hsl(258,78%,55%)' }} /> : <BellRing size={14} className="text-muted-foreground" />}
+                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${!n.is_read ? '' : 'opacity-50'}`} style={{ background: n.type === 'order' ? 'hsl(192,75%,97%)' : n.type === 'promo' ? 'hsl(38,100%,95%)' : n.type === 'notice' ? 'hsl(192,78%,96%)' : 'rgba(255,255,255,0.7)' }}>
+                              {n.type === 'order' ? <Package size={14} style={{ color: 'hsl(var(--primary))' }} /> : n.type === 'promo' ? <Gift size={14} style={{ color: 'hsl(38,80%,50%)' }} /> : n.type === 'notice' ? <Megaphone size={14} style={{ color: 'hsl(192,78%,55%)' }} /> : <BellRing size={14} className="text-muted-foreground" />}
                             </div>
                             <div className="flex-1">
                               <div className="flex items-center justify-between">
@@ -1897,9 +1897,9 @@ const UserDashboard = () => {
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         {[
                           { label: t(selectedLang, 'points_available'), value: pointsBalance.toLocaleString(), sub: `= ৳${Math.floor(pointsBalance/2)}`, color: 'hsl(43,95%,48%)', bg: 'hsla(43,95%,55%,0.08)', border: 'hsla(43,95%,55%,0.25)', icon: <Award size={16} /> },
-                          { label: t(selectedLang, 'points_total_earned'), value: totalPointsEarned.toLocaleString(), sub: t(selectedLang, 'points_from_orders'), color: 'hsl(271,91%,65%)', bg: 'hsla(271,91%,65%,0.08)', border: 'hsla(271,91%,65%,0.25)', icon: <TrendingUp size={16} /> },
+                          { label: t(selectedLang, 'points_total_earned'), value: totalPointsEarned.toLocaleString(), sub: t(selectedLang, 'points_from_orders'), color: 'hsl(216,91%,65%)', bg: 'hsla(216,91%,65%,0.08)', border: 'hsla(216,91%,65%,0.25)', icon: <TrendingUp size={16} /> },
                           { label: t(selectedLang, 'points_total_redeemed'), value: totalPointsRedeemed.toLocaleString(), sub: `= ৳${Math.floor(totalPointsRedeemed/2)} ${t(selectedLang, 'points_credited')}`, color: 'hsl(158,64%,42%)', bg: 'hsla(158,64%,42%,0.08)', border: 'hsla(158,64%,42%,0.25)', icon: <Wallet size={16} /> },
-                          { label: t(selectedLang, 'points_value'), value: `৳${Math.floor(pointsBalance / 2)}`, sub: t(selectedLang, 'points_rate'), color: 'hsl(243,75%,59%)', bg: 'hsla(243,75%,59%,0.08)', border: 'hsla(243,75%,59%,0.25)', icon: <Zap size={16} /> },
+                          { label: t(selectedLang, 'points_value'), value: `৳${Math.floor(pointsBalance / 2)}`, sub: t(selectedLang, 'points_rate'), color: 'hsl(192,75%,59%)', bg: 'hsla(192,75%,59%,0.08)', border: 'hsla(192,75%,59%,0.25)', icon: <Zap size={16} /> },
                         ].map(stat => (
                           <div key={stat.label} className="rounded-2xl p-4" style={{ background: stat.bg, border: `1px solid ${stat.border}`, backdropFilter: 'blur(8px)' }}>
                             <div className="flex items-center gap-2 mb-2" style={{ color: stat.color }}>{stat.icon}<span className="text-xs font-semibold text-muted-foreground">{stat.label}</span></div>
@@ -1935,7 +1935,7 @@ const UserDashboard = () => {
 
                       {/* Redeem Section */}
                       {pointsBalance >= 20 ? (
-                        <div className="rounded-2xl p-5 space-y-4" style={{ background: 'rgba(255,255,255,0.75)', border: '1px solid hsla(258,78%,75%,0.25)' }}>
+                        <div className="rounded-2xl p-5 space-y-4" style={{ background: 'rgba(255,255,255,0.75)', border: '1px solid hsla(192,78%,75%,0.25)' }}>
                           <div>
                             <h3 className="font-bold text-foreground flex items-center gap-2">
                               <ArrowDownCircle size={16} style={{ color: 'hsl(158,64%,42%)' }} /> {t(selectedLang, 'points_redeem_title')}
@@ -1951,7 +1951,7 @@ const UserDashboard = () => {
                                   className="px-3 py-1.5 rounded-lg text-xs font-bold border transition-all"
                                   style={redeemPoints === String(v)
                                     ? { background: 'hsl(var(--primary))', color: 'white', borderColor: 'hsl(var(--primary))' }
-                                    : { background: 'rgba(255,255,255,0.8)', borderColor: 'hsla(258,78%,75%,0.3)', color: 'hsl(var(--foreground))' }}>
+                                    : { background: 'rgba(255,255,255,0.8)', borderColor: 'hsla(192,78%,75%,0.3)', color: 'hsl(var(--foreground))' }}>
                                   {v} pts → ৳{v/2}
                                 </button>
                               ))}
@@ -1997,7 +1997,7 @@ const UserDashboard = () => {
                           </button>
                         </div>
                       ) : (
-                        <div className="rounded-2xl p-6 text-center" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
+                        <div className="rounded-2xl p-6 text-center" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(192,78%,75%,0.2)' }}>
                           <div className="text-4xl mb-3">⭐</div>
                           <p className="font-bold text-foreground text-sm mb-1">
                             {pointsBalance > 0 ? `${t(selectedLang, 'points_need_more')} (${20 - pointsBalance} pts)` : t(selectedLang, 'points_none_yet')}
@@ -2009,28 +2009,28 @@ const UserDashboard = () => {
                             </div>
                           )}
                           <a href="/shop" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white"
-                            style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                            style={{ background: 'linear-gradient(135deg, hsl(192,75%,59%), hsl(192,70%,58%))' }}>
                             <Zap size={13} /> {t(selectedLang, 'points_shop_btn')}
                           </a>
                         </div>
                       )}
 
                       {/* Transactions History */}
-                      <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.72)', border: '1px solid hsla(258,78%,75%,0.2)', backdropFilter: 'blur(16px)' }}>
-                        <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid hsla(258,78%,75%,0.16)', background: 'rgba(255,255,255,0.4)' }}>
+                      <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.72)', border: '1px solid hsla(192,78%,75%,0.2)', backdropFilter: 'blur(16px)' }}>
+                        <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid hsla(192,78%,75%,0.16)', background: 'rgba(255,255,255,0.4)' }}>
                           <h3 className="font-bold text-foreground flex items-center gap-2"><History size={14} className="text-primary" /> {t(selectedLang, 'points_history')}</h3>
                           <button onClick={fetchPoints} className="text-muted-foreground hover:text-primary transition-colors"><RefreshCw size={13} /></button>
                         </div>
                         {pointsTx.length === 0 ? (
                           <div className="text-center py-8 text-sm text-muted-foreground">{t(selectedLang, 'points_no_tx')}</div>
                         ) : (
-                          <div className="divide-y max-h-[320px] overflow-y-auto" style={{ divideColor: 'hsla(258,78%,75%,0.12)' } as any}>
+                          <div className="divide-y max-h-[320px] overflow-y-auto" style={{ divideColor: 'hsla(192,78%,75%,0.12)' } as any}>
                             {pointsTx.map((tx: any) => {
                               const isEarn = tx.type === 'earn';
                               const isDeduct = tx.type === 'deduct';
                               const isRedeem = tx.type === 'redeem';
                               return (
-                                <div key={tx.id} className="flex items-center justify-between px-4 py-3" style={{ borderBottom: '1px solid hsla(258,78%,75%,0.10)' }}>
+                                <div key={tx.id} className="flex items-center justify-between px-4 py-3" style={{ borderBottom: '1px solid hsla(192,78%,75%,0.10)' }}>
                                   <div className="flex items-center gap-3">
                                     <div className="w-9 h-9 rounded-xl flex items-center justify-center"
                                       style={{ background: isEarn ? 'hsla(43,95%,55%,0.15)' : isRedeem ? 'hsla(158,64%,42%,0.12)' : 'hsla(0,80%,60%,0.10)' }}>
@@ -2069,10 +2069,10 @@ const UserDashboard = () => {
                   <div className="space-y-4">
                     {/* Summary Card */}
                     <div className="relative overflow-hidden rounded-2xl p-5 sm:p-6"
-                      style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.85), rgba(255,255,255,0.65))', backdropFilter: 'blur(20px)', border: '1.5px solid hsla(258,78%,65%,0.35)', boxShadow: '0 0 30px hsla(258,78%,55%,0.12), 0 4px 16px hsla(258,78%,55%,0.08)' }}>
+                      style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.85), rgba(255,255,255,0.65))', backdropFilter: 'blur(20px)', border: '1.5px solid hsla(192,78%,65%,0.35)', boxShadow: '0 0 30px hsla(192,78%,55%,0.12), 0 4px 16px hsla(192,78%,55%,0.08)' }}>
                       <div className="flex items-center justify-between flex-wrap gap-4">
                         <div className="flex items-center gap-4">
-                          <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" style={{ background: 'linear-gradient(135deg, hsla(258,78%,65%,0.15), hsla(258,78%,65%,0.30))', border: '1px solid hsla(258,78%,65%,0.4)' }}>🎁</div>
+                          <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" style={{ background: 'linear-gradient(135deg, hsla(192,78%,65%,0.15), hsla(192,78%,65%,0.30))', border: '1px solid hsla(192,78%,65%,0.4)' }}>🎁</div>
                           <div>
                             <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-0.5">{t(selectedLang, 'referral_program_label')}</p>
                             <p className="text-2xl font-black" style={{ color: 'hsl(var(--primary))' }}>{t(selectedLang, 'referral_rate')}</p>
@@ -2090,7 +2090,7 @@ const UserDashboard = () => {
                         </div>
                       </div>
                       <div className="mt-4 grid grid-cols-2 gap-3 text-center">
-                        <div className="rounded-xl p-3" style={{ background: 'hsla(258,78%,65%,0.08)' }}>
+                        <div className="rounded-xl p-3" style={{ background: 'hsla(192,78%,65%,0.08)' }}>
                           <p className="text-xl font-black text-foreground">{completedRefs}</p>
                           <p className="text-[10px] text-muted-foreground">{t(selectedLang, 'referral_count_success')} {t(selectedLang, 'tab_referral')}</p>
                         </div>
@@ -2102,7 +2102,7 @@ const UserDashboard = () => {
                     </div>
 
                     {/* Referral Code Card */}
-                    <div className="p-5 rounded-2xl" style={{ background: 'linear-gradient(135deg, rgba(99,82,234,0.07), rgba(99,82,234,0.04))', border: '1px solid hsla(258,78%,65%,0.25)', backdropFilter: 'blur(12px)' }}>
+                    <div className="p-5 rounded-2xl" style={{ background: 'linear-gradient(135deg, rgba(99,82,234,0.07), rgba(99,82,234,0.04))', border: '1px solid hsla(192,78%,65%,0.25)', backdropFilter: 'blur(12px)' }}>
                       <p className="text-xs font-bold uppercase tracking-wide mb-3 text-muted-foreground">{t(selectedLang, 'your_code')}</p>
                       <div className="flex items-center gap-3 mb-3">
                         <span className="text-2xl font-black tracking-widest flex-1" style={{ fontFamily: 'Orbitron, monospace', color: 'hsl(var(--primary))' }}>{profile.referral_code || '—'}</span>
@@ -2118,7 +2118,7 @@ const UserDashboard = () => {
                         { label: t(selectedLang, 'referral_count_success'), value: completedRefs, color: 'hsl(158,64%,42%)' },
                         { label: t(selectedLang, 'referral_earnings'), value: `৳${profile.referral_earnings}`, color: 'hsl(var(--primary))' },
                       ].map(s => (
-                        <div key={s.label} className="p-4 rounded-2xl text-center" style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(258,78%,75%,0.2)', backdropFilter: 'blur(8px)' }}>
+                        <div key={s.label} className="p-4 rounded-2xl text-center" style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(192,78%,75%,0.2)', backdropFilter: 'blur(8px)' }}>
                           <div className="text-xl font-black" style={{ color: s.color }}>{s.value}</div>
                           <div className="text-xs text-muted-foreground">{s.label}</div>
                         </div>
@@ -2133,7 +2133,7 @@ const UserDashboard = () => {
                           { emoji: '🏷️', title: t(selectedLang, 'referral_benefit1_title'), sub: t(selectedLang, 'referral_benefit1_sub') },
                           { emoji: '🤝', title: t(selectedLang, 'referral_benefit2_title'), sub: t(selectedLang, 'referral_benefit2_sub') },
                         ].map(b => (
-                          <div key={b.title} className="flex items-center gap-2 p-2.5 rounded-xl" style={{ background: 'hsla(258,78%,65%,0.08)' }}>
+                          <div key={b.title} className="flex items-center gap-2 p-2.5 rounded-xl" style={{ background: 'hsla(192,78%,65%,0.08)' }}>
                             <span className="text-lg">{b.emoji}</span>
                             <div><p className="text-sm font-black" style={{ color: 'hsl(var(--primary))' }}>{b.title}</p><p className="text-[10px] text-muted-foreground">{b.sub}</p></div>
                           </div>
@@ -2142,7 +2142,7 @@ const UserDashboard = () => {
                     </div>
 
                     {/* How it works */}
-                    <div className="p-4 rounded-2xl" style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(258,78%,75%,0.2)', backdropFilter: 'blur(8px)' }}>
+                    <div className="p-4 rounded-2xl" style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(192,78%,75%,0.2)', backdropFilter: 'blur(8px)' }}>
                       <p className="text-sm font-bold mb-3 text-foreground">{t(selectedLang, 'referral_how')}</p>
                       {[
                         { n: '1', text: t(selectedLang, 'referral_step1') },
@@ -2168,7 +2168,7 @@ const UserDashboard = () => {
                           {referrals.map((r, i) => {
                             const refTier = getCurrentTier(i + 1);
                             return (
-                              <div key={r.id} className="flex items-center justify-between p-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(258,78%,75%,0.18)', backdropFilter: 'blur(8px)' }}>
+                              <div key={r.id} className="flex items-center justify-between p-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(192,78%,75%,0.18)', backdropFilter: 'blur(8px)' }}>
                                 <div className="flex items-center gap-2.5">
                                   <div className="w-9 h-9 rounded-xl flex items-center justify-center text-base flex-shrink-0" style={{ background: `${refTier.color}18`, border: `1px solid ${refTier.color}30` }}>
                                     {refTier.emoji}
@@ -2196,7 +2196,7 @@ const UserDashboard = () => {
                         </div>
                       </div>
                     ) : (
-                      <div className="text-center py-6 rounded-2xl" style={{ background: 'rgba(255,255,255,0.5)', border: '1px solid hsla(258,78%,75%,0.18)' }}>
+                      <div className="text-center py-6 rounded-2xl" style={{ background: 'rgba(255,255,255,0.5)', border: '1px solid hsla(192,78%,75%,0.18)' }}>
                         <div className="text-3xl mb-2">👥</div>
                         <p className="text-sm font-semibold text-foreground mb-1">{t(selectedLang, 'no_referrals')}</p>
                         <p className="text-xs text-muted-foreground">{t(selectedLang, 'no_referrals_sub')}</p>
@@ -2209,7 +2209,7 @@ const UserDashboard = () => {
               {/* ── Security Tab ── */}
               {activeTab === 'security' && (
                 <div className="max-w-lg space-y-5">
-                  <div className="p-4 rounded-2xl flex items-start gap-3" style={{ background: 'linear-gradient(135deg, rgba(99,82,234,0.08), rgba(99,82,234,0.04))', border: '1px solid hsla(258,78%,65%,0.22)', backdropFilter: 'blur(8px)' }}>
+                  <div className="p-4 rounded-2xl flex items-start gap-3" style={{ background: 'linear-gradient(135deg, rgba(99,82,234,0.08), rgba(99,82,234,0.04))', border: '1px solid hsla(192,78%,65%,0.22)', backdropFilter: 'blur(8px)' }}>
                     <ShieldCheck size={18} style={{ color: 'hsl(var(--primary))' }} className="mt-0.5 flex-shrink-0" />
                     <div>
                       <p className="text-sm font-semibold" style={{ color: 'hsl(var(--primary))' }}>{t(selectedLang, 'security_title')}</p>
@@ -2391,7 +2391,7 @@ const UserDashboard = () => {
                     {/* Stat tiles */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
                       {[
-                        { k: 'Total', v: stats.total, c: { bg: 'hsla(258,78%,55%,0.08)', fg: 'hsl(258,78%,50%)', border: 'hsla(258,78%,55%,0.22)' } },
+                        { k: 'Total', v: stats.total, c: { bg: 'hsla(192,78%,55%,0.08)', fg: 'hsl(192,78%,50%)', border: 'hsla(192,78%,55%,0.22)' } },
                         { k: 'Expired', v: stats.expired, c: colorOf('expired') },
                         { k: '≤ 7 days', v: stats.critical, c: colorOf('critical') },
                         { k: '≤ 30 days', v: stats.warning, c: colorOf('warning') },
@@ -2405,7 +2405,7 @@ const UserDashboard = () => {
 
                     {/* Auto-reminder hint */}
                     <div className="flex items-start gap-2.5 rounded-2xl p-3 text-xs"
-                      style={{ background: 'hsla(258,78%,55%,0.06)', border: '1px solid hsla(258,78%,55%,0.18)' }}>
+                      style={{ background: 'hsla(192,78%,55%,0.06)', border: '1px solid hsla(192,78%,55%,0.18)' }}>
                       <Bell size={14} className="text-primary mt-0.5 flex-shrink-0" />
                       <div className="text-foreground/80">
                         We will automatically email and notify you <strong>7 days before</strong> any subscription expires.
@@ -2516,7 +2516,7 @@ const UserDashboard = () => {
                 <div className="space-y-5">
                   {/* Balance Card */}
                   <div className="rounded-2xl p-5 sm:p-6 relative overflow-hidden"
-                    style={{ background: 'linear-gradient(135deg, hsl(243,75%,52%) 0%, hsl(263,70%,50%) 100%)', boxShadow: '0 8px 32px hsla(258,78%,55%,0.30), 0 1px 0 rgba(255,255,255,0.15) inset' }}>
+                    style={{ background: 'linear-gradient(135deg, hsl(192,75%,52%) 0%, hsl(192,70%,50%) 100%)', boxShadow: '0 8px 32px hsla(192,78%,55%,0.30), 0 1px 0 rgba(255,255,255,0.15) inset' }}>
                     <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 80% 20%, white 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
                     <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10" style={{ background: 'white', transform: 'translate(20%, -20%)' }} />
                     <div className="relative flex items-center justify-between mb-5">
@@ -2538,9 +2538,9 @@ const UserDashboard = () => {
                   </div>
 
                   {/* Top-up Wizard */}
-                  <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.72)', border: '1px solid hsla(258,78%,75%,0.22)', backdropFilter: 'blur(20px)' }}>
+                  <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.72)', border: '1px solid hsla(192,78%,75%,0.22)', backdropFilter: 'blur(20px)' }}>
                     {/* Step indicators */}
-                    <div className="flex" style={{ borderBottom: '1px solid hsla(258,78%,75%,0.18)' }}>
+                    <div className="flex" style={{ borderBottom: '1px solid hsla(192,78%,75%,0.18)' }}>
                       {['Select Amount', 'Payment', 'Confirm'].map((s, i) => (
                         <div key={i} className={`flex-1 py-3 text-center text-xs font-semibold transition-colors ${
                           topupStep === i ? 'text-primary border-b-2 border-primary' :
@@ -2617,7 +2617,7 @@ const UserDashboard = () => {
 
                             {/* bKash Online (PGW) info block */}
                             {isBkashOnline && (
-                              <div className="rounded-xl p-4 space-y-2 border bg-pink-500/10 border-pink-500/30">
+                              <div className="rounded-xl p-4 space-y-2 border bg-orange-500/10 border-orange-500/30">
                                 <div className="flex items-center gap-2 text-sm font-bold text-foreground">
                                   <img src={bkashLogoSrc} alt="bKash" className="h-6 w-auto" />
                                   <span>{bkashContent.title}</span>
@@ -2630,7 +2630,7 @@ const UserDashboard = () => {
                                     {bkashContent.bullets.map((b, i) => <li key={i}>{b}</li>)}
                                   </ul>
                                 )}
-                                <p className="text-xs text-pink-600 dark:text-pink-300 font-medium">
+                                <p className="text-xs text-orange-600 dark:text-orange-300 font-medium">
                                   {bkashContent.amount_prefix} ৳{amt.toLocaleString()}
                                 </p>
                               </div>
@@ -2699,7 +2699,7 @@ const UserDashboard = () => {
                               <button
                                 onClick={() => setTopupStep(0)}
                                 className="px-5 py-3 rounded-2xl text-sm font-semibold text-muted-foreground hover:bg-white/60 transition-colors"
-                                style={{ border: '1px solid hsla(258,78%,75%,0.3)' }}
+                                style={{ border: '1px solid hsla(192,78%,75%,0.3)' }}
                               >
                                 Back
                               </button>
@@ -2733,7 +2733,7 @@ const UserDashboard = () => {
                                   onClick={handleTopupSubmit}
                                   disabled={topupProcessing || !topupTxId.trim()}
                                   className="group relative flex-1 overflow-hidden rounded-2xl py-3.5 px-5 font-bold text-base text-white shadow-[0_12px_40px_-8px_rgba(79,70,229,0.55)] transition-all duration-300 hover:shadow-[0_18px_55px_-8px_rgba(79,70,229,0.75)] hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
-                                  style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 45%, #1e3a8a 100%)' }}
+                                  style={{ background: 'linear-gradient(135deg, #0891b2 0%, #2563eb 45%, #1e3a8a 100%)' }}
                                 >
                                   <span aria-hidden className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full" />
                                   <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-2xl bg-gradient-to-b from-white/25 to-transparent" />
@@ -2743,7 +2743,7 @@ const UserDashboard = () => {
                                     ) : (
                                       <>
                                         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-white/40">
-                                          <CreditCard size={16} className="text-indigo-700" />
+                                          <CreditCard size={16} className="text-blue-700" />
                                         </span>
                                         <span className="tracking-wide">Submit Top-up Request</span>
                                         <span className="ml-1 rounded-full bg-white/20 px-3 py-1 text-sm font-extrabold backdrop-blur-sm">৳{amt.toLocaleString()}</span>
@@ -2794,18 +2794,18 @@ const UserDashboard = () => {
                   )}
 
                   {/* Transaction History */}
-                  <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.72)', border: '1px solid hsla(258,78%,75%,0.2)', backdropFilter: 'blur(16px)' }}>
-                    <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid hsla(258,78%,75%,0.16)', background: 'rgba(255,255,255,0.4)' }}>
+                  <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.72)', border: '1px solid hsla(192,78%,75%,0.2)', backdropFilter: 'blur(16px)' }}>
+                    <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid hsla(192,78%,75%,0.16)', background: 'rgba(255,255,255,0.4)' }}>
                       <h3 className="font-bold text-foreground flex items-center gap-2"><History size={14} className="text-primary" /> Transaction History</h3>
                       <button onClick={fetchWallet} className="text-muted-foreground hover:text-primary transition-colors"><RefreshCw size={13} /></button>
                     </div>
-                    <div className="divide-y max-h-[280px] overflow-y-auto" style={{ divideColor: 'hsla(258,78%,75%,0.12)' } as any}>
+                    <div className="divide-y max-h-[280px] overflow-y-auto" style={{ divideColor: 'hsla(192,78%,75%,0.12)' } as any}>
                       {walletLoading ? (
                         <div className="p-6 text-center text-muted-foreground text-sm">Loading...</div>
                       ) : walletTx.length === 0 ? (
                         <div className="p-6 text-center text-muted-foreground text-sm">No transactions yet</div>
                       ) : walletTx.map((tx: any) => (
-                        <div key={tx.id} className="flex items-center justify-between px-4 py-3" style={{ borderBottom: '1px solid hsla(258,78%,75%,0.10)' }}>
+                        <div key={tx.id} className="flex items-center justify-between px-4 py-3" style={{ borderBottom: '1px solid hsla(192,78%,75%,0.10)' }}>
                           <div className="flex items-center gap-3">
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center`} style={{ background: tx.type === 'credit' ? 'hsla(158,80%,48%,0.12)' : 'hsla(0,80%,60%,0.10)' }}>
                               {tx.type === 'credit' ? <TrendingUp size={12} style={{ color: 'hsl(158,80%,42%)' }} /> : <TrendingDown size={12} className="text-destructive" />}
@@ -2827,7 +2827,7 @@ const UserDashboard = () => {
                   </div>
 
                   {/* How to use wallet */}
-                  <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(258,78%,75%,0.2)', backdropFilter: 'blur(8px)' }}>
+                  <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(192,78%,75%,0.2)', backdropFilter: 'blur(8px)' }}>
                     <p className="text-sm font-bold mb-3 text-foreground">How to use your wallet?</p>
                     {[
                       { n: '1', text: 'Top-up: Choose amount → Pay via BKash/Nagad → Enter TrxID' },
@@ -2862,12 +2862,12 @@ const UserDashboard = () => {
                           className="flex items-center gap-4 p-4 rounded-2xl text-left transition-all duration-200"
                           style={isActive ? {
                             background: 'linear-gradient(135deg, rgba(99,82,234,0.10), rgba(99,82,234,0.06))',
-                            border: '1.5px solid hsla(258,78%,65%,0.35)',
-                            boxShadow: '0 4px 16px hsla(258,78%,55%,0.10)',
+                            border: '1.5px solid hsla(192,78%,65%,0.35)',
+                            boxShadow: '0 4px 16px hsla(192,78%,55%,0.10)',
                             backdropFilter: 'blur(12px)',
                           } : {
                             background: 'rgba(255,255,255,0.65)',
-                            border: '1px solid hsla(258,78%,75%,0.18)',
+                            border: '1px solid hsla(192,78%,75%,0.18)',
                             backdropFilter: 'blur(8px)',
                           }}>
                           <span className="text-3xl leading-none">{lang.flag}</span>
@@ -2884,7 +2884,7 @@ const UserDashboard = () => {
                       );
                     })}
                   </div>
-                  <div className="rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(258,78%,75%,0.18)', backdropFilter: 'blur(8px)' }}>
+                  <div className="rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(192,78%,75%,0.18)', backdropFilter: 'blur(8px)' }}>
                     <p className="text-xs text-muted-foreground flex items-start gap-2">
                       <Globe size={13} className="text-primary mt-0.5 flex-shrink-0" />
                       {t(selectedLang, 'language_note')}
@@ -2924,10 +2924,10 @@ const UserDashboard = () => {
                         const url = product?.download_link;
                         return (
                           <div key={item.id} className="rounded-2xl border overflow-hidden transition-all hover:border-primary/40"
-                            style={{ background: 'hsl(var(--card))', borderColor: 'hsla(258,78%,55%,0.20)' }}>
+                            style={{ background: 'hsl(var(--card))', borderColor: 'hsla(192,78%,55%,0.20)' }}>
                             <div className="flex items-center gap-3 p-3">
                               <div className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden"
-                                style={{ background: 'hsla(258,78%,55%,0.08)' }}>
+                                style={{ background: 'hsla(192,78%,55%,0.08)' }}>
                                 {product?.image_url ? (
                                   <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
                                 ) : (
@@ -2944,7 +2944,7 @@ const UserDashboard = () => {
                             <div className="px-3 pb-3 flex items-center gap-2">
                               <a href={url} target="_blank" rel="noopener noreferrer"
                                 className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-bold text-white transition-all hover:opacity-90"
-                                style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', boxShadow: '0 4px 14px hsla(258,78%,55%,0.30)' }}>
+                                style={{ background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(200,90%,45%))', boxShadow: '0 4px 14px hsla(192,78%,55%,0.30)' }}>
                                 <Download size={13} /> ডাউনলোড করুন
                               </a>
                               <button

@@ -50,8 +50,8 @@ const newMethodTemplate = (): PaymentMethodConfig => ({
   number: '',
   type: 'Send Money',
   logoUrl: '',
-  accentColor: 'hsl(258,78%,55%)',
-  bgColor: 'hsla(258,78%,55%,0.07)',
+  accentColor: 'hsl(192,78%,55%)',
+  bgColor: 'hsla(192,78%,55%,0.07)',
   steps: [
     'আপনার অ্যাপ ওপেন করুন',
     '"Send Money" অপশনটি সিলেক্ট করুন',
@@ -225,7 +225,7 @@ const MethodEditor = ({
                 <Input
                   value={form.accentColor}
                   onChange={e => set('accentColor', e.target.value)}
-                  placeholder="hsl(338,90%,48%)"
+                  placeholder="hsl(24,90%,48%)"
                   className="text-xs font-mono"
                 />
                 <div
@@ -242,7 +242,7 @@ const MethodEditor = ({
                 <Input
                   value={form.bgColor}
                   onChange={e => set('bgColor', e.target.value)}
-                  placeholder="hsla(338,90%,48%,0.07)"
+                  placeholder="hsla(24,90%,48%,0.07)"
                   className="text-xs font-mono"
                 />
                 <div

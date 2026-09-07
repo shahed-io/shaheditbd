@@ -9,7 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import PhoneInput from '@/components/store/PhoneInput';
 
-const A = 'hsl(258,78%,55%)';
+const A = 'hsl(192,78%,55%)';
 const B = 'hsl(200,90%,45%)';
 
 const CONTACT_INFO = [
@@ -38,8 +38,8 @@ const CONTACT_INFO = [
     value: 'info@shahedit.com',
     href: 'mailto:info@shahedit.com',
     color: A,
-    bg: 'hsla(258,78%,55%,0.08)',
-    border: 'hsla(258,78%,55%,0.20)',
+    bg: 'hsla(192,78%,55%,0.08)',
+    border: 'hsla(192,78%,55%,0.20)',
   },
   {
     icon: <Globe size={18} />,
@@ -56,7 +56,7 @@ const CONTACT_INFO = [
 const SOCIAL = [
   { icon: <Facebook size={20} />, label: 'Facebook', href: 'https://www.facebook.com/shahed.it.co', color: 'hsl(221,44%,41%)', ext: true },
   { icon: <MessageCircle size={20} />, label: 'WhatsApp', href: 'https://wa.me/8801820060046', color: 'hsl(142,58%,40%)', ext: true },
-  { icon: <Instagram size={20} />, label: 'Instagram', href: 'https://www.instagram.com/shahedstore.com.bd/', color: 'hsl(329,86%,56%)', ext: true },
+  { icon: <Instagram size={20} />, label: 'Instagram', href: 'https://www.instagram.com/shahedstore.com.bd/', color: 'hsl(24,86%,56%)', ext: true },
 ];
 
 const HOURS = [
@@ -112,7 +112,7 @@ export default function ContactUs() {
   return (
     <div
       className="min-h-screen text-foreground"
-      style={{ background: 'linear-gradient(145deg, hsl(258,55%,97%) 0%, hsl(220,40%,96%) 40%, hsl(200,50%,96%) 100%)' }}
+      style={{ background: 'linear-gradient(145deg, hsl(192,55%,97%) 0%, hsl(220,40%,96%) 40%, hsl(200,50%,96%) 100%)' }}
     >
       <SEOHead title="Contact Shahed IT – Customer Support Bangladesh" description="Contact Shahed IT for support. Reach us via phone, email, WhatsApp or our contact form. Fast response, 7 days a week. Bangladesh's trusted digital software shop." canonical="https://shahedit.com/contact" />
       <Navbar />
@@ -209,9 +209,9 @@ export default function ContactUs() {
                           placeholder="আপনার নাম লিখুন"
                           maxLength={100}
                           className="w-full px-4 py-2.5 rounded-xl text-[13px] outline-none transition-all"
-                          style={{ background: 'rgba(255,255,255,0.70)', border: '1px solid hsla(258,78%,75%,0.25)', color: 'hsl(226,35%,18%)' }}
+                          style={{ background: 'rgba(255,255,255,0.70)', border: '1px solid hsla(192,78%,75%,0.25)', color: 'hsl(226,35%,18%)' }}
                           onFocus={e => e.currentTarget.style.borderColor = `${A}60`}
-                          onBlur={e => e.currentTarget.style.borderColor = 'hsla(258,78%,75%,0.25)'}
+                          onBlur={e => e.currentTarget.style.borderColor = 'hsla(192,78%,75%,0.25)'}
                         />
                       </div>
                       <div>
@@ -223,9 +223,9 @@ export default function ContactUs() {
                           placeholder="email@example.com"
                           maxLength={255}
                           className="w-full px-4 py-2.5 rounded-xl text-[13px] outline-none transition-all"
-                          style={{ background: 'rgba(255,255,255,0.70)', border: '1px solid hsla(258,78%,75%,0.25)', color: 'hsl(226,35%,18%)' }}
+                          style={{ background: 'rgba(255,255,255,0.70)', border: '1px solid hsla(192,78%,75%,0.25)', color: 'hsl(226,35%,18%)' }}
                           onFocus={e => e.currentTarget.style.borderColor = `${A}60`}
-                          onBlur={e => e.currentTarget.style.borderColor = 'hsla(258,78%,75%,0.25)'}
+                          onBlur={e => e.currentTarget.style.borderColor = 'hsla(192,78%,75%,0.25)'}
                         />
                       </div>
                     </div>
@@ -244,9 +244,9 @@ export default function ContactUs() {
                         <select
                           name="subject" value={form.subject} onChange={handleChange}
                           className="w-full px-4 py-2.5 rounded-xl text-[13px] outline-none transition-all appearance-none"
-                          style={{ background: 'rgba(255,255,255,0.70)', border: '1px solid hsla(258,78%,75%,0.25)', color: form.subject ? 'hsl(226,35%,18%)' : 'hsl(226,25%,58%)' }}
+                          style={{ background: 'rgba(255,255,255,0.70)', border: '1px solid hsla(192,78%,75%,0.25)', color: form.subject ? 'hsl(226,35%,18%)' : 'hsl(226,25%,58%)' }}
                           onFocus={e => e.currentTarget.style.borderColor = `${A}60`}
-                          onBlur={e => e.currentTarget.style.borderColor = 'hsla(258,78%,75%,0.25)'}
+                          onBlur={e => e.currentTarget.style.borderColor = 'hsla(192,78%,75%,0.25)'}
                         >
                           <option value="">বিষয় নির্বাচন করুন</option>
                           <option value="Product Enquiry">পণ্য সম্পর্কে জিজ্ঞাসা</option>
@@ -269,9 +269,9 @@ export default function ContactUs() {
                         maxLength={2000}
                         rows={5}
                         className="w-full px-4 py-3 rounded-xl text-[13px] outline-none transition-all resize-none"
-                        style={{ background: 'rgba(255,255,255,0.70)', border: '1px solid hsla(258,78%,75%,0.25)', color: 'hsl(226,35%,18%)' }}
+                        style={{ background: 'rgba(255,255,255,0.70)', border: '1px solid hsla(192,78%,75%,0.25)', color: 'hsl(226,35%,18%)' }}
                         onFocus={e => e.currentTarget.style.borderColor = `${A}60`}
-                        onBlur={e => e.currentTarget.style.borderColor = 'hsla(258,78%,75%,0.25)'}
+                        onBlur={e => e.currentTarget.style.borderColor = 'hsla(192,78%,75%,0.25)'}
                       />
                       <p className="text-right text-[11px] mt-1" style={{ color: 'hsl(226,25%,60%)' }}>{form.message.length}/2000</p>
                     </div>
@@ -301,10 +301,10 @@ export default function ContactUs() {
               <div className="space-y-2.5">
                 {HOURS.map(h => (
                   <div key={h.day} className="flex justify-between items-center py-2 px-1"
-                    style={{ borderBottom: '1px solid hsla(258,78%,55%,0.08)' }}>
+                    style={{ borderBottom: '1px solid hsla(192,78%,55%,0.08)' }}>
                     <span className="text-[12px] font-semibold" style={{ color: 'hsl(226,35%,30%)' }}>{h.day}</span>
                     <span className="text-[11px] font-bold px-2.5 py-1 rounded-full"
-                      style={{ background: 'hsla(258,78%,55%,0.08)', color: A }}>{h.time}</span>
+                      style={{ background: 'hsla(192,78%,55%,0.08)', color: A }}>{h.time}</span>
                   </div>
                 ))}
               </div>

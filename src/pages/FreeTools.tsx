@@ -27,15 +27,15 @@ const glass = (color: string) => ({
 });
 
 const inputStyle = {
-  background: 'hsla(258,78%,55%,0.04)',
-  border: '1.5px solid hsla(258,78%,55%,0.18)',
+  background: 'hsla(192,78%,55%,0.04)',
+  border: '1.5px solid hsla(192,78%,55%,0.18)',
   color: 'hsl(226,35%,18%)',
   outline: 'none',
 };
 
 const btnPrimary = {
-  background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))',
-  boxShadow: '0 4px 16px hsla(258,78%,55%,0.30)',
+  background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(200,90%,45%))',
+  boxShadow: '0 4px 16px hsla(192,78%,55%,0.30)',
   color: 'white',
 };
 
@@ -48,7 +48,7 @@ const CopyBtn = ({ text }: { text: string }) => {
   };
   return (
     <button onClick={copy} className="p-2 rounded-lg transition-all flex-shrink-0"
-      style={{ color: ok ? 'hsl(162,72%,35%)' : 'hsl(258,78%,50%)' }}>
+      style={{ color: ok ? 'hsl(162,72%,35%)' : 'hsl(192,78%,50%)' }}>
       {ok ? <Check size={15} /> : <Copy size={15} />}
     </button>
   );
@@ -68,8 +68,8 @@ const ToolInput = (props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) => 
     {...props}
     className="w-full rounded-xl p-4 text-sm resize-none"
     style={inputStyle}
-    onFocus={e => { e.currentTarget.style.borderColor = 'hsla(258,78%,55%,0.55)'; e.currentTarget.style.boxShadow = '0 0 0 3px hsla(258,78%,55%,0.08)'; }}
-    onBlur={e => { e.currentTarget.style.borderColor = 'hsla(258,78%,55%,0.18)'; e.currentTarget.style.boxShadow = 'none'; }}
+    onFocus={e => { e.currentTarget.style.borderColor = 'hsla(192,78%,55%,0.55)'; e.currentTarget.style.boxShadow = '0 0 0 3px hsla(192,78%,55%,0.08)'; }}
+    onBlur={e => { e.currentTarget.style.borderColor = 'hsla(192,78%,55%,0.18)'; e.currentTarget.style.boxShadow = 'none'; }}
   />
 );
 
@@ -113,19 +113,19 @@ const PasswordGenerator = () => {
       <div className="grid grid-cols-2 gap-3">
         {([['upper', 'Uppercase (A-Z)'], ['lower', 'Lowercase (a-z)'], ['num', 'Numbers (0-9)'], ['sym', 'Symbols (!@#$)']] as const).map(([k, label]) => (
           <label key={k} className="flex items-center gap-2 cursor-pointer px-3 py-2.5 rounded-xl select-none"
-            style={{ background: opts[k] ? 'hsla(258,78%,55%,0.08)' : 'hsla(226,35%,50%,0.05)', border: `1.5px solid ${opts[k] ? 'hsla(258,78%,55%,0.30)' : 'hsla(226,35%,50%,0.12)'}` }}>
+            style={{ background: opts[k] ? 'hsla(192,78%,55%,0.08)' : 'hsla(226,35%,50%,0.05)', border: `1.5px solid ${opts[k] ? 'hsla(192,78%,55%,0.30)' : 'hsla(226,35%,50%,0.12)'}` }}>
             <input type="checkbox" className="hidden" checked={opts[k]} onChange={e => setOpts(p => ({ ...p, [k]: e.target.checked }))} />
             <span className="w-4 h-4 rounded-md flex items-center justify-center flex-shrink-0"
-              style={{ background: opts[k] ? 'hsl(258,78%,55%)' : 'transparent', border: `2px solid ${opts[k] ? 'hsl(258,78%,55%)' : 'hsl(226,35%,55%)'}` }}>
+              style={{ background: opts[k] ? 'hsl(192,78%,55%)' : 'transparent', border: `2px solid ${opts[k] ? 'hsl(192,78%,55%)' : 'hsl(226,35%,55%)'}` }}>
               {opts[k] && <Check size={10} className="text-white" />}
             </span>
-            <span className="text-xs font-medium" style={{ color: opts[k] ? 'hsl(258,78%,45%)' : 'hsl(226,35%,40%)' }}>{label}</span>
+            <span className="text-xs font-medium" style={{ color: opts[k] ? 'hsl(192,78%,45%)' : 'hsl(226,35%,40%)' }}>{label}</span>
           </label>
         ))}
       </div>
       <div className="space-y-2">
-        <div className="flex justify-between"><span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,30%)' }}>Length</span><span className="font-black text-lg" style={{ color: 'hsl(258,78%,50%)' }}>{length}</span></div>
-        <input type="range" min={6} max={64} value={length} onChange={e => setLength(Number(e.target.value))} className="w-full accent-violet-600 cursor-pointer" />
+        <div className="flex justify-between"><span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,30%)' }}>Length</span><span className="font-black text-lg" style={{ color: 'hsl(192,78%,50%)' }}>{length}</span></div>
+        <input type="range" min={6} max={64} value={length} onChange={e => setLength(Number(e.target.value))} className="w-full accent-cyan-600 cursor-pointer" />
       </div>
       <div className="space-y-1.5">
         <div className="flex justify-between text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}><span>Strength</span><span style={{ color: s.color }}>{s.label}</span></div>
@@ -155,7 +155,7 @@ const AgeCalculator = () => {
       <PrimaryBtn onClick={calculate}>Calculate Age</PrimaryBtn>
       {result && (
         <div className="grid grid-cols-2 gap-3">
-          {[{ label: 'Years', value: result.years, c: 'hsl(258,78%,50%)' }, { label: 'Months', value: result.months, c: 'hsl(200,90%,42%)' }, { label: 'Days', value: result.days, c: 'hsl(162,72%,38%)' }, { label: 'Total Days', value: result.totalDays.toLocaleString(), c: 'hsl(38,92%,50%)' }].map(r => (
+          {[{ label: 'Years', value: result.years, c: 'hsl(192,78%,50%)' }, { label: 'Months', value: result.months, c: 'hsl(200,90%,42%)' }, { label: 'Days', value: result.days, c: 'hsl(162,72%,38%)' }, { label: 'Total Days', value: result.totalDays.toLocaleString(), c: 'hsl(38,92%,50%)' }].map(r => (
             <div key={r.label} className="rounded-xl p-4 text-center" style={{ background: `${r.c.slice(0, -1)},0.07)`.replace('hsl', 'hsla'), border: `1.5px solid ${r.c.slice(0, -1)},0.20)`.replace('hsl', 'hsla') }}>
               <p className="text-3xl font-black" style={{ color: r.c }}>{r.value}</p>
               <p className="text-xs font-semibold mt-1" style={{ color: 'hsl(226,35%,45%)' }}>{r.label}</p>
@@ -184,7 +184,7 @@ const ProfitCalculator = () => {
       ))}
       {(costN > 0 || sellN > 0) && (
         <div className="grid grid-cols-2 gap-3 pt-2">
-          {[{ label: 'Profit/Loss', value: `৳${profit.toFixed(2)}`, c: profit >= 0 ? 'hsl(162,72%,38%)' : 'hsl(0,72%,50%)' }, { label: 'Profit Rate', value: `${margin}%`, c: 'hsl(258,78%,50%)' }, { label: 'Margin', value: `${marginSell}%`, c: 'hsl(200,90%,42%)' }, { label: 'Profitable', value: profit >= 0 ? 'Yes ✓' : 'No ✗', c: profit >= 0 ? 'hsl(162,72%,38%)' : 'hsl(0,72%,50%)' }].map(r => (
+          {[{ label: 'Profit/Loss', value: `৳${profit.toFixed(2)}`, c: profit >= 0 ? 'hsl(162,72%,38%)' : 'hsl(0,72%,50%)' }, { label: 'Profit Rate', value: `${margin}%`, c: 'hsl(192,78%,50%)' }, { label: 'Margin', value: `${marginSell}%`, c: 'hsl(200,90%,42%)' }, { label: 'Profitable', value: profit >= 0 ? 'Yes ✓' : 'No ✗', c: profit >= 0 ? 'hsl(162,72%,38%)' : 'hsl(0,72%,50%)' }].map(r => (
             <div key={r.label} className="rounded-xl p-3 text-center" style={{ background: `${r.c.slice(0, -1)},0.07)`.replace('hsl', 'hsla'), border: `1.5px solid ${r.c.slice(0, -1)},0.18)`.replace('hsl', 'hsla') }}>
               <p className="text-xl font-black" style={{ color: r.c }}>{r.value}</p>
               <p className="text-xs mt-0.5 font-medium" style={{ color: 'hsl(226,35%,45%)' }}>{r.label}</p>
@@ -208,7 +208,7 @@ const CaseConverter = () => {
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         {[['upper', 'UPPER CASE'], ['lower', 'lower case'], ['title', 'Title Case'], ['sentence', 'Sentence case'], ['alternate', 'aLtErNaTe'], ['reverse', 'esreveR']].map(([t, l]) => (
           <button key={t} onClick={() => convert(t)} className="py-2.5 px-3 rounded-xl text-sm font-bold transition-all hover:scale-[1.03]"
-            style={{ background: 'hsla(258,78%,55%,0.08)', color: 'hsl(258,78%,45%)', border: '1.5px solid hsla(258,78%,55%,0.20)' }}>{l}</button>
+            style={{ background: 'hsla(192,78%,55%,0.08)', color: 'hsl(192,78%,45%)', border: '1.5px solid hsla(192,78%,55%,0.20)' }}>{l}</button>
         ))}
       </div>
       {result && <ResultBox value={result} />}
@@ -223,10 +223,10 @@ const UrlEncoder = () => {
   };
   return (
     <div className="space-y-4">
-      <div className="flex gap-2 p-1 rounded-xl" style={{ background: 'hsla(258,78%,55%,0.06)' }}>
+      <div className="flex gap-2 p-1 rounded-xl" style={{ background: 'hsla(192,78%,55%,0.06)' }}>
         {(['encode', 'decode'] as const).map(m => (
           <button key={m} onClick={() => { setMode(m); setResult(''); setError(''); }} className="flex-1 py-2 rounded-lg text-sm font-bold transition-all"
-            style={{ background: mode === m ? 'hsl(258,78%,55%)' : 'transparent', color: mode === m ? 'white' : 'hsl(258,78%,50%)' }}>{m === 'encode' ? 'Encode' : 'Decode'}</button>
+            style={{ background: mode === m ? 'hsl(192,78%,55%)' : 'transparent', color: mode === m ? 'white' : 'hsl(192,78%,50%)' }}>{m === 'encode' ? 'Encode' : 'Decode'}</button>
         ))}
       </div>
       <ToolInput value={input} onChange={e => setInput(e.target.value)} placeholder={mode === 'encode' ? 'Enter URL...' : 'Enter encoded URL...'} rows={3} />
@@ -244,10 +244,10 @@ const Base64Tool = () => {
   };
   return (
     <div className="space-y-4">
-      <div className="flex gap-2 p-1 rounded-xl" style={{ background: 'hsla(258,78%,55%,0.06)' }}>
+      <div className="flex gap-2 p-1 rounded-xl" style={{ background: 'hsla(192,78%,55%,0.06)' }}>
         {(['encode', 'decode'] as const).map(m => (
           <button key={m} onClick={() => { setMode(m); setResult(''); setError(''); }} className="flex-1 py-2 rounded-lg text-sm font-bold transition-all"
-            style={{ background: mode === m ? 'hsl(258,78%,55%)' : 'transparent', color: mode === m ? 'white' : 'hsl(258,78%,50%)' }}>{m === 'encode' ? 'Encode' : 'Decode'}</button>
+            style={{ background: mode === m ? 'hsl(192,78%,55%)' : 'transparent', color: mode === m ? 'white' : 'hsl(192,78%,50%)' }}>{m === 'encode' ? 'Encode' : 'Decode'}</button>
         ))}
       </div>
       <ToolInput value={input} onChange={e => setInput(e.target.value)} placeholder={mode === 'encode' ? 'Enter text...' : 'Enter Base64...'} rows={3} />
@@ -293,14 +293,14 @@ const QrGenerator = () => {
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1">
           <label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>QR Color</label>
-          <div className="flex items-center gap-2 p-2 rounded-xl" style={{ border: '1.5px solid hsla(258,78%,55%,0.18)' }}>
+          <div className="flex items-center gap-2 p-2 rounded-xl" style={{ border: '1.5px solid hsla(192,78%,55%,0.18)' }}>
             <input type="color" value={color} onChange={e => setColor(e.target.value)} className="w-8 h-8 rounded cursor-pointer border-0" />
             <span className="text-xs font-mono" style={{ color: 'hsl(226,35%,40%)' }}>{color}</span>
           </div>
         </div>
         <div className="space-y-1">
           <label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Background</label>
-          <div className="flex items-center gap-2 p-2 rounded-xl" style={{ border: '1.5px solid hsla(258,78%,55%,0.18)' }}>
+          <div className="flex items-center gap-2 p-2 rounded-xl" style={{ border: '1.5px solid hsla(192,78%,55%,0.18)' }}>
             <input type="color" value={bgColor} onChange={e => setBgColor(e.target.value)} className="w-8 h-8 rounded cursor-pointer border-0" />
             <span className="text-xs font-mono" style={{ color: 'hsl(226,35%,40%)' }}>{bgColor}</span>
           </div>
@@ -309,7 +309,7 @@ const QrGenerator = () => {
       <PrimaryBtn onClick={generate}>{loading ? <Loader2 size={14} className="animate-spin" /> : <QrCode size={14} />}Generate QR Code</PrimaryBtn>
       {qrUrl && (
         <div className="flex flex-col items-center gap-4">
-          <img src={qrUrl} alt="QR Code" className="w-48 h-48 rounded-xl border-2" style={{ borderColor: 'hsla(258,78%,55%,0.20)' }} />
+          <img src={qrUrl} alt="QR Code" className="w-48 h-48 rounded-xl border-2" style={{ borderColor: 'hsla(192,78%,55%,0.20)' }} />
           <button onClick={download} className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all hover:scale-105"
             style={{ background: 'hsla(162,72%,38%,0.10)', color: 'hsl(162,72%,30%)', border: '1.5px solid hsla(162,72%,38%,0.25)' }}>
             <Download size={14} />Download
@@ -351,14 +351,14 @@ const ImageResizer = () => {
   return (
     <div className="space-y-4">
       <label className="flex flex-col items-center justify-center gap-3 p-8 rounded-xl cursor-pointer transition-all"
-        style={{ border: '2px dashed hsla(258,78%,55%,0.30)', background: 'hsla(258,78%,55%,0.03)' }}>
-        <Upload size={28} style={{ color: 'hsl(258,78%,55%)' }} />
+        style={{ border: '2px dashed hsla(192,78%,55%,0.30)', background: 'hsla(192,78%,55%,0.03)' }}>
+        <Upload size={28} style={{ color: 'hsl(192,78%,55%)' }} />
         <span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Upload Image</span>
         <input type="file" accept="image/*" className="hidden" onChange={onFile} />
       </label>
       {imgSrc && (
         <>
-          <img src={imgSrc} alt="original" className="w-full max-h-40 object-contain rounded-xl" style={{ border: '1px solid hsla(258,78%,55%,0.15)' }} />
+          <img src={imgSrc} alt="original" className="w-full max-h-40 object-contain rounded-xl" style={{ border: '1px solid hsla(192,78%,55%,0.15)' }} />
           <p className="text-xs font-medium text-center" style={{ color: 'hsl(226,35%,45%)' }}>Original size: {origSize}</p>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1"><label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Width (px)</label><input type="number" value={width} onChange={e => setWidth(e.target.value)} className="w-full rounded-xl p-3 text-sm" style={inputStyle} /></div>
@@ -401,8 +401,8 @@ const ImageConverter = () => {
   const download = () => { if (!outputUrl) return; const a = document.createElement('a'); a.href = outputUrl; a.download = `converted.${format}`; a.click(); };
   return (
     <div className="space-y-4">
-      <label className="flex flex-col items-center gap-3 p-8 rounded-xl cursor-pointer" style={{ border: '2px dashed hsla(258,78%,55%,0.30)', background: 'hsla(258,78%,55%,0.03)' }}>
-        <Upload size={28} style={{ color: 'hsl(258,78%,55%)' }} /><span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Upload Image</span><input type="file" accept="image/*" className="hidden" onChange={onFile} />
+      <label className="flex flex-col items-center gap-3 p-8 rounded-xl cursor-pointer" style={{ border: '2px dashed hsla(192,78%,55%,0.30)', background: 'hsla(192,78%,55%,0.03)' }}>
+        <Upload size={28} style={{ color: 'hsl(192,78%,55%)' }} /><span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Upload Image</span><input type="file" accept="image/*" className="hidden" onChange={onFile} />
       </label>
       {imgSrc && (
         <>
@@ -412,7 +412,7 @@ const ImageConverter = () => {
             <div className="flex gap-2">
               {(['png', 'jpeg', 'webp'] as const).map(f => (
                 <button key={f} onClick={() => setFormat(f)} className="flex-1 py-2 rounded-xl text-sm font-bold transition-all"
-                  style={{ background: format === f ? 'hsl(258,78%,55%)' : 'hsla(258,78%,55%,0.08)', color: format === f ? 'white' : 'hsl(258,78%,50%)', border: `1.5px solid ${format === f ? 'transparent' : 'hsla(258,78%,55%,0.20)'}` }}>
+                  style={{ background: format === f ? 'hsl(192,78%,55%)' : 'hsla(192,78%,55%,0.08)', color: format === f ? 'white' : 'hsl(192,78%,50%)', border: `1.5px solid ${format === f ? 'transparent' : 'hsla(192,78%,55%,0.20)'}` }}>
                   .{f.toUpperCase()}
                 </button>
               ))}
@@ -420,8 +420,8 @@ const ImageConverter = () => {
           </div>
           {format !== 'png' && (
             <div className="space-y-2">
-              <div className="flex justify-between text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}><span>Quality</span><span style={{ color: 'hsl(258,78%,50%)' }}>{quality}%</span></div>
-              <input type="range" min={10} max={100} value={quality} onChange={e => setQuality(Number(e.target.value))} className="w-full accent-violet-600 cursor-pointer" />
+              <div className="flex justify-between text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}><span>Quality</span><span style={{ color: 'hsl(192,78%,50%)' }}>{quality}%</span></div>
+              <input type="range" min={10} max={100} value={quality} onChange={e => setQuality(Number(e.target.value))} className="w-full accent-cyan-600 cursor-pointer" />
             </div>
           )}
           <PrimaryBtn onClick={convert}><RotateCcw size={14} />Convert</PrimaryBtn>
@@ -465,15 +465,15 @@ const ImageCompressor = () => {
   const download = () => { if (!outputUrl) return; const a = document.createElement('a'); a.href = outputUrl; a.download = 'compressed.jpg'; a.click(); };
   return (
     <div className="space-y-4">
-      <label className="flex flex-col items-center gap-3 p-8 rounded-xl cursor-pointer" style={{ border: '2px dashed hsla(258,78%,55%,0.30)', background: 'hsla(258,78%,55%,0.03)' }}>
-        <Upload size={28} style={{ color: 'hsl(258,78%,55%)' }} /><span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Upload Image</span><input type="file" accept="image/*" className="hidden" onChange={onFile} />
+      <label className="flex flex-col items-center gap-3 p-8 rounded-xl cursor-pointer" style={{ border: '2px dashed hsla(192,78%,55%,0.30)', background: 'hsla(192,78%,55%,0.03)' }}>
+        <Upload size={28} style={{ color: 'hsl(192,78%,55%)' }} /><span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Upload Image</span><input type="file" accept="image/*" className="hidden" onChange={onFile} />
       </label>
       {imgSrc && (
         <>
           <img src={imgSrc} alt="orig" className="w-full max-h-36 object-contain rounded-xl" />
           <div className="space-y-2">
-            <div className="flex justify-between text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}><span>Quality</span><span style={{ color: 'hsl(258,78%,50%)' }}>{quality}%</span></div>
-            <input type="range" min={10} max={99} value={quality} onChange={e => setQuality(Number(e.target.value))} className="w-full accent-violet-600 cursor-pointer" />
+            <div className="flex justify-between text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}><span>Quality</span><span style={{ color: 'hsl(192,78%,50%)' }}>{quality}%</span></div>
+            <input type="range" min={10} max={99} value={quality} onChange={e => setQuality(Number(e.target.value))} className="w-full accent-cyan-600 cursor-pointer" />
           </div>
           <PrimaryBtn onClick={compress}><Scissors size={14} />Compress</PrimaryBtn>
         </>
@@ -529,10 +529,10 @@ const HashtagGenerator = () => {
   const copyAll = async () => { await navigator.clipboard.writeText(tags.join(' ')); };
   return (
     <div className="space-y-4">
-      <div className="flex gap-2 p-1 rounded-xl" style={{ background: 'hsla(258,78%,55%,0.06)' }}>
+      <div className="flex gap-2 p-1 rounded-xl" style={{ background: 'hsla(192,78%,55%,0.06)' }}>
         {(['instagram', 'facebook', 'tiktok', 'youtube'] as const).map(p => (
           <button key={p} onClick={() => setPlatform(p)} className="flex-1 py-1.5 rounded-lg text-xs font-bold transition-all"
-            style={{ background: platform === p ? 'hsl(258,78%,55%)' : 'transparent', color: platform === p ? 'white' : 'hsl(258,78%,50%)' }}>
+            style={{ background: platform === p ? 'hsl(192,78%,55%)' : 'transparent', color: platform === p ? 'white' : 'hsl(192,78%,50%)' }}>
             {p.charAt(0).toUpperCase() + p.slice(1)}
           </button>
         ))}
@@ -544,7 +544,7 @@ const HashtagGenerator = () => {
           <div className="flex flex-wrap gap-2">
             {tags.map(t => (
               <span key={t} className="px-3 py-1.5 rounded-full text-xs font-bold cursor-pointer transition-all hover:scale-105"
-                style={{ background: 'hsla(258,78%,55%,0.10)', color: 'hsl(258,78%,45%)', border: '1px solid hsla(258,78%,55%,0.22)' }}
+                style={{ background: 'hsla(192,78%,55%,0.10)', color: 'hsl(192,78%,45%)', border: '1px solid hsla(192,78%,55%,0.22)' }}
                 onClick={() => navigator.clipboard.writeText(t)}>{t}</span>
             ))}
           </div>
@@ -764,8 +764,8 @@ const WatermarkTool = () => {
   const download = () => { if (!outputUrl) return; const a = document.createElement('a'); a.href = outputUrl; a.download = 'watermarked.png'; a.click(); };
   return (
     <div className="space-y-4">
-      <label className="flex flex-col items-center gap-3 p-8 rounded-xl cursor-pointer" style={{ border: '2px dashed hsla(258,78%,55%,0.30)', background: 'hsla(258,78%,55%,0.03)' }}>
-        <Upload size={28} style={{ color: 'hsl(258,78%,55%)' }} />
+      <label className="flex flex-col items-center gap-3 p-8 rounded-xl cursor-pointer" style={{ border: '2px dashed hsla(192,78%,55%,0.30)', background: 'hsla(192,78%,55%,0.03)' }}>
+        <Upload size={28} style={{ color: 'hsl(192,78%,55%)' }} />
         <span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Upload Image</span>
         <input type="file" accept="image/*" className="hidden" onChange={onFile} />
       </label>
@@ -787,12 +787,12 @@ const WatermarkTool = () => {
           </div>
           <div className="space-y-1">
             <label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Font Size: {fontSize}px</label>
-            <input type="range" min={16} max={80} value={fontSize} onChange={e => setFontSize(Number(e.target.value))} className="w-full mt-2 cursor-pointer" style={{ accentColor: 'hsl(258,78%,55%)' }} />
+            <input type="range" min={16} max={80} value={fontSize} onChange={e => setFontSize(Number(e.target.value))} className="w-full mt-2 cursor-pointer" style={{ accentColor: 'hsl(192,78%,55%)' }} />
           </div>
         </div>
         <div className="space-y-1">
-          <div className="flex justify-between text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}><span>Opacity</span><span style={{ color: 'hsl(258,78%,50%)' }}>{opacity}%</span></div>
-          <input type="range" min={10} max={100} value={opacity} onChange={e => setOpacity(Number(e.target.value))} className="w-full cursor-pointer" style={{ accentColor: 'hsl(258,78%,55%)' }} />
+          <div className="flex justify-between text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}><span>Opacity</span><span style={{ color: 'hsl(192,78%,50%)' }}>{opacity}%</span></div>
+          <input type="range" min={10} max={100} value={opacity} onChange={e => setOpacity(Number(e.target.value))} className="w-full cursor-pointer" style={{ accentColor: 'hsl(192,78%,55%)' }} />
         </div>
         <PrimaryBtn onClick={applyWatermark}><Stamp size={14} />Add Watermark</PrimaryBtn>
       </>}
@@ -1123,7 +1123,7 @@ const PdfMergeTool = () => {
 
 const PdfCompressTool = () => (
   <div className="space-y-4">
-    <div className="rounded-2xl p-6 text-center space-y-4" style={{ background: 'linear-gradient(135deg, hsla(200,90%,45%,0.06), hsla(258,78%,55%,0.06))', border: '1.5px solid hsla(200,90%,45%,0.20)' }}>
+    <div className="rounded-2xl p-6 text-center space-y-4" style={{ background: 'linear-gradient(135deg, hsla(200,90%,45%,0.06), hsla(192,78%,55%,0.06))', border: '1.5px solid hsla(200,90%,45%,0.20)' }}>
       <div className="w-14 h-14 rounded-2xl mx-auto flex items-center justify-center" style={{ background: 'hsla(200,90%,45%,0.12)', border: '1.5px solid hsla(200,90%,45%,0.25)' }}>
         <Minimize2 size={24} style={{ color: 'hsl(200,90%,45%)' }} />
       </div>
@@ -1141,7 +1141,7 @@ const PdfCompressTool = () => (
 
 const PdfSplitTool = () => (
   <div className="space-y-4">
-    <div className="rounded-2xl p-6 text-center space-y-4" style={{ background: 'linear-gradient(135deg, hsla(38,92%,50%,0.06), hsla(258,78%,55%,0.06))', border: '1.5px solid hsla(38,92%,50%,0.20)' }}>
+    <div className="rounded-2xl p-6 text-center space-y-4" style={{ background: 'linear-gradient(135deg, hsla(38,92%,50%,0.06), hsla(192,78%,55%,0.06))', border: '1.5px solid hsla(38,92%,50%,0.20)' }}>
       <div className="w-14 h-14 rounded-2xl mx-auto flex items-center justify-center" style={{ background: 'hsla(38,92%,50%,0.12)', border: '1.5px solid hsla(38,92%,50%,0.25)' }}>
         <SplitSquareVertical size={24} style={{ color: 'hsl(38,92%,45%)' }} />
       </div>
@@ -1159,16 +1159,16 @@ const PdfSplitTool = () => (
 
 const PdfLockTool = () => (
   <div className="space-y-4">
-    <div className="rounded-2xl p-6 text-center space-y-4" style={{ background: 'linear-gradient(135deg, hsla(258,78%,55%,0.06), hsla(162,72%,38%,0.06))', border: '1.5px solid hsla(258,78%,55%,0.20)' }}>
-      <div className="w-14 h-14 rounded-2xl mx-auto flex items-center justify-center" style={{ background: 'hsla(258,78%,55%,0.12)', border: '1.5px solid hsla(258,78%,55%,0.25)' }}>
-        <FileLock2 size={24} style={{ color: 'hsl(258,78%,55%)' }} />
+    <div className="rounded-2xl p-6 text-center space-y-4" style={{ background: 'linear-gradient(135deg, hsla(192,78%,55%,0.06), hsla(162,72%,38%,0.06))', border: '1.5px solid hsla(192,78%,55%,0.20)' }}>
+      <div className="w-14 h-14 rounded-2xl mx-auto flex items-center justify-center" style={{ background: 'hsla(192,78%,55%,0.12)', border: '1.5px solid hsla(192,78%,55%,0.25)' }}>
+        <FileLock2 size={24} style={{ color: 'hsl(192,78%,55%)' }} />
       </div>
       <h3 className="font-bold" style={{ color: 'hsl(226,35%,18%)' }}>PDF Lock / Unlock</h3>
       <p className="text-sm" style={{ color: 'hsl(226,35%,45%)' }}>Add password protection or remove it from your PDF files.</p>
       <div className="flex gap-2 justify-center flex-wrap">
         {[['Protect PDF', 'https://ilovepdf.com/protect_pdf'], ['Unlock PDF', 'https://ilovepdf.com/unlock_pdf'], ['smallpdf.com', 'https://smallpdf.com/protect-pdf']].map(([label, href]) => (
           <a key={label} href={href} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold"
-            style={{ background: 'hsl(258,78%,55%)', color: 'white' }}>{label} <ArrowRight size={12} /></a>
+            style={{ background: 'hsl(192,78%,55%)', color: 'white' }}>{label} <ArrowRight size={12} /></a>
         ))}
       </div>
     </div>
@@ -1183,15 +1183,15 @@ type Category = { id: string; label: string; emoji: string; color: string; tools
 
 const CATEGORIES: Category[] = [
   {
-    id: 'utility', label: 'Utility Tools', emoji: '⚙️', color: 'hsl(258,78%,55%)',
+    id: 'utility', label: 'Utility Tools', emoji: '⚙️', color: 'hsl(192,78%,55%)',
     tools: [
       { id: 'password-gen', icon: <Shield size={20} />, title: 'Password Generator', subtitle: 'Generate strong secure passwords', color: 'hsl(162,72%,38%)', badge: 'Secure', component: <PasswordGenerator /> },
       { id: 'case-converter', icon: <Type size={20} />, title: 'Case Converter', subtitle: 'Convert text case easily', color: 'hsl(200,90%,45%)', component: <CaseConverter /> },
       { id: 'age-calculator', icon: <Clock size={20} />, title: 'Age Calculator', subtitle: 'Exact age in years, months & days', color: 'hsl(38,92%,50%)', component: <AgeCalculator /> },
       { id: 'profit-calculator', icon: <DollarSign size={20} />, title: 'Profit Calculator', subtitle: 'Calculate profit, loss & margin', color: 'hsl(162,72%,38%)', component: <ProfitCalculator /> },
-      { id: 'url-encoder', icon: <Link2 size={20} />, title: 'URL Encoder/Decoder', subtitle: 'Encode & decode URLs', color: 'hsl(258,78%,55%)', component: <UrlEncoder /> },
-      { id: 'base64', icon: <FileText size={20} />, title: 'Base64 Encoder', subtitle: 'Convert text to Base64', color: 'hsl(330,85%,55%)', component: <Base64Tool /> },
-      { id: 'qr-generator', icon: <QrCode size={20} />, title: 'QR Code Generator', subtitle: 'Create custom color QR codes', color: 'hsl(258,78%,55%)', badge: 'New', component: <QrGenerator /> },
+      { id: 'url-encoder', icon: <Link2 size={20} />, title: 'URL Encoder/Decoder', subtitle: 'Encode & decode URLs', color: 'hsl(192,78%,55%)', component: <UrlEncoder /> },
+      { id: 'base64', icon: <FileText size={20} />, title: 'Base64 Encoder', subtitle: 'Convert text to Base64', color: 'hsl(24,85%,55%)', component: <Base64Tool /> },
+      { id: 'qr-generator', icon: <QrCode size={20} />, title: 'QR Code Generator', subtitle: 'Create custom color QR codes', color: 'hsl(192,78%,55%)', badge: 'New', component: <QrGenerator /> },
       { id: 'hashtag-gen', icon: <Hash size={20} />, title: 'Hashtag Generator', subtitle: 'Generate hashtags with AI', color: 'hsl(200,90%,45%)', badge: 'AI', component: <HashtagGenerator /> },
     ]
   },
@@ -1199,38 +1199,38 @@ const CATEGORIES: Category[] = [
     id: 'image', label: 'Image Tools', emoji: '🖼️', color: 'hsl(200,90%,45%)',
     tools: [
       { id: 'img-resizer', icon: <Maximize2 size={20} />, title: 'Image Resizer', subtitle: 'Resize images to custom dimensions', color: 'hsl(200,90%,45%)', badge: 'New', component: <ImageResizer /> },
-      { id: 'img-converter', icon: <RotateCcw size={20} />, title: 'Image Converter', subtitle: 'Convert PNG ↔ JPG ↔ WebP', color: 'hsl(258,78%,55%)', badge: 'New', component: <ImageConverter /> },
+      { id: 'img-converter', icon: <RotateCcw size={20} />, title: 'Image Converter', subtitle: 'Convert PNG ↔ JPG ↔ WebP', color: 'hsl(192,78%,55%)', badge: 'New', component: <ImageConverter /> },
       { id: 'img-compressor', icon: <Scissors size={20} />, title: 'Image Compressor', subtitle: 'Reduce image size, keep quality', color: 'hsl(38,92%,50%)', badge: 'New', component: <ImageCompressor /> },
       { id: 'img-blur', icon: <Droplets size={20} />, title: 'Image Blur Tool', subtitle: 'Blur images easily', color: 'hsl(162,72%,38%)', badge: 'New', component: <ImageBlurTool /> },
-      { id: 'watermark', icon: <Stamp size={20} />, title: 'Watermark Tool', subtitle: 'Add text watermarks to images', color: 'hsl(258,78%,55%)', badge: 'New', component: <WatermarkTool /> },
+      { id: 'watermark', icon: <Stamp size={20} />, title: 'Watermark Tool', subtitle: 'Add text watermarks to images', color: 'hsl(192,78%,55%)', badge: 'New', component: <WatermarkTool /> },
       { id: 'meme-gen', icon: <Laugh size={20} />, title: 'Meme Generator', subtitle: 'Create funny memes instantly', color: 'hsl(38,92%,50%)', badge: 'New', component: <MemeGenerator /> },
       { id: 'thumbnail-maker', icon: <Film size={20} />, title: 'Thumbnail Maker', subtitle: 'Create YouTube/Social thumbnails', color: 'hsl(200,90%,45%)', badge: 'New', component: <ThumbnailMaker /> },
     ]
   },
   {
-    id: 'social', label: 'Social Media', emoji: '📱', color: 'hsl(330,85%,55%)',
+    id: 'social', label: 'Social Media', emoji: '📱', color: 'hsl(24,85%,55%)',
     tools: [
       { id: 'fb-caption', icon: <Facebook size={20} />, title: 'Facebook Caption', subtitle: 'AI-powered engaging FB captions', color: 'hsl(200,90%,45%)', badge: 'AI', component: <FacebookCaptionGen /> },
-      { id: 'tiktok-caption', icon: <Zap size={20} />, title: 'TikTok Caption', subtitle: 'Viral TikTok captions generator', color: 'hsl(330,85%,55%)', badge: 'AI', component: <TikTokCaptionGen /> },
+      { id: 'tiktok-caption', icon: <Zap size={20} />, title: 'TikTok Caption', subtitle: 'Viral TikTok captions generator', color: 'hsl(24,85%,55%)', badge: 'AI', component: <TikTokCaptionGen /> },
       { id: 'yt-title', icon: <Youtube size={20} />, title: 'YouTube Title', subtitle: 'SEO-optimized YouTube titles', color: 'hsl(0,72%,50%)', badge: 'AI', component: <YoutubeTitleGen /> },
-      { id: 'bio-gen', icon: <AtSign size={20} />, title: 'Bio Generator', subtitle: 'Create FB/Instagram bio', color: 'hsl(258,78%,55%)', badge: 'AI', component: <BioGen /> },
+      { id: 'bio-gen', icon: <AtSign size={20} />, title: 'Bio Generator', subtitle: 'Create FB/Instagram bio', color: 'hsl(192,78%,55%)', badge: 'AI', component: <BioGen /> },
       { id: 'hashtag-social', icon: <Hash size={20} />, title: 'Hashtag Generator', subtitle: 'Generate trending hashtags', color: 'hsl(200,90%,45%)', badge: 'AI', component: <HashtagGenerator /> },
     ]
   },
   {
     id: 'ai', label: 'AI Content Writer', emoji: '🤖', color: 'hsl(162,72%,38%)',
     tools: [
-      { id: 'blog-writer', icon: <BookOpen size={20} />, title: 'Blog Writer', subtitle: 'Generate full blog posts with AI', color: 'hsl(258,78%,55%)', badge: 'AI', component: <BlogWriterTool /> },
+      { id: 'blog-writer', icon: <BookOpen size={20} />, title: 'Blog Writer', subtitle: 'Generate full blog posts with AI', color: 'hsl(192,78%,55%)', badge: 'AI', component: <BlogWriterTool /> },
       { id: 'ad-copy', icon: <TrendingUp size={20} />, title: 'Ad Copy Generator', subtitle: 'Create compelling ad copy', color: 'hsl(38,92%,50%)', badge: 'AI', component: <AdCopyGen /> },
       { id: 'product-desc', icon: <Tag size={20} />, title: 'Product Description', subtitle: 'Generate product descriptions', color: 'hsl(162,72%,38%)', badge: 'AI', component: <ProductDescGen /> },
       { id: 'email-writer', icon: <Mail size={20} />, title: 'Email Writer', subtitle: 'Formal & marketing emails', color: 'hsl(200,90%,45%)', badge: 'AI', component: <EmailWriterTool /> },
-      { id: 'resume-gen', icon: <Briefcase size={20} />, title: 'Resume Generator', subtitle: 'Professional resume drafts', color: 'hsl(330,85%,55%)', badge: 'AI', component: <ResumeGen /> },
+      { id: 'resume-gen', icon: <Briefcase size={20} />, title: 'Resume Generator', subtitle: 'Professional resume drafts', color: 'hsl(24,85%,55%)', badge: 'AI', component: <ResumeGen /> },
       { id: 'grammar-fix', icon: <Check size={20} />, title: 'Grammar Fixer', subtitle: 'Fix English grammar errors', color: 'hsl(162,72%,38%)', badge: 'AI', component: <GrammarFixer /> },
-      { id: 'paraphrase', icon: <RotateCcw size={20} />, title: 'Paraphrasing Tool', subtitle: 'Rewrite text in a new way', color: 'hsl(258,78%,55%)', badge: 'AI', component: <Paraphraser /> },
+      { id: 'paraphrase', icon: <RotateCcw size={20} />, title: 'Paraphrasing Tool', subtitle: 'Rewrite text in a new way', color: 'hsl(192,78%,55%)', badge: 'AI', component: <Paraphraser /> },
       { id: 'summarize', icon: <FileText size={20} />, title: 'Text Summarizer', subtitle: 'Summarize long content', color: 'hsl(38,92%,50%)', badge: 'AI', component: <TextSummarizer /> },
       { id: 'seo-meta', icon: <Search size={20} />, title: 'SEO Meta Generator', subtitle: 'Generate title & meta description', color: 'hsl(200,90%,45%)', badge: 'AI', component: <SeoMetaGen /> },
       { id: 'business-name', icon: <Globe size={20} />, title: 'Business Name Generator', subtitle: 'Business name & domain ideas', color: 'hsl(162,72%,38%)', badge: 'AI', component: <BusinessNameGen /> },
-      { id: 'keyword-gen', icon: <Tag size={20} />, title: 'Keyword Generator', subtitle: 'Generate SEO keywords', color: 'hsl(258,78%,55%)', badge: 'AI', component: <KeywordGen /> },
+      { id: 'keyword-gen', icon: <Tag size={20} />, title: 'Keyword Generator', subtitle: 'Generate SEO keywords', color: 'hsl(192,78%,55%)', badge: 'AI', component: <KeywordGen /> },
     ]
   },
   {
@@ -1240,7 +1240,7 @@ const CATEGORIES: Category[] = [
       { id: 'pdf-split', icon: <SplitSquareVertical size={20} />, title: 'PDF Split', subtitle: 'Split PDF into separate files', color: 'hsl(38,92%,50%)', badge: 'New', component: <PdfSplitTool /> },
       { id: 'pdf-compress', icon: <Minimize2 size={20} />, title: 'PDF Compress', subtitle: 'Reduce PDF file size', color: 'hsl(200,90%,45%)', badge: 'New', component: <PdfCompressTool /> },
       { id: 'img-to-pdf', icon: <FileImage size={20} />, title: 'Image to PDF', subtitle: 'Convert images to PDF', color: 'hsl(162,72%,38%)', badge: 'New', component: <ImageToPdf /> },
-      { id: 'pdf-lock', icon: <FileLock2 size={20} />, title: 'PDF Lock/Unlock', subtitle: 'Add or remove PDF password', color: 'hsl(258,78%,55%)', badge: 'New', component: <PdfLockTool /> },
+      { id: 'pdf-lock', icon: <FileLock2 size={20} />, title: 'PDF Lock/Unlock', subtitle: 'Add or remove PDF password', color: 'hsl(192,78%,55%)', badge: 'New', component: <PdfLockTool /> },
     ]
   },
 ];
@@ -1292,24 +1292,24 @@ const FreeTools = () => {
 
       {/* ── Hero ── */}
       <section className="relative overflow-hidden py-16 px-4"
-        style={{ background: 'linear-gradient(135deg, hsla(258,78%,55%,0.07) 0%, hsla(200,90%,45%,0.05) 50%, hsla(162,72%,38%,0.06) 100%)' }}>
-        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, hsla(258,78%,55%,0.07) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+        style={{ background: 'linear-gradient(135deg, hsla(192,78%,55%,0.07) 0%, hsla(200,90%,45%,0.05) 50%, hsla(162,72%,38%,0.06) 100%)' }}>
+        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, hsla(192,78%,55%,0.07) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
         <div className="relative z-10 max-w-5xl mx-auto text-center space-y-5">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold"
             style={{ background: 'hsla(162,72%,38%,0.10)', border: '1.5px solid hsla(162,72%,38%,0.25)', color: 'hsl(162,72%,30%)' }}>
             <Gift size={14} />Completely Free — {totalTools}+ Tools
           </div>
           <h1 className="font-sora font-black text-4xl sm:text-5xl leading-tight" style={{ color: 'hsl(226,35%,12%)' }}>
-            Free Online <span style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Tools</span>
+            Free Online <span style={{ background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(200,90%,45%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Tools</span>
           </h1>
           <p className="text-base leading-relaxed max-w-2xl mx-auto" style={{ color: 'hsl(226,35%,40%)' }}>
             Image, AI, PDF, Social Media and all essential tools — no account or payment required
           </p>
           <div className="relative max-w-md mx-auto">
-            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: 'hsl(258,78%,55%)' }} />
+            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: 'hsl(192,78%,55%)' }} />
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search tools..."
               className="w-full pl-11 pr-4 py-3.5 rounded-2xl text-sm"
-              style={{ background: 'hsla(0,0%,100%,0.85)', backdropFilter: 'blur(12px)', border: '1.5px solid hsla(258,78%,55%,0.22)', color: 'hsl(226,35%,18%)', outline: 'none' }} />
+              style={{ background: 'hsla(0,0%,100%,0.85)', backdropFilter: 'blur(12px)', border: '1.5px solid hsla(192,78%,55%,0.22)', color: 'hsl(226,35%,18%)', outline: 'none' }} />
           </div>
         </div>
       </section>
@@ -1439,18 +1439,18 @@ const FreeTools = () => {
           background: 'hsla(0,0%,100%,0.72)',
           backdropFilter: 'blur(28px)',
           WebkitBackdropFilter: 'blur(28px)',
-          border: '1.5px solid hsla(258,78%,75%,0.22)',
-          boxShadow: '0 8px 40px hsla(258,78%,55%,0.10), inset 0 1px 0 hsla(0,0%,100%,0.80)',
+          border: '1.5px solid hsla(192,78%,75%,0.22)',
+          boxShadow: '0 8px 40px hsla(192,78%,55%,0.10), inset 0 1px 0 hsla(0,0%,100%,0.80)',
         }}>
 
         {/* Background decorative blobs — same as footer */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-3xl">
           <div className="absolute top-0 right-0 w-80 h-64"
-            style={{ background: 'radial-gradient(ellipse at 80% 0%, hsla(258,78%,55%,0.07), transparent 65%)' }} />
+            style={{ background: 'radial-gradient(ellipse at 80% 0%, hsla(192,78%,55%,0.07), transparent 65%)' }} />
           <div className="absolute bottom-0 left-0 w-64 h-48"
             style={{ background: 'radial-gradient(ellipse at 0% 100%, hsla(200,90%,45%,0.06), transparent 65%)' }} />
           <div className="absolute inset-0 rounded-3xl"
-            style={{ backgroundImage: 'radial-gradient(circle, hsla(258,78%,55%,0.035) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+            style={{ backgroundImage: 'radial-gradient(circle, hsla(192,78%,55%,0.035) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
         </div>
 
         <div className="relative z-10 max-w-4xl mx-auto px-8 py-14 text-center space-y-5">
@@ -1458,8 +1458,8 @@ const FreeTools = () => {
           {/* Icon */}
           <div className="w-14 h-14 rounded-2xl mx-auto flex items-center justify-center mb-2"
             style={{
-              background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))',
-              boxShadow: '0 4px 16px hsla(258,78%,55%,0.30)',
+              background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(200,90%,45%))',
+              boxShadow: '0 4px 16px hsla(192,78%,55%,0.30)',
             }}>
             <Sparkles size={22} className="text-white" />
           </div>
@@ -1481,21 +1481,21 @@ const FreeTools = () => {
               style={{
                 background: 'hsla(0,0%,100%,0.70)',
                 backdropFilter: 'blur(10px)',
-                color: 'hsl(258,78%,45%)',
-                border: '1px solid hsla(258,78%,75%,0.35)',
+                color: 'hsl(192,78%,45%)',
+                border: '1px solid hsla(192,78%,75%,0.35)',
                 boxShadow: '0 1px 4px hsla(226,35%,12%,0.05)',
               }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'hsla(258,78%,55%,0.08)'; e.currentTarget.style.boxShadow = '0 2px 10px hsla(258,78%,55%,0.15)'; }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'hsla(192,78%,55%,0.08)'; e.currentTarget.style.boxShadow = '0 2px 10px hsla(192,78%,55%,0.15)'; }}
               onMouseLeave={e => { e.currentTarget.style.background = 'hsla(0,0%,100%,0.70)'; e.currentTarget.style.boxShadow = '0 1px 4px hsla(226,35%,12%,0.05)'; }}>
               Suggest a Tool <ArrowRight size={14} />
             </a>
             <a href="/shop"
               className="flex items-center gap-2 px-6 py-2.5 rounded-lg font-bold text-sm transition-all hover:scale-105"
               style={{
-                background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))',
+                background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(200,90%,45%))',
                 color: 'white',
-                border: '1px solid hsla(258,78%,75%,0.30)',
-                boxShadow: '0 4px 16px hsla(258,78%,55%,0.30)',
+                border: '1px solid hsla(192,78%,75%,0.30)',
+                boxShadow: '0 4px 16px hsla(192,78%,55%,0.30)',
               }}>
               Browse Products <ArrowRight size={14} />
             </a>

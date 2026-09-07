@@ -40,13 +40,13 @@ interface Category {
 const CAT_META: Record<string, { icon: string; accent: string }> = {
   'Windows':          { icon: '🪟', accent: 'hsl(210,90%,55%)' },
   'Office':           { icon: '📦', accent: 'hsl(25,90%,58%)' },
-  'Software':         { icon: '💻', accent: 'hsl(263,70%,60%)' },
+  'Software':         { icon: '💻', accent: 'hsl(192,70%,60%)' },
   'VPN':              { icon: '🔒', accent: 'hsl(190,70%,48%)' },
-  'Subscription':     { icon: '🎬', accent: 'hsl(283,65%,58%)' },
+  'Subscription':     { icon: '🎬', accent: 'hsl(216,65%,58%)' },
   'Antivirus':        { icon: '🛡️', accent: 'hsl(158,64%,45%)' },
   'Streaming':        { icon: '📺', accent: 'hsl(0,80%,58%)' },
   'Microsoft Office': { icon: '📦', accent: 'hsl(25,90%,58%)' },
-  'default':          { icon: '🛒', accent: 'hsl(243,75%,60%)' },
+  'default':          { icon: '🛒', accent: 'hsl(192,75%,60%)' },
 };
 
 const SORT_OPTIONS = [
@@ -80,14 +80,14 @@ const ShopProductCard = ({ product }: { product: Product }) => {
       style={{
         border: '1.5px solid hsl(var(--border))',
         background: 'hsl(var(--background))',
-        boxShadow: '0 2px 12px hsla(258,78%,55%,0.06)',
+        boxShadow: '0 2px 12px hsla(192,78%,55%,0.06)',
       }}
       onClick={() => navigate(`/product/${product.slug}`)}>
       {/* Image */}
       <div className="relative aspect-square overflow-hidden bg-muted">
         {product.image_url
           ? <img src={product.image_url} alt={`${product.name} — Buy Online in Bangladesh at Shahed IT`} title={product.name} loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-          : <div className="w-full h-full flex items-center justify-center text-4xl" style={{ background: 'hsla(258,78%,55%,0.06)' }}>🛒</div>
+          : <div className="w-full h-full flex items-center justify-center text-4xl" style={{ background: 'hsla(192,78%,55%,0.06)' }}>🛒</div>
         }
         {outOfStock && (
           <>
@@ -103,7 +103,7 @@ const ShopProductCard = ({ product }: { product: Product }) => {
         )}
         {product.badge && (
           <span className="absolute top-2 right-2 text-[10px] font-bold text-white px-2 py-1 rounded-full"
-            style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' }}>
+            style={{ background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(200,90%,45%))' }}>
             {product.badge}
           </span>
         )}
@@ -135,7 +135,7 @@ const ShopProductCard = ({ product }: { product: Product }) => {
               }}
               aria-label={`Add ${product.name} to cart`}
               className="w-9 h-9 rounded-xl flex items-center justify-center text-white transition-all hover:scale-110 flex-shrink-0"
-              style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' }}>
+              style={{ background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(200,90%,45%))' }}>
               <ShoppingCart size={14} />
             </button>
           )}
@@ -393,21 +393,21 @@ const Shop = () => {
           <aside className="w-full lg:w-64 flex-shrink-0">
             <div className="relative rounded-3xl p-4 lg:p-5 lg:sticky lg:top-24 overflow-hidden"
               style={{
-                background: 'linear-gradient(140deg, hsla(0,0%,100%,0.78), hsla(258,60%,98%,0.65))',
+                background: 'linear-gradient(140deg, hsla(0,0%,100%,0.78), hsla(192,60%,98%,0.65))',
                 backdropFilter: 'blur(28px) saturate(180%)',
                 WebkitBackdropFilter: 'blur(28px) saturate(180%)',
                 border: '1px solid hsla(0,0%,100%,0.7)',
-                boxShadow: '0 12px 40px hsla(258,60%,40%,0.10), inset 0 1px 0 hsla(0,0%,100%,0.9)',
+                boxShadow: '0 12px 40px hsla(192,60%,40%,0.10), inset 0 1px 0 hsla(0,0%,100%,0.9)',
               }}>
               {/* Ambient blobs */}
               <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full pointer-events-none"
-                style={{ background: 'radial-gradient(circle, hsla(258,90%,66%,0.18), transparent 70%)', filter: 'blur(40px)' }} />
+                style={{ background: 'radial-gradient(circle, hsla(192,90%,66%,0.18), transparent 70%)', filter: 'blur(40px)' }} />
               <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full pointer-events-none"
                 style={{ background: 'radial-gradient(circle, hsla(199,89%,60%,0.15), transparent 70%)', filter: 'blur(40px)' }} />
 
               <div className="relative">
                 <div className="hidden lg:flex items-center gap-2 mb-4 px-1">
-                  <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(258,90%,66%), hsl(199,89%,60%))' }} />
+                  <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(192,90%,66%), hsl(199,89%,60%))' }} />
                   <div className="font-bold text-[11px] text-foreground uppercase tracking-[0.18em]">ক্যাটাগরি</div>
                 </div>
 
@@ -416,26 +416,26 @@ const Shop = () => {
                     className="group relative flex-shrink-0 lg:flex-shrink flex items-center gap-2.5 px-3 py-2.5 lg:py-3 rounded-2xl text-sm font-semibold transition-all duration-300 text-left whitespace-nowrap hover:-translate-y-0.5 overflow-hidden"
                     style={{
                       background: !activeCatSlug
-                        ? 'linear-gradient(135deg, hsla(258,90%,66%,0.18), hsla(199,89%,60%,0.14))'
+                        ? 'linear-gradient(135deg, hsla(192,90%,66%,0.18), hsla(199,89%,60%,0.14))'
                         : 'hsla(0,0%,100%,0.55)',
-                      color: !activeCatSlug ? 'hsl(258,78%,42%)' : 'hsl(var(--foreground))',
+                      color: !activeCatSlug ? 'hsl(192,78%,42%)' : 'hsl(var(--foreground))',
                       border: !activeCatSlug
-                        ? '1.5px solid hsla(258,90%,66%,0.45)'
-                        : '1px solid hsla(258,40%,80%,0.25)',
+                        ? '1.5px solid hsla(192,90%,66%,0.45)'
+                        : '1px solid hsla(192,40%,80%,0.25)',
                       boxShadow: !activeCatSlug
-                        ? '0 6px 18px hsla(258,90%,66%,0.20), inset 0 1px 0 hsla(0,0%,100%,0.7)'
-                        : '0 2px 8px hsla(258,40%,40%,0.04)',
+                        ? '0 6px 18px hsla(192,90%,66%,0.20), inset 0 1px 0 hsla(0,0%,100%,0.7)'
+                        : '0 2px 8px hsla(192,40%,40%,0.04)',
                     }}>
                     {!activeCatSlug && (
                       <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full"
-                        style={{ background: 'linear-gradient(180deg, hsl(258,90%,66%), hsl(199,89%,60%))' }} />
+                        style={{ background: 'linear-gradient(180deg, hsl(192,90%,66%), hsl(199,89%,60%))' }} />
                     )}
                     <span className="w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0 text-base"
                       style={{
                         background: !activeCatSlug
-                          ? 'linear-gradient(135deg, hsl(258,90%,66%), hsl(199,89%,60%))'
-                          : 'hsla(258,30%,90%,0.6)',
-                        boxShadow: !activeCatSlug ? '0 4px 12px hsla(258,90%,66%,0.35)' : 'none',
+                          ? 'linear-gradient(135deg, hsl(192,90%,66%), hsl(199,89%,60%))'
+                          : 'hsla(192,30%,90%,0.6)',
+                        boxShadow: !activeCatSlug ? '0 4px 12px hsla(192,90%,66%,0.35)' : 'none',
                       }}>
                       <span style={{ filter: !activeCatSlug ? 'grayscale(0)' : 'none' }}>🛒</span>
                     </span>
@@ -458,10 +458,10 @@ const Shop = () => {
                           color: isActive ? meta.accent : 'hsl(var(--foreground))',
                           border: isActive
                             ? `1.5px solid ${meta.accent}55`
-                            : '1px solid hsla(258,40%,80%,0.25)',
+                            : '1px solid hsla(192,40%,80%,0.25)',
                           boxShadow: isActive
                             ? `0 6px 18px ${meta.accent}30, inset 0 1px 0 hsla(0,0%,100%,0.7)`
-                            : '0 2px 8px hsla(258,40%,40%,0.04)',
+                            : '0 2px 8px hsla(192,40%,40%,0.04)',
                         }}>
                         {isActive && (
                           <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full"
@@ -471,7 +471,7 @@ const Shop = () => {
                           style={{
                             background: isActive
                               ? `linear-gradient(135deg, ${meta.accent}, ${meta.accent}cc)`
-                              : 'hsla(258,30%,94%,0.7)',
+                              : 'hsla(192,30%,94%,0.7)',
                             boxShadow: isActive ? `0 4px 12px ${meta.accent}45` : 'none',
                           }}>
                           {imgSrc
@@ -598,7 +598,7 @@ const Shop = () => {
                 )}
                 <button onClick={() => { setSearch(''); setCategory(''); setSearchParams({}); }}
                   className="mt-4 px-6 py-2.5 rounded-xl text-sm font-bold text-white"
-                  style={{ background: 'hsl(258,78%,55%)' }}>
+                  style={{ background: 'hsl(192,78%,55%)' }}>
                   সব দেখুন
                 </button>
               </div>

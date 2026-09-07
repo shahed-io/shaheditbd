@@ -283,12 +283,12 @@ const AdminAttributes = () => {
               <div>
                 <label className={lc}>Color Code <span className="opacity-50">(hex)</span></label>
                 <div className="flex gap-2 items-center">
-                  <input type="color" value={valForm.color_code || '#7c3aed'}
+                  <input type="color" value={valForm.color_code || '#0891b2'}
                     onChange={e => setValForm(p => ({ ...p, color_code: e.target.value }))}
                     className="w-10 h-10 rounded-lg border border-border cursor-pointer" />
                   <input value={valForm.color_code}
                     onChange={e => setValForm(p => ({ ...p, color_code: e.target.value }))}
-                    placeholder="#7c3aed" className={`${ic} flex-1`} />
+                    placeholder="#0891b2" className={`${ic} flex-1`} />
                 </div>
               </div>
             )}
@@ -334,7 +334,7 @@ const AdminAttributes = () => {
                         {attr.slug}
                       </span>
                       <span className="text-[10px] px-2 py-0.5 rounded-full border"
-                        style={{ color: 'hsl(271,91%,75%)', borderColor: 'hsla(271,91%,65%,0.3)', background: 'hsla(271,91%,65%,0.08)' }}>
+                        style={{ color: 'hsl(216,91%,75%)', borderColor: 'hsla(216,91%,65%,0.3)', background: 'hsla(216,91%,65%,0.08)' }}>
                         {ATTR_TYPES.find(t => t.value === attr.type)?.label.replace(/^[^\s]+ /, '') || attr.type}
                       </span>
                       {attr.has_archives && (

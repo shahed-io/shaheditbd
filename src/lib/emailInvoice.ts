@@ -148,7 +148,7 @@ async function buildOffscreenInvoice(rawData: InvoiceData): Promise<HTMLElement>
   const data = sanitizeBengaliDeep(rawData);
   const logoIcon = (await import('@/assets/logo.png')).default;
   const cachedLogo = await loadLogoBase64(logoIcon);
-  const brandColor = '#7c3aed';
+  const brandColor = '#0891b2';
   const brandLight = '#f3f0ff';
   const { getInvoiceHeaderTheme } = await import('./invoiceTheme');
   const hdr = getInvoiceHeaderTheme(brandColor);
@@ -163,7 +163,7 @@ async function buildOffscreenInvoice(rawData: InvoiceData): Promise<HTMLElement>
   const itemsHtml = data.items.map((item, idx) => {
     const total = item.total ?? item.quantity * item.price;
     const keyRow = item.license_key
-      ? `<div style="font-size:11px;color:#7c3aed;font-family:monospace;margin-top:4px;background:#f3f0ff;padding:3px 8px;border-radius:4px;display:inline-block">Key: ${esc(item.license_key)}</div>`
+      ? `<div style="font-size:11px;color:#0891b2;font-family:monospace;margin-top:4px;background:#f3f0ff;padding:3px 8px;border-radius:4px;display:inline-block">Key: ${esc(item.license_key)}</div>`
       : '';
     return `<tr style="border-bottom:1px solid #eee;background:${idx % 2 === 0 ? '#fff' : '#faf9ff'}">
       <td style="padding:14px;font-size:13px;color:#666;text-align:center">${idx + 1}</td>

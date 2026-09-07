@@ -27,7 +27,7 @@ const AdminBlog = () => {
   const [activeTab, setActiveTab] = useState<'posts' | 'categories' | 'comments' | 'ai-generator'>('posts');
   const [tagInput, setTagInput] = useState('');
   const [comments, setComments] = useState<any[]>([]);
-  const [catForm, setCatForm] = useState({ name: '', slug: '', description: '', color: '#7c3aed' });
+  const [catForm, setCatForm] = useState({ name: '', slug: '', description: '', color: '#0891b2' });
   const [editCat, setEditCat] = useState<any>(null);
   const [formTab, setFormTab] = useState<'content' | 'seo' | 'settings'>('content');
 
@@ -121,7 +121,7 @@ const AdminBlog = () => {
       : await supabase.from('blog_categories').insert(payload);
     if (error) { toast.error(error.message); return; }
     toast.success('ক্যাটাগরি সেভ হয়েছে!');
-    setCatForm({ name: '', slug: '', description: '', color: '#7c3aed' });
+    setCatForm({ name: '', slug: '', description: '', color: '#0891b2' });
     setEditCat(null);
     fetchAll();
   };
@@ -386,7 +386,7 @@ const AdminBlog = () => {
                 <Save size={12} /> সেভ করুন
               </button>
               {editCat && (
-                <button onClick={() => { setEditCat(null); setCatForm({ name: '', slug: '', description: '', color: '#7c3aed' }); }}
+                <button onClick={() => { setEditCat(null); setCatForm({ name: '', slug: '', description: '', color: '#0891b2' }); }}
                   className="px-4 py-2 rounded-xl glass-card border border-border text-xs text-muted-foreground hover:text-foreground">
                   বাতিল
                 </button>
@@ -404,7 +404,7 @@ const AdminBlog = () => {
                   <p className="text-[10px] text-muted-foreground font-mono">/blog/category/{cat.slug}</p>
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={() => { setEditCat(cat); setCatForm({ name: cat.name, slug: cat.slug, description: cat.description || '', color: cat.color || '#7c3aed' }); }}
+                  <button onClick={() => { setEditCat(cat); setCatForm({ name: cat.name, slug: cat.slug, description: cat.description || '', color: cat.color || '#0891b2' }); }}
                     className="p-1.5 text-muted-foreground hover:text-primary transition-colors"><Edit3 size={12} /></button>
                   <button onClick={async () => { if (confirm('ডিলিট?')) { await supabase.from('blog_categories').delete().eq('id', cat.id); fetchAll(); } }}
                     className="p-1.5 text-muted-foreground hover:text-destructive transition-colors"><Trash2 size={12} /></button>

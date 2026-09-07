@@ -15,14 +15,14 @@ import {
 
 /* ─── Editable pages registry ─── */
 const EDITABLE_PAGES = [
-  { key: 'about',           label: 'About Us',              path: '/about',           icon: '👥', color: 'hsl(258,78%,55%)' },
+  { key: 'about',           label: 'About Us',              path: '/about',           icon: '👥', color: 'hsl(192,78%,55%)' },
   { key: 'privacy',         label: 'Privacy Policy',        path: '/privacy-policy',  icon: '🔒', color: 'hsl(200,90%,45%)' },
   { key: 'terms',           label: 'Terms & Conditions',    path: '/terms-conditions',icon: '📜', color: 'hsl(38,100%,52%)' },
   { key: 'refund',          label: 'Refund Policy',         path: '/refund-policy',   icon: '💰', color: 'hsl(142,72%,38%)' },
-  { key: 'order_policy',    label: 'Order & Cancellation',  path: '/order-policy',    icon: '🛒', color: 'hsl(329,86%,56%)' },
+  { key: 'order_policy',    label: 'Order & Cancellation',  path: '/order-policy',    icon: '🛒', color: 'hsl(24,86%,56%)' },
   { key: 'delivery',        label: 'Delivery Info',         path: '/delivery-info',   icon: '🚚', color: 'hsl(180,72%,40%)' },
   { key: 'return',          label: 'Return Policy',         path: '/return-policy',   icon: '↩️',  color: 'hsl(30,90%,52%)'  },
-  { key: 'faqs',            label: 'FAQs',                  path: '/faqs',            icon: '❓', color: 'hsl(243,75%,65%)' },
+  { key: 'faqs',            label: 'FAQs',                  path: '/faqs',            icon: '❓', color: 'hsl(192,75%,65%)' },
   { key: 'contact',         label: 'Contact Us',            path: '/contact',         icon: '📞', color: 'hsl(162,72%,38%)' },
 ];
 
@@ -31,12 +31,12 @@ const ICON_OPTIONS = ['Package', 'Info', 'FileText', 'Shield', 'Globe', 'Shoppin
 
 /* ─── Available accent colors ─── */
 const COLOR_OPTIONS = [
-  { label: 'Purple',  value: 'hsl(258,78%,55%)' },
+  { label: 'Purple',  value: 'hsl(192,78%,55%)' },
   { label: 'Blue',    value: 'hsl(200,90%,45%)' },
   { label: 'Green',   value: 'hsl(162,72%,38%)' },
   { label: 'Orange',  value: 'hsl(38,100%,55%)' },
-  { label: 'Pink',    value: 'hsl(329,86%,56%)' },
-  { label: 'Indigo',  value: 'hsl(243,75%,65%)' },
+  { label: 'Pink',    value: 'hsl(24,86%,56%)' },
+  { label: 'Indigo',  value: 'hsl(192,75%,65%)' },
   { label: 'Cyan',    value: 'hsl(180,72%,40%)' },
   { label: 'Red',     value: 'hsl(0,75%,55%)' },
 ];
@@ -72,7 +72,7 @@ const LinkEditRow = ({ link, onSave, onCancel }: {
         <div className="flex items-center justify-end gap-2">
           <button onClick={() => onSave({ label, href, external })}
             className="px-3 py-1.5 rounded-lg text-xs font-bold text-white"
-            style={{ background: 'linear-gradient(135deg, hsl(243,75%,65%), hsl(263,70%,62%))' }}>
+            style={{ background: 'linear-gradient(135deg, hsl(192,75%,65%), hsl(192,70%,62%))' }}>
             <Check size={13} />
           </button>
           <button onClick={onCancel}
@@ -331,7 +331,7 @@ const AdminPages = () => {
         <div>
           <div className="flex items-center gap-2.5 mb-1">
             <div className="w-9 h-9 rounded-xl flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, hsl(243,75%,65%), hsl(263,70%,62%))', boxShadow: '0 4px 16px hsla(243,75%,65%,0.35)' }}>
+              style={{ background: 'linear-gradient(135deg, hsl(192,75%,65%), hsl(192,70%,62%))', boxShadow: '0 4px 16px hsla(192,75%,65%,0.35)' }}>
               <FileText size={17} className="text-white" />
             </div>
             <h1 className="font-sora font-black text-2xl text-foreground">Pages & Footer</h1>
@@ -353,7 +353,7 @@ const AdminPages = () => {
         <button onClick={() => setActiveTab('content')}
           className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all"
           style={activeTab === 'content'
-            ? { background: 'linear-gradient(135deg, hsl(243,75%,65%), hsl(263,70%,62%))', color: 'white', boxShadow: '0 4px 14px hsla(243,75%,65%,0.35)' }
+            ? { background: 'linear-gradient(135deg, hsl(192,75%,65%), hsl(192,70%,62%))', color: 'white', boxShadow: '0 4px 14px hsla(192,75%,65%,0.35)' }
             : { color: 'hsl(var(--muted-foreground))' }}>
           <Edit3 size={14} /> Page Content
         </button>

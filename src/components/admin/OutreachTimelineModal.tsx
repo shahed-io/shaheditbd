@@ -18,7 +18,7 @@ const EVENT_TYPES = [
   { value: 'sent',      label: 'Email Sent',  icon: Send,       color: 'hsl(220 90% 60%)' },
   { value: 'replied',   label: 'Reply Received', icon: Reply,   color: 'hsl(150 70% 45%)' },
   { value: 'follow_up', label: 'Follow-up',   icon: Clock,      color: 'hsl(40 95% 55%)' },
-  { value: 'call',      label: 'Call/Meeting',icon: Phone,      color: 'hsl(280 80% 65%)' },
+  { value: 'call',      label: 'Call/Meeting',icon: Phone,      color: 'hsl(216 80% 65%)' },
   { value: 'note',      label: 'Note',        icon: StickyNote, color: 'hsl(220 15% 60%)' },
 ];
 

@@ -290,7 +290,7 @@ const AdminCurrencies = () => {
             size="sm"
             onClick={aiAutoUpdate}
             disabled={aiUpdating}
-            className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
+            className="bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 text-white"
           >
             <Sparkles className="w-4 h-4 mr-1" />
             {aiUpdating ? "Updating…" : "AI Auto-Update Rates"}

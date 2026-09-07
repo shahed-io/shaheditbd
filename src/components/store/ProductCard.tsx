@@ -98,19 +98,19 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
             className="quick-preview-enter relative rounded-3xl overflow-hidden max-w-lg w-full border"
             style={{
               background: 'hsl(215,28%,10%)',
-              borderColor: 'hsla(271,91%,65%,0.35)',
-              boxShadow: '0 0 60px hsla(271,91%,65%,0.25), 0 32px 80px hsla(215,40%,4%,0.8)',
+              borderColor: 'hsla(216,91%,65%,0.35)',
+              boxShadow: '0 0 60px hsla(216,91%,65%,0.25), 0 32px 80px hsla(215,40%,4%,0.8)',
             }}
             onClick={e => e.stopPropagation()}
           >
             {/* Neon top border */}
-            <div className="h-[2px] w-full" style={{ background: 'linear-gradient(90deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
+            <div className="h-[2px] w-full" style={{ background: 'linear-gradient(90deg, hsl(216,91%,65%), hsl(185,90%,52%))' }} />
 
             <button
               onClick={() => setShowPreview(false)}
               aria-label="Close product preview"
               className="absolute top-4 right-4 z-10 w-9 h-9 rounded-xl flex items-center justify-center transition-all hover:scale-110"
-              style={{ background: 'hsla(271,91%,65%,0.15)', border: '1px solid hsla(271,91%,65%,0.3)', color: 'hsl(271,91%,75%)' }}
+              style={{ background: 'hsla(216,91%,65%,0.15)', border: '1px solid hsla(216,91%,65%,0.3)', color: 'hsl(216,91%,75%)' }}
             >
               <X size={16} />
             </button>
@@ -133,7 +133,7 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
                 {/* Scan line animation */}
                 <div className="absolute inset-0 pointer-events-none overflow-hidden">
                   <div className="absolute left-0 right-0 h-[2px] anim-scan"
-                    style={{ background: 'linear-gradient(90deg, transparent, hsl(271,91%,65%), transparent)', opacity: 0.7 }} />
+                    style={{ background: 'linear-gradient(90deg, transparent, hsl(216,91%,65%), transparent)', opacity: 0.7 }} />
                 </div>
                 {product.discount && (
                   <div className="absolute top-3 left-3 badge-sale text-[11px] px-2.5 py-1">-{product.discount}%</div>
@@ -160,7 +160,7 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
                 </div>
 
                 <div className="flex items-baseline gap-2">
-                  <span className="font-sora font-black text-2xl" style={{ color: 'hsl(271,91%,75%)' }}>{fmtPrice(product.price)}</span>
+                  <span className="font-sora font-black text-2xl" style={{ color: 'hsl(216,91%,75%)' }}>{fmtPrice(product.price)}</span>
                   {product.originalPrice && (
                     <span className="text-sm line-through text-muted-foreground">{fmtPrice(product.originalPrice)}</span>
                   )}
@@ -174,7 +174,7 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
                     { icon: <Clock size={10} />, text: '24/7 Support' },
                   ].map(f => (
                     <span key={f.text} className="flex items-center gap-1 text-[10px] font-semibold px-2.5 py-1 rounded-full"
-                      style={{ background: 'hsla(271,91%,65%,0.1)', border: '1px solid hsla(271,91%,65%,0.2)', color: 'hsl(271,91%,75%)' }}>
+                      style={{ background: 'hsla(216,91%,65%,0.1)', border: '1px solid hsla(216,91%,65%,0.2)', color: 'hsl(216,91%,75%)' }}>
                       {f.icon} {f.text}
                     </span>
                   ))}
@@ -184,13 +184,13 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
                   <button
                     onClick={() => { setShowPreview(false); setShowModal(true); }}
                     className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.02]"
-                    style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))', boxShadow: '0 0 20px hsla(271,91%,65%,0.4)' }}>
+                    style={{ background: 'linear-gradient(135deg, hsl(216,91%,65%), hsl(185,90%,52%))', boxShadow: '0 0 20px hsla(216,91%,65%,0.4)' }}>
                     <CreditCard size={13} className="inline mr-1.5" /> Buy Now
                   </button>
                   <button
                     onClick={() => { setShowPreview(false); navigate(`/product/${product.slug || product.id}`); }}
                     className="w-full py-2.5 rounded-xl text-sm font-semibold transition-all hover:scale-[1.01] flex items-center justify-center gap-1.5"
-                    style={{ background: 'hsla(271,91%,65%,0.08)', border: '1px solid hsla(271,91%,65%,0.2)', color: 'hsl(271,91%,75%)' }}>
+                    style={{ background: 'hsla(216,91%,65%,0.08)', border: '1px solid hsla(216,91%,65%,0.2)', color: 'hsl(216,91%,75%)' }}>
                     View Details →
                   </button>
                 </div>
@@ -220,10 +220,10 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
             ? `opacity 0.3s ease ${delay}s, box-shadow 0.3s ease`
             : `opacity 0.6s ease ${delay}s, transform 0.6s ease ${delay}s, box-shadow 0.4s ease`,
           boxShadow: clicked
-            ? '0 4px 30px hsla(271,91%,65%,0.25), 0 0 0 2px hsla(185,90%,52%,0.4)'
+            ? '0 4px 30px hsla(216,91%,65%,0.25), 0 0 0 2px hsla(185,90%,52%,0.4)'
             : isHovered
-            ? '0 8px 32px hsla(271,91%,65%,0.15), 0 0 0 1px hsla(271,91%,65%,0.25)'
-            : '0 2px 16px hsla(258,78%,55%,0.08), 0 0 0 1px hsla(258,78%,55%,0.1)',
+            ? '0 8px 32px hsla(216,91%,65%,0.15), 0 0 0 1px hsla(216,91%,65%,0.25)'
+            : '0 2px 16px hsla(192,78%,55%,0.08), 0 0 0 1px hsla(192,78%,55%,0.1)',
           borderRadius: 'var(--radius)',
         }}
         onMouseEnter={() => {
@@ -254,7 +254,7 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
               style={{
                 inset: '-2px',
                 borderRadius: 'inherit',
-                background: 'conic-gradient(from 0deg, transparent 0deg, hsl(271,91%,75%) 30deg, hsl(185,90%,62%) 60deg, hsl(320,90%,72%) 90deg, transparent 120deg, transparent 360deg)',
+                background: 'conic-gradient(from 0deg, transparent 0deg, hsl(216,91%,75%) 30deg, hsl(185,90%,62%) 60deg, hsl(24,90%,72%) 90deg, transparent 120deg, transparent 360deg)',
                 animation: 'orbit-spin 1.1s cubic-bezier(0.22,1,0.36,1) forwards',
               }}
             />
@@ -270,7 +270,7 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
             <span
               className="absolute inset-0 rounded-[inherit]"
               style={{
-                boxShadow: 'inset 0 0 0 2px hsla(271,91%,65%,0.8), 0 0 20px hsla(271,91%,65%,0.6), 0 0 50px hsla(185,90%,52%,0.3)',
+                boxShadow: 'inset 0 0 0 2px hsla(216,91%,65%,0.8), 0 0 20px hsla(216,91%,65%,0.6), 0 0 50px hsla(185,90%,52%,0.3)',
                 animation: 'orbit-glow 1.1s ease-out forwards',
               }}
             />
@@ -290,7 +290,7 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
               const dx = Math.cos((angle * Math.PI) / 180) * dist;
               const dy = Math.sin((angle * Math.PI) / 180) * dist;
               const size = 4 + Math.random() * 5;
-              const colors = ['hsl(271,91%,75%)', 'hsl(185,90%,62%)', 'hsl(320,90%,72%)', 'hsl(40,100%,65%)'];
+              const colors = ['hsl(216,91%,75%)', 'hsl(185,90%,62%)', 'hsl(24,90%,72%)', 'hsl(40,100%,65%)'];
               const color = colors[i % colors.length];
               return (
                 <span
@@ -361,7 +361,7 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
             style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.04) 40%, transparent 70%)' }} />
           {/* Bottom light glow — soft upward light */}
           <div className="absolute bottom-0 left-0 right-0 h-24 transition-opacity duration-500 opacity-0 group-hover:opacity-100 pointer-events-none"
-            style={{ background: 'linear-gradient(to top, hsla(271,91%,75%,0.18) 0%, hsla(185,90%,62%,0.08) 50%, transparent 100%)' }} />
+            style={{ background: 'linear-gradient(to top, hsla(216,91%,75%,0.18) 0%, hsla(185,90%,62%,0.08) 50%, transparent 100%)' }} />
 
           {/* Badges — bottom-left so they don't clash with the brand pills baked into the card image */}
           <div className="absolute bottom-2.5 left-2.5 flex flex-row gap-1.5 z-10">
@@ -398,12 +398,12 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
               opacity: isHovered ? 1 : 0,
               transform: isHovered ? 'translateY(0) scale(1)' : 'translateY(-6px) scale(0.8)',
               transition: 'all 0.25s cubic-bezier(0.34,1.56,0.64,1)',
-              background: wishlisted ? 'hsla(320,90%,62%,0.2)' : 'hsla(215,28%,14%,0.9)',
-              border: `1px solid ${wishlisted ? 'hsla(320,90%,62%,0.5)' : 'hsla(271,91%,65%,0.2)'}`,
+              background: wishlisted ? 'hsla(24,90%,62%,0.2)' : 'hsla(215,28%,14%,0.9)',
+              border: `1px solid ${wishlisted ? 'hsla(24,90%,62%,0.5)' : 'hsla(216,91%,65%,0.2)'}`,
               backdropFilter: 'blur(8px)',
             }}
           >
-            <Heart size={13} fill={wishlisted ? 'hsl(320,90%,62%)' : 'none'} color={wishlisted ? 'hsl(320,90%,62%)' : 'hsl(var(--muted-foreground))'} />
+            <Heart size={13} fill={wishlisted ? 'hsl(24,90%,62%)' : 'none'} color={wishlisted ? 'hsl(24,90%,62%)' : 'hsl(var(--muted-foreground))'} />
           </button>
 
           {/* Bottom hover label */}
@@ -420,7 +420,7 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
         <div className="p-4 flex flex-col gap-2.5 flex-1 relative z-10">
           <h3
             className="text-sm font-semibold leading-snug line-clamp-2 text-foreground transition-colors duration-200 min-h-[2.5rem]"
-            onMouseEnter={e => (e.currentTarget.style.color = 'hsl(271,91%,75%)')}
+            onMouseEnter={e => (e.currentTarget.style.color = 'hsl(216,91%,75%)')}
             onMouseLeave={e => (e.currentTarget.style.color = '')}
           >
             {product.name}
@@ -437,7 +437,7 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
           </div>
 
           <div className="flex items-baseline gap-2 mt-auto">
-            <span className="text-xl font-sora font-black" style={{ color: 'hsl(271,91%,75%)' }}>
+            <span className="text-xl font-sora font-black" style={{ color: 'hsl(216,91%,75%)' }}>
               {fmtPrice(product.price)}
             </span>
             {product.originalPrice && (

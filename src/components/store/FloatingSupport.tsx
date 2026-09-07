@@ -650,8 +650,8 @@ const FloatingSupport = () => {
               if (config.chat_enabled) {
                 items.push(renderPill(
                   'ai', openChat,
-                  'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
-                  'hsla(271,91%,60%,0.55)',
+                  'linear-gradient(135deg, hsl(216,91%,65%), hsl(185,90%,52%))',
+                  'hsla(216,91%,60%,0.55)',
                   AiLogo, config.ai_label, config.ai_subtitle,
                 ));
               }
@@ -751,7 +751,7 @@ const FloatingSupport = () => {
             aria-label="সাপোর্ট"
           >
             {/* Outer halo / glow */}
-            <span className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-br from-[#7c3aed] to-[#ec4899] opacity-40 blur-xl group-hover:opacity-60 transition-opacity" />
+            <span className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-br from-[#0891b2] to-[#f97316] opacity-40 blur-xl group-hover:opacity-60 transition-opacity" />
 
             {/* Main glass body */}
             <span className="relative w-full h-full flex items-center justify-center rounded-full border border-white/30 bg-white/20 backdrop-blur-xl shadow-[0_8px_32px_rgba(124,58,237,0.3)] overflow-hidden">
@@ -760,13 +760,13 @@ const FloatingSupport = () => {
                 className="absolute inset-0 pointer-events-none"
                 style={{
                   background: (chatOpen || menuOpen)
-                    ? 'linear-gradient(45deg, hsla(258,80%,97%,0.85), hsla(271,75%,94%,0.75))'
+                    ? 'linear-gradient(45deg, hsla(192,80%,97%,0.85), hsla(216,75%,94%,0.75))'
                     : 'linear-gradient(45deg, rgba(124,58,237,0.60), rgba(6,182,212,0.40), rgba(236,72,153,0.60))'
                 }}
               />
               {/* Icon */}
               {(chatOpen || menuOpen)
-                ? <X size={26} strokeWidth={2.4} className="fs-x-rotate relative z-10" style={{ color: 'hsl(258,78%,45%)' }} />
+                ? <X size={26} strokeWidth={2.4} className="fs-x-rotate relative z-10" style={{ color: 'hsl(192,78%,45%)' }} />
                 : <MessageCircleMore size={28} strokeWidth={2} className="relative z-10 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.28)]" />
               }
               {/* Premium highlight rim */}
@@ -808,16 +808,16 @@ const FloatingSupport = () => {
         .fs-pill {
           position: relative;
           background:
-            linear-gradient(135deg, hsla(258,85%,98%,0.78) 0%, hsla(271,80%,95%,0.72) 45%, hsla(220,85%,97%,0.78) 100%);
-          border: 1.5px solid hsla(258,70%,75%,0.55);
+            linear-gradient(135deg, hsla(192,85%,98%,0.78) 0%, hsla(216,80%,95%,0.72) 45%, hsla(220,85%,97%,0.78) 100%);
+          border: 1.5px solid hsla(192,70%,75%,0.55);
           backdrop-filter: blur(44px) saturate(220%);
           -webkit-backdrop-filter: blur(44px) saturate(220%);
           box-shadow:
-            0 22px 48px -12px hsla(258,70%,35%,0.32),
-            0 8px 18px -6px hsla(258,60%,40%,0.18),
-            0 0 0 1px hsla(258,60%,80%,0.22),
+            0 22px 48px -12px hsla(192,70%,35%,0.32),
+            0 8px 18px -6px hsla(192,60%,40%,0.18),
+            0 0 0 1px hsla(192,60%,80%,0.22),
             inset 0 1.5px 0 hsla(0,0%,100%,0.9),
-            inset 0 -1px 0 hsla(258,40%,85%,0.4);
+            inset 0 -1px 0 hsla(192,40%,85%,0.4);
           transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, border-color 0.3s ease;
           overflow: hidden;
           isolation: isolate;
@@ -841,11 +841,11 @@ const FloatingSupport = () => {
           border-radius: 9999px;
           padding: 1px;
           background: linear-gradient(120deg,
-            var(--pill-glow, hsla(271,91%,65%,0.55)),
+            var(--pill-glow, hsla(216,91%,65%,0.55)),
             hsla(0,0%,100%,0.4),
             var(--pill-glow, hsla(185,90%,52%,0.45)),
             hsla(0,0%,100%,0.3),
-            var(--pill-glow, hsla(271,91%,65%,0.55)));
+            var(--pill-glow, hsla(216,91%,65%,0.55)));
           background-size: 280% 280%;
           -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
           -webkit-mask-composite: xor;
@@ -872,10 +872,10 @@ const FloatingSupport = () => {
         }
         .fs-pill:hover {
           transform: translateX(-4px) translateY(-2px);
-          border-color: hsla(258,60%,65%,0.5);
+          border-color: hsla(192,60%,65%,0.5);
           box-shadow:
-            0 24px 56px -12px hsla(258,40%,30%,0.28),
-            0 0 28px -4px var(--pill-glow, hsla(258,60%,60%,0.2)),
+            0 24px 56px -12px hsla(192,40%,30%,0.28),
+            0 0 28px -4px var(--pill-glow, hsla(192,60%,60%,0.2)),
             inset 0 1px 0 hsla(0,0%,100%,1);
         }
         .fs-pill:hover::before { opacity: 1; }
@@ -891,7 +891,7 @@ const FloatingSupport = () => {
           transform: translateX(-2px);
           transition: transform 0.3s ease, color 0.3s ease;
         }
-        .fs-pill:hover .fs-pill-arrow { transform: translateX(2px); color: hsl(258,78%,55%); }
+        .fs-pill:hover .fs-pill-arrow { transform: translateX(2px); color: hsl(192,78%,55%); }
 
         /* Icon container with conic-gradient halo ring */
         .fs-icon-wrap { display: inline-flex; padding: 2px; }
@@ -924,15 +924,15 @@ const FloatingSupport = () => {
         /* Premium menu heading pill — sits above stacked options */
         .fs-menu-heading {
           position: relative;
-          background: linear-gradient(135deg, hsla(258,85%,98%,0.85), hsla(271,80%,95%,0.78) 50%, hsla(220,85%,97%,0.85));
-          border: 1.5px solid hsla(258,70%,75%,0.6);
+          background: linear-gradient(135deg, hsla(192,85%,98%,0.85), hsla(216,80%,95%,0.78) 50%, hsla(220,85%,97%,0.85));
+          border: 1.5px solid hsla(192,70%,75%,0.6);
           backdrop-filter: blur(44px) saturate(220%);
           -webkit-backdrop-filter: blur(44px) saturate(220%);
           box-shadow:
-            0 12px 28px -8px hsla(258,70%,35%,0.28),
-            0 0 22px -6px hsla(271,91%,60%,0.35),
+            0 12px 28px -8px hsla(192,70%,35%,0.28),
+            0 0 22px -6px hsla(216,91%,60%,0.35),
             inset 0 1.5px 0 hsla(0,0%,100%,0.95),
-            inset 0 -1px 0 hsla(258,40%,85%,0.4);
+            inset 0 -1px 0 hsla(192,40%,85%,0.4);
           overflow: hidden;
         }
         .fs-menu-heading::before {
@@ -942,11 +942,11 @@ const FloatingSupport = () => {
           border-radius: 9999px;
           padding: 1.5px;
           background: linear-gradient(120deg,
-            hsla(271,91%,65%,0.7),
+            hsla(216,91%,65%,0.7),
             hsla(0,0%,100%,0.5),
             hsla(185,90%,55%,0.6),
-            hsla(320,90%,65%,0.55),
-            hsla(271,91%,65%,0.7));
+            hsla(24,90%,65%,0.55),
+            hsla(216,91%,65%,0.7));
           background-size: 280% 280%;
           -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
           -webkit-mask-composite: xor;
@@ -958,8 +958,8 @@ const FloatingSupport = () => {
         .fs-menu-heading-dot {
           width: 6px; height: 6px;
           border-radius: 50%;
-          background: linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,55%));
-          box-shadow: 0 0 10px hsla(271,91%,60%,0.7);
+          background: linear-gradient(135deg, hsl(216,91%,65%), hsl(185,90%,55%));
+          box-shadow: 0 0 10px hsla(216,91%,60%,0.7);
           animation: fsHeadingDotPulse 2s ease-in-out infinite;
         }
         @keyframes fsHeadingDotPulse {
@@ -967,7 +967,7 @@ const FloatingSupport = () => {
           50%       { transform: scale(1.35); opacity: 0.75; }
         }
         .fs-menu-heading-text {
-          background: linear-gradient(120deg, hsl(258,78%,32%), hsl(271,85%,42%), hsl(210,85%,38%));
+          background: linear-gradient(120deg, hsl(192,78%,32%), hsl(216,85%,42%), hsl(210,85%,38%));
           -webkit-background-clip: text;
           background-clip: text;
           -webkit-text-fill-color: transparent;
@@ -976,14 +976,14 @@ const FloatingSupport = () => {
         /* Side help-pill next to FAB — premium violet-tinted glass with shine */
         .fs-help-pill {
           position: relative;
-          background: linear-gradient(135deg, hsla(258,80%,98%,0.95), hsla(271,75%,94%,0.92) 50%, hsla(220,80%,96%,0.95));
-          border: 1.5px solid hsla(258,70%,72%,0.55);
+          background: linear-gradient(135deg, hsla(192,80%,98%,0.95), hsla(216,75%,94%,0.92) 50%, hsla(220,80%,96%,0.95));
+          border: 1.5px solid hsla(192,70%,72%,0.55);
           backdrop-filter: blur(40px) saturate(200%);
           -webkit-backdrop-filter: blur(40px) saturate(200%);
           box-shadow:
-            0 18px 44px -10px hsla(258,70%,40%,0.3),
-            0 0 26px -6px hsla(271,91%,60%,0.4),
-            0 0 0 1px hsla(258,60%,75%,0.2),
+            0 18px 44px -10px hsla(192,70%,40%,0.3),
+            0 0 26px -6px hsla(216,91%,60%,0.4),
+            0 0 0 1px hsla(192,60%,75%,0.2),
             inset 0 1px 0 hsla(0,0%,100%,0.9);
           animation: fsHelpIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both, fsHelpBob 4s ease-in-out 0.6s infinite;
           overflow: hidden;
@@ -997,11 +997,11 @@ const FloatingSupport = () => {
           border-radius: 9999px;
           padding: 1.5px;
           background: linear-gradient(120deg,
-            hsla(271,91%,65%,0.65),
+            hsla(216,91%,65%,0.65),
             hsla(0,0%,100%,0.5),
             hsla(185,90%,55%,0.55),
-            hsla(320,90%,65%,0.5),
-            hsla(271,91%,65%,0.65));
+            hsla(24,90%,65%,0.5),
+            hsla(216,91%,65%,0.65));
           background-size: 280% 280%;
           -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
           -webkit-mask-composite: xor;
@@ -1027,21 +1027,21 @@ const FloatingSupport = () => {
         .fs-help-pill:hover {
           transform: translateX(-3px) translateY(-2px) scale(1.03);
           box-shadow:
-            0 24px 56px -12px hsla(258,40%,30%,0.32),
-            0 0 32px -4px hsla(271,91%,60%,0.5),
+            0 24px 56px -12px hsla(192,40%,30%,0.32),
+            0 0 32px -4px hsla(216,91%,60%,0.5),
             inset 0 1px 0 hsla(0,0%,100%,1);
         }
         .fs-help-pill:active { transform: translateX(-1px) scale(0.97); }
         .fs-help-pill--active {
-          border-color: hsla(258,70%,60%,0.7);
+          border-color: hsla(192,70%,60%,0.7);
           box-shadow:
-            0 24px 56px -12px hsla(258,60%,40%,0.4),
-            0 0 32px -4px hsla(271,91%,60%,0.55),
+            0 24px 56px -12px hsla(192,60%,40%,0.4),
+            0 0 32px -4px hsla(216,91%,60%,0.55),
             inset 0 1px 0 hsla(0,0%,100%,1);
         }
         .fs-help-pill .fs-help-title {
-          color: hsl(258,78%,28%);
-          background: linear-gradient(120deg, hsl(258,78%,32%), hsl(271,85%,42%), hsl(210,85%,40%));
+          color: hsl(192,78%,28%);
+          background: linear-gradient(120deg, hsl(192,78%,32%), hsl(216,85%,42%), hsl(210,85%,40%));
           -webkit-background-clip: text;
           background-clip: text;
           -webkit-text-fill-color: transparent;
@@ -1088,7 +1088,7 @@ const FloatingSupport = () => {
           width: 96px; height: 96px;
           border-radius: 9999px;
           background: radial-gradient(circle,
-            hsla(258,90%,85%,0.5) 0%,
+            hsla(192,90%,85%,0.5) 0%,
             hsla(220,90%,90%,0.3) 45%,
             transparent 72%);
           filter: blur(6px);
@@ -1107,11 +1107,11 @@ const FloatingSupport = () => {
           border-radius: 9999px;
           padding: 2px;
           background: conic-gradient(from 0deg,
-            hsla(271,91%,75%,0.9),
-            hsla(320,90%,70%,0.6),
+            hsla(216,91%,75%,0.9),
+            hsla(24,90%,70%,0.6),
             hsla(185,90%,65%,0.9),
             hsla(210,90%,70%,0.5),
-            hsla(271,91%,75%,0.9));
+            hsla(216,91%,75%,0.9));
           -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
           -webkit-mask-composite: xor;
                   mask-composite: exclude;
@@ -1138,11 +1138,11 @@ const FloatingSupport = () => {
         .fab-ring {
           position: absolute;
           border-radius: 9999px;
-          border: 1.5px solid hsla(271,91%,65%,0.5);
+          border: 1.5px solid hsla(216,91%,65%,0.5);
           animation: fab-ring-out 2.4s cubic-bezier(0.2,0.8,0.4,1) infinite;
           pointer-events: none;
         }
-        .fab-ring-1 { width: 56px; height: 56px; animation-delay: 0s; border-color: hsla(258,80%,72%,0.45); }
+        .fab-ring-1 { width: 56px; height: 56px; animation-delay: 0s; border-color: hsla(192,80%,72%,0.45); }
         .fab-ring-2 { width: 56px; height: 56px; animation-delay: 1.2s; border-color: hsla(220,85%,75%,0.4); }
         @keyframes fab-ring-out {
           0%   { transform: scale(1);   opacity: 0.9; }
@@ -1157,7 +1157,7 @@ const FloatingSupport = () => {
         }
         .fab-soft-ring-1 {
           width: 78px; height: 78px;
-          background: radial-gradient(circle, hsla(258,90%,90%,0.55) 0%, hsla(258,90%,92%,0) 75%);
+          background: radial-gradient(circle, hsla(192,90%,90%,0.55) 0%, hsla(192,90%,92%,0) 75%);
         }
         .fab-soft-ring-2 {
           width: 100px; height: 100px;
@@ -1168,7 +1168,7 @@ const FloatingSupport = () => {
           background: radial-gradient(circle, hsla(195,95%,93%,0.38) 0%, hsla(195,95%,95%,0) 70%);
         }
         .fab-pulse-inner {
-          background: radial-gradient(circle, hsla(271,91%,65%,0.35) 0%, transparent 70%);
+          background: radial-gradient(circle, hsla(216,91%,65%,0.35) 0%, transparent 70%);
           animation: fab-inner-pulse 2s ease-in-out infinite;
         }
         @keyframes fab-inner-pulse {
@@ -1178,16 +1178,16 @@ const FloatingSupport = () => {
 
         /* Close (X) button on the help pill */
         .fs-help-close {
-          background: hsla(258,40%,92%,0.65);
-          color: hsl(258,40%,38%);
-          border: 1px solid hsla(258,50%,75%,0.5);
+          background: hsla(192,40%,92%,0.65);
+          color: hsl(192,40%,38%);
+          border: 1px solid hsla(192,50%,75%,0.5);
           transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
         }
         .fs-help-close:hover {
-          background: hsla(258,80%,55%,0.92);
+          background: hsla(192,80%,55%,0.92);
           color: #fff;
           transform: scale(1.08);
-          border-color: hsla(258,80%,55%,0.92);
+          border-color: hsla(192,80%,55%,0.92);
         }
         .fs-help-close:active { transform: scale(0.92); }
         .fab-comet {
@@ -1196,7 +1196,7 @@ const FloatingSupport = () => {
           height: 8px;
           border-radius: 50%;
           background: hsl(185,90%,62%);
-          box-shadow: 0 0 10px hsl(185,90%,62%), 0 0 20px hsl(271,91%,65%);
+          box-shadow: 0 0 10px hsl(185,90%,62%), 0 0 20px hsl(216,91%,65%);
           transform-origin: 38px 38px;
           animation: fab-orbit 3s linear infinite;
           pointer-events: none;
@@ -1204,8 +1204,8 @@ const FloatingSupport = () => {
           left: calc(50% - 4px);
         }
         .fab-comet-2 {
-          background: hsl(320,90%,68%);
-          box-shadow: 0 0 10px hsl(320,90%,68%), 0 0 20px hsl(271,91%,65%);
+          background: hsl(24,90%,68%);
+          box-shadow: 0 0 10px hsl(24,90%,68%), 0 0 20px hsl(216,91%,65%);
           animation-duration: 4.5s;
           animation-direction: reverse;
         }

@@ -1,7 +1,7 @@
 import { Zap, Mail, Package, CheckCircle, AlertTriangle, Clock } from 'lucide-react';
 import PolicyLayout, { SectionCard, Bullet, ContactCard } from '@/components/store/PolicyLayout';
 
-const A = 'hsl(258,78%,55%)';
+const A = 'hsl(192,78%,55%)';
 const B = 'hsl(200,90%,45%)';
 
 const DeliveryInfo = () => (
@@ -26,7 +26,7 @@ const DeliveryInfo = () => (
           style={{
             background: 'linear-gradient(155deg, rgba(255,255,255,0.70), rgba(255,255,255,0.45))',
             backdropFilter: 'blur(16px)',
-            border: `1px solid hsla(258,78%,75%,0.22)`,
+            border: `1px solid hsla(192,78%,75%,0.22)`,
           }}>
           <div className="text-2xl mb-1">{card.icon}</div>
           <p className="font-sora font-black text-[15px]" style={{ color: card.color }}>{card.time}</p>
@@ -37,7 +37,7 @@ const DeliveryInfo = () => (
 
     {/* Important notice */}
     <div className="rounded-2xl p-4 mb-6 flex items-start gap-3"
-      style={{ background: 'hsla(258,78%,55%,0.07)', border: '1.5px solid hsla(258,78%,55%,0.22)' }}>
+      style={{ background: 'hsla(192,78%,55%,0.07)', border: '1.5px solid hsla(192,78%,55%,0.22)' }}>
       <Clock size={18} style={{ color: A, flexShrink: 0, marginTop: 2 }} />
       <div>
         <p className="font-bold text-[13px] mb-1" style={{ color: 'hsl(226,35%,14%)' }}>ডেলিভারি সময় সম্পর্কে গুরুত্বপূর্ণ তথ্য</p>
@@ -66,7 +66,7 @@ const DeliveryInfo = () => (
           { name: 'Domain, Hosting ও Business Email', delivery: 'সেটআপ + অ্যাক্সেস হ্যান্ডওভার', time: '১–২ কর্মদিবস' },
         ].map(item => (
           <div key={item.name} className="flex items-center gap-3 rounded-xl px-3 py-2.5"
-            style={{ background: 'hsla(258,78%,55%,0.05)', border: '1px solid hsla(258,78%,55%,0.10)' }}>
+            style={{ background: 'hsla(192,78%,55%,0.05)', border: '1px solid hsla(192,78%,55%,0.10)' }}>
             <div className="flex-1">
               <p className="font-semibold text-[12px]" style={{ color: 'hsl(226,35%,18%)' }}>{item.name}</p>
               <p className="text-[11px]" style={{ color: 'hsl(226,25%,50%)' }}>{item.delivery}</p>

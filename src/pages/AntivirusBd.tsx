@@ -9,7 +9,7 @@ import { breadcrumbSchema, itemListSchema } from '@/components/seo/schemas';
 import { supabase } from '@/integrations/supabase/client';
 import { useCurrency } from '@/hooks/useCurrency';
 
-const A = 'hsl(258,78%,55%)';
+const A = 'hsl(192,78%,55%)';
 const B = 'hsl(200,90%,45%)';
 
 interface AvProduct {
@@ -100,7 +100,7 @@ const AntivirusBd = () => {
           style={{
             background: 'linear-gradient(155deg, rgba(255,255,255,0.72), rgba(255,255,255,0.45))',
             backdropFilter: 'blur(24px)',
-            border: '1px solid hsla(258,78%,75%,0.24)',
+            border: '1px solid hsla(192,78%,75%,0.24)',
           }}>
           <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full"
             style={{ background: `${A}14`, color: A }}>
@@ -119,7 +119,7 @@ const AntivirusBd = () => {
           <div className="grid sm:grid-cols-3 gap-3 mt-5">
             {HIGHLIGHTS.map(h => (
               <div key={h.title} className="rounded-2xl p-3.5"
-                style={{ background: 'hsla(258,78%,55%,0.06)', border: '1px solid hsla(258,78%,55%,0.14)' }}>
+                style={{ background: 'hsla(192,78%,55%,0.06)', border: '1px solid hsla(192,78%,55%,0.14)' }}>
                 <p className="flex items-center gap-1.5 font-bold text-[12.5px]" style={{ color: A }}>{h.icon}{h.title}</p>
                 <p className="text-[12px] mt-1 leading-relaxed" style={{ color: 'hsl(226,25%,45%)' }}>{h.text}</p>
               </div>
@@ -135,7 +135,7 @@ const AntivirusBd = () => {
           {loading ? (
             <div className="grid sm:grid-cols-2 gap-3">
               {[0, 1, 2, 3].map(i => (
-                <div key={i} className="rounded-2xl h-[104px] animate-pulse" style={{ background: 'hsla(258,78%,55%,0.07)' }} />
+                <div key={i} className="rounded-2xl h-[104px] animate-pulse" style={{ background: 'hsla(192,78%,55%,0.07)' }} />
               ))}
             </div>
           ) : products.length === 0 ? (
@@ -150,7 +150,7 @@ const AntivirusBd = () => {
                   style={{
                     background: 'linear-gradient(155deg, rgba(255,255,255,0.70), rgba(255,255,255,0.45))',
                     backdropFilter: 'blur(18px)',
-                    border: '1px solid hsla(258,78%,75%,0.22)',
+                    border: '1px solid hsla(192,78%,75%,0.22)',
                   }}>
                   {p.image_url && (
                     <img src={p.image_url} alt={`${p.name} — Shahed IT`} loading="lazy"
@@ -184,7 +184,7 @@ const AntivirusBd = () => {
           <div className="space-y-3">
             {GUIDE.map(item => (
               <div key={item.q} className="rounded-2xl p-4"
-                style={{ background: 'hsla(258,78%,55%,0.05)', border: '1px solid hsla(258,78%,55%,0.12)' }}>
+                style={{ background: 'hsla(192,78%,55%,0.05)', border: '1px solid hsla(192,78%,55%,0.12)' }}>
                 <h3 className="font-bold text-[13px] mb-1" style={{ color: 'hsl(226,35%,16%)' }}>{item.q}</h3>
                 <p className="text-[12.5px] leading-relaxed" style={{ color: 'hsl(226,25%,42%)' }}>{item.a}</p>
               </div>

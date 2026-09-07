@@ -68,9 +68,9 @@ const Checkout = () => {
 
   // Build dynamic payment methods from DB config
   const paymentMethods = [
-    { id: 'bkash_online' as PaymentMethod, label: 'bKash (Online)', color: 'from-pink-600 to-rose-700', number: '', type: 'bKash PGW', logo: bkashLogoSrc },
+    { id: 'bkash_online' as PaymentMethod, label: 'bKash (Online)', color: 'from-orange-600 to-rose-700', number: '', type: 'bKash PGW', logo: bkashLogoSrc },
     ...(paypalCfg.is_active && paypalCfg.client_id ? [
-      { id: 'paypal' as PaymentMethod, label: 'PayPal', color: 'from-blue-600 to-indigo-700', number: '', type: 'PayPal Checkout', logo: 'https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg' },
+      { id: 'paypal' as PaymentMethod, label: 'PayPal', color: 'from-blue-600 to-blue-700', number: '', type: 'PayPal Checkout', logo: 'https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg' },
     ] : []),
     ...(uddoktapayCfg.is_active && uddoktapayCfg.api_key ? [
       { id: 'uddoktapay' as PaymentMethod, label: 'Uddoktapay (bKash/Nagad/Card)', color: 'from-emerald-600 to-teal-700', number: '', type: 'Uddoktapay Aggregator', logo: 'https://uddoktapay.com/assets/img/logo.png' },
@@ -90,7 +90,7 @@ const Checkout = () => {
         type: c.type,
         logo: getPaymentLogo(c.id, c.logoUrl, bkashContent.logo_url) || undefined,
       })),
-    { id: 'wallet' as PaymentMethod, label: 'Wallet', color: 'from-violet-600 to-purple-700', number: '', type: 'Wallet Balance', logo: undefined as string | undefined },
+    { id: 'wallet' as PaymentMethod, label: 'Wallet', color: 'from-cyan-600 to-sky-700', number: '', type: 'Wallet Balance', logo: undefined as string | undefined },
   ];
 
   // Filter payment methods: guests can't use wallet
@@ -1152,8 +1152,8 @@ const Checkout = () => {
             const checking = isInstant && instantDelivered === null;
             const pending = isInstant && instantDelivered === false;
             const accent = isWallet
-              ? { ring: 'bg-violet-500/20 border-2 border-violet-500/40', icon: 'text-violet-500', tint: 'from-violet-500/10 to-violet-600/5 border-violet-400/30', label: 'text-violet-700', source: 'ওয়ালেট' }
-              : { ring: 'bg-pink-500/20 border-2 border-pink-500/40', icon: 'text-pink-500', tint: 'from-pink-500/10 to-pink-600/5 border-pink-400/30', label: 'text-pink-600', source: 'bKash' };
+              ? { ring: 'bg-cyan-500/20 border-2 border-cyan-500/40', icon: 'text-cyan-500', tint: 'from-cyan-500/10 to-cyan-600/5 border-cyan-400/30', label: 'text-cyan-700', source: 'ওয়ালেট' }
+              : { ring: 'bg-orange-500/20 border-2 border-orange-500/40', icon: 'text-orange-500', tint: 'from-orange-500/10 to-orange-600/5 border-orange-400/30', label: 'text-orange-600', source: 'bKash' };
             const ringClass = delivered ? accent.ring : 'bg-green-500/20 border-2 border-green-500/40';
             const iconClass = delivered ? accent.icon : 'text-green-400';
             return (
@@ -1389,7 +1389,7 @@ const Checkout = () => {
 
             {/* bKash Online (PGW) info block */}
             {paymentMethod === 'bkash_online' && (
-              <div className="rounded-xl p-4 space-y-2 border bg-pink-500/10 border-pink-500/30">
+              <div className="rounded-xl p-4 space-y-2 border bg-orange-500/10 border-orange-500/30">
                 <div className="flex items-center gap-2 text-sm font-bold text-foreground">
                   <img src={bkashLogoSrc} alt="bKash" className="h-6 w-auto" />
                   <span>{bkashContent.title}</span>
@@ -1402,7 +1402,7 @@ const Checkout = () => {
                     {bkashContent.bullets.map((b, i) => <li key={i}>{b}</li>)}
                   </ul>
                 )}
-                <p className="text-xs text-pink-600 dark:text-pink-300 font-medium">
+                <p className="text-xs text-orange-600 dark:text-orange-300 font-medium">
                   {bkashContent.amount_prefix} ৳{payableTotal.toLocaleString()}
                 </p>
               </div>
@@ -1570,8 +1570,8 @@ const Checkout = () => {
           ) : (() => {
             const isWallet = paymentMethod === 'wallet';
             const gradient = isWallet
-              ? 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 45%, #4c1d95 100%)'
-              : 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 45%, #1e3a8a 100%)';
+              ? 'linear-gradient(135deg, #22d3ee 0%, #0e7490 45%, #164e63 100%)'
+              : 'linear-gradient(135deg, #0891b2 0%, #2563eb 45%, #1e3a8a 100%)';
             const shadow = isWallet
               ? 'shadow-[0_12px_40px_-8px_rgba(139,92,246,0.55)] hover:shadow-[0_18px_55px_-8px_rgba(139,92,246,0.75)]'
               : 'shadow-[0_12px_40px_-8px_rgba(79,70,229,0.55)] hover:shadow-[0_18px_55px_-8px_rgba(79,70,229,0.75)]';
@@ -1590,7 +1590,7 @@ const Checkout = () => {
                   ) : (
                     <>
                       <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-white/40">
-                        {isWallet ? <Wallet size={16} className="text-violet-700" /> : <FileText size={16} className="text-indigo-700" />}
+                        {isWallet ? <Wallet size={16} className="text-cyan-700" /> : <FileText size={16} className="text-blue-700" />}
                       </span>
                       <span className="tracking-wide">
                         {isWallet ? 'ওয়ালেট দিয়ে পরিশোধ করুন' : 'অর্ডার কনফার্ম করুন'}

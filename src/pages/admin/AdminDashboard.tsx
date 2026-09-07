@@ -143,13 +143,13 @@ const AdminDashboard = () => {
     };
     const PM_META: Record<string, { label: string; color: string; gradient: string }> = {
       bkash_personal:  { label: 'bKash Personal',  color: '#e2136e', gradient: 'linear-gradient(90deg, #e2136e, #ff5ba0)' },
-      bkash_online:    { label: 'bKash Online',    color: '#d61667', gradient: 'linear-gradient(90deg, #d61667, #f472b6)' },
-      bkash_merchant:  { label: 'bKash Merchant',  color: '#b81259', gradient: 'linear-gradient(90deg, #b81259, #ec4899)' },
+      bkash_online:    { label: 'bKash Online',    color: '#d61667', gradient: 'linear-gradient(90deg, #d61667, #fb923c)' },
+      bkash_merchant:  { label: 'bKash Merchant',  color: '#b81259', gradient: 'linear-gradient(90deg, #b81259, #f97316)' },
       nagad:           { label: 'Nagad',           color: '#f37021', gradient: 'linear-gradient(90deg, #f37021, #fbbf24)' },
-      rocket:          { label: 'Rocket',          color: '#8b3f98', gradient: 'linear-gradient(90deg, #8b3f98, #c084fc)' },
+      rocket:          { label: 'Rocket',          color: '#8b3f98', gradient: 'linear-gradient(90deg, #8b3f98, #38bdf8)' },
       upay:            { label: 'Upay',            color: '#0ea5e9', gradient: 'linear-gradient(90deg, #0ea5e9, #67e8f9)' },
       bank_transfer:   { label: 'Bank Transfer',   color: '#0f766e', gradient: 'linear-gradient(90deg, #0f766e, #5eead4)' },
-      wallet:          { label: 'Wallet',          color: '#7c3aed', gradient: 'linear-gradient(90deg, #7c3aed, #a78bfa)' },
+      wallet:          { label: 'Wallet',          color: '#0891b2', gradient: 'linear-gradient(90deg, #0891b2, #67e8f9)' },
       card:            { label: 'Card Payment',    color: '#1e40af', gradient: 'linear-gradient(90deg, #1e40af, #60a5fa)' },
       other:           { label: 'Other',           color: '#64748b', gradient: 'linear-gradient(90deg, #64748b, #cbd5e1)' },
     };
@@ -278,7 +278,7 @@ const AdminDashboard = () => {
     processing: 'text-blue-500 bg-blue-500/10',
     completed: 'text-green-500 bg-green-500/10',
     cancelled: 'text-destructive bg-destructive/10',
-    refunded: 'text-purple-500 bg-purple-500/10',
+    refunded: 'text-sky-500 bg-sky-500/10',
   };
 
   const notifIcon: Record<string, { icon: any; color: string }> = {
@@ -375,7 +375,7 @@ const AdminDashboard = () => {
         </h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard label="Today's Sales" value={stats.todaySales} icon={TrendingUp} gradient="from-primary to-primary/60" prefix="৳" onClick={() => navigate('/ceo/orders?filter=today')} />
-          <StatCard label="This Month Revenue" value={stats.monthRevenue} icon={DollarSign} gradient="from-purple-500 to-violet-600" prefix="৳" changePct={revenueGrowth} change="vs last month" onClick={() => navigate('/ceo/orders?filter=month')} />
+          <StatCard label="This Month Revenue" value={stats.monthRevenue} icon={DollarSign} gradient="from-sky-500 to-cyan-600" prefix="৳" changePct={revenueGrowth} change="vs last month" onClick={() => navigate('/ceo/orders?filter=month')} />
           <StatCard label="This Year Revenue" value={stats.yearRevenue} icon={TrendingUp} gradient="from-green-500 to-emerald-600" prefix="৳" onClick={() => navigate('/ceo/orders?filter=year')} />
           <StatCard label="Total Revenue (All)" value={stats.totalRevenue} icon={DollarSign} gradient="from-orange-500 to-amber-500" prefix="৳" onClick={() => navigate('/ceo/orders')} />
         </div>

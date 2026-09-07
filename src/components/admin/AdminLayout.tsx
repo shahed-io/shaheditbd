@@ -380,7 +380,7 @@ const AdminLayout = () => {
             </div>
           ) : (
             <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-              style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(258,78%,42%))', boxShadow: '0 4px 14px hsla(258,78%,55%,0.30)' }}>
+              style={{ background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(192,78%,42%))', boxShadow: '0 4px 14px hsla(192,78%,55%,0.30)' }}>
               <span className="text-white text-xs font-black" style={{ fontFamily: 'Sora, sans-serif' }}>S</span>
             </div>
           )}
@@ -391,13 +391,13 @@ const AdminLayout = () => {
           <div className="px-3 pt-3 pb-1">
             <button
               onClick={() => { setCmdOpen(true); if (isMobile) setMobileSidebarOpen(false); }}
-              className="group w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl border border-violet-200/60 bg-white/60 hover:bg-white/90 hover:border-violet-300/80 dark:border-violet-800/40 dark:bg-violet-950/20 dark:hover:bg-violet-950/40 transition-all backdrop-blur-md"
+              className="group w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl border border-cyan-200/60 bg-white/60 hover:bg-white/90 hover:border-cyan-300/80 dark:border-cyan-800/40 dark:bg-cyan-950/20 dark:hover:bg-cyan-950/40 transition-all backdrop-blur-md"
             >
-              <Search size={14} className="text-violet-500 group-hover:text-violet-600 transition-colors flex-shrink-0" strokeWidth={2.5} />
+              <Search size={14} className="text-cyan-500 group-hover:text-cyan-600 transition-colors flex-shrink-0" strokeWidth={2.5} />
               <span className="flex-1 text-left text-xs text-muted-foreground/90 group-hover:text-foreground transition-colors truncate">
                 Search anything…
               </span>
-              <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md border border-violet-200/70 bg-white/80 dark:bg-violet-950/40 dark:border-violet-800/40 font-mono text-[9px] font-bold text-violet-600 dark:text-violet-400 flex-shrink-0">
+              <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md border border-cyan-200/70 bg-white/80 dark:bg-cyan-950/40 dark:border-cyan-800/40 font-mono text-[9px] font-bold text-cyan-600 dark:text-cyan-400 flex-shrink-0">
                 ⌘K
               </kbd>
             </button>
@@ -461,7 +461,7 @@ const AdminLayout = () => {
                                 </span>
                               )}
                               {item.badge === 'new' && (
-                                <span className="text-[9px] font-bold text-white bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 px-1.5 py-0.5 rounded-md shadow-sm">NEW</span>
+                                <span className="text-[9px] font-bold text-white bg-gradient-to-r from-cyan-500 via-blue-500 to-orange-500 px-1.5 py-0.5 rounded-md shadow-sm">NEW</span>
                               )}
                             </>
                           )}
@@ -486,7 +486,7 @@ const AdminLayout = () => {
           {showLabel ? (
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
-                style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(258,78%,42%))', boxShadow: '0 4px 14px hsla(258,78%,55%,0.30)' }}>
+                style={{ background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(192,78%,42%))', boxShadow: '0 4px 14px hsla(192,78%,55%,0.30)' }}>
                 A
               </div>
               <div className="flex-1 min-w-0">
@@ -557,10 +557,10 @@ const AdminLayout = () => {
           {/* Page title + breadcrumb */}
           <div className="min-w-0 flex-1">
             {pageMeta.section && (
-              <div className="hidden sm:flex items-center gap-2 text-[10px] font-semibold text-violet-500/80 uppercase tracking-[1.2px]">
+              <div className="hidden sm:flex items-center gap-2 text-[10px] font-semibold text-cyan-500/80 uppercase tracking-[1.2px]">
                 <span>{pageMeta.section}</span>
                 <ChevronRight size={10} />
-                <span style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(258,78%,42%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{pageMeta.title}</span>
+                <span style={{ background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(192,78%,42%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{pageMeta.title}</span>
               </div>
             )}
             <h1 className="text-base sm:text-lg font-bold text-foreground truncate leading-tight" style={{ fontFamily: 'Sora, sans-serif', letterSpacing: '-0.01em' }}>
@@ -572,14 +572,14 @@ const AdminLayout = () => {
             {/* Premium Search Trigger (header) */}
             <button
               onClick={() => setCmdOpen(true)}
-              className="group hidden sm:inline-flex items-center gap-2.5 h-9 px-3 rounded-xl border border-violet-200/60 bg-white/60 hover:bg-white/90 hover:border-violet-300/80 dark:border-violet-800/40 dark:bg-violet-950/20 dark:hover:bg-violet-950/40 backdrop-blur-md transition-all"
+              className="group hidden sm:inline-flex items-center gap-2.5 h-9 px-3 rounded-xl border border-cyan-200/60 bg-white/60 hover:bg-white/90 hover:border-cyan-300/80 dark:border-cyan-800/40 dark:bg-cyan-950/20 dark:hover:bg-cyan-950/40 backdrop-blur-md transition-all"
               aria-label="Search admin"
             >
-              <Search size={14} className="text-violet-500 group-hover:text-violet-600 transition-colors" strokeWidth={2.5} />
+              <Search size={14} className="text-cyan-500 group-hover:text-cyan-600 transition-colors" strokeWidth={2.5} />
               <span className="text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">
                 Search…
               </span>
-              <kbd className="inline-flex items-center px-1.5 py-0.5 rounded-md border border-violet-200/70 bg-white/80 dark:bg-violet-950/40 dark:border-violet-800/40 font-mono text-[9px] font-bold text-violet-600 dark:text-violet-400">
+              <kbd className="inline-flex items-center px-1.5 py-0.5 rounded-md border border-cyan-200/70 bg-white/80 dark:bg-cyan-950/40 dark:border-cyan-800/40 font-mono text-[9px] font-bold text-cyan-600 dark:text-cyan-400">
                 ⌘K
               </kbd>
             </button>
@@ -596,7 +596,7 @@ const AdminLayout = () => {
               <Bell size={18} />
               {notifCount > 0 && (
                 <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold text-white flex items-center justify-center shadow-md ring-2 ring-white"
-                  style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(258,78%,42%))' }}>
+                  style={{ background: 'linear-gradient(135deg, hsl(192,78%,55%), hsl(192,78%,42%))' }}>
                   {notifCount > 9 ? '9+' : notifCount}
                 </span>
               )}
