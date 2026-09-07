@@ -65,14 +65,14 @@ const BrandLogo = ({ size = 'md', className = '' }: BrandLogoProps) => {
             Shahed
           </span>
 
-          {/* "Store" — indigo-blue */}
+          {/* "IT" — indigo-blue */}
           <span className="ml-[0.3em]" style={{
             background: 'linear-gradient(135deg, hsl(210,90%,52%) 0%, hsl(243,80%,55%) 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
           }}>
-            Store
+            IT
           </span>
         </div>
 
