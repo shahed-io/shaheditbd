@@ -322,12 +322,12 @@ const Navbar = () => {
           className="relative w-full flex items-center overflow-hidden rounded-2xl text-[11px] font-medium"
           style={{
             background:
-              'linear-gradient(120deg, hsla(0,0%,100%,0.78) 0%, hsla(0,0%,100%,0.62) 50%, hsla(0,0%,100%,0.78) 100%)',
+              'linear-gradient(120deg, hsla(276,67%,10%,0.90) 0%, hsla(276,55%,7%,0.82) 50%, hsla(276,67%,10%,0.90) 100%)',
             backdropFilter: 'blur(28px) saturate(180%)',
             WebkitBackdropFilter: 'blur(28px) saturate(180%)',
-            border: '1px solid hsla(0,0%,100%,0.85)',
+            border: '1px solid hsla(var(--accent-h),var(--accent-s),var(--accent-l),0.18)',
             boxShadow:
-              '0 8px 32px -12px hsla(var(--brand-h),40%,40%,0.18), inset 0 1px 0 hsla(0,0%,100%,0.95), inset 0 -1px 0 hsla(var(--brand-h),30%,80%,0.20)',
+              '0 8px 32px -12px hsla(var(--accent-h),var(--accent-s),var(--accent-l),0.28), inset 0 1px 0 hsla(0,0%,100%,0.08)',
             color: 'hsl(var(--foreground))',
             padding: '7px 10px',
           }}
@@ -359,7 +359,7 @@ const Navbar = () => {
               aria-label="Call us"
               className="group flex items-center gap-1.5 px-2.5 py-[5px] rounded-full transition-all hover:scale-[1.04] active:scale-95"
               style={{
-                background: 'hsla(0,0%,100%,0.85)',
+                background: 'hsla(276,35%,14%,0.88)',
                 border: '1px solid hsla(var(--brand-h),40%,80%,0.45)',
                 boxShadow: '0 1px 4px hsla(var(--brand-h),30%,40%,0.10)',
                 color: 'hsl(var(--foreground))',
@@ -373,7 +373,7 @@ const Navbar = () => {
               aria-label="Email us"
               className="hidden md:flex group items-center gap-1.5 px-2.5 py-[5px] rounded-full transition-all hover:scale-[1.04] active:scale-95"
               style={{
-                background: 'hsla(0,0%,100%,0.85)',
+                background: 'hsla(276,35%,14%,0.88)',
                 border: '1px solid hsla(var(--brand-h),40%,80%,0.45)',
                 boxShadow: '0 1px 4px hsla(var(--brand-h),30%,40%,0.10)',
                 color: 'hsl(var(--foreground))',
@@ -552,9 +552,9 @@ const Navbar = () => {
                     onFocus={() => prefetchRoute(link.href)}
                     className="flex items-center px-2.5 lg:px-4 py-1.5 rounded-lg transition-all duration-200 font-bold text-xs lg:text-sm whitespace-nowrap hover:scale-105"
                     style={{
-                      background: isActive ? 'linear-gradient(135deg, hsla(258,78%,55%,0.12), hsla(200,90%,45%,0.08))' : 'hsla(0,0%,100%,0.70)',
+                      background: isActive ? 'linear-gradient(135deg, hsla(var(--primary),0.24), hsla(var(--accent),0.14))' : 'hsla(276,35%,14%,0.76)',
                       backdropFilter: 'blur(10px)',
-                      color: isActive ? 'hsl(258,78%,45%)' : 'hsl(226,35%,30%)',
+                      color: isActive ? 'hsl(var(--accent))' : 'hsl(var(--foreground))',
                       border: isActive ? '1px solid hsla(258,78%,75%,0.35)' : '1px solid hsla(258,78%,75%,0.22)',
                       boxShadow: isActive
                         ? '0 2px 10px hsla(258,78%,55%,0.15)'
@@ -562,10 +562,10 @@ const Navbar = () => {
                     }}
                     onMouseLeave={e => {
                       if (!isActive) {
-                        e.currentTarget.style.color = 'hsl(226,35%,30%)';
+                        e.currentTarget.style.color = 'hsl(var(--foreground))';
                         e.currentTarget.style.border = '1px solid hsla(258,78%,75%,0.22)';
                         e.currentTarget.style.boxShadow = '0 1px 4px hsla(226,35%,12%,0.05)';
-                        e.currentTarget.style.background = 'hsla(0,0%,100%,0.70)';
+                        e.currentTarget.style.background = 'hsla(276,35%,14%,0.76)';
                       }
                     }}>
                     {link.label}
