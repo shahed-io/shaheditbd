@@ -1,8 +1,8 @@
 # Roadmap
 
 ## Homepage reference palette
-- [ ] Apply the reference black-purple-magenta palette without changing layout, sizing, positions, or content
-- [ ] Verify the unchanged homepage structure on desktop and mobile
+- [x] Apply the reference black-purple-magenta palette without changing layout, sizing, positions, or content
+- [x] Verify the unchanged homepage structure on desktop and mobile
 
 ## Rebrand to Shahed IT (shahedit.com)
 - [x] Replace store name with "Shahed IT" across app, edge functions, manifest, index.html, emails, memory rules
