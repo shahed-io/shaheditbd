@@ -31,7 +31,7 @@ import certifiedBadge from '@/assets/certified-badge.png.asset.json';
 
 import { useAuth } from '@/hooks/useAuth';
 
-const WA = '8801840099853';
+const WA = '8801820060046';
 const PLACEHOLDER = 'https://placehold.co/600x600/0d1117/a855f7?text=Product';
 
 // Fix: replace Bengali danda (।) after English/numbers with English period (.)

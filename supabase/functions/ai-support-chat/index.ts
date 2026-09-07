@@ -428,7 +428,7 @@ serve(async (req) => {
     }
 
     // ============ 4) SUPPORT PHONE ============
-    let supportPhone = "01840099853";
+    let supportPhone = "01820060046";
     try {
       const { data: phoneRow } = await supabase
         .from("site_settings")

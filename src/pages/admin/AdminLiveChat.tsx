@@ -56,11 +56,11 @@ interface LiveSet {
 const DEFAULT_SETTINGS: LiveChatSettings = {
   chat_enabled: true,
   whatsapp_enabled: true,
-  whatsapp_number: '8801840099853',
+  whatsapp_number: '8801820060046',
   whatsapp_label: 'WhatsApp',
   whatsapp_subtitle: 'সরাসরি কথা বলুন',
   phone_enabled: true,
-  phone_number: '01840-099853',
+  phone_number: '01820-060046',
   phone_label: 'ফোন করুন',
   phone_subtitle: 'সরাসরি কল করুন',
   ai_label: 'AI Support',
@@ -759,7 +759,7 @@ const AdminLiveChat = () => {
                   onChange={e => setSettings(prev => ({ ...prev, whatsapp_number: e.target.value }))}
                   placeholder="8801XXXXXXXXX"
                 />
-                <p className="text-xs text-muted-foreground">উদাহরণ: 8801840099853 (+ ছাড়া)</p>
+                <p className="text-xs text-muted-foreground">উদাহরণ: 8801820060046 (+ ছাড়া)</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -796,7 +796,7 @@ const AdminLiveChat = () => {
                 <Input
                   value={settings.phone_number}
                   onChange={e => setSettings(prev => ({ ...prev, phone_number: e.target.value }))}
-                  placeholder="01840-099853"
+                  placeholder="01820-060046"
                 />
                 <p className="text-xs text-muted-foreground">যেকোনো ফরম্যাটে দিতে পারেন — অটো ক্লিন হয়ে কলে যাবে</p>
               </div>

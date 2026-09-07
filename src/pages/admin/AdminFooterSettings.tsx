@@ -107,7 +107,7 @@ const AdminFooterSettings = () => {
       {/* Contact Info */}
       <Section title="যোগাযোগ তথ্য" icon={Phone}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Field label="ফোন নম্বর" k="phone" placeholder="01840-099853" />
+          <Field label="ফোন নম্বর" k="phone" placeholder="01820-060046" />
           <Field label="ইমেইল" k="email" placeholder="info@shahedit.com" />
           <Field label="ঠিকানা" k="address" placeholder="Rajshahi, Bangladesh" />
         </div>

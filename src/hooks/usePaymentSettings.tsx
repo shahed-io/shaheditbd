@@ -48,7 +48,7 @@ export const DEFAULT_PAYMENT_CONFIGS: PaymentMethodConfig[] = [
   {
     id: 'nagad',
     label: 'Nagad',
-    number: '01840099853',
+    number: '01820060046',
     type: 'Send Money',
     logoUrl: '',
     accentColor: 'hsl(22,100%,48%)',
@@ -68,7 +68,7 @@ export const DEFAULT_PAYMENT_CONFIGS: PaymentMethodConfig[] = [
   {
     id: 'rocket',
     label: 'Rocket',
-    number: '01840099853',
+    number: '01820060046',
     type: 'Send Money',
     logoUrl: '',
     accentColor: 'hsl(270,80%,48%)',
@@ -88,7 +88,7 @@ export const DEFAULT_PAYMENT_CONFIGS: PaymentMethodConfig[] = [
   {
     id: 'upay',
     label: 'উপায় (Upay)',
-    number: '01840099853',
+    number: '01820060046',
     type: 'Send Money',
     logoUrl: '',
     accentColor: 'hsl(142,70%,38%)',
@@ -108,7 +108,7 @@ export const DEFAULT_PAYMENT_CONFIGS: PaymentMethodConfig[] = [
   {
     id: 'bkash_merchant',
     label: 'BKash Merchant',
-    number: '01840099853',
+    number: '01820060046',
     type: 'Merchant Payment',
     logoUrl: '',
     accentColor: 'hsl(338,85%,42%)',

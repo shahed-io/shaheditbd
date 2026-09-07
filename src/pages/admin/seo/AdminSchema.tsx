@@ -41,9 +41,9 @@ const AdminSchema = () => {
     { key: 'name', label: 'Organization Name', placeholder: 'Shahed IT' },
     { key: 'url', label: 'Website URL', placeholder: 'https://shahedit.com' },
     { key: 'logo', label: 'Logo URL', placeholder: 'https://shahedit.com/logo.png' },
-    { key: 'phone', label: 'Phone Number', placeholder: '+8801840099853' },
+    { key: 'phone', label: 'Phone Number', placeholder: '+8801820060046' },
     { key: 'email', label: 'Email Address', placeholder: 'info@shahedit.com' },
-    { key: 'facebook', label: 'Facebook URL', placeholder: 'https://facebook.com/shahedstore' },
+    { key: 'facebook', label: 'Facebook URL', placeholder: 'https://facebook.com/shahed.it.co' },
     { key: 'description', label: 'Description', placeholder: "Bangladesh's trusted digital software store" },
   ];
 

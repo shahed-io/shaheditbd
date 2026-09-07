@@ -14,7 +14,7 @@ interface ProductCardProps {
   priority?: boolean; // true for first ~4 cards (above fold)
 }
 
-const WA = '8801840099853';
+const WA = '8801820060046';
 
 // Ripple particle type
 type Particle = { id: number; x: number; y: number };

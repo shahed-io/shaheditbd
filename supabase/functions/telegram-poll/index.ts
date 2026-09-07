@@ -1468,8 +1468,8 @@ async function processUpdate(update: any, BOT_TOKEN: string, supabase: any): Pro
       // Confirmation ID system disabled.
       await sendMsg(BOT_TOKEN, chatId,
         lang === 'bn'
-          ? '⚠️ Confirmation ID সার্ভিসটি বর্তমানে বন্ধ রয়েছে।\n\nসহায়তার জন্য WhatsApp: 01840099853'
-          : '⚠️ The Confirmation ID service is currently disabled.\n\nFor help, WhatsApp: 01840099853');
+          ? '⚠️ Confirmation ID সার্ভিসটি বর্তমানে বন্ধ রয়েছে।\n\nসহায়তার জন্য WhatsApp: 01820060046'
+          : '⚠️ The Confirmation ID service is currently disabled.\n\nFor help, WhatsApp: 01820060046');
 
 
 
@@ -1601,8 +1601,8 @@ async function processUpdate(update: any, BOT_TOKEN: string, supabase: any): Pro
     // Confirmation ID system disabled — direct user to support.
     await sendMsg(BOT_TOKEN, chatId,
       lang === 'bn'
-        ? '⚠️ Confirmation ID সার্ভিসটি বর্তমানে বন্ধ রয়েছে।\n\nসহায়তার জন্য WhatsApp: 01840099853'
-        : '⚠️ The Confirmation ID service is currently disabled.\n\nFor help, WhatsApp: 01840099853',
+        ? '⚠️ Confirmation ID সার্ভিসটি বর্তমানে বন্ধ রয়েছে।\n\nসহায়তার জন্য WhatsApp: 01820060046'
+        : '⚠️ The Confirmation ID service is currently disabled.\n\nFor help, WhatsApp: 01820060046',
       inlineKb([[{ text: t(lang, 'btn_menu'), callback_data: 'start' }]])
     );
 
