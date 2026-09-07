@@ -3091,3 +3091,46 @@ body.admin-page table > tbody > tr,
 body.admin-page table > tfoot > tr {
   width: 100%;
 }
+
+/* ══════════════════════════════════════
+   PREMIUM GLOSSY PRIMARY BUTTON (.btn-glow)
+   Cyan → Cobalt gradient with moving sheen
+══════════════════════════════════════ */
+.btn-glow {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  color: #fff;
+  background:
+    linear-gradient(180deg, hsla(0,0%,100%,0.22) 0%, hsla(0,0%,100%,0) 46%),
+    linear-gradient(135deg,
+      hsl(var(--brand-h), var(--brand-s), calc(var(--brand-l) + 6%)) 0%,
+      hsl(var(--brand2-h), var(--brand2-s), var(--brand2-l)) 100%);
+  box-shadow:
+    0 10px 26px -10px hsla(var(--brand2-h), var(--brand2-s), 45%, 0.55),
+    inset 0 1px 0 hsla(0,0%,100%,0.45),
+    inset 0 -2px 6px hsla(var(--brand-h), 60%, 20%, 0.25);
+  border: 1px solid hsla(0,0%,100%,0.18);
+  transition: transform .25s cubic-bezier(.4,0,.2,1), box-shadow .25s, filter .25s;
+}
+.btn-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  left: -140%;
+  width: 60%;
+  background: linear-gradient(100deg, transparent, hsla(0,0%,100%,0.42), transparent);
+  transform: skewX(-18deg);
+  transition: left .6s ease;
+  pointer-events: none;
+}
+.btn-glow:hover::after { left: 150%; }
+.btn-glow:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05) saturate(1.05);
+  box-shadow:
+    0 16px 34px -10px hsla(var(--brand2-h), var(--brand2-s), 45%, 0.62),
+    inset 0 1px 0 hsla(0,0%,100%,0.5);
+}
+.btn-glow:active { transform: translateY(0); }
+.btn-glow:disabled { opacity: .6; filter: grayscale(.15); transform: none; }
