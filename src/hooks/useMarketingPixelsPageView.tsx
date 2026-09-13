@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { mTrackPageView, loadMarketingPixels } from '@/components/store/MarketingPixels';
 
 /**
  * Fires PageView event on every SPA route change for all enabled
@@ -11,7 +12,6 @@ export const useMarketingPixelsPageView = () => {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const { loadMarketingPixels, mTrackPageView } = await import('@/components/store/MarketingPixels');
       await loadMarketingPixels();
       if (cancelled) return;
       // Slight delay so the page DOM has settled

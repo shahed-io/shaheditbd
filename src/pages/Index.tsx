@@ -6,6 +6,7 @@ import TopProducts from '@/components/store/TopProducts';
 import { TickerBanner, FloatingButtons } from '@/components/store/Extras';
 import SEOHead from '@/components/seo/SEOHead';
 import { organizationSchema, websiteSchema, localBusinessSchema, siteNavigationSchema, speakableSchema } from '@/components/seo/schemas';
+import AuthModal from '@/components/store/AuthModal';
 
 // Below-fold sections — lazy loaded after hero renders
 const FlashSale    = lazy(() => import('@/components/store/FlashSale'));
@@ -14,7 +15,6 @@ const Testimonials = lazy(() => import('@/components/store/Testimonials'));
 const Footer       = lazy(() => import('@/components/store/Footer'));
 const PopupBanner  = lazy(() => import('@/components/store/PopupBanner'));
 const WelcomeDiscount = lazy(() => import('@/components/store/WelcomeDiscount'));
-const AuthModal = lazy(() => import('@/components/store/AuthModal'));
 
 // Lightweight skeleton placeholders
 const SectionSkeleton = () => (
@@ -130,11 +130,7 @@ const Index = () => {
       )}
 
       <FloatingButtons />
-      {authOpen && (
-        <Suspense fallback={null}>
-          <AuthModal isOpen onClose={() => setAuthOpen(false)} />
-        </Suspense>
-      )}
+      <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
       {belowFoldReady && (
         <>
           <Suspense fallback={null}>

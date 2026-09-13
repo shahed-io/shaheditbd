@@ -237,14 +237,11 @@ const AppContent = () => {
 
 
   useEffect(() => {
-    // Keep analytics, support widgets and drawers off the critical rendering path.
-    const activate = () => setDeferReady(true);
-    const idle = window.requestIdleCallback?.(activate, { timeout: 1800 });
-    const fallback = idle == null ? window.setTimeout(activate, 1200) : undefined;
-    return () => {
-      if (idle != null) window.cancelIdleCallback?.(idle);
-      if (fallback != null) window.clearTimeout(fallback);
-    };
+    // Defer non-critical components until after first paint (~20ms)
+    const id = requestAnimationFrame(() => {
+      setDeferReady(true);
+    });
+    return () => cancelAnimationFrame(id);
   }, []);
 
   // Warm critical route chunks during browser idle time → instant navigation
@@ -259,7 +256,7 @@ const AppContent = () => {
       '/contact',
       '/about',
       '/faqs',
-    ], 3500);
+    ], 1500);
   }, []);
 
   useEffect(() => {
