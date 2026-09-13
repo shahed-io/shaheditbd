@@ -24,6 +24,16 @@
     background: hsl(var(--hero-pink) / 0.18);
   }
 
+  .hero-grid-pattern {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.12;
+    background-image: radial-gradient(circle, hsl(var(--hero-foreground) / 0.22) 0.7px, transparent 0.8px);
+    background-size: 28px 28px;
+    mask-image: linear-gradient(to bottom, black, transparent 92%);
+  }
+
   .hero-service-card {
     border: 1px solid hsl(var(--hero-border));
     border-radius: 1rem;
@@ -32,6 +42,14 @@
     box-shadow: var(--hero-shadow-card);
     backdrop-filter: blur(24px);
     transition: border-color 200ms ease, transform 200ms ease, background 200ms ease;
+  }
+
+  .hero-reference::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(90deg, hsl(var(--hero-violet) / 0.1), transparent 48%, hsl(var(--hero-pink) / 0.1));
   }
 
   .hero-service-card:hover {

@@ -13,6 +13,7 @@
 
 ## Homepage banner
 - [x] Replace the image carousel with the selected responsive Cyber-glass Shahed IT service banner
+- [x] Match the Web Sol Studio banner structure with offer countdown, dual service cards, portfolio action, stats, and dotted dark backdrop
 
 ## Homepage color clarity
 - [x] Deepen the current palette and fix low-contrast text, cards, borders, and glossy surfaces without changing the layout
