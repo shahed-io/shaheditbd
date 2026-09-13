@@ -17,4 +17,4 @@
 ## Homepage color clarity
 - [x] Deepen the current palette and fix low-contrast text, cards, borders, and glossy surfaces without changing the layout
 
-- [ ] Keep the current theme/layout unchanged; deepen and brighten only its existing colors and improve clarity. Do not show another preview for this request.
+- [x] Keep the current theme/layout unchanged; deepen and brighten only its existing colors and improve clarity. Do not show another preview for this request.
