@@ -1,16 +1,18 @@
-import { useState, useEffect, useRef } from 'react';
+import { lazy, Suspense, useState, useEffect, useRef } from 'react';
 import { Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Star, Shield, Phone, Mail, Sparkles, Search, Download, Share2, PlusSquare, Package, Key, Wallet, Award, Heart, MapPin, Bell, Gift, Lock, Globe, ShieldCheck, ChevronRight, Facebook, MessageCircle, Instagram, Send } from 'lucide-react';
 import { useFooterSettings } from '@/hooks/useFooterSettings';
-import AuthModal from './AuthModal';
 import BrandLogo from './BrandLogo';
 import VerifiedBadge from './VerifiedBadge';
-import SearchBar, { DesktopSearchPalette, MobileSearchOverlay } from './SearchBar';
 import CurrencySwitcher from './CurrencySwitcher';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { prefetchRoute } from '@/hooks/usePrefetchRoute';
+
+const AuthModal = lazy(() => import('./AuthModal'));
+const DesktopSearchPalette = lazy(() => import('./SearchBar').then(module => ({ default: module.DesktopSearchPalette })));
+const MobileSearchOverlay = lazy(() => import('./SearchBar').then(module => ({ default: module.MobileSearchOverlay })));
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -281,7 +283,11 @@ const Navbar = () => {
 
   return (
     <>
-      <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
+      {authOpen && (
+        <Suspense fallback={null}>
+          <AuthModal isOpen onClose={() => setAuthOpen(false)} />
+        </Suspense>
+      )}
 
       {/* ── Desktop Search Overlay ── */}
       {desktopSearch && (
@@ -292,7 +298,9 @@ const Navbar = () => {
             style={{ background: 'hsl(var(--card))', border: '1.5px solid hsl(var(--border))', maxHeight: '80vh' }}>
             {/* Top line */}
             <div className="h-[2px] w-full" style={{ background: 'linear-gradient(90deg, hsl(var(--primary)), hsl(263,70%,58%))' }} />
-            <DesktopSearchPalette onClose={() => setDesktopSearch(false)} />
+            <Suspense fallback={null}>
+              <DesktopSearchPalette onClose={() => setDesktopSearch(false)} />
+            </Suspense>
           </div>
         </div>
       )}
@@ -690,7 +698,9 @@ const Navbar = () => {
 
         {/* Mobile Search — full-screen overlay, xs/sm only */}
         {mobileSearch && (
-          <MobileSearchOverlay onClose={() => setMobileSearch(false)} />
+          <Suspense fallback={null}>
+            <MobileSearchOverlay onClose={() => setMobileSearch(false)} />
+          </Suspense>
         )}
 
         {/* Mobile Menu — Next-Gen Bento Design */}

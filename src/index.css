@@ -2,6 +2,74 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .hero-ambient {
+    position: absolute;
+    width: min(38rem, 72vw);
+    aspect-ratio: 1;
+    border-radius: 9999px;
+    filter: blur(120px);
+    pointer-events: none;
+  }
+
+  .hero-ambient-left {
+    top: -36%;
+    left: -16%;
+    background: hsl(var(--hero-violet) / 0.2);
+  }
+
+  .hero-ambient-right {
+    right: -14%;
+    bottom: -40%;
+    background: hsl(var(--hero-pink) / 0.18);
+  }
+
+  .hero-service-card {
+    border: 1px solid hsl(var(--hero-border));
+    border-radius: 1rem;
+    padding: 1.25rem;
+    background: hsl(var(--hero-glass));
+    box-shadow: var(--hero-shadow-card);
+    backdrop-filter: blur(24px);
+    transition: border-color 200ms ease, transform 200ms ease, background 200ms ease;
+  }
+
+  .hero-service-card:hover {
+    transform: translateY(-2px);
+    background: hsl(var(--hero-glass-strong));
+  }
+
+  .hero-service-icon {
+    display: inline-flex;
+    width: 3rem;
+    height: 3rem;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid currentColor;
+    border-radius: 0.75rem;
+    background: hsl(var(--hero-violet) / 0.2);
+    color: hsl(var(--hero-violet));
+    box-shadow: 0 8px 24px hsl(var(--hero-violet) / 0.22);
+  }
+
+  .hero-service-icon svg { color: hsl(var(--hero-foreground)); }
+  .hero-service-badge { border: 1px solid currentColor; border-radius: 9999px; padding: 0.25rem 0.5rem; font-size: 0.5rem; font-weight: 800; }
+  .hero-service-violet { color: hsl(var(--hero-violet)); }
+  .hero-service-pink { color: hsl(var(--hero-pink)); }
+  .hero-service-cyan { color: hsl(var(--hero-cyan)); }
+  .hero-service-pink .hero-service-icon { background: hsl(var(--hero-pink) / 0.2); color: hsl(var(--hero-pink)); box-shadow: 0 8px 24px hsl(var(--hero-pink) / 0.22); }
+  .hero-service-cyan .hero-service-icon { background: hsl(var(--hero-cyan) / 0.2); color: hsl(var(--hero-cyan)); box-shadow: 0 8px 24px hsl(var(--hero-cyan) / 0.22); }
+  .hero-service-violet:hover { border-color: hsl(var(--hero-violet) / 0.55); }
+  .hero-service-pink:hover { border-color: hsl(var(--hero-pink) / 0.55); }
+  .hero-service-cyan:hover { border-color: hsl(var(--hero-cyan) / 0.55); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-service-card,
+    .hero-service-card * { transition: none !important; }
+  }
+}
+
 /* Reserve space at the bottom on mobile so the fixed Bottom Navigation
    bar (rendered by MobileBottomNav.tsx) never covers page content/footer.
    Hidden on /ceo admin routes (body.admin-page) and on md+ screens. */
@@ -98,6 +166,25 @@
     --input:              220 20% 93%;
     --ring:               258 78% 55%;
     --radius:             1rem;
+
+    /* ── Homepage cyber-glass hero ── */
+    --hero-canvas: 266 66% 6%;
+    --hero-foreground: 0 0% 100%;
+    --hero-muted: 260 12% 69%;
+    --hero-subtle: 260 10% 48%;
+    --hero-glass: 268 34% 13% / 0.72;
+    --hero-glass-strong: 268 34% 18% / 0.88;
+    --hero-panel: 266 43% 7% / 0.62;
+    --hero-border: 270 28% 78% / 0.14;
+    --hero-violet: 270 86% 61%;
+    --hero-pink: 320 86% 56%;
+    --hero-cyan: 188 86% 51%;
+    --hero-online: 158 78% 52%;
+    --hero-action-foreground: 0 0% 100%;
+    --hero-title: linear-gradient(90deg, hsl(var(--hero-violet)), hsl(var(--hero-pink)));
+    --hero-action: linear-gradient(100deg, hsl(var(--hero-violet)), hsl(var(--hero-pink)));
+    --hero-shadow-card: 0 24px 70px hsl(268 75% 2% / 0.34), inset 0 1px 0 hsl(0 0% 100% / 0.04);
+    --hero-shadow-action: 0 12px 36px hsl(var(--hero-pink) / 0.28);
 
     /* ═══ BRAND HSL TOKENS ═══ 
        All utility classes reference these so themes work globally */

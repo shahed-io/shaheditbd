@@ -1,12 +1,13 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { lazy, Suspense, useState, useRef, useEffect, useCallback } from 'react';
 import { Heart, ShoppingCart, MessageCircle, CreditCard, Zap, Star, X, Clock, CheckCircle } from 'lucide-react';
 import { Product, isProductOutOfStock } from '@/data/products';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
-import QuickOrderModal from './QuickOrderModal';
 import { useNavigate } from 'react-router-dom';
 import { prefetchRoute } from '@/hooks/usePrefetchRoute';
 import { useCurrency } from '@/hooks/useCurrency';
+
+const QuickOrderModal = lazy(() => import('./QuickOrderModal'));
 
 interface ProductCardProps {
   product: Product;
@@ -480,10 +481,12 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
       </div>
 
       {showModal && (
-        <QuickOrderModal
-          product={{ id: product.id, name: product.name, price: product.price, originalPrice: product.originalPrice, image: product.image, category: product.category, customFields: product.customFields }}
-          onClose={() => setShowModal(false)}
-        />
+        <Suspense fallback={null}>
+          <QuickOrderModal
+            product={{ id: product.id, name: product.name, price: product.price, originalPrice: product.originalPrice, image: product.image, category: product.category, customFields: product.customFields }}
+            onClose={() => setShowModal(false)}
+          />
+        </Suspense>
       )}
     </>
   );
