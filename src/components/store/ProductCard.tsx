@@ -184,7 +184,7 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
                 <div className="flex flex-col gap-2 mt-auto pt-2">
                   <button
                     onClick={() => { setShowPreview(false); setShowModal(true); }}
-                    className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.02]"
+                    className="w-full py-3 rounded-xl text-sm font-bold text-primary-foreground transition-all hover:scale-[1.02]"
                     style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))', boxShadow: '0 0 20px hsla(271,91%,65%,0.4)' }}>
                     <CreditCard size={13} className="inline mr-1.5" /> Buy Now
                   </button>
@@ -367,7 +367,7 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
           {/* Badges — bottom-left so they don't clash with the brand pills baked into the card image */}
           <div className="absolute bottom-2.5 left-2.5 flex flex-row gap-1.5 z-10">
             {outOfStock && (
-              <span className="text-[9px] font-black tracking-wider px-2 py-1 rounded-lg text-white"
+              <span className="text-[9px] font-black tracking-wider px-2 py-1 rounded-lg text-destructive-foreground"
                 style={{ background: 'linear-gradient(135deg, hsl(0,80%,55%), hsl(15,90%,55%))', boxShadow: '0 2px 8px hsla(0,80%,55%,0.5)' }}>
                 STOCK OUT
               </span>

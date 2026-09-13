@@ -199,12 +199,12 @@ const MobileBottomNav = () => {
             className="relative rounded-[28px] border overflow-hidden"
             style={{
               background:
-                'linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.75) 100%)',
+                'linear-gradient(180deg, hsl(var(--card) / 0.96) 0%, hsl(var(--popover) / 0.94) 100%)',
               backdropFilter: 'blur(28px) saturate(200%)',
               WebkitBackdropFilter: 'blur(28px) saturate(200%)',
-              borderColor: 'rgba(255,255,255,0.6)',
+              borderColor: 'hsl(var(--border))',
               boxShadow:
-                '0 12px 40px -8px rgba(88, 28, 200, 0.18), 0 4px 12px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.9)',
+                '0 14px 42px -8px hsl(var(--background) / 0.78), 0 0 22px hsl(var(--primary) / 0.18), inset 0 1px 0 hsl(var(--foreground) / 0.16)',
             }}
           >
             {/* Subtle gradient sheen on top */}
@@ -283,7 +283,7 @@ const MobileBottomNav = () => {
                             size={22}
                             strokeWidth={isActive ? 2.6 : 2}
                             className={`transition-all duration-300 ${
-                              isActive ? 'text-white scale-110' : 'text-foreground/60'
+                              isActive ? 'text-primary-foreground scale-110' : 'text-foreground/80'
                             }`}
                             style={
                               isActive
@@ -310,7 +310,7 @@ const MobileBottomNav = () => {
                         className={`text-[10px] leading-none font-semibold transition-all duration-300 ${
                           isActive
                             ? 'text-white opacity-100 scale-100'
-                            : 'text-foreground/55 opacity-90'
+                             : 'text-foreground/75 opacity-100'
                         }`}
                         style={
                           isActive

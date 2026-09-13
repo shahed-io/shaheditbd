@@ -125,12 +125,12 @@ const TickerBanner = () => {
         <div className="absolute left-3 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1.5 text-[10px] font-bold px-3 py-1.5 rounded-full"
           style={{
             background: settings.accentColor,
-            color: 'white',
+            color: 'hsl(var(--accent-foreground))',
             boxShadow: `0 2px 10px ${settings.accentColor}59`,
           }}>
-          <Zap size={9} fill="white" />
+          <Zap size={9} fill="currentColor" />
           <span>{settings.liveLabel}</span>
-          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+          <span className="w-1.5 h-1.5 rounded-full bg-accent-foreground animate-pulse" />
         </div>
 
         <div
@@ -144,7 +144,7 @@ const TickerBanner = () => {
                 <span className="font-bold" style={{ color: settings.accentColor }}>{item.price}</span>
                 {item.off && (
                   <span className="font-bold text-[11px] px-2.5 py-0.5 rounded-full"
-                    style={{ background: settings.accentColor, color: 'white' }}>{item.off}</span>
+                    style={{ background: settings.accentColor, color: 'hsl(var(--accent-foreground))' }}>{item.off}</span>
                 )}
               </span>
             );

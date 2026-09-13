@@ -41,19 +41,19 @@ export default function CustomerNoticesWidget() {
   if (list.length === 0) return null;
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
+    <div className="bg-card text-card-foreground rounded-2xl border border-border p-5 shadow-lg">
       <div className="flex items-center justify-between mb-3">
         <h3 className="font-semibold text-base flex items-center gap-2">
-          <Megaphone className="w-4 h-4 text-violet-600" /> নোটিশ
+          <Megaphone className="w-4 h-4 text-primary" /> নোটিশ
         </h3>
-        <Link to="/notices" className="text-xs text-violet-600 hover:underline inline-flex items-center">
+        <Link to="/notices" className="text-xs text-primary hover:underline inline-flex items-center">
           সব দেখুন <ChevronRight className="w-3 h-3" />
         </Link>
       </div>
       <div className="space-y-2">
         {list.map((n) => (
           <Link key={n.id} to={`/notices/${n.slug}`}
-                className="block rounded-lg px-3 py-2 hover:bg-violet-50 transition">
+                className="block rounded-lg px-3 py-2 hover:bg-secondary transition">
             <div className="flex items-start justify-between gap-2">
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium truncate">{n.pinned && '📌 '}{n.title}</div>
