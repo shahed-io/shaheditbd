@@ -146,7 +146,7 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
                 <div>
                   <div className="flex items-center gap-1.5 mb-2">
                     <span className="text-[10px] font-fira font-bold uppercase tracking-widest px-2.5 py-1 rounded-full"
-                      style={{ color: 'hsl(185,90%,62%)', background: 'hsla(185,90%,52%,0.12)', border: '1px solid hsla(185,90%,52%,0.2)' }}>
+                      style={{ color: 'hsl(var(--primary))', background: 'hsl(var(--primary) / 0.12)', border: '1px solid hsl(var(--primary) / 0.28)' }}>
                       {product.category}
                     </span>
                   </div>
@@ -161,7 +161,7 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
                 </div>
 
                 <div className="flex items-baseline gap-2">
-                  <span className="font-sora font-black text-2xl" style={{ color: 'hsl(271,91%,75%)' }}>{fmtPrice(product.price)}</span>
+                  <span className="font-sora font-black text-2xl text-primary">{fmtPrice(product.price)}</span>
                   {product.originalPrice && (
                     <span className="text-sm line-through text-muted-foreground">{fmtPrice(product.originalPrice)}</span>
                   )}
@@ -175,7 +175,7 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
                     { icon: <Clock size={10} />, text: '24/7 Support' },
                   ].map(f => (
                     <span key={f.text} className="flex items-center gap-1 text-[10px] font-semibold px-2.5 py-1 rounded-full"
-                      style={{ background: 'hsla(271,91%,65%,0.1)', border: '1px solid hsla(271,91%,65%,0.2)', color: 'hsl(271,91%,75%)' }}>
+                      style={{ background: 'hsl(var(--primary) / 0.1)', border: '1px solid hsl(var(--primary) / 0.24)', color: 'hsl(var(--primary))' }}>
                       {f.icon} {f.text}
                     </span>
                   ))}
@@ -185,13 +185,13 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
                   <button
                     onClick={() => { setShowPreview(false); setShowModal(true); }}
                     className="w-full py-3 rounded-xl text-sm font-bold text-primary-foreground transition-all hover:scale-[1.02]"
-                    style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))', boxShadow: '0 0 20px hsla(271,91%,65%,0.4)' }}>
+                    style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))', boxShadow: '0 0 20px hsl(var(--accent) / 0.35)' }}>
                     <CreditCard size={13} className="inline mr-1.5" /> Buy Now
                   </button>
                   <button
                     onClick={() => { setShowPreview(false); navigate(`/product/${product.slug || product.id}`); }}
                     className="w-full py-2.5 rounded-xl text-sm font-semibold transition-all hover:scale-[1.01] flex items-center justify-center gap-1.5"
-                    style={{ background: 'hsla(271,91%,65%,0.08)', border: '1px solid hsla(271,91%,65%,0.2)', color: 'hsl(271,91%,75%)' }}>
+                    style={{ background: 'hsl(var(--primary) / 0.09)', border: '1px solid hsl(var(--primary) / 0.28)', color: 'hsl(var(--primary))' }}>
                     View Details →
                   </button>
                 </div>

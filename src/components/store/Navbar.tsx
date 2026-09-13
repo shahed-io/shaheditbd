@@ -513,7 +513,7 @@ const Navbar = () => {
             <button
               onClick={() => setDesktopSearch(true)}
               className="hidden lg:flex flex-1 min-w-0 max-w-[460px] items-center gap-2 rounded-xl border px-3 py-1.5 text-left transition-all hover:border-primary/50 hover:shadow-[0_0_0_3px_hsl(var(--primary)/0.08)] group overflow-hidden"
-              style={{ borderColor: 'hsla(258,78%,60%,0.20)', background: 'hsla(258,78%,55%,0.04)' }}
+              style={{ borderColor: 'hsl(var(--border))', background: 'hsl(var(--card) / 0.78)' }}
             >
               <Search size={14} className="text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
               <span className="text-sm text-muted-foreground flex-1 min-w-0 truncate whitespace-nowrap">Search products...</span>
@@ -542,30 +542,30 @@ const Navbar = () => {
                       // Prefetch route chunk for instant nav
                       prefetchRoute(link.href);
                       if (!isActive) {
-                        e.currentTarget.style.color = 'hsl(258,78%,45%)';
-                        e.currentTarget.style.border = '1px solid hsla(258,78%,75%,0.35)';
-                        e.currentTarget.style.boxShadow = '0 2px 10px hsla(258,78%,55%,0.12)';
-                        e.currentTarget.style.background = 'hsla(258,78%,55%,0.07)';
+                        e.currentTarget.style.color = 'hsl(var(--foreground))';
+                        e.currentTarget.style.border = '1px solid hsl(var(--primary) / 0.42)';
+                        e.currentTarget.style.boxShadow = '0 2px 14px hsl(var(--accent) / 0.16)';
+                        e.currentTarget.style.background = 'hsl(var(--secondary) / 0.9)';
                       }
                     }}
                     onTouchStart={() => prefetchRoute(link.href)}
                     onFocus={() => prefetchRoute(link.href)}
                     className="flex items-center px-2.5 lg:px-4 py-1.5 rounded-lg transition-all duration-200 font-bold text-xs lg:text-sm whitespace-nowrap hover:scale-105"
                     style={{
-                      background: isActive ? 'linear-gradient(135deg, hsla(258,78%,55%,0.12), hsla(200,90%,45%,0.08))' : 'hsla(0,0%,100%,0.70)',
+                      background: isActive ? 'linear-gradient(135deg, hsl(var(--primary) / 0.22), hsl(var(--accent) / 0.16))' : 'hsl(var(--card) / 0.82)',
                       backdropFilter: 'blur(10px)',
-                      color: isActive ? 'hsl(258,78%,45%)' : 'hsl(226,35%,30%)',
-                      border: isActive ? '1px solid hsla(258,78%,75%,0.35)' : '1px solid hsla(258,78%,75%,0.22)',
+                      color: isActive ? 'hsl(var(--primary))' : 'hsl(var(--foreground) / 0.82)',
+                      border: isActive ? '1px solid hsl(var(--primary) / 0.48)' : '1px solid hsl(var(--border))',
                       boxShadow: isActive
                         ? '0 2px 10px hsla(258,78%,55%,0.15)'
                         : '0 1px 4px hsla(226,35%,12%,0.05)',
                     }}
                     onMouseLeave={e => {
                       if (!isActive) {
-                        e.currentTarget.style.color = 'hsl(226,35%,30%)';
-                        e.currentTarget.style.border = '1px solid hsla(258,78%,75%,0.22)';
+                        e.currentTarget.style.color = 'hsl(var(--foreground) / 0.82)';
+                        e.currentTarget.style.border = '1px solid hsl(var(--border))';
                         e.currentTarget.style.boxShadow = '0 1px 4px hsla(226,35%,12%,0.05)';
-                        e.currentTarget.style.background = 'hsla(0,0%,100%,0.70)';
+                        e.currentTarget.style.background = 'hsl(var(--card) / 0.82)';
                       }
                     }}>
                     {link.label}
@@ -621,7 +621,7 @@ const Navbar = () => {
               ) : (
                 <button onClick={() => setAuthOpen(true)}
                   className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all border"
-                  style={{ color: 'hsl(258,78%,50%)', borderColor: 'hsla(258,78%,55%,0.30)', background: 'hsla(258,78%,55%,0.05)' }}
+                  style={{ color: 'hsl(var(--primary))', borderColor: 'hsl(var(--primary) / 0.38)', background: 'hsl(var(--primary) / 0.1)' }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = 'hsla(258,78%,55%,0.55)'; e.currentTarget.style.background = 'hsla(258,78%,55%,0.10)'; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = 'hsla(258,78%,55%,0.30)'; e.currentTarget.style.background = 'hsla(258,78%,55%,0.05)'; }}>
                   <User size={16} />
@@ -683,8 +683,7 @@ const Navbar = () => {
                 )}
               </button>
 
-              <button className="lg:hidden p-2.5 rounded-xl transition-colors"
-                style={{ color: 'hsl(226,35%,30%)' }}
+              <button className="lg:hidden p-2.5 rounded-xl text-foreground transition-colors"
                 aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
                 aria-expanded={mobileOpen}
                 aria-controls="mobile-navigation-menu"

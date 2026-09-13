@@ -80,7 +80,7 @@ const TopProducts = () => {
             <span className="section-label">Featured Products</span>
             <h2 className="section-heading text-3xl sm:text-4xl mt-3">
               Top{' '}
-              <span style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+              <span style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                 Selling
               </span>
             </h2>
@@ -96,10 +96,10 @@ const TopProducts = () => {
         <div className="flex flex-wrap gap-2 mb-8 pb-8 border-b border-border">
           {tabs.map((tab) => (
             <button key={tab} onClick={() => setActiveTab(tab)}
-              style={activeTab === tab ? { background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' } : {}}
+              style={activeTab === tab ? { background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))' } : {}}
               className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors duration-200 ${
                 activeTab === tab
-                  ? 'text-white shadow-indigo'
+                  ? 'text-primary-foreground shadow-indigo'
                   : 'bg-card border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 shadow-soft'
               }`}>
               {tab}
@@ -113,8 +113,8 @@ const TopProducts = () => {
             <div className="text-6xl">😕</div>
             <p className="text-muted-foreground">Failed to load products. Please try again.</p>
             <button onClick={() => refetch()}
-              className="px-6 py-2.5 rounded-2xl text-sm font-bold text-white shadow-indigo"
-              style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+              className="px-6 py-2.5 rounded-2xl text-sm font-bold text-primary-foreground shadow-indigo"
+              style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))' }}>
               Retry
             </button>
           </div>
@@ -142,7 +142,7 @@ const TopProducts = () => {
                 <CategoryRevealBlock key={cat} catIdx={catIdx}>
                   <div className="flex items-center justify-between mb-6">
                     <h3 className="font-sora font-bold text-lg text-foreground flex items-center gap-2">
-                      <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(243,75%,59%), hsl(263,70%,58%))' }} />
+                      <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(var(--primary)), hsl(var(--accent)))' }} />
                       {cat}
                       <span className="text-xs font-semibold text-muted-foreground bg-muted px-2 py-0.5 rounded-full border border-border">{items.length}</span>
                     </h3>
