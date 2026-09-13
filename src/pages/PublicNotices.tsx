@@ -200,7 +200,7 @@ function NoticeActions({ targetRef, notice }: { targetRef: React.RefObject<HTMLD
       <button
         onClick={handleShare}
         disabled={!!busy}
-        className="inline-flex items-center gap-1.5 rounded-full border border-violet-200 bg-white/80 backdrop-blur px-3 py-1.5 text-xs font-medium text-violet-700 hover:bg-violet-50 disabled:opacity-60"
+        className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/80 backdrop-blur px-3 py-1.5 text-xs font-medium text-primary hover:bg-secondary/60 disabled:opacity-60"
       >
         {busy === 'share' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Share2 className="w-3.5 h-3.5" />}
         <span>শেয়ার</span>
@@ -208,7 +208,7 @@ function NoticeActions({ targetRef, notice }: { targetRef: React.RefObject<HTMLD
       <button
         onClick={handleSave}
         disabled={!!busy}
-        className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-md shadow-violet-500/30 hover:shadow-lg hover:shadow-violet-500/40 disabled:opacity-60"
+        className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground shadow-md shadow-primary/30 hover:opacity-90 disabled:opacity-60"
       >
         {busy === 'save' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
         <span>গ্যালারিতে সেভ</span>

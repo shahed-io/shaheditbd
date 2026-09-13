@@ -580,41 +580,39 @@ const Navbar = () => {
               {user ? (
                 <div className="hidden sm:flex items-center gap-1">
                   <button onClick={() => navigate('/dashboard')}
-                    className="group relative flex items-center gap-2 pl-1 pr-3.5 py-1 rounded-full text-sm font-semibold transition-all duration-300"
+                    className="group relative flex items-center gap-2 pl-1 pr-3.5 py-1 rounded-full text-sm font-semibold text-primary transition-all duration-300"
                     style={{
-                      color: 'hsl(258,78%,40%)',
-                      background: 'linear-gradient(135deg, hsla(0,0%,100%,0.85), hsla(258,78%,96%,0.75))',
-                      border: '1px solid hsla(258,78%,55%,0.25)',
+                      background: 'linear-gradient(135deg, hsl(var(--card) / 0.96), hsl(var(--secondary) / 0.86))',
+                      border: '1px solid hsl(var(--border))',
                       backdropFilter: 'blur(14px)',
                       WebkitBackdropFilter: 'blur(14px)',
-                      boxShadow: '0 4px 14px -4px hsla(258,78%,55%,0.25), inset 0 1px 0 hsla(0,0%,100%,0.9)',
+                      boxShadow: 'var(--glass-shadow)',
                     }}
                     onMouseEnter={e => {
                       e.currentTarget.style.transform = 'translateY(-1px)';
-                      e.currentTarget.style.boxShadow = '0 8px 22px -6px hsla(258,78%,55%,0.45), inset 0 1px 0 hsla(0,0%,100%,0.9)';
-                      e.currentTarget.style.borderColor = 'hsla(258,78%,55%,0.45)';
+                      e.currentTarget.style.boxShadow = '0 8px 24px hsl(var(--primary) / 0.24)';
+                      e.currentTarget.style.borderColor = 'hsl(var(--primary) / 0.6)';
                     }}
                     onMouseLeave={e => {
                       e.currentTarget.style.transform = '';
-                      e.currentTarget.style.boxShadow = '0 4px 14px -4px hsla(258,78%,55%,0.25), inset 0 1px 0 hsla(0,0%,100%,0.9)';
-                      e.currentTarget.style.borderColor = 'hsla(258,78%,55%,0.25)';
+                      e.currentTarget.style.boxShadow = 'var(--glass-shadow)';
+                      e.currentTarget.style.borderColor = 'hsl(var(--border))';
                     }}>
                     <span className="relative flex-shrink-0">
-                      <span className="block w-7 h-7 rounded-full overflow-hidden flex items-center justify-center text-xs font-bold text-white ring-2 ring-white"
-                        style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', boxShadow: '0 2px 6px hsla(258,78%,45%,0.4)' }}>
+                      <span className="block w-7 h-7 rounded-full overflow-hidden flex items-center justify-center text-xs font-bold text-primary-foreground ring-2 ring-primary/40"
+                        style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))', boxShadow: '0 2px 8px hsl(var(--primary) / 0.4)' }}>
                         {avatarUrl ? <img src={avatarUrl} alt="avatar" className="w-full h-full object-cover" /> : initials}
                       </span>
                       <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white" />
                     </span>
-                    <span className="hidden lg:inline bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(135deg, hsl(258,78%,45%), hsl(200,90%,40%))' }}>
+                    <span className="hidden lg:inline bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))' }}>
                       Dashboard
                     </span>
                   </button>
                   <button onClick={() => supabase.auth.signOut()}
-                    className="p-2 rounded-xl transition-all"
-                    style={{ color: 'hsl(226,35%,45%)' }}
+                    className="p-2 rounded-xl text-muted-foreground transition-all"
                     onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(0,84%,55%)'; (e.currentTarget as HTMLElement).style.background = 'hsla(0,84%,55%,0.08)'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(226,35%,45%)'; (e.currentTarget as HTMLElement).style.background = ''; }}>
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = ''; (e.currentTarget as HTMLElement).style.background = ''; }}>
                     <LogOut size={15} />
                   </button>
                 </div>
@@ -821,8 +819,8 @@ const Navbar = () => {
                       onClick={() => { navigate(`/dashboard?tab=${q.tab}`); setMobileOpen(false); }}
                       className="group relative aspect-square rounded-2xl overflow-hidden flex flex-col items-center justify-center gap-1.5 transition-all duration-300 hover:scale-[1.05] active:scale-[0.95]"
                       style={{
-                        background: 'hsla(0,0%,100%,0.85)',
-                        border: '1px solid hsla(258,78%,60%,0.12)',
+                        background: 'hsl(var(--card) / 0.9)',
+                        border: '1px solid hsl(var(--border))',
                         backdropFilter: 'blur(12px)',
                         boxShadow: '0 4px 12px hsla(258,40%,40%,0.06)',
                         animation: mobileOpen ? `slideInRight 0.4s ease-out ${0.05 + i * 0.04}s both` : undefined,
@@ -839,7 +837,7 @@ const Navbar = () => {
                         style={{ background: q.grad, boxShadow: '0 6px 14px hsla(258,40%,40%,0.22), inset 0 1px 0 hsla(0,0%,100%,0.3)' }}>
                         <q.icon size={17} className="text-white" strokeWidth={2.5} />
                       </div>
-                      <span className="text-[10.5px] font-bold tracking-tight" style={{ color: 'hsl(226,35%,22%)' }}>{q.label}</span>
+                      <span className="text-[10.5px] font-bold tracking-tight text-foreground">{q.label}</span>
                     </button>
                   ))}
                 </div>

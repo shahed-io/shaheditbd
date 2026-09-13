@@ -274,11 +274,11 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
     }
   };
 
-  const inputCls = `w-full rounded-xl px-4 py-3 text-sm outline-none transition-all bg-white/70 border border-white/60 focus:border-indigo-400/60 focus:ring-2 focus:ring-indigo-400/15 placeholder:text-slate-400`;
+  const inputCls = `w-full rounded-xl px-4 py-3 text-sm text-foreground outline-none transition-all bg-secondary/40 border border-border focus:border-primary/60 focus:ring-2 focus:ring-primary/15 placeholder:text-muted-foreground`;
   const labelCls = `block text-[12.5px] font-semibold mb-1.5`;
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(145deg, hsl(258,55%,97%) 0%, hsl(220,40%,96%) 40%, hsl(200,50%,96%) 100%)' }}>
+    <div className="min-h-screen bg-background text-foreground">
       <SEOHead title="Refund Request — Shahed IT" description="রিফান্ড রিকোয়েস্ট করুন। Shahed IT রিফান্ড পলিসি দেখুন এবং আবেদন ফর্ম পূরণ করুন।" />
       <Navbar />
 
@@ -291,17 +291,17 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
         </div>
         <div className="relative max-w-3xl mx-auto px-4 sm:px-6 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[12px] font-bold mb-5"
-            style={{ background: 'rgba(255,255,255,0.65)', backdropFilter: 'blur(16px)', border: `1px solid ${A}35`, color: A, boxShadow: `0 4px 16px ${A}20` }}>
+            style={{ background: 'hsl(var(--card) / 0.86)', backdropFilter: 'blur(16px)', border: '1px solid hsl(var(--border))', color: 'hsl(var(--primary))', boxShadow: 'var(--glass-shadow)' }}>
             <RefreshCw size={13} /> Refund Request
           </div>
           <div className="inline-block px-8 py-5 rounded-3xl mb-5"
-            style={{ background: 'linear-gradient(155deg, rgba(255,255,255,0.80), rgba(255,255,255,0.55))', backdropFilter: 'blur(32px)', border: '1.5px solid rgba(255,255,255,0.80)', boxShadow: `0 12px 50px ${A}18, 0 1px 0 rgba(255,255,255,0.9) inset` }}>
+            style={{ background: 'linear-gradient(155deg, hsl(var(--card) / 0.96), hsl(var(--popover) / 0.9))', backdropFilter: 'blur(32px)', border: '1px solid hsl(var(--border))', boxShadow: 'var(--glass-shadow)' }}>
             <h1 className="font-sora font-black text-4xl sm:text-5xl leading-none"
               style={{ background: `linear-gradient(135deg, ${A}, ${B})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
               Refund Request
             </h1>
           </div>
-          <p className="text-[14px] max-w-lg mx-auto leading-relaxed" style={{ color: 'hsl(226,25%,42%)' }}>
+          <p className="text-[14px] max-w-lg mx-auto leading-relaxed text-muted-foreground">
             রিফান্ড আবেদনের আগে আমাদের পলিসি মনোযোগ দিয়ে পড়ুন এবং নিচের ফর্মটি পূরণ করুন।
           </p>
         </div>
@@ -313,22 +313,22 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
         <GlassCard>
           <button
             onClick={() => setPolicyOpen(p => !p)}
-            className="w-full flex items-center justify-between px-6 py-5 transition-colors hover:bg-white/30"
+            className="w-full flex items-center justify-between px-6 py-5 transition-colors hover:bg-secondary/40"
           >
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${A}, ${B})` }}>
                 <RefreshCw size={16} className="text-white" />
               </div>
               <div className="text-left">
-                <p className="font-sora font-bold text-[15px]" style={{ color: 'hsl(226,35%,14%)' }}>Refund & Return Policy</p>
-                <p className="text-[11px]" style={{ color: 'hsl(226,25%,52%)' }}>আবেদনের আগে পলিসিটি পড়ুন</p>
+                <p className="font-sora font-bold text-[15px] text-foreground">Refund & Return Policy</p>
+                <p className="text-[11px] text-muted-foreground">আবেদনের আগে পলিসিটি পড়ুন</p>
               </div>
             </div>
             {policyOpen ? <ChevronUp size={18} style={{ color: A }} /> : <ChevronDown size={18} style={{ color: A }} />}
           </button>
 
           {policyOpen && (
-            <div className="px-6 pb-6 space-y-4 border-t border-white/40">
+            <div className="px-6 pb-6 space-y-4 border-t border-border">
 
               {/* Quick cards */}
               <div className="grid sm:grid-cols-2 gap-3 pt-4">
