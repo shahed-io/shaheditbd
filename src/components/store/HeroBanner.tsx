@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, Bolt, Code2, Palette, Play, Sparkles } from 'lucide-react';
+import { ArrowRight, Bolt, Code2, Palette, Play } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 

@@ -658,13 +658,11 @@ const ProductDetail = () => {
                   aria-label="Verify DBID 623962552 — Government of Bangladesh"
                   className="group relative flex items-stretch rounded-[18px] overflow-visible"
                   style={{
-                    background: '#ffffff',
-                    // double gradient border using padding trick
-                    boxShadow:
-                      '0 1px 0 #ffffff inset, 0 0 0 1px rgba(255,255,255,0.9) inset, 0 8px 28px rgba(124,58,237,0.12), 0 2px 6px rgba(168,85,247,0.08)',
+                    background: 'hsl(var(--card) / 0.96)',
+                    boxShadow: 'var(--glass-shadow)',
                     border: '2px solid transparent',
                     backgroundImage:
-                      'linear-gradient(#ffffff,#ffffff), linear-gradient(135deg, hsl(280,85%,65%) 0%, hsl(258,90%,55%) 50%, hsl(300,75%,60%) 100%)',
+                      'linear-gradient(hsl(var(--card) / 0.96), hsl(var(--card) / 0.96)), linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 55%, hsl(var(--hero-pink)) 100%)',
                     backgroundOrigin: 'border-box',
                     backgroundClip: 'padding-box, border-box',
                   }}
@@ -686,28 +684,24 @@ const ProductDetail = () => {
                      <div className="flex flex-col leading-tight min-w-0">
                        <div className="flex items-baseline gap-1 lg:gap-1.5 flex-nowrap min-w-0">
                         <span
-                          className="text-[12px] lg:text-[16px] font-extrabold tracking-normal whitespace-nowrap"
-                          style={{ color: '#ea580c', fontFamily: 'Sora, sans-serif' }}
+                          className="font-sora text-[12px] lg:text-[16px] font-extrabold tracking-normal whitespace-nowrap text-primary"
                         >
                           Certified
                         </span>
                         <span
-                          className="text-[11px] lg:text-[15px] font-bold italic whitespace-nowrap"
-                          style={{ color: '#1f2937', fontFamily: '"Plus Jakarta Sans", sans-serif' }}
+                          className="text-[11px] lg:text-[15px] font-bold italic whitespace-nowrap text-foreground"
                         >
                           by DBID
                         </span>
                       </div>
                       <div className="flex items-baseline gap-1 mt-0.5 whitespace-nowrap">
                         <span
-                          className="text-[9px] lg:text-[11px] font-semibold"
-                          style={{ color: '#374151', fontFamily: '"Plus Jakarta Sans", sans-serif' }}
+                          className="text-[9px] lg:text-[11px] font-semibold text-muted-foreground"
                         >
                           ID:
                         </span>
                         <span
-                          className="text-[10px] lg:text-[12px] font-extrabold tabular-nums tracking-normal"
-                          style={{ color: '#f97316', fontFamily: 'Sora, sans-serif' }}
+                          className="font-sora text-[10px] lg:text-[12px] font-extrabold tabular-nums tracking-normal text-primary"
                         >
                           623962552
                         </span>
@@ -718,7 +712,7 @@ const ProductDetail = () => {
                   {/* ── Vertical separator ── */}
                   <div
                     className="w-px my-2.5 lg:my-3.5 flex-shrink-0"
-                    style={{ background: 'linear-gradient(180deg, transparent, #fdba74 30%, #fdba74 70%, transparent)' }}
+                    style={{ background: 'linear-gradient(180deg, transparent, hsl(var(--primary) / 0.7) 30%, hsl(var(--primary) / 0.7) 70%, transparent)' }}
                   />
 
 
@@ -728,26 +722,23 @@ const ProductDetail = () => {
                       <span
                         className="text-[10px] lg:text-[13px] font-extrabold leading-tight whitespace-nowrap"
                         style={{
-                          background: 'linear-gradient(90deg, #ef4444 0%, #f97316 100%)',
+                          background: 'linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%)',
                           WebkitBackgroundClip: 'text',
                           WebkitTextFillColor: 'transparent',
                           backgroundClip: 'text',
-                          fontFamily: 'Sora, sans-serif',
                         }}
                       >
                         Digital Business
                       </span>
                     </div>
                     <div
-                      className="text-[9px] lg:text-[11px] font-bold leading-tight mt-0.5 whitespace-nowrap"
-                      style={{ color: '#1f2937', fontFamily: '"Plus Jakarta Sans", sans-serif' }}
+                      className="text-[9px] lg:text-[11px] font-bold leading-tight mt-0.5 whitespace-nowrap text-foreground"
                     >
                       Identification Number
                     </div>
                     <div className="flex items-center gap-1 mt-1 lg:mt-1.5">
                       <span
-                        className="text-[8px] lg:text-[10px] font-semibold underline-offset-2 group-hover:underline decoration-orange-400 whitespace-nowrap"
-                        style={{ color: '#4b5563', fontFamily: '"Plus Jakarta Sans", sans-serif' }}
+                        className="text-[8px] lg:text-[10px] font-semibold underline-offset-2 group-hover:underline decoration-primary whitespace-nowrap text-muted-foreground"
                       >
                         Click here to verify
                       </span>
@@ -874,9 +865,9 @@ const ProductDetail = () => {
                       ))}
                       <span className="text-sm font-semibold ml-1 text-foreground">4.9</span>
                     </div>
-                    <span className="w-1 h-1 rounded-full" style={{ background: 'hsl(226,25%,75%)' }} />
+                     <span className="w-1 h-1 rounded-full bg-border" />
                     <span className="text-sm text-muted-foreground">{(product.total_sales || 0) + 50}+ sold</span>
-                    <span className="w-1 h-1 rounded-full" style={{ background: 'hsl(226,25%,75%)' }} />
+                     <span className="w-1 h-1 rounded-full bg-border" />
                     {outOfStock ? (
                       <span className="text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1"
                         style={{ color: 'hsl(0,80%,42%)', background: 'hsla(0,80%,55%,0.12)', border: '1px solid hsla(0,80%,55%,0.28)' }}>
