@@ -15,4 +15,4 @@
 - [x] Replace the image carousel with the selected responsive Cyber-glass Shahed IT service banner
 
 ## Homepage color clarity
-- [ ] Deepen the current palette and fix low-contrast text, cards, borders, and glossy surfaces without changing the layout
+- [x] Deepen the current palette and fix low-contrast text, cards, borders, and glossy surfaces without changing the layout

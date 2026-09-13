@@ -156,8 +156,7 @@ const ReviewCard = ({ review, index }: { review: Review; index: number }) => {
             }}>
             <Quote size={14} />
           </div>
-          <span className="text-[10.5px] font-bold uppercase tracking-[0.14em] truncate max-w-[160px]"
-            style={{ color: 'hsl(226,35%,20%)' }}>
+          <span className="text-[10.5px] font-bold uppercase tracking-[0.14em] truncate max-w-[160px] text-foreground">
             {review.product}
           </span>
           <StarRating rating={review.rating} color={from} />
@@ -167,7 +166,7 @@ const ReviewCard = ({ review, index }: { review: Review; index: number }) => {
         <div className="h-px rounded-full"
           style={{ background: `linear-gradient(90deg, ${from.replace('hsl(','hsla(').replace(')',',0.40)')}, transparent)` }} />
 
-        <p className="text-[15px] leading-[1.55] line-clamp-5 italic" style={{ color: 'hsl(226,22%,28%)', fontFamily: "'Instrument Serif', Georgia, serif", fontWeight: 400, letterSpacing: '0.005em' }}>
+        <p className="text-[15px] leading-[1.55] line-clamp-5 italic text-foreground/90" style={{ fontFamily: "'Instrument Serif', Georgia, serif", fontWeight: 400, letterSpacing: '0.005em' }}>
           "{review.review}"
         </p>
 
@@ -270,23 +269,23 @@ const Testimonials = () => {
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-[11px] font-bold mb-5 tracking-widest uppercase"
             style={{
-              background: 'rgba(255,255,255,0.85)',
+              background: 'hsl(var(--card) / 0.92)',
               backdropFilter: 'blur(16px)',
               border: '1.5px solid hsla(243,75%,59%,0.38)',
-              color: 'hsl(243,75%,55%)',
+              color: 'hsl(var(--primary))',
               boxShadow: '0 2px 14px hsla(243,75%,59%,0.14)',
             }}>
             ⭐ Customer Reviews
           </div>
 
-          <h2 className="font-sora font-black text-3xl sm:text-4xl mb-3" style={{ color: 'hsl(226,35%,13%)' }}>
+          <h2 className="font-sora font-black text-3xl sm:text-4xl mb-3 text-foreground">
             হাজারো{' '}
             <span style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
               সন্তুষ্ট
             </span>{' '}
             গ্রাহক
           </h2>
-          <p className="text-sm sm:text-base max-w-lg mx-auto" style={{ color: 'hsl(226,20%,46%)' }}>
+          <p className="text-sm sm:text-base max-w-lg mx-auto text-muted-foreground">
             সারা বাংলাদেশ থেকে গ্রাহকরা আমাদের সার্ভিস নিয়ে যা বলছেন
           </p>
 
@@ -303,10 +302,10 @@ const Testimonials = () => {
                 }}>
                 
                 <div className="text-center px-7 py-3">
-                  <p className="font-sora font-black text-2xl sm:text-3xl" style={{ color: 'hsl(226,35%,14%)' }}>
+                  <p className="font-sora font-black text-2xl sm:text-3xl text-foreground">
                     {stat.value}<span style={{ color: stat.from }}>{stat.suffix}</span>
                   </p>
-                  <p className="text-[11px] font-medium mt-0.5" style={{ color: 'hsl(226,20%,52%)' }}>{stat.label}</p>
+                  <p className="text-[11px] font-medium mt-0.5 text-muted-foreground">{stat.label}</p>
                 </div>
               </div>
             ))}
