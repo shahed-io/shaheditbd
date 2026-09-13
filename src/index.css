@@ -36,7 +36,7 @@
 
   .hero-service-card {
     border: 1px solid hsl(var(--hero-border));
-    border-radius: 1rem;
+    border-radius: 1.25rem;
     padding: 1.25rem;
     background: hsl(var(--hero-glass));
     box-shadow: var(--hero-shadow-card);
@@ -73,8 +73,14 @@
 
   .hero-service-icon svg { color: hsl(var(--hero-foreground)); }
   .hero-service-badge { border: 1px solid currentColor; border-radius: 9999px; padding: 0.25rem 0.5rem; font-size: 0.5rem; font-weight: 800; }
-  .hero-service-violet { color: hsl(var(--hero-violet)); }
-  .hero-service-pink { color: hsl(var(--hero-pink)); }
+  .hero-service-violet {
+    color: hsl(var(--hero-violet));
+    background: linear-gradient(110deg, hsl(var(--hero-glass)), hsl(var(--hero-violet) / 0.09));
+  }
+  .hero-service-pink {
+    color: hsl(var(--hero-pink));
+    background: linear-gradient(110deg, hsl(var(--hero-glass)), hsl(var(--hero-pink) / 0.13));
+  }
   .hero-service-cyan { color: hsl(var(--hero-cyan)); }
   .hero-service-pink .hero-service-icon { background: hsl(var(--hero-pink) / 0.2); color: hsl(var(--hero-pink)); box-shadow: 0 8px 24px hsl(var(--hero-pink) / 0.22); }
   .hero-service-cyan .hero-service-icon { background: hsl(var(--hero-cyan) / 0.2); color: hsl(var(--hero-cyan)); box-shadow: 0 8px 24px hsl(var(--hero-cyan) / 0.22); }

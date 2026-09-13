@@ -66,14 +66,14 @@ const HeroBanner = () => {
     <div className="hero-ambient hero-ambient-left" aria-hidden="true" />
     <div className="hero-ambient hero-ambient-right" aria-hidden="true" />
 
-    <div className="container-fluid relative z-10 grid min-h-[615px] grid-cols-1 items-center gap-10 pb-12 pt-[148px] md:py-16 lg:grid-cols-12 lg:gap-14 lg:py-[70px]">
+    <div className="container-fluid relative z-10 grid min-h-[615px] max-w-[1210px] grid-cols-1 items-center gap-10 pb-12 pt-[148px] md:py-16 lg:grid-cols-12 lg:gap-14 lg:py-[70px]">
       <div className="lg:col-span-6">
         <div className="inline-flex items-center gap-2 rounded-full border border-hero-border bg-hero-glass px-4 py-2 backdrop-blur-md">
           <span className="h-2 w-2 rounded-full bg-hero-pink shadow-hero-pink" />
           <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-hero-muted sm:text-[10px]">Professional IT Agency — Bangladesh</span>
         </div>
 
-        <h2 id="hero-heading" className="mt-8 max-w-3xl text-5xl font-extrabold leading-[1.04] text-hero-foreground sm:text-6xl lg:text-[4.5rem]">
+        <h2 id="hero-heading" className="mt-8 max-w-3xl text-5xl font-extrabold leading-[1.04] text-hero-foreground sm:text-6xl lg:text-[3.75rem]">
           Build Your
           <span className="mt-1 block bg-hero-title bg-clip-text text-transparent">Digital Empire</span>
         </h2>
