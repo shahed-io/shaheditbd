@@ -136,46 +136,45 @@
 
 @layer base {
   /* ══════════════════════════════════════
-     SHAHED IT — CLEAN WHITE THEME
-     Pure White + Royal Indigo + Electric Gold
-     পরিষ্কার সাদা, চোখে আরামদায়ক
+     SHAHED IT — PREMIUM OBSIDIAN THEME
+     Deep ink + crisp pearl text + distinct jewel accents
   ══════════════════════════════════════ */
   :root {
     /* ── Base Surfaces ── */
-    --background:         0 0% 100%;
-    --foreground:         226 35% 12%;
-    --card:               0 0% 99%;
-    --card-foreground:    226 35% 12%;
-    --popover:            0 0% 100%;
-    --popover-foreground: 226 35% 12%;
+    --background:         264 38% 6%;
+    --foreground:         255 25% 96%;
+    --card:               264 29% 12%;
+    --card-foreground:    255 25% 96%;
+    --popover:            264 32% 9%;
+    --popover-foreground: 255 25% 96%;
 
     /* ── Primary ── */
-    --primary:            258 78% 55%;
-    --primary-foreground: 0 0% 100%;
-    --secondary:          220 20% 96%;
-    --secondary-foreground: 226 35% 25%;
-    --muted:              220 20% 96%;
-    --muted-foreground:   220 15% 50%;
+    --primary:            267 88% 68%;
+    --primary-foreground: 264 45% 6%;
+    --secondary:          260 24% 17%;
+    --secondary-foreground: 255 20% 92%;
+    --muted:              262 22% 15%;
+    --muted-foreground:   255 13% 72%;
 
     /* ── Accent ── */
-    --accent:             42 96% 58%;
-    --accent-foreground:  226 35% 8%;
+    --accent:             190 92% 52%;
+    --accent-foreground:  264 45% 6%;
     --destructive:        4 80% 55%;
     --destructive-foreground: 0 0% 100%;
-    --border:             220 20% 90%;
-    --input:              220 20% 93%;
-    --ring:               258 78% 55%;
+    --border:             262 22% 27%;
+    --input:              262 24% 18%;
+    --ring:               267 88% 68%;
     --radius:             1rem;
 
     /* ── Homepage cyber-glass hero ── */
     --hero-canvas: 266 66% 6%;
     --hero-foreground: 0 0% 100%;
-    --hero-muted: 260 12% 69%;
-    --hero-subtle: 260 10% 48%;
-    --hero-glass: 268 34% 13% / 0.72;
-    --hero-glass-strong: 268 34% 18% / 0.88;
-    --hero-panel: 266 43% 7% / 0.62;
-    --hero-border: 270 28% 78% / 0.14;
+    --hero-muted: 255 15% 78%;
+    --hero-subtle: 255 12% 64%;
+    --hero-glass: 268 38% 13% / 0.86;
+    --hero-glass-strong: 268 40% 20% / 0.94;
+    --hero-panel: 266 45% 8% / 0.88;
+    --hero-border: 267 70% 82% / 0.22;
     --hero-violet: 270 86% 61%;
     --hero-pink: 320 86% 56%;
     --hero-cyan: 188 86% 51%;
@@ -217,20 +216,20 @@
     --shadow-medium:      0 4px 24px hsla(226, 35%, 12%, 0.10);
 
     /* ── Surfaces ── */
-    --surface-white:      hsl(0, 0%, 100%);
-    --surface-light:      hsl(220, 20%, 98%);
-    --surface-soft:       hsl(220, 20%, 96%);
+    --surface-white:      hsl(264, 29%, 12%);
+    --surface-light:      hsl(264, 31%, 9%);
+    --surface-soft:       hsl(262, 22%, 15%);
 
     /* ── Gradients ── */
     --gradient-hero:      linear-gradient(135deg, hsl(var(--brand-h),var(--brand-s),var(--brand-l)) 0%, hsl(var(--brand2-h),var(--brand2-s),var(--brand2-l)) 100%);
     --gradient-warm:      linear-gradient(135deg, hsl(var(--brand3-h),var(--brand3-s),var(--brand3-l)) 0%, hsl(var(--accent-h),var(--accent-s),var(--accent-l)) 100%);
     --gradient-cool:      linear-gradient(135deg, hsl(var(--brand2-h),var(--brand2-s),var(--brand2-l)) 0%, hsl(var(--brand4-h),var(--brand4-s),var(--brand4-l)) 100%);
-    --gradient-card:      linear-gradient(145deg, hsla(220,20%,100%,1) 0%, hsla(220,20%,97%,1) 100%);
+    --gradient-card:      linear-gradient(145deg, hsl(264 29% 15%) 0%, hsl(264 32% 10%) 100%);
 
     /* ── Glass properties ── */
-    --glass-bg: hsla(0, 0%, 100%, 0.60);
-    --glass-border: hsla(var(--brand-h), var(--brand-s), 75%, 0.20);
-    --glass-shadow: 0 4px 24px hsla(226,35%,12%,0.08), inset 0 1px 0 hsla(0,0%,100%,0.7);
+    --glass-bg: hsla(264, 28%, 14%, 0.82);
+    --glass-border: hsla(267, 86%, 78%, 0.28);
+    --glass-shadow: 0 18px 46px hsla(264,55%,2%,0.42), inset 0 1px 0 hsla(0,0%,100%,0.10);
 
     /* ── Legacy aliases ── */
     --indigo:             hsl(var(--brand-h), var(--brand-s), var(--brand-l));
@@ -249,14 +248,14 @@
     --shadow-indigo:      var(--glow-violet);
     --shadow-coral:       var(--glow-pink);
 
-    --sidebar-background: 220 20% 98%;
-    --sidebar-foreground: 226 35% 20%;
-    --sidebar-primary:    258 78% 55%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent:     220 20% 94%;
-    --sidebar-accent-foreground: 226 35% 25%;
-    --sidebar-border:     220 20% 88%;
-    --sidebar-ring:       258 78% 55%;
+    --sidebar-background: 264 32% 9%;
+    --sidebar-foreground: 255 20% 92%;
+    --sidebar-primary:    267 88% 68%;
+    --sidebar-primary-foreground: 264 45% 6%;
+    --sidebar-accent:     262 24% 17%;
+    --sidebar-accent-foreground: 255 20% 92%;
+    --sidebar-border:     262 22% 25%;
+    --sidebar-ring:       267 88% 68%;
   }
 
   /* ══════════════════════════════════════

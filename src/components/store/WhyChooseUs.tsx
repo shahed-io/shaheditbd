@@ -65,11 +65,11 @@ const GlassCard: React.FC<{ from: string; to: string; className?: string; childr
   <div
     className={`group relative rounded-3xl overflow-hidden transition-all duration-500 hover:-translate-y-1 ${className}`}
     style={{
-      background: 'linear-gradient(135deg, hsla(0,0%,100%,0.75), hsla(0,0%,100%,0.55))',
+      background: 'linear-gradient(145deg, hsl(var(--card) / 0.96), hsl(var(--card) / 0.78))',
       backdropFilter: 'blur(28px) saturate(180%)',
       WebkitBackdropFilter: 'blur(28px) saturate(180%)',
-      border: '1px solid hsla(0,0%,100%,0.6)',
-      boxShadow: '0 8px 32px hsla(243,60%,40%,0.08), inset 0 1px 0 hsla(0,0%,100%,0.9)',
+      border: '1px solid hsl(var(--border))',
+      boxShadow: 'var(--glass-shadow)',
     }}
   >
     {/* Animated gradient border on hover */}
@@ -126,11 +126,11 @@ const FeatureCard = ({ feature: f, index }: { feature: typeof FEATURES[0]; index
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         style={{
-          background: 'hsla(0,0%,100%,0.7)',
-          border: '1px solid hsla(220,20%,80%,0.45)',
+          background: 'linear-gradient(145deg, hsl(var(--card) / 0.98), hsl(var(--card) / 0.82))',
+          border: '1px solid hsl(var(--border))',
           boxShadow: hovered
             ? `0 20px 40px -12px hsla(${f.from},0.28)`
-            : '0 1px 2px hsla(243,40%,30%,0.05)',
+            : 'var(--glass-shadow)',
         }}
       >
         {/* Top hairline accent on hover */}
@@ -215,11 +215,11 @@ const StatsBar = ({ stats, visible }: { stats: typeof STATS; visible: boolean })
   <div
     className="relative overflow-hidden rounded-3xl"
     style={{
-      background: 'linear-gradient(135deg, hsla(0,0%,100%,0.78), hsla(0,0%,100%,0.55))',
+      background: 'linear-gradient(145deg, hsl(var(--card) / 0.98), hsl(var(--card) / 0.80))',
       backdropFilter: 'blur(28px) saturate(180%)',
       WebkitBackdropFilter: 'blur(28px) saturate(180%)',
-      border: '1px solid hsla(0,0%,100%,0.6)',
-      boxShadow: '0 12px 40px hsla(243,60%,40%,0.1), inset 0 1px 0 hsla(0,0%,100%,0.9)',
+      border: '1px solid hsl(var(--border))',
+      boxShadow: 'var(--glass-shadow)',
     }}
   >
     {/* Floating ambient blobs */}

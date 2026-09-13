@@ -308,7 +308,7 @@ const Navbar = () => {
       {/* ── Fixed wrapper for announcement + navbar ── */}
       <div className="fixed top-0 left-0 right-0 z-50">
 
-      {/* ── Top Announcement Bar — White Glass Minimal ── */}
+      {/* ── Top Announcement Bar — Obsidian Glass ── */}
       <div
         className="w-full transition-all duration-300 px-2 sm:px-3"
         style={{
@@ -322,12 +322,12 @@ const Navbar = () => {
           className="relative w-full flex items-center overflow-hidden rounded-2xl text-[11px] font-medium"
           style={{
             background:
-              'linear-gradient(120deg, hsla(0,0%,100%,0.78) 0%, hsla(0,0%,100%,0.62) 50%, hsla(0,0%,100%,0.78) 100%)',
+              'linear-gradient(120deg, hsl(var(--card) / 0.94) 0%, hsl(var(--secondary) / 0.88) 50%, hsl(var(--card) / 0.94) 100%)',
             backdropFilter: 'blur(28px) saturate(180%)',
             WebkitBackdropFilter: 'blur(28px) saturate(180%)',
-            border: '1px solid hsla(0,0%,100%,0.85)',
+            border: '1px solid hsl(var(--border))',
             boxShadow:
-              '0 8px 32px -12px hsla(var(--brand-h),40%,40%,0.18), inset 0 1px 0 hsla(0,0%,100%,0.95), inset 0 -1px 0 hsla(var(--brand-h),30%,80%,0.20)',
+              '0 8px 32px -12px hsla(var(--brand-h),70%,35%,0.35), inset 0 1px 0 hsl(var(--foreground) / 0.10)',
             color: 'hsl(var(--foreground))',
             padding: '7px 10px',
           }}
@@ -359,7 +359,7 @@ const Navbar = () => {
               aria-label="Call us"
               className="group flex items-center gap-1.5 px-2.5 py-[5px] rounded-full transition-all hover:scale-[1.04] active:scale-95"
               style={{
-                background: 'hsla(0,0%,100%,0.85)',
+                background: 'hsl(var(--secondary) / 0.92)',
                 border: '1px solid hsla(var(--brand-h),40%,80%,0.45)',
                 boxShadow: '0 1px 4px hsla(var(--brand-h),30%,40%,0.10)',
                 color: 'hsl(var(--foreground))',
@@ -373,7 +373,7 @@ const Navbar = () => {
               aria-label="Email us"
               className="hidden md:flex group items-center gap-1.5 px-2.5 py-[5px] rounded-full transition-all hover:scale-[1.04] active:scale-95"
               style={{
-                background: 'hsla(0,0%,100%,0.85)',
+                background: 'hsl(var(--secondary) / 0.92)',
                 border: '1px solid hsla(var(--brand-h),40%,80%,0.45)',
                 boxShadow: '0 1px 4px hsla(var(--brand-h),30%,40%,0.10)',
                 color: 'hsl(var(--foreground))',
@@ -440,7 +440,7 @@ const Navbar = () => {
               {footerSettings.facebook_url && (
                 <a href={footerSettings.facebook_url} target="_blank" rel="noopener noreferrer"
                   className="social-soft w-6 h-6 flex items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95"
-                  style={{ background: 'hsla(0,0%,100%,0.85)', border: '1px solid hsla(214,90%,80%,0.6)', color: 'hsl(214,85%,50%)' }}
+                  style={{ background: 'hsl(var(--secondary) / 0.92)', border: '1px solid hsla(214,90%,65%,0.45)', color: 'hsl(214,90%,68%)' }}
                   title="Facebook">
                   <Facebook size={11} fill="currentColor" />
                 </a>
@@ -448,7 +448,7 @@ const Navbar = () => {
               {footerSettings.whatsapp_url && (
                 <a href={footerSettings.whatsapp_url} target="_blank" rel="noopener noreferrer"
                   className="social-soft w-6 h-6 flex items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95"
-                  style={{ background: 'hsla(0,0%,100%,0.85)', border: '1px solid hsla(142,70%,75%,0.6)', color: 'hsl(142,70%,38%)' }}
+                  style={{ background: 'hsl(var(--secondary) / 0.92)', border: '1px solid hsla(142,70%,60%,0.45)', color: 'hsl(142,70%,62%)' }}
                   title="WhatsApp">
                   <MessageCircle size={11} />
                 </a>
@@ -456,7 +456,7 @@ const Navbar = () => {
               {footerSettings.instagram_url && (
                 <a href={footerSettings.instagram_url} target="_blank" rel="noopener noreferrer"
                   className="social-soft w-6 h-6 flex items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95"
-                  style={{ background: 'hsla(0,0%,100%,0.85)', border: '1px solid hsla(340,80%,80%,0.6)', color: 'hsl(340,80%,50%)' }}
+                  style={{ background: 'hsl(var(--secondary) / 0.92)', border: '1px solid hsla(340,80%,65%,0.45)', color: 'hsl(340,82%,68%)' }}
                   title="Instagram">
                   <Instagram size={11} />
                 </a>
@@ -464,7 +464,7 @@ const Navbar = () => {
               {footerSettings.telegram_url && (
                 <a href={footerSettings.telegram_url} target="_blank" rel="noopener noreferrer"
                   className="social-soft w-6 h-6 flex items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95"
-                  style={{ background: 'hsla(0,0%,100%,0.85)', border: '1px solid hsla(200,90%,80%,0.6)', color: 'hsl(200,85%,45%)' }}
+                  style={{ background: 'hsl(var(--secondary) / 0.92)', border: '1px solid hsla(200,90%,65%,0.45)', color: 'hsl(200,90%,65%)' }}
                   title="Telegram">
                   <Send size={11} />
                 </a>

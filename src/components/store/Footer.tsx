@@ -81,7 +81,7 @@ const Footer = () => {
     <div className="relative z-10 border-b" style={{ borderColor: 'hsla(258,78%,75%,0.15)' }}>
       <div className="container-fluid py-7"
         style={{
-          background: 'hsla(0,0%,100%,0.50)',
+          background: 'hsl(var(--card) / 0.84)',
           backdropFilter: 'blur(24px) saturate(180%)',
           WebkitBackdropFilter: 'blur(24px) saturate(180%)',
         }}>
@@ -89,19 +89,19 @@ const Footer = () => {
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
               style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', boxShadow: '0 4px 16px hsla(258,78%,55%,0.30)' }}>
-              <Zap size={18} className="text-white" />
+               <Zap size={18} className="text-primary-foreground" />
             </div>
             <div>
-              <h3 className="font-sora font-black text-xl" style={{ color: 'hsl(226,35%,12%)' }}>Need help choosing a product?</h3>
-              <p className="text-sm mt-0.5" style={{ color: 'hsl(226,35%,45%)' }}>Our experts are available 24/7 to assist you</p>
+               <h3 className="font-sora font-black text-xl text-foreground">Need help choosing a product?</h3>
+               <p className="text-sm mt-0.5 text-muted-foreground">Our experts are available 24/7 to assist you</p>
             </div>
           </div>
           <div className="flex items-center gap-3 flex-shrink-0">
             <a href={`https://wa.me/${settings.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer"
               className="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold transition-all hover:scale-105"
               style={{
-                color: 'hsl(226,35%,28%)',
-                background: 'hsla(0,0%,100%,0.75)',
+                 color: 'hsl(var(--foreground))',
+                 background: 'hsl(var(--secondary) / 0.88)',
                 backdropFilter: 'blur(12px)',
                 border: '1.5px solid hsla(258,78%,75%,0.25)',
                 boxShadow: '0 2px 12px hsla(226,35%,12%,0.06)',
@@ -109,7 +109,7 @@ const Footer = () => {
               <MessageCircle size={15} /> WhatsApp
             </a>
             <a href="/shop"
-              className="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold text-white transition-all hover:scale-105"
+               className="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold text-primary-foreground transition-all hover:scale-105"
               style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', boxShadow: '0 4px 16px hsla(258,78%,55%,0.30)' }}>
               Shop Now <ArrowUpRight size={15} />
             </a>
@@ -124,18 +124,18 @@ const Footer = () => {
       {/* Brand section — always centered */}
       <div className="flex flex-col items-center text-center mb-10 space-y-5"
         style={{
-          background: 'linear-gradient(135deg, hsla(0,0%,100%,0.72) 0%, hsla(0,0%,100%,0.50) 100%)',
+          background: 'linear-gradient(135deg, hsl(var(--card) / 0.96), hsl(var(--card) / 0.78))',
           backdropFilter: 'blur(24px) saturate(180%)',
           WebkitBackdropFilter: 'blur(24px) saturate(180%)',
           border: '1px solid hsla(258,78%,75%,0.20)',
           borderRadius: '20px',
-          boxShadow: '0 4px 24px hsla(258,78%,55%,0.07), 0 1px 0 rgba(255,255,255,0.9) inset',
+          boxShadow: 'var(--glass-shadow)',
           padding: '24px 20px',
         }}>
         <a href="/" className="flex items-center justify-center">
           <BrandLogo size="lg" />
         </a>
-        <p className="text-[13px] leading-relaxed md:whitespace-nowrap footer-tagline-highlight" style={{ color: 'hsl(226,35%,42%)' }}
+         <p className="text-[13px] leading-relaxed md:whitespace-nowrap footer-tagline-highlight text-muted-foreground"
           dangerouslySetInnerHTML={{ __html: highlightTagline(settings.tagline) }}
         />
 
@@ -149,9 +149,9 @@ const Footer = () => {
           ].map((c, i) => (
             <a key={i} href={c.href}
               className="flex items-center gap-3 text-sm transition-all group hover:translate-x-1"
-              style={{ color: 'hsl(226,35%,42%)' }}
+               style={{ color: 'hsl(var(--muted-foreground))' }}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = c.color; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(226,35%,42%)'; }}>
+               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(var(--muted-foreground))'; }}>
               <span className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
                 style={{
                   background: `${c.color.replace('hsl(','hsla(').replace(')',',0.10)')}`,
@@ -177,10 +177,10 @@ const Footer = () => {
               aria-label={`Visit Shahed IT on ${s.label}`}
               className="w-11 h-11 rounded-xl flex items-center justify-center transition-all hover:scale-110 hover:-translate-y-0.5"
               style={{
-                background: 'hsla(0,0%,100%,0.65)',
+                 background: 'hsl(var(--secondary) / 0.88)',
                 backdropFilter: 'blur(12px)',
                 border: '1.5px solid hsla(258,78%,75%,0.22)',
-                color: 'hsl(226,35%,42%)',
+                 color: 'hsl(var(--muted-foreground))',
                 boxShadow: '0 2px 8px hsla(226,35%,12%,0.06)',
               }}
               title={s.label}
@@ -192,7 +192,7 @@ const Footer = () => {
               }}
               onMouseLeave={e => {
                 const el = e.currentTarget as HTMLElement;
-                el.style.color = 'hsl(226,35%,42%)';
+                 el.style.color = 'hsl(var(--muted-foreground))';
                 el.style.borderColor = 'hsla(258,78%,75%,0.22)';
                 el.style.boxShadow = '0 2px 8px hsla(226,35%,12%,0.06)';
               }}>
@@ -210,11 +210,11 @@ const Footer = () => {
           return (
             <div key={col.id} className="rounded-2xl p-5 space-y-4"
               style={{
-                background: 'linear-gradient(135deg, hsla(0,0%,100%,0.72) 0%, hsla(0,0%,100%,0.50) 100%)',
+                 background: 'linear-gradient(135deg, hsl(var(--card) / 0.96), hsl(var(--card) / 0.78))',
                 backdropFilter: 'blur(24px) saturate(180%)',
                 WebkitBackdropFilter: 'blur(24px) saturate(180%)',
                 border: `1px solid ${accent.replace('hsl(','hsla(').replace(')',',0.18)')}`,
-                boxShadow: `0 4px 20px ${accent.replace('hsl(','hsla(').replace(')',',0.07)')}, 0 1px 0 rgba(255,255,255,0.9) inset`,
+                 boxShadow: 'var(--glass-shadow)',
               }}>
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -225,8 +225,7 @@ const Footer = () => {
                   }}>
                   <IconComp size={14} />
                 </div>
-                <h4 className="font-sora font-bold text-[11px] uppercase tracking-[0.18em]"
-                  style={{ color: 'hsl(226,35%,20%)' }}>
+                <h4 className="font-sora font-bold text-[11px] uppercase tracking-[0.18em] text-foreground">
                   {col.title}
                 </h4>
               </div>
@@ -239,8 +238,8 @@ const Footer = () => {
                       target={link.external ? '_blank' : undefined}
                       rel={link.external ? 'noopener noreferrer' : undefined}
                       className="group flex items-center gap-2 px-2.5 py-2 rounded-xl text-[12.5px] transition-all"
-                      style={{
-                        color: 'hsl(226,35%,45%)',
+                       style={{
+                         color: 'hsl(var(--muted-foreground))',
                         background: 'transparent',
                         border: '1px solid transparent',
                       }}
@@ -253,7 +252,7 @@ const Footer = () => {
                       }}
                       onMouseLeave={e => {
                         const el = e.currentTarget as HTMLElement;
-                        el.style.color = 'hsl(226,35%,45%)';
+                         el.style.color = 'hsl(var(--muted-foreground))';
                         el.style.background = 'transparent';
                         el.style.borderColor = 'transparent';
                         el.style.transform = 'translateX(0)';
@@ -274,7 +273,7 @@ const Footer = () => {
     {/* ── Trust bar ── */}
     <div className="relative z-10 mx-4 sm:mx-6 lg:mx-8 mb-6 rounded-2xl overflow-hidden"
       style={{
-        background: 'hsla(0,0%,100%,0.55)',
+         background: 'hsl(var(--card) / 0.88)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         border: '1px solid hsla(258,78%,75%,0.18)',
@@ -322,12 +321,12 @@ const Footer = () => {
 
         {/* Payments */}
         <div className="flex items-center gap-2 flex-wrap justify-center">
-          <span className="text-[10px] font-fira font-bold tracking-widest mr-1" style={{ color: 'hsl(226,35%,50%)' }}>PAYMENTS:</span>
+           <span className="text-[10px] font-fira font-bold tracking-widest mr-1 text-muted-foreground">PAYMENTS:</span>
           {paymentMethods.map(pm => (
             <span key={pm}
               className="px-3 py-1.5 rounded-lg text-[10.5px] font-bold font-fira cursor-default transition-all hover:scale-105"
               style={{
-                background: 'hsla(0,0%,100%,0.70)',
+                 background: 'hsl(var(--secondary) / 0.92)',
                 backdropFilter: 'blur(10px)',
                 color: 'hsl(258,78%,45%)',
                 border: '1px solid hsla(258,78%,75%,0.22)',
@@ -353,7 +352,7 @@ const Footer = () => {
         <div
           className="inline-flex items-center px-4 py-1.5 rounded-full backdrop-blur-md transition-all hover:scale-[1.02]"
           style={{
-            background: 'linear-gradient(135deg, hsla(0,0%,100%,0.85), hsla(258,78%,98%,0.75))',
+             background: 'linear-gradient(135deg, hsl(var(--card) / 0.96), hsl(var(--secondary) / 0.84))',
             border: '1px solid hsla(258,78%,75%,0.25)',
             boxShadow: '0 4px 16px -4px hsla(258,78%,50%,0.12), inset 0 1px 0 hsla(0,0%,100%,0.6)',
           }}
@@ -373,7 +372,7 @@ const Footer = () => {
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
             }}>{settings.store_name}</strong>
-            <span style={{ color: 'hsl(226,30%,45%)' }}>. </span>
+             <span className="text-muted-foreground">. </span>
             <span style={{
               background: 'linear-gradient(90deg, hsl(190,75%,40%), hsl(258,70%,50%))',
               WebkitBackgroundClip: 'text',
@@ -386,7 +385,7 @@ const Footer = () => {
         <a href={settings.website_url} target="_blank" rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full backdrop-blur-md transition-all hover:scale-[1.02]"
           style={{
-            background: 'linear-gradient(135deg, hsla(0,0%,100%,0.85), hsla(258,78%,98%,0.75))',
+             background: 'linear-gradient(135deg, hsl(var(--card) / 0.96), hsl(var(--secondary) / 0.84))',
             border: '1px solid hsla(258,78%,75%,0.25)',
             boxShadow: '0 4px 16px -4px hsla(258,78%,50%,0.12), inset 0 1px 0 hsla(0,0%,100%,0.6)',
           }}>
