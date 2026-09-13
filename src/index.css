@@ -2,6 +2,71 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .hero-ambient {
+    position: absolute;
+    width: min(38rem, 72vw);
+    aspect-ratio: 1;
+    border-radius: 9999px;
+    filter: blur(120px);
+    pointer-events: none;
+  }
+
+  .hero-ambient-left {
+    top: -36%;
+    left: -16%;
+    background: hsl(var(--hero-violet) / 0.2);
+  }
+
+  .hero-ambient-right {
+    right: -14%;
+    bottom: -40%;
+    background: hsl(var(--hero-pink) / 0.18);
+  }
+
+  .hero-service-card {
+    border: 1px solid hsl(var(--hero-border));
+    border-radius: 1rem;
+    padding: 1.25rem;
+    background: hsl(var(--hero-glass));
+    box-shadow: var(--hero-shadow-card);
+    backdrop-filter: blur(24px);
+    transition: border-color 200ms ease, transform 200ms ease, background 200ms ease;
+  }
+
+  .hero-service-card:hover {
+    transform: translateY(-2px);
+    background: hsl(var(--hero-glass-strong));
+  }
+
+  .hero-service-icon {
+    display: inline-flex;
+    width: 3rem;
+    height: 3rem;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid currentColor;
+    border-radius: 0.75rem;
+    background: currentColor;
+    box-shadow: 0 8px 24px currentColor;
+  }
+
+  .hero-service-icon svg { color: hsl(var(--hero-foreground)); }
+  .hero-service-badge { border: 1px solid currentColor; border-radius: 9999px; padding: 0.25rem 0.5rem; font-size: 0.5rem; font-weight: 800; }
+  .hero-service-violet { color: hsl(var(--hero-violet)); }
+  .hero-service-pink { color: hsl(var(--hero-pink)); }
+  .hero-service-cyan { color: hsl(var(--hero-cyan)); }
+  .hero-service-violet:hover { border-color: hsl(var(--hero-violet) / 0.55); }
+  .hero-service-pink:hover { border-color: hsl(var(--hero-pink) / 0.55); }
+  .hero-service-cyan:hover { border-color: hsl(var(--hero-cyan) / 0.55); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-service-card,
+    .hero-service-card * { transition: none !important; }
+  }
+}
+
 /* Reserve space at the bottom on mobile so the fixed Bottom Navigation
    bar (rendered by MobileBottomNav.tsx) never covers page content/footer.
    Hidden on /ceo admin routes (body.admin-page) and on md+ screens. */
