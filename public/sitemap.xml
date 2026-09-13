@@ -96,157 +96,7 @@
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://shahedit.com/product/ecommerce-store-package</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://shahedit.com/storage/v1/object/public/product-images/packages%2Fpkg-ecommerce.webp</image:loc>
-      <image:title>E-Commerce Store Package | Shahed IT</image:title>
-      <image:caption>অনলাইন বিক্রির জন্য সম্পূর্ণ ই কমার্স স্টোর — পেমেন্ট ও কুরিয়ার ইন্টিগ্রেশনসহ।</image:caption>
-      <image:license>https://shahedit.com/terms-conditions</image:license>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedit.com/product/wordpress-starter-package</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://shahedit.com/storage/v1/object/public/product-images/packages%2Fpkg-wp-starter.webp</image:loc>
-      <image:title>WordPress Starter Package | Shahed IT</image:title>
-      <image:caption>ছোট ব্যবসা বা ব্যক্তিগত পরিচিতির জন্য ৫ পেজের প্রফেশনাল ওয়ার্ডপ্রেস ওয়েবসাইট।</image:caption>
-      <image:license>https://shahedit.com/terms-conditions</image:license>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedit.com/product/django-web-application</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://shahedit.com/storage/v1/object/public/product-images/packages%2Fpkg-django.webp</image:loc>
-      <image:title>Django Web Application | Shahed IT</image:title>
-      <image:caption>Python Django দিয়ে সিকিউর, ডেটা ভিত্তিক এন্টারপ্রাইজ ওয়েব অ্যাপ্লিকেশন।</image:caption>
-      <image:license>https://shahedit.com/terms-conditions</image:license>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedit.com/product/react-business-website</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://shahedit.com/storage/v1/object/public/product-images/packages%2Fpkg-react-business.webp</image:loc>
-      <image:title>React Business Website | Shahed IT</image:title>
-      <image:caption>React দিয়ে তৈরি অতি দ্রুত, মডার্ন ও SEO বান্ধব বিজনেস ওয়েবসাইট।</image:caption>
-      <image:license>https://shahedit.com/terms-conditions</image:license>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedit.com/product/enterprise-web-solution</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://shahedit.com/storage/v1/object/public/product-images/packages%2Fpkg-enterprise.webp</image:loc>
-      <image:title>Enterprise Web Solution | Shahed IT</image:title>
-      <image:caption>বড় প্রতিষ্ঠানের জন্য কাস্টম আর্কিটেকচার, ইন্টিগ্রেশন ও ডেডিকেটেড সাপোর্টসহ পূর্ণাঙ্গ সলিউশন।</image:caption>
-      <image:license>https://shahedit.com/terms-conditions</image:license>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedit.com/product/mern-stack-web-application</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://shahedit.com/storage/v1/object/public/product-images/packages%2Fpkg-mern.webp</image:loc>
-      <image:title>MERN Stack Web Application | Shahed IT</image:title>
-      <image:caption>MongoDB, Express, React ও Node.js দিয়ে সম্পূর্ণ কাস্টম ওয়েব অ্যাপ্লিকেশন।</image:caption>
-      <image:license>https://shahedit.com/terms-conditions</image:license>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedit.com/product/wordpress-pro-package</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://shahedit.com/storage/v1/object/public/product-images/packages%2Fpkg-wp-pro.webp</image:loc>
-      <image:title>WordPress Pro Package | Shahed IT</image:title>
-      <image:caption>কাস্টম ডিজাইন, মাল্টিল্যাঙ্গুয়েজ ও অ্যাডভান্সড ফিচারসহ প্রো লেভেল ওয়ার্ডপ্রেস ওয়েবসাইট।</image:caption>
-      <image:license>https://shahedit.com/terms-conditions</image:license>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedit.com/product/custom-landing-page</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://shahedit.com/storage/v1/object/public/product-images/packages%2Fpkg-custom-landing.webp</image:loc>
-      <image:title>Custom Landing Page | Shahed IT</image:title>
-      <image:caption>ক্যাম্পেইন ও অ্যাডের জন্য হাই কনভার্টিং সিঙ্গেল পেজ ল্যান্ডিং ডিজাইন।</image:caption>
-      <image:license>https://shahedit.com/terms-conditions</image:license>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedit.com/product/wordpress-business-package</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://shahedit.com/storage/v1/object/public/product-images/packages%2Fpkg-wp-business.webp</image:loc>
-      <image:title>WordPress Business Package | Shahed IT</image:title>
-      <image:caption>প্রতিষ্ঠিত ব্যবসার জন্য ১০+ পেজের সম্পূর্ণ কর্পোরেট ওয়ার্ডপ্রেস সলিউশন।</image:caption>
-      <image:license>https://shahedit.com/terms-conditions</image:license>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedit.com/product/saas-platform-development</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://shahedit.com/storage/v1/object/public/product-images/packages%2Fpkg-saas.webp</image:loc>
-      <image:title>SaaS Platform Development | Shahed IT</image:title>
-      <image:caption>সাবস্ক্রিপশন ও মাল্টি টেন্যান্ট সাপোর্টসহ সম্পূর্ণ SaaS প্লাটফর্ম ডেভেলপমেন্ট।</image:caption>
-      <image:license>https://shahedit.com/terms-conditions</image:license>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedit.com/product/seo-service-monthly</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://shahedit.com/product/google-ads-management</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://shahedit.com/product/business-website-development</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://shahedit.com/product/business-email-setup</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://shahedit.com/product/it-consultancy-support</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://shahedit.com/product/domain-hosting-setup</loc>
     <lastmod>2026-09-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -301,6 +151,36 @@
   </url>
   <url>
     <loc>https://shahedit.com/product/facebook-ads-management</loc>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://shahedit.com/product/seo-service-monthly</loc>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://shahedit.com/product/google-ads-management</loc>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://shahedit.com/product/domain-hosting-setup</loc>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://shahedit.com/product/business-email-setup</loc>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://shahedit.com/product/it-consultancy-support</loc>
     <lastmod>2026-09-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
