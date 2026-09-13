@@ -291,8 +291,8 @@ const Footer = () => {
               style={{ background: 'conic-gradient(from 180deg, hsl(258,78%,60%), hsl(200,90%,55%), hsl(162,72%,45%), hsl(258,78%,60%))' }} />
             <div className="relative w-12 h-12 rounded-[12px] flex items-center justify-center overflow-hidden transition-transform duration-300 group-hover:scale-105"
               style={{
-                background: 'linear-gradient(135deg, hsl(0,0%,100%) 0%, hsla(258,78%,98%,1) 100%)',
-                boxShadow: '0 6px 18px hsla(258,78%,55%,0.22), inset 0 1px 0 hsla(0,0%,100%,0.9)',
+                background: 'linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--card)))',
+                boxShadow: '0 6px 18px hsl(var(--primary) / 0.22), inset 0 1px 0 hsl(var(--foreground) / 0.12)',
               }}>
               <img src={dbidLogo} alt="DBID Logo" className="w-8 h-8 object-contain drop-shadow-sm" />
               {/* subtle shine */}
@@ -307,11 +307,11 @@ const Footer = () => {
           </div>
           <div className="min-w-0">
             <p className="text-[11px] font-black font-sora tracking-widest leading-tight bg-clip-text text-transparent"
-              style={{ backgroundImage: 'linear-gradient(90deg, hsl(258,78%,40%) 0%, hsl(200,90%,38%) 50%, hsl(162,72%,32%) 100%)' }}>
+              style={{ backgroundImage: 'linear-gradient(90deg, hsl(var(--foreground)) 0%, hsl(var(--primary)) 55%, hsl(var(--accent)) 100%)' }}>
               {settings.cert_title}
             </p>
             <p className="text-[10px] font-fira mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
-              style={{ background: 'hsla(258,78%,55%,0.08)', color: 'hsl(258,78%,38%)', border: '1px solid hsla(258,78%,65%,0.18)' }}>
+              style={{ background: 'hsl(var(--primary) / 0.12)', color: 'hsl(var(--primary))', border: '1px solid hsl(var(--primary) / 0.28)' }}>
               <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
               {settings.cert_id}
             </p>
@@ -328,7 +328,7 @@ const Footer = () => {
               style={{
                  background: 'hsl(var(--secondary) / 0.92)',
                 backdropFilter: 'blur(10px)',
-                color: 'hsl(258,78%,45%)',
+                color: 'hsl(var(--foreground))',
                 border: '1px solid hsla(258,78%,75%,0.22)',
                 boxShadow: '0 1px 4px hsla(226,35%,12%,0.05)',
               }}>
@@ -341,7 +341,7 @@ const Footer = () => {
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full"
           style={{ background: 'hsla(162,72%,38%,0.08)', border: '1px solid hsla(162,72%,38%,0.20)' }}>
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-[11px] font-fira font-medium" style={{ color: 'hsl(162,72%,30%)' }}>{settings.status_text}</span>
+          <span className="text-[11px] font-fira font-medium" style={{ color: 'hsl(var(--hero-online))' }}>{settings.status_text}</span>
         </div>
       </div>
     </div>
@@ -367,7 +367,7 @@ const Footer = () => {
             }}>© {new Date().getFullYear()}</span>
             {' '}
             <strong style={{
-              background: 'linear-gradient(90deg, hsl(226,75%,30%), hsl(258,78%,40%))',
+              background: 'linear-gradient(90deg, hsl(var(--foreground)), hsl(var(--primary)))',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',

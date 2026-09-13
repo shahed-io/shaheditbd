@@ -79,8 +79,8 @@ const ShopProductCard = ({ product }: { product: Product }) => {
       className="rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:-translate-y-1 group"
       style={{
         border: '1.5px solid hsl(var(--border))',
-        background: 'hsl(var(--background))',
-        boxShadow: '0 2px 12px hsla(258,78%,55%,0.06)',
+        background: 'linear-gradient(155deg, hsl(var(--card) / 0.98), hsl(var(--popover) / 0.94))',
+        boxShadow: 'var(--glass-shadow)',
       }}
       onClick={() => navigate(`/product/${product.slug}`)}>
       {/* Image */}
@@ -123,7 +123,7 @@ const ShopProductCard = ({ product }: { product: Product }) => {
               onClick={handlePreOrder}
               aria-label={`Pre-order ${product.name} via WhatsApp`}
               title="Pre-order via WhatsApp"
-              className="w-9 h-9 rounded-xl flex items-center justify-center text-white transition-all hover:scale-110 flex-shrink-0"
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-destructive-foreground transition-all hover:scale-110 flex-shrink-0"
               style={{ background: 'linear-gradient(135deg, hsl(0,80%,55%), hsl(15,90%,55%))' }}>
               <MessageCircle size={14} />
             </button>
@@ -134,8 +134,8 @@ const ShopProductCard = ({ product }: { product: Product }) => {
                 addToCart({ id: product.id, name: product.name, price: product.price, category: '', image: product.image_url || '' });
               }}
               aria-label={`Add ${product.name} to cart`}
-              className="w-9 h-9 rounded-xl flex items-center justify-center text-white transition-all hover:scale-110 flex-shrink-0"
-              style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' }}>
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-accent-foreground transition-all hover:scale-110 flex-shrink-0"
+              style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))' }}>
               <ShoppingCart size={14} />
             </button>
           )}
@@ -393,11 +393,11 @@ const Shop = () => {
           <aside className="w-full lg:w-64 flex-shrink-0">
             <div className="relative rounded-3xl p-4 lg:p-5 lg:sticky lg:top-24 overflow-hidden"
               style={{
-                background: 'linear-gradient(140deg, hsla(0,0%,100%,0.78), hsla(258,60%,98%,0.65))',
+                background: 'linear-gradient(140deg, hsl(var(--card) / 0.94), hsl(var(--popover) / 0.86))',
                 backdropFilter: 'blur(28px) saturate(180%)',
                 WebkitBackdropFilter: 'blur(28px) saturate(180%)',
-                border: '1px solid hsla(0,0%,100%,0.7)',
-                boxShadow: '0 12px 40px hsla(258,60%,40%,0.10), inset 0 1px 0 hsla(0,0%,100%,0.9)',
+                border: '1px solid hsl(var(--border))',
+                boxShadow: 'var(--glass-shadow)',
               }}>
               {/* Ambient blobs */}
               <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full pointer-events-none"
@@ -417,14 +417,14 @@ const Shop = () => {
                     style={{
                       background: !activeCatSlug
                         ? 'linear-gradient(135deg, hsla(258,90%,66%,0.18), hsla(199,89%,60%,0.14))'
-                        : 'hsla(0,0%,100%,0.55)',
-                      color: !activeCatSlug ? 'hsl(258,78%,42%)' : 'hsl(var(--foreground))',
+                        : 'hsl(var(--secondary) / 0.62)',
+                      color: !activeCatSlug ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))',
                       border: !activeCatSlug
                         ? '1.5px solid hsla(258,90%,66%,0.45)'
-                        : '1px solid hsla(258,40%,80%,0.25)',
+                        : '1px solid hsl(var(--border))',
                       boxShadow: !activeCatSlug
-                        ? '0 6px 18px hsla(258,90%,66%,0.20), inset 0 1px 0 hsla(0,0%,100%,0.7)'
-                        : '0 2px 8px hsla(258,40%,40%,0.04)',
+                        ? '0 8px 24px hsl(var(--primary) / 0.26), inset 0 1px 0 hsl(var(--foreground) / 0.12)'
+                        : '0 2px 12px hsl(var(--background) / 0.34)',
                     }}>
                     {!activeCatSlug && (
                       <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full"
@@ -434,7 +434,7 @@ const Shop = () => {
                       style={{
                         background: !activeCatSlug
                           ? 'linear-gradient(135deg, hsl(258,90%,66%), hsl(199,89%,60%))'
-                          : 'hsla(258,30%,90%,0.6)',
+                          : 'hsl(var(--muted) / 0.72)',
                         boxShadow: !activeCatSlug ? '0 4px 12px hsla(258,90%,66%,0.35)' : 'none',
                       }}>
                       <span style={{ filter: !activeCatSlug ? 'grayscale(0)' : 'none' }}>🛒</span>
@@ -454,14 +454,14 @@ const Shop = () => {
                         style={{
                           background: isActive
                             ? `linear-gradient(135deg, ${meta.accent}28, ${meta.accent}10)`
-                            : 'hsla(0,0%,100%,0.55)',
-                          color: isActive ? meta.accent : 'hsl(var(--foreground))',
+                            : 'hsl(var(--secondary) / 0.62)',
+                          color: isActive ? meta.accent : 'hsl(var(--muted-foreground))',
                           border: isActive
                             ? `1.5px solid ${meta.accent}55`
-                            : '1px solid hsla(258,40%,80%,0.25)',
+                            : '1px solid hsl(var(--border))',
                           boxShadow: isActive
-                            ? `0 6px 18px ${meta.accent}30, inset 0 1px 0 hsla(0,0%,100%,0.7)`
-                            : '0 2px 8px hsla(258,40%,40%,0.04)',
+                            ? `0 6px 18px ${meta.accent}30, inset 0 1px 0 hsl(var(--foreground) / 0.12)`
+                            : '0 2px 12px hsl(var(--background) / 0.34)',
                         }}>
                         {isActive && (
                           <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full"
@@ -471,7 +471,7 @@ const Shop = () => {
                           style={{
                             background: isActive
                               ? `linear-gradient(135deg, ${meta.accent}, ${meta.accent}cc)`
-                              : 'hsla(258,30%,94%,0.7)',
+                              : 'hsl(var(--muted) / 0.72)',
                             boxShadow: isActive ? `0 4px 12px ${meta.accent}45` : 'none',
                           }}>
                           {imgSrc
@@ -597,8 +597,7 @@ const Shop = () => {
                   <div className="text-sm mt-2">&ldquo;{search}&rdquo; এর জন্য কোনো মিল পাওয়া যায়নি</div>
                 )}
                 <button onClick={() => { setSearch(''); setCategory(''); setSearchParams({}); }}
-                  className="mt-4 px-6 py-2.5 rounded-xl text-sm font-bold text-white"
-                  style={{ background: 'hsl(258,78%,55%)' }}>
+                  className="mt-4 px-6 py-2.5 rounded-xl text-sm font-bold text-primary-foreground bg-primary">
                   সব দেখুন
                 </button>
               </div>

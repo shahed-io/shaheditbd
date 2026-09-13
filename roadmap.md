@@ -18,3 +18,6 @@
 - [x] Deepen the current palette and fix low-contrast text, cards, borders, and glossy surfaces without changing the layout
 
 - [x] Keep the current theme/layout unchanged; deepen and brighten only its existing colors and improve clarity. Do not show another preview for this request.
+
+## Reference palette and typography
+- [x] Match the public storefront to the supplied Web Sol Studio dark violet/magenta palette and typography; remove pale low-contrast product surfaces and verify desktop/mobile.

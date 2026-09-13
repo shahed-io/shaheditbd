@@ -177,7 +177,7 @@ const ReviewCard = ({ review, index }: { review: Review; index: number }) => {
           <AvatarCircle initials={review.avatar || review.name?.slice(0,2).toUpperCase()} index={index} seed={review.name || review.id} name={review.name} />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5">
-              <p className="text-[13px] font-bold truncate" style={{ color: 'hsl(226,35%,14%)' }}>
+              <p className="text-[13px] font-bold truncate text-foreground">
                 {review.name}
               </p>
               {review.verified && (
@@ -189,7 +189,7 @@ const ReviewCard = ({ review, index }: { review: Review; index: number }) => {
                 </span>
               )}
             </div>
-            <p className="text-[11px]" style={{ color: 'hsl(226,20%,58%)' }}>
+            <p className="text-[11px] text-muted-foreground">
               {review.location} · {review.date}
             </p>
           </div>
