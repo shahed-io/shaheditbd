@@ -10,3 +10,6 @@
 ## Remix setup
 - [ ] Update remixed secrets (36 keys) — via secure form
 - [ ] Link Google Search Console connection 'Shahed's Google Search Console'
+
+## Homepage banner
+- [x] Replace the image carousel with the selected responsive Cyber-glass Shahed IT service banner

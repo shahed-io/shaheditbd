@@ -64,10 +64,10 @@ const HeroBanner = () => (
         </p>
 
         <div className="mt-8 flex flex-wrap gap-3">
-          <Button asChild size="lg" className="h-13 rounded-lg bg-hero-action px-6 text-hero-action-foreground shadow-hero-action hover:opacity-90">
+          <Button asChild size="lg" className="h-[52px] rounded-lg bg-hero-action px-6 text-hero-action-foreground shadow-hero-action hover:opacity-90">
             <Link to="/contact-us"><Bolt aria-hidden="true" />Start Your Project</Link>
           </Button>
-          <Button asChild size="lg" variant="outline" className="h-13 rounded-lg border-hero-border bg-hero-glass px-6 text-hero-foreground hover:bg-hero-glass-strong hover:text-hero-foreground">
+          <Button asChild size="lg" variant="outline" className="h-[52px] rounded-lg border-hero-border bg-hero-glass px-6 text-hero-foreground hover:bg-hero-glass-strong hover:text-hero-foreground">
             <Link to="/shop"><Play aria-hidden="true" />View Services</Link>
           </Button>
         </div>
