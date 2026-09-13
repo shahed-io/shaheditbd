@@ -191,7 +191,7 @@ const StepCard = ({ step, index }: { step: typeof STEPS[0]; index: number }) => 
               boxShadow: `0 8px 24px hsla(${step.from},0.4), inset 0 1px 0 hsla(0,0%,100%,0.4)`,
             }}
           >
-            <step.Icon size={24} strokeWidth={2.2} className="text-white" />
+            <step.Icon size={24} strokeWidth={2.2} className="text-primary-foreground" />
           </div>
           <div
             className="absolute inset-0 rounded-2xl opacity-50 -z-10"

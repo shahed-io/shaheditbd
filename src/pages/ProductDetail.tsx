@@ -542,7 +542,7 @@ const ProductDetail = () => {
             <div
                 className={`relative rounded-3xl overflow-hidden border aspect-square group${entered ? ' rainbow-glow-border' : ''}`}
                 style={{
-                  background: 'linear-gradient(155deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.60) 100%)',
+                  background: 'linear-gradient(155deg, hsl(var(--card) / 0.98) 0%, hsl(var(--popover) / 0.96) 100%)',
                   backdropFilter: 'blur(24px) saturate(180%)',
                   WebkitBackdropFilter: 'blur(24px) saturate(180%)',
                   borderColor: 'transparent',
@@ -595,12 +595,12 @@ const ProductDetail = () => {
                   <>
                     <button onClick={prevImg} aria-label="Previous image"
                       className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 z-10"
-                      style={{ background: 'rgba(255,255,255,0.80)', border: '1px solid hsla(258,78%,60%,0.25)', color: 'hsl(258,78%,50%)', backdropFilter: 'blur(12px)', boxShadow: '0 2px 12px hsla(258,78%,55%,0.15)' }}>
+                      style={{ background: 'hsl(var(--card) / 0.92)', border: '1px solid hsl(var(--border))', color: 'hsl(var(--primary))', backdropFilter: 'blur(12px)', boxShadow: 'var(--glass-shadow)' }}>
                       <ChevronLeft size={18} />
                     </button>
                     <button onClick={nextImg} aria-label="Next image"
                       className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 z-10"
-                      style={{ background: 'rgba(255,255,255,0.80)', border: '1px solid hsla(258,78%,60%,0.25)', color: 'hsl(258,78%,50%)', backdropFilter: 'blur(12px)', boxShadow: '0 2px 12px hsla(258,78%,55%,0.15)' }}>
+                      style={{ background: 'hsl(var(--card) / 0.92)', border: '1px solid hsl(var(--border))', color: 'hsl(var(--primary))', backdropFilter: 'blur(12px)', boxShadow: 'var(--glass-shadow)' }}>
                       <ChevronRight size={18} />
                     </button>
                   </>
@@ -613,7 +613,7 @@ const ProductDetail = () => {
                   onClick={() => toggleWishlist(cartItem)}
                   className="absolute top-4 right-4 w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:scale-110 z-10"
                   style={{
-                    background: wishlisted ? 'hsla(320,90%,62%,0.15)' : 'rgba(255,255,255,0.80)',
+                    background: wishlisted ? 'hsl(var(--accent) / 0.18)' : 'hsl(var(--card) / 0.92)',
                     border: `1px solid ${wishlisted ? 'hsla(320,90%,62%,0.45)' : 'hsla(258,78%,60%,0.20)'}`,
                     backdropFilter: 'blur(12px)',
                     boxShadow: '0 2px 12px hsla(258,78%,55%,0.10)',
@@ -805,11 +805,11 @@ const ProductDetail = () => {
               <div
                 className="relative rounded-3xl overflow-hidden"
                 style={{
-                  background: 'linear-gradient(155deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.68) 100%)',
+                  background: 'linear-gradient(155deg, hsl(var(--card) / 0.98) 0%, hsl(var(--popover) / 0.94) 100%)',
                   backdropFilter: 'blur(28px) saturate(180%)',
                   WebkitBackdropFilter: 'blur(28px) saturate(180%)',
                   border: '1px solid hsla(258,78%,60%,0.22)',
-                  boxShadow: '0 8px 40px hsla(258,78%,55%,0.12), 0 1px 0 rgba(255,255,255,0.95) inset',
+                  boxShadow: '0 18px 48px hsl(var(--background) / 0.55), inset 0 1px 0 hsl(var(--foreground) / 0.12)',
                   opacity: entered ? 1 : 0,
                   transform: entered ? 'none' : 'translateY(28px)',
                   transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1) 0.15s',
@@ -828,14 +828,13 @@ const ProductDetail = () => {
                     </span>
                     <button onClick={handleCopy}
                       className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl transition-all hover:scale-105"
-                      style={{ color: copied ? 'hsl(158,80%,45%)' : 'hsl(226,25%,45%)', background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid hsla(258,78%,60%,0.18)', boxShadow: '0 2px 8px hsla(258,78%,55%,0.08)' }}>
+                      style={{ color: copied ? 'hsl(var(--hero-online))' : 'hsl(var(--muted-foreground))', background: 'hsl(var(--secondary) / 0.82)', backdropFilter: 'blur(12px)', border: '1px solid hsl(var(--border))', boxShadow: '0 2px 12px hsl(var(--background) / 0.35)' }}>
                       {copied ? <><Check size={12} /> Copied!</> : <><Copy size={12} /> Share</>}
                     </button>
                   </div>
 
                   {/* Title */}
-                  <h1 className="font-sora font-black text-2xl sm:text-3xl leading-tight mb-2"
-                    style={{ color: 'hsl(226,35%,14%)' }}>
+                  <h1 className="font-sora font-black text-2xl sm:text-3xl leading-tight mb-2 text-foreground">
                     {productDisplayName}
                   </h1>
 
@@ -853,12 +852,12 @@ const ProductDetail = () => {
                               style={{ background: 'hsla(258,78%,55%,0.12)', border: '1px solid hsla(258,78%,55%,0.28)' }}>
                               <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'hsl(258,78%,55%)' }} />
                             </span>
-                            <span style={{ color: 'hsl(226,25%,38%)' }}>{line}</span>
+                            <span className="text-muted-foreground">{line}</span>
                           </li>
                         ))}
                       </ul>
                     ) : (
-                      <p className="text-sm leading-relaxed mb-3" style={{ color: 'hsl(226,25%,42%)' }}>
+                      <p className="text-sm leading-relaxed mb-3 text-muted-foreground">
                         {shortDescription}
                       </p>
                     );
@@ -873,10 +872,10 @@ const ProductDetail = () => {
                       {[1,2,3,4,5].map(s => (
                         <Star key={s} size={14} fill="hsl(38,100%,55%)" color="hsl(38,100%,55%)" />
                       ))}
-                      <span className="text-sm font-semibold ml-1" style={{ color: 'hsl(226,35%,18%)' }}>4.9</span>
+                      <span className="text-sm font-semibold ml-1 text-foreground">4.9</span>
                     </div>
                     <span className="w-1 h-1 rounded-full" style={{ background: 'hsl(226,25%,75%)' }} />
-                    <span className="text-sm" style={{ color: 'hsl(226,25%,48%)' }}>{(product.total_sales || 0) + 50}+ sold</span>
+                    <span className="text-sm text-muted-foreground">{(product.total_sales || 0) + 50}+ sold</span>
                     <span className="w-1 h-1 rounded-full" style={{ background: 'hsl(226,25%,75%)' }} />
                     {outOfStock ? (
                       <span className="text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1"
@@ -894,12 +893,12 @@ const ProductDetail = () => {
                   {/* Price row — always single line on every device */}
                   <div className="flex items-end flex-nowrap gap-2 sm:gap-3 py-3 px-3 sm:px-4 rounded-2xl overflow-hidden"
                     style={{ background: 'linear-gradient(135deg, hsla(258,78%,55%,0.07) 0%, hsla(185,90%,52%,0.05) 100%)', border: '1px solid hsla(258,78%,60%,0.14)' }}>
-                    <span className="font-sora font-black whitespace-nowrap text-[26px] sm:text-3xl md:text-4xl flex-shrink-0" style={{ color: 'hsl(258,78%,42%)' }}>
+                    <span className="font-sora font-black whitespace-nowrap text-[26px] sm:text-3xl md:text-4xl flex-shrink-0 text-primary">
                       {fmtPrice(displayPrice)}
                     </span>
                     {displayOriginalPrice && displayOriginalPrice > displayPrice && (
                       <div className="flex flex-col min-w-0 flex-shrink">
-                        <div className="text-sm sm:text-base md:text-lg line-through whitespace-nowrap" style={{ color: 'hsl(226,25%,62%)' }}>{fmtPrice(displayOriginalPrice)}</div>
+                        <div className="text-sm sm:text-base md:text-lg line-through whitespace-nowrap text-muted-foreground">{fmtPrice(displayOriginalPrice)}</div>
                         {savings > 0 && (
                           <div className="text-[10px] sm:text-xs font-bold whitespace-nowrap" style={{ color: 'hsl(40,100%,48%)' }}>
                             Save {fmtPrice(savings)}
@@ -932,7 +931,7 @@ const ProductDetail = () => {
                     transition: 'all 0.6s cubic-bezier(0.22,1,0.36,1) 0.38s',
                   }}
                 >
-                  <p className="text-sm font-semibold mb-3" style={{ color: 'hsl(226,35%,28%)' }}>
+                  <p className="text-sm font-semibold mb-3 text-foreground">
                     মেয়াদ ও মূল্য পরিকল্পনা
                   </p>
                   <div className="grid grid-cols-1 gap-2.5">
@@ -953,8 +952,8 @@ const ProductDetail = () => {
                             background: 'linear-gradient(135deg, hsla(258,78%,55%,0.10) 0%, hsla(185,90%,52%,0.07) 100%)',
                             boxShadow: '0 0 0 3px hsla(258,78%,55%,0.12)',
                           } : {
-                            borderColor: 'hsla(220,20%,82%,0.9)',
-                            background: 'rgba(255,255,255,0.65)',
+                            borderColor: 'hsl(var(--border))',
+                            background: 'hsl(var(--card) / 0.84)',
                             backdropFilter: 'blur(12px)',
                           }}
                         >
@@ -964,16 +963,16 @@ const ProductDetail = () => {
                               style={{ borderColor: isSel ? 'hsl(258,78%,55%)' : 'hsl(220,20%,75%)' }}>
                               {isSel && <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'hsl(258,78%,55%)' }} />}
                             </div>
-                            <span className="font-bold text-[13px] sm:text-sm truncate" style={{ color: isSel ? 'hsl(258,78%,42%)' : 'hsl(226,35%,22%)' }}>
+                            <span className="font-bold text-[13px] sm:text-sm truncate" style={{ color: isSel ? 'hsl(var(--primary))' : 'hsl(var(--foreground))' }}>
                               {plan.duration}
                             </span>
                           </div>
                           {/* Right: price — always one line */}
                           <div className="flex items-center gap-1.5 text-right flex-shrink-0 whitespace-nowrap">
                             {planOriginal && planOriginal > planPrice && (
-                              <span className="text-[11px] sm:text-xs line-through" style={{ color: 'hsl(226,25%,65%)' }}>{fmtPrice(planOriginal)}</span>
+                              <span className="text-[11px] sm:text-xs line-through text-muted-foreground">{fmtPrice(planOriginal)}</span>
                             )}
-                            <span className="font-black text-sm sm:text-base font-sora" style={{ color: 'hsl(258,78%,42%)' }}>
+                            <span className="font-black text-sm sm:text-base font-sora text-primary">
                               {fmtPrice(planPrice)}
                             </span>
                             {planDiscount > 0 && (
@@ -1214,12 +1213,12 @@ const ProductDetail = () => {
                       }}
                       className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-bold text-base transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
                       style={{
-                        background: 'linear-gradient(135deg, rgba(255,255,255,0.88) 0%, rgba(245,243,255,0.82) 50%, rgba(235,245,255,0.88) 100%)',
+                        background: 'linear-gradient(100deg, hsl(var(--primary)), hsl(var(--accent)))',
                         backdropFilter: 'blur(20px)',
                         WebkitBackdropFilter: 'blur(20px)',
-                        border: '1.5px solid rgba(255,255,255,0.95)',
-                        boxShadow: '0 4px 24px hsla(258,78%,55%,0.18), 0 1px 0 rgba(255,255,255,1) inset, 0 -1px 0 hsla(258,78%,55%,0.08) inset',
-                        color: 'hsl(258,78%,48%)',
+                        border: '1px solid hsl(var(--primary) / 0.72)',
+                        boxShadow: '0 12px 30px hsl(var(--accent) / 0.26), inset 0 1px 0 hsl(var(--foreground) / 0.28)',
+                        color: 'hsl(var(--accent-foreground))',
                         letterSpacing: '0.02em',
                       }}
                     >
@@ -1234,12 +1233,12 @@ const ProductDetail = () => {
                     <button onClick={outOfStock ? waPreOrder : waOrder}
                       className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-semibold text-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
                       style={{
-                        background: 'linear-gradient(135deg, rgba(255,255,255,0.82) 0%, rgba(243,242,255,0.76) 100%)',
+                        background: 'hsl(var(--secondary) / 0.92)',
                         backdropFilter: 'blur(20px)',
                         WebkitBackdropFilter: 'blur(20px)',
-                        border: '1.5px solid rgba(255,255,255,0.90)',
-                        boxShadow: '0 2px 16px hsla(258,78%,55%,0.12), 0 1px 0 rgba(255,255,255,1) inset',
-                        color: 'hsl(258,78%,48%)',
+                        border: '1px solid hsl(var(--border))',
+                        boxShadow: 'var(--glass-shadow)',
+                        color: 'hsl(var(--primary))',
                       }}>
                       <MessageCircle size={15} strokeWidth={2.5} /> WhatsApp
                     </button>
@@ -1251,15 +1250,15 @@ const ProductDetail = () => {
                       className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-semibold text-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                       style={{
                         background: inCart
-                          ? 'linear-gradient(135deg, rgba(240,255,248,0.88) 0%, rgba(230,250,255,0.82) 100%)'
-                          : 'linear-gradient(135deg, rgba(235,248,255,0.88) 0%, rgba(230,242,255,0.82) 100%)',
+                          ? 'hsl(var(--hero-online) / 0.16)'
+                          : 'hsl(var(--secondary) / 0.92)',
                         backdropFilter: 'blur(20px)',
                         WebkitBackdropFilter: 'blur(20px)',
-                        border: '1.5px solid rgba(255,255,255,0.90)',
+                        border: '1px solid hsl(var(--border))',
                         boxShadow: inCart
-                          ? '0 2px 16px hsla(162,72%,46%,0.18), 0 1px 0 rgba(255,255,255,1) inset'
-                          : '0 2px 16px hsla(200,90%,45%,0.15), 0 1px 0 rgba(255,255,255,1) inset',
-                        color: inCart ? 'hsl(162,72%,38%)' : 'hsl(200,90%,38%)',
+                          ? '0 4px 20px hsl(var(--hero-online) / 0.18)'
+                          : 'var(--glass-shadow)',
+                        color: inCart ? 'hsl(var(--hero-online))' : 'hsl(var(--primary))',
                       }}
                     >
                       <ShoppingCart size={15} strokeWidth={2.5} />
@@ -1275,24 +1274,24 @@ const ProductDetail = () => {
                 <div
                   className="rounded-2xl p-5"
                   style={{
-                    background: 'linear-gradient(155deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.58) 100%)',
+                    background: 'linear-gradient(155deg, hsl(var(--card) / 0.98) 0%, hsl(var(--popover) / 0.94) 100%)',
                     backdropFilter: 'blur(24px)',
                     WebkitBackdropFilter: 'blur(24px)',
                     border: '1px solid hsla(258,78%,75%,0.22)',
-                    boxShadow: '0 4px 24px hsla(258,78%,55%,0.08), 0 1px 0 rgba(255,255,255,0.9) inset',
+                    boxShadow: 'var(--glass-shadow)',
                     opacity: entered ? 1 : 0,
                     transform: entered ? 'none' : 'translateY(20px)',
                     transition: 'all 0.65s cubic-bezier(0.22,1,0.36,1) 0.64s',
                   }}
                 >
-                  <h3 className="font-sora font-bold text-base flex items-center gap-2 mb-4" style={{ color: 'hsl(226,35%,18%)' }}>
+                  <h3 className="font-sora font-bold text-base flex items-center gap-2 mb-4 text-foreground">
                     <Package size={16} style={{ color: 'hsl(258,78%,55%)' }} /> What You'll Get
                   </h3>
                   <ul className="space-y-2.5">
                     {product.what_you_get.map((item, i) => (
                       <li key={i} className="flex items-start gap-3 text-sm"
                         style={{
-                          color: 'hsl(226,25%,35%)',
+                          color: 'hsl(var(--muted-foreground))',
                           opacity: entered ? 1 : 0,
                           transform: entered ? 'none' : 'translateX(-12px)',
                           transition: `all 0.5s cubic-bezier(0.22,1,0.36,1) ${0.7 + i * 0.07}s`,
@@ -1363,22 +1362,22 @@ const ProductDetail = () => {
               <div
                 className="rounded-2xl p-6 text-sm leading-relaxed"
                 style={{
-                  background: 'linear-gradient(155deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.58) 100%)',
+                  background: 'linear-gradient(155deg, hsl(var(--card) / 0.98) 0%, hsl(var(--popover) / 0.94) 100%)',
                   backdropFilter: 'blur(24px)',
                   WebkitBackdropFilter: 'blur(24px)',
                   border: '1px solid hsla(258,78%,75%,0.22)',
-                  boxShadow: '0 4px 24px hsla(258,78%,55%,0.08), 0 1px 0 rgba(255,255,255,0.9) inset',
-                  color: 'hsl(226,25%,40%)',
+                  boxShadow: 'var(--glass-shadow)',
+                  color: 'hsl(var(--muted-foreground))',
                 }}
               >
                 {description ? (
                   <div className="prose prose-sm max-w-none
                     prose-headings:text-foreground prose-headings:font-bold prose-headings:mt-4 prose-headings:mb-2
                     prose-h2:text-base prose-h3:text-sm
-                    prose-p:text-[hsl(226,25%,40%)] prose-p:mb-2 prose-p:leading-relaxed
+                    prose-p:text-muted-foreground prose-p:mb-2 prose-p:leading-relaxed
                     prose-strong:text-foreground prose-strong:font-semibold
                     prose-ul:pl-4 prose-ul:space-y-1
-                    prose-li:text-[hsl(226,25%,40%)] prose-li:leading-relaxed
+                    prose-li:text-muted-foreground prose-li:leading-relaxed
                     prose-a:text-primary">
                   <Suspense fallback={<div className="h-20 shimmer rounded-xl" />}>
                       <ReactMarkdown>{fixPunctuation(description)}</ReactMarkdown>
@@ -1622,7 +1621,7 @@ const FAQItem = ({ q, a, delay = 0, revealed = true }: { q: string; a: string; d
   return (
     <div className="rounded-2xl overflow-hidden transition-all"
       style={{
-        background: 'linear-gradient(155deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.58) 100%)',
+        background: 'linear-gradient(155deg, hsl(var(--card) / 0.98) 0%, hsl(var(--popover) / 0.94) 100%)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         border: `1px solid ${open ? 'hsla(258,78%,60%,0.35)' : 'hsla(258,78%,75%,0.22)'}`,
@@ -1631,12 +1630,12 @@ const FAQItem = ({ q, a, delay = 0, revealed = true }: { q: string; a: string; d
         transform: revealed ? 'none' : 'translateY(16px)',
         transition: `opacity 0.5s cubic-bezier(0.22,1,0.36,1) ${delay}s, transform 0.5s cubic-bezier(0.22,1,0.36,1) ${delay}s, border-color 0.3s, box-shadow 0.3s`,
       }}>
-      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between px-5 py-4 text-sm font-semibold text-left gap-3" style={{ color: 'hsl(226,35%,18%)' }}>
+      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between px-5 py-4 text-sm font-semibold text-left gap-3 text-foreground">
         <span>{q}</span>
         <ChevronDown size={16} className="flex-shrink-0 transition-transform duration-300" style={{ color: 'hsl(258,78%,55%)', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }} />
       </button>
       <div className="overflow-hidden transition-all duration-400" style={{ maxHeight: open ? '300px' : '0', opacity: open ? 1 : 0 }}>
-        <div className="px-5 pb-4 text-sm leading-relaxed border-t" style={{ borderColor: 'hsla(258,78%,75%,0.18)', paddingTop: '12px', color: 'hsl(226,25%,42%)' }}>{a}</div>
+        <div className="px-5 pb-4 text-sm leading-relaxed border-t text-muted-foreground" style={{ borderColor: 'hsl(var(--border))', paddingTop: '12px' }}>{a}</div>
       </div>
     </div>
   );
@@ -1673,7 +1672,7 @@ const ProductSpecsTable = ({ productId }: { productId: string }) => {
       </h2>
       <div className="rounded-2xl overflow-hidden"
         style={{
-          background: 'linear-gradient(155deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.58) 100%)',
+          background: 'linear-gradient(155deg, hsl(var(--card) / 0.98) 0%, hsl(var(--popover) / 0.94) 100%)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
           border: '1px solid hsla(258,78%,75%,0.22)',
@@ -1682,9 +1681,9 @@ const ProductSpecsTable = ({ productId }: { productId: string }) => {
         <table className="w-full text-sm">
           <tbody>
             {specs.map((s, i) => (
-              <tr key={i} style={{ background: i % 2 === 0 ? 'rgba(255,255,255,0.40)' : 'transparent' }}>
-                <td className="px-5 py-3 font-semibold w-1/3 border-r" style={{ color: 'hsl(226,35%,22%)', borderColor: 'hsla(258,78%,75%,0.18)' }}>{s.name}</td>
-                <td className="px-5 py-3" style={{ color: 'hsl(226,25%,42%)' }}>
+              <tr key={i} style={{ background: i % 2 === 0 ? 'hsl(var(--secondary) / 0.46)' : 'transparent' }}>
+                <td className="px-5 py-3 font-semibold w-1/3 border-r text-foreground" style={{ borderColor: 'hsl(var(--border))' }}>{s.name}</td>
+                <td className="px-5 py-3 text-muted-foreground">
                   <div className="flex flex-wrap gap-1.5">
                     {s.values.map(v => (
                       <span key={v} className="px-2.5 py-0.5 rounded-full text-xs" style={{ background: 'hsla(258,78%,55%,0.08)', border: '1px solid hsla(258,78%,75%,0.25)', color: 'hsl(258,78%,45%)' }}>{v}</span>
@@ -1799,7 +1798,7 @@ const ProductReviews = ({ productId, productSlug }: { productId: string; product
   };
 
   const glassStyle: React.CSSProperties = {
-    background: 'linear-gradient(155deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.68) 100%)',
+    background: 'linear-gradient(155deg, hsl(var(--card) / 0.98) 0%, hsl(var(--popover) / 0.94) 100%)',
     backdropFilter: 'blur(20px)',
     WebkitBackdropFilter: 'blur(20px)',
     border: '1px solid hsla(258,78%,75%,0.22)',
@@ -1846,7 +1845,7 @@ const ProductReviews = ({ productId, productSlug }: { productId: string; product
         <div className="rounded-2xl p-5 mb-6 flex flex-col sm:flex-row gap-6" style={glassStyle}>
           {/* Avg score */}
           <div className="flex flex-col items-center justify-center min-w-[100px]">
-            <div className="text-5xl font-sora font-black" style={{ color: 'hsl(258,78%,42%)' }}>
+            <div className="text-5xl font-sora font-black text-primary">
               {avgRating.toFixed(1)}
             </div>
             <StarRating value={Math.round(avgRating)} size={16} />
@@ -1856,7 +1855,7 @@ const ProductReviews = ({ productId, productSlug }: { productId: string; product
           <div className="flex-1 space-y-1.5">
             {ratingCounts.map(({ star, count }) => (
               <div key={star} className="flex items-center gap-2">
-                <span className="text-xs w-4 text-right font-semibold" style={{ color: 'hsl(226,35%,25%)' }}>{star}</span>
+                <span className="text-xs w-4 text-right font-semibold text-foreground">{star}</span>
                 <Star size={11} fill="hsl(38,100%,55%)" color="hsl(38,100%,55%)" />
                 <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: 'hsla(258,78%,55%,0.10)' }}>
                   <div
@@ -1975,7 +1974,7 @@ const ProductReviews = ({ productId, productSlug }: { productId: string; product
                     </span>
                   </div>
                   {r.title && <p className="text-sm font-semibold text-foreground mb-1">{r.title}</p>}
-                  <p className="text-sm leading-relaxed" style={{ color: 'hsl(226,25%,42%)' }}>{r.body}</p>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{r.body}</p>
                   {/* Helpful */}
                   <button
                     onClick={() => handleHelpful(r.id, r.helpful_count)}

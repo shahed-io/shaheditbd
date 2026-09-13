@@ -79,8 +79,8 @@ const ShopProductCard = ({ product }: { product: Product }) => {
       className="rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:-translate-y-1 group"
       style={{
         border: '1.5px solid hsl(var(--border))',
-        background: 'hsl(var(--background))',
-        boxShadow: '0 2px 12px hsla(258,78%,55%,0.06)',
+        background: 'linear-gradient(155deg, hsl(var(--card) / 0.98), hsl(var(--popover) / 0.94))',
+        boxShadow: 'var(--glass-shadow)',
       }}
       onClick={() => navigate(`/product/${product.slug}`)}>
       {/* Image */}
@@ -123,7 +123,7 @@ const ShopProductCard = ({ product }: { product: Product }) => {
               onClick={handlePreOrder}
               aria-label={`Pre-order ${product.name} via WhatsApp`}
               title="Pre-order via WhatsApp"
-              className="w-9 h-9 rounded-xl flex items-center justify-center text-white transition-all hover:scale-110 flex-shrink-0"
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-destructive-foreground transition-all hover:scale-110 flex-shrink-0"
               style={{ background: 'linear-gradient(135deg, hsl(0,80%,55%), hsl(15,90%,55%))' }}>
               <MessageCircle size={14} />
             </button>
@@ -134,8 +134,8 @@ const ShopProductCard = ({ product }: { product: Product }) => {
                 addToCart({ id: product.id, name: product.name, price: product.price, category: '', image: product.image_url || '' });
               }}
               aria-label={`Add ${product.name} to cart`}
-              className="w-9 h-9 rounded-xl flex items-center justify-center text-white transition-all hover:scale-110 flex-shrink-0"
-              style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' }}>
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-accent-foreground transition-all hover:scale-110 flex-shrink-0"
+              style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))' }}>
               <ShoppingCart size={14} />
             </button>
           )}
@@ -597,8 +597,7 @@ const Shop = () => {
                   <div className="text-sm mt-2">&ldquo;{search}&rdquo; এর জন্য কোনো মিল পাওয়া যায়নি</div>
                 )}
                 <button onClick={() => { setSearch(''); setCategory(''); setSearchParams({}); }}
-                  className="mt-4 px-6 py-2.5 rounded-xl text-sm font-bold text-white"
-                  style={{ background: 'hsl(258,78%,55%)' }}>
+                  className="mt-4 px-6 py-2.5 rounded-xl text-sm font-bold text-primary-foreground bg-primary">
                   সব দেখুন
                 </button>
               </div>
