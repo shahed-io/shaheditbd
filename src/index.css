@@ -141,43 +141,43 @@
   ══════════════════════════════════════ */
   :root {
     /* ── Base Surfaces ── */
-    --background:         264 38% 6%;
-    --foreground:         255 25% 96%;
-    --card:               264 29% 12%;
-    --card-foreground:    255 25% 96%;
-    --popover:            264 32% 9%;
-    --popover-foreground: 255 25% 96%;
+    --background:         264 52% 4%;
+    --foreground:         255 30% 98%;
+    --card:               264 38% 10%;
+    --card-foreground:    255 30% 98%;
+    --popover:            264 42% 7%;
+    --popover-foreground: 255 30% 98%;
 
     /* ── Primary ── */
-    --primary:            267 88% 68%;
+    --primary:            267 96% 72%;
     --primary-foreground: 264 45% 6%;
-    --secondary:          260 24% 17%;
-    --secondary-foreground: 255 20% 92%;
-    --muted:              262 22% 15%;
-    --muted-foreground:   255 13% 72%;
+    --secondary:          260 34% 15%;
+    --secondary-foreground: 255 25% 96%;
+    --muted:              262 30% 12%;
+    --muted-foreground:   255 18% 82%;
 
     /* ── Accent ── */
-    --accent:             190 92% 52%;
+    --accent:             190 100% 58%;
     --accent-foreground:  264 45% 6%;
     --destructive:        4 80% 55%;
     --destructive-foreground: 0 0% 100%;
-    --border:             262 22% 27%;
-    --input:              262 24% 18%;
-    --ring:               267 88% 68%;
+    --border:             265 42% 36%;
+    --input:              262 34% 16%;
+    --ring:               267 96% 72%;
     --radius:             1rem;
 
     /* ── Homepage cyber-glass hero ── */
     --hero-canvas: 266 66% 6%;
     --hero-foreground: 0 0% 100%;
-    --hero-muted: 255 15% 78%;
-    --hero-subtle: 255 12% 64%;
-    --hero-glass: 268 38% 13% / 0.86;
-    --hero-glass-strong: 268 40% 20% / 0.94;
-    --hero-panel: 266 45% 8% / 0.88;
-    --hero-border: 267 70% 82% / 0.22;
-    --hero-violet: 270 86% 61%;
-    --hero-pink: 320 86% 56%;
-    --hero-cyan: 188 86% 51%;
+    --hero-muted: 255 20% 86%;
+    --hero-subtle: 255 16% 74%;
+    --hero-glass: 268 48% 10% / 0.94;
+    --hero-glass-strong: 268 52% 17% / 0.98;
+    --hero-panel: 266 58% 6% / 0.94;
+    --hero-border: 267 90% 82% / 0.38;
+    --hero-violet: 270 96% 68%;
+    --hero-pink: 320 94% 62%;
+    --hero-cyan: 188 100% 57%;
     --hero-online: 158 78% 52%;
     --hero-action-foreground: 0 0% 100%;
     --hero-title: linear-gradient(90deg, hsl(var(--hero-violet)), hsl(var(--hero-pink)));
@@ -224,12 +224,12 @@
     --gradient-hero:      linear-gradient(135deg, hsl(var(--brand-h),var(--brand-s),var(--brand-l)) 0%, hsl(var(--brand2-h),var(--brand2-s),var(--brand2-l)) 100%);
     --gradient-warm:      linear-gradient(135deg, hsl(var(--brand3-h),var(--brand3-s),var(--brand3-l)) 0%, hsl(var(--accent-h),var(--accent-s),var(--accent-l)) 100%);
     --gradient-cool:      linear-gradient(135deg, hsl(var(--brand2-h),var(--brand2-s),var(--brand2-l)) 0%, hsl(var(--brand4-h),var(--brand4-s),var(--brand4-l)) 100%);
-    --gradient-card:      linear-gradient(145deg, hsl(264 29% 15%) 0%, hsl(264 32% 10%) 100%);
+    --gradient-card:      linear-gradient(145deg, hsl(264 42% 13%) 0%, hsl(264 48% 7%) 100%);
 
     /* ── Glass properties ── */
-    --glass-bg: hsla(264, 28%, 14%, 0.82);
-    --glass-border: hsla(267, 86%, 78%, 0.28);
-    --glass-shadow: 0 18px 46px hsla(264,55%,2%,0.42), inset 0 1px 0 hsla(0,0%,100%,0.10);
+    --glass-bg: hsla(264, 42%, 10%, 0.92);
+    --glass-border: hsla(267, 96%, 78%, 0.38);
+    --glass-shadow: 0 20px 52px hsla(264,70%,1%,0.60), inset 0 1px 0 hsla(0,0%,100%,0.16);
 
     /* ── Legacy aliases ── */
     --indigo:             hsl(var(--brand-h), var(--brand-s), var(--brand-l));
@@ -658,10 +658,10 @@ html[data-theme="midnight-purple"] body::after  { background: radial-gradient(ci
 
 .hero-card-inner {
   border-radius: calc(2rem - 2px);
-  background: linear-gradient(155deg, hsla(0,0%,100%,0.94) 0%, hsla(var(--brand-h),30%,98%,0.90) 50%, hsla(var(--brand2-h),30%,98%,0.92) 100%);
+  background: linear-gradient(155deg, hsl(var(--card) / 0.98) 0%, hsl(var(--popover) / 0.96) 100%);
   backdrop-filter: blur(32px) saturate(200%);
   -webkit-backdrop-filter: blur(32px) saturate(200%);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 hsla(var(--brand-h),var(--brand-s),var(--brand-l),0.05);
+  box-shadow: inset 0 1px 0 hsl(var(--foreground) / 0.16), inset 0 -1px 0 hsl(var(--primary) / 0.12);
 }
 /* Dark themes: dark hero inner */
 html[data-theme="dark-cyber"] .hero-card-inner,
@@ -672,11 +672,11 @@ html[data-theme="midnight-purple"] .hero-card-inner {
 .hero-float-card {
   border-radius: 1rem;
   padding: 12px 16px;
-  background: linear-gradient(155deg, rgba(255,255,255,0.88) 0%, hsla(var(--brand-h),30%,98%,0.80) 100%);
+  background: linear-gradient(155deg, hsl(var(--card) / 0.96) 0%, hsl(var(--popover) / 0.92) 100%);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1.5px solid rgba(255,255,255,0.92);
-  box-shadow: 0 4px 20px hsla(var(--brand-h),var(--brand-s),var(--brand-l),0.12), 0 1px 0 rgba(255,255,255,0.95) inset;
+  border: 1.5px solid hsl(var(--border));
+  box-shadow: 0 8px 26px hsl(var(--background) / 0.7), 0 1px 0 hsl(var(--foreground) / 0.16) inset;
 }
 html[data-theme="dark-cyber"] .hero-float-card,
 html[data-theme="midnight-purple"] .hero-float-card {
@@ -723,10 +723,10 @@ html[data-theme="midnight-purple"] .hero-float-card {
 .cta-card-inner {
   border-radius: 1.375rem;
   padding: 1rem;
-  background: linear-gradient(160deg, hsla(240,30%,98%,0.92) 0%, hsla(var(--brand-h),40%,97%,0.88) 50%, hsla(var(--brand2-h),35%,98%,0.92) 100%);
+  background: linear-gradient(160deg, hsl(var(--card) / 0.98) 0%, hsl(var(--popover) / 0.95) 100%);
   backdrop-filter: blur(32px);
   -webkit-backdrop-filter: blur(32px);
-  box-shadow: inset 0 1px 0 hsla(0,0%,100%,0.95), inset 0 -1px 0 hsla(var(--brand-h),var(--brand-s),var(--brand-l),0.06);
+  box-shadow: inset 0 1px 0 hsl(var(--foreground) / 0.16), inset 0 -1px 0 hsl(var(--primary) / 0.12);
 }
 html[data-theme="dark-cyber"] .cta-card-inner,
 html[data-theme="midnight-purple"] .cta-card-inner {
@@ -737,12 +737,12 @@ html[data-theme="midnight-purple"] .cta-card-inner {
    PRODUCT CARD — Glassmorphism
 ══════════════════════════════════════ */
 .product-card-new {
-  background: hsla(0, 0%, 100%, 0.6);
-  border: 1px solid hsla(var(--brand-h), var(--brand-s), 80%, 0.22);
+  background: linear-gradient(155deg, hsl(var(--card) / 0.98), hsl(var(--popover) / 0.96));
+  border: 1px solid hsl(var(--border));
   border-radius: 1.25rem;
   overflow: hidden;
   transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-  box-shadow: 0 2px 16px hsla(var(--brand-h),var(--brand-s),var(--brand-l),0.06), inset 0 1px 0 hsla(0,0%,100%,0.7);
+  box-shadow: 0 12px 30px hsl(var(--background) / 0.52), inset 0 1px 0 hsl(var(--foreground) / 0.14);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   position: relative;
