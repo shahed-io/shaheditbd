@@ -225,8 +225,7 @@ const Footer = () => {
                   }}>
                   <IconComp size={14} />
                 </div>
-                <h4 className="font-sora font-bold text-[11px] uppercase tracking-[0.18em]"
-                   className="font-sora font-bold text-[11px] uppercase tracking-[0.18em] text-foreground">
+                <h4 className="font-sora font-bold text-[11px] uppercase tracking-[0.18em] text-foreground">
                   {col.title}
                 </h4>
               </div>
