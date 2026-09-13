@@ -23,10 +23,10 @@ const DEFAULT_SETTINGS: AnnouncementSettings = {
   enabled: true,
   useLiveProducts: true,
   speedSeconds: 60,
-  bgFrom: 'hsl(220,20%,97%)',
-  bgTo: 'hsl(258,40%,96%)',
-  textColor: 'hsl(226,35%,18%)',
-  accentColor: 'hsl(258,78%,55%)',
+  bgFrom: 'hsl(264,29%,12%)',
+  bgTo: 'hsl(268,30%,17%)',
+  textColor: 'hsl(255,25%,96%)',
+  accentColor: 'hsl(267,88%,68%)',
   liveLabel: 'LIVE',
   items: [
     { label: 'Business Website', price: '৳15,000', off: '-25%' },
@@ -112,7 +112,7 @@ const TickerBanner = () => {
         style={{
           background: `linear-gradient(135deg, ${settings.bgFrom} 0%, ${settings.bgTo} 50%, ${settings.bgFrom} 100%)`,
           border: `1px solid ${settings.accentColor}26`,
-          boxShadow: `0 8px 24px ${settings.accentColor}1f, inset 0 1px 0 rgba(255,255,255,0.5)`,
+           boxShadow: `0 8px 24px ${settings.accentColor}1f, inset 0 1px 0 hsl(var(--foreground) / 0.10)`,
         }}>
         <div className="absolute inset-0 pointer-events-none"
           style={{ backgroundImage: `radial-gradient(ellipse at 50% 0%, ${settings.accentColor}0d 0%, transparent 65%)` }} />
