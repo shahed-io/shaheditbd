@@ -48,8 +48,9 @@
     justify-content: center;
     border: 1px solid currentColor;
     border-radius: 0.75rem;
-    background: currentColor;
-    box-shadow: 0 8px 24px currentColor;
+    background: hsl(var(--hero-violet) / 0.2);
+    color: hsl(var(--hero-violet));
+    box-shadow: 0 8px 24px hsl(var(--hero-violet) / 0.22);
   }
 
   .hero-service-icon svg { color: hsl(var(--hero-foreground)); }
@@ -57,6 +58,8 @@
   .hero-service-violet { color: hsl(var(--hero-violet)); }
   .hero-service-pink { color: hsl(var(--hero-pink)); }
   .hero-service-cyan { color: hsl(var(--hero-cyan)); }
+  .hero-service-pink .hero-service-icon { background: hsl(var(--hero-pink) / 0.2); color: hsl(var(--hero-pink)); box-shadow: 0 8px 24px hsl(var(--hero-pink) / 0.22); }
+  .hero-service-cyan .hero-service-icon { background: hsl(var(--hero-cyan) / 0.2); color: hsl(var(--hero-cyan)); box-shadow: 0 8px 24px hsl(var(--hero-cyan) / 0.22); }
   .hero-service-violet:hover { border-color: hsl(var(--hero-violet) / 0.55); }
   .hero-service-pink:hover { border-color: hsl(var(--hero-pink) / 0.55); }
   .hero-service-cyan:hover { border-color: hsl(var(--hero-cyan) / 0.55); }

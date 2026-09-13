@@ -47,7 +47,7 @@ const HeroBanner = () => (
     <div className="hero-ambient hero-ambient-left" aria-hidden="true" />
     <div className="hero-ambient hero-ambient-right" aria-hidden="true" />
 
-    <div className="container-fluid relative z-10 grid min-h-[650px] grid-cols-1 items-center gap-10 py-10 md:py-14 lg:grid-cols-12 lg:gap-12 lg:py-16">
+    <div className="container-fluid relative z-10 grid min-h-[650px] grid-cols-1 items-center gap-10 pb-10 pt-[152px] md:py-14 lg:grid-cols-12 lg:gap-12 lg:py-16">
       <div className="lg:col-span-7">
         <div className="inline-flex items-center gap-2 rounded-full border border-hero-border bg-hero-glass px-4 py-2 backdrop-blur-md">
           <span className="h-2 w-2 rounded-full bg-hero-pink shadow-hero-pink" />
