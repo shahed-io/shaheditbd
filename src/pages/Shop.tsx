@@ -38,6 +38,12 @@ interface Category {
 }
 
 const CAT_META: Record<string, { icon: string; accent: string }> = {
+  'Web Development':    { icon: '⌨', accent: 'hsl(var(--primary))' },
+  'Website Maintenance': { icon: '⚙', accent: 'hsl(var(--accent))' },
+  'Graphics Design':    { icon: '✦', accent: 'hsl(var(--hero-pink))' },
+  'Facebook Services':  { icon: 'f', accent: 'hsl(var(--hero-cyan))' },
+  'Digital Marketing':  { icon: '↗', accent: 'hsl(var(--primary))' },
+  'Business Solutions': { icon: '◆', accent: 'hsl(var(--accent))' },
   'Windows':          { icon: '🪟', accent: 'hsl(210,90%,55%)' },
   'Office':           { icon: '📦', accent: 'hsl(25,90%,58%)' },
   'Software':         { icon: '💻', accent: 'hsl(263,70%,60%)' },
@@ -372,7 +378,7 @@ const Shop = () => {
 
       <Navbar />
 
-      <div className="container-fluid py-10">
+      <div className="container-fluid pb-10 pt-[148px] sm:pt-[132px] lg:pt-[122px]">
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="font-sora font-black text-3xl text-foreground">
