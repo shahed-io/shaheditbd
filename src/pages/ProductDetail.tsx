@@ -1309,20 +1309,20 @@ const ProductDetail = () => {
                 <div
                   className="rounded-2xl p-5"
                   style={{
-                    background: 'linear-gradient(155deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.60) 100%)',
+                    background: 'linear-gradient(155deg, hsl(var(--card) / 0.98) 0%, hsl(var(--popover) / 0.94) 100%)',
                     backdropFilter: 'blur(24px)',
                     WebkitBackdropFilter: 'blur(24px)',
                     border: '1px solid hsla(158,80%,45%,0.30)',
-                    boxShadow: '0 4px 24px hsla(158,80%,45%,0.12), 0 1px 0 rgba(255,255,255,0.9) inset',
+                    boxShadow: '0 6px 26px hsl(var(--hero-online) / 0.12), inset 0 1px 0 hsl(var(--foreground) / 0.1)',
                     opacity: entered ? 1 : 0,
                     transform: entered ? 'none' : 'translateY(20px)',
                     transition: 'all 0.65s cubic-bezier(0.22,1,0.36,1) 0.72s',
                   }}
                 >
-                  <h3 className="font-sora font-bold text-base flex items-center gap-2 mb-1.5" style={{ color: 'hsl(226,35%,18%)' }}>
+                  <h3 className="font-sora font-bold text-base flex items-center gap-2 mb-1.5 text-foreground">
                     <Download size={16} style={{ color: 'hsl(158,80%,42%)' }} /> Software Download
                   </h3>
-                  <p className="text-xs mb-4" style={{ color: 'hsl(226,20%,42%)' }}>
+                  <p className="text-xs mb-4 text-muted-foreground">
                     Official setup file — free download। Purchase করার পর license key দিয়ে activate করুন।
                   </p>
                   <a

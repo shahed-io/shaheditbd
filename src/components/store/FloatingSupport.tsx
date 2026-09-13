@@ -754,19 +754,19 @@ const FloatingSupport = () => {
             <span className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-br from-[#7c3aed] to-[#ec4899] opacity-40 blur-xl group-hover:opacity-60 transition-opacity" />
 
             {/* Main glass body */}
-            <span className="relative w-full h-full flex items-center justify-center rounded-full border border-white/30 bg-white/20 backdrop-blur-xl shadow-[0_8px_32px_rgba(124,58,237,0.3)] overflow-hidden">
+              <span className="relative w-full h-full flex items-center justify-center rounded-full border border-primary/50 bg-card/80 backdrop-blur-xl shadow-[0_8px_32px_rgba(124,58,237,0.3)] overflow-hidden">
               {/* Internal gradient mesh */}
               <span
                 className="absolute inset-0 pointer-events-none"
                 style={{
                   background: (chatOpen || menuOpen)
-                    ? 'linear-gradient(45deg, hsla(258,80%,97%,0.85), hsla(271,75%,94%,0.75))'
+                    ? 'linear-gradient(45deg, hsl(var(--card)), hsl(var(--popover)))'
                     : 'linear-gradient(45deg, rgba(124,58,237,0.60), rgba(6,182,212,0.40), rgba(236,72,153,0.60))'
                 }}
               />
               {/* Icon */}
               {(chatOpen || menuOpen)
-                ? <X size={26} strokeWidth={2.4} className="fs-x-rotate relative z-10" style={{ color: 'hsl(258,78%,45%)' }} />
+                ? <X size={26} strokeWidth={2.4} className="fs-x-rotate relative z-10 text-primary" />
                 : <MessageCircleMore size={28} strokeWidth={2} className="relative z-10 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.28)]" />
               }
               {/* Premium highlight rim */}
@@ -808,16 +808,15 @@ const FloatingSupport = () => {
         .fs-pill {
           position: relative;
           background:
-            linear-gradient(135deg, hsla(258,85%,98%,0.78) 0%, hsla(271,80%,95%,0.72) 45%, hsla(220,85%,97%,0.78) 100%);
-          border: 1.5px solid hsla(258,70%,75%,0.55);
+            linear-gradient(135deg, hsl(var(--card) / 0.96) 0%, hsl(var(--popover) / 0.92) 100%);
+          border: 1px solid hsl(var(--border));
           backdrop-filter: blur(44px) saturate(220%);
           -webkit-backdrop-filter: blur(44px) saturate(220%);
           box-shadow:
             0 22px 48px -12px hsla(258,70%,35%,0.32),
             0 8px 18px -6px hsla(258,60%,40%,0.18),
-            0 0 0 1px hsla(258,60%,80%,0.22),
-            inset 0 1.5px 0 hsla(0,0%,100%,0.9),
-            inset 0 -1px 0 hsla(258,40%,85%,0.4);
+            0 0 0 1px hsl(var(--primary) / 0.18),
+            inset 0 1px 0 hsl(var(--foreground) / 0.12);
           transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, border-color 0.3s ease;
           overflow: hidden;
           isolation: isolate;
@@ -881,13 +880,13 @@ const FloatingSupport = () => {
         .fs-pill:hover::before { opacity: 1; }
         .fs-pill:active { transform: translateX(-2px) scale(0.98); }
 
-        /* Text colors for white glass */
-        .fs-pill .fs-pill-title { color: hsl(226,40%,18%); }
-        .fs-pill .fs-pill-subtitle { color: hsl(226,15%,45%); }
+        /* High-contrast text on dark glass */
+        .fs-pill .fs-pill-title { color: hsl(var(--foreground)); }
+        .fs-pill .fs-pill-subtitle { color: hsl(var(--muted-foreground)); }
 
         .fs-pill-arrow {
           font-size: 16px;
-          color: hsl(226,15%,55%);
+          color: hsl(var(--muted-foreground));
           transform: translateX(-2px);
           transition: transform 0.3s ease, color 0.3s ease;
         }
@@ -924,8 +923,8 @@ const FloatingSupport = () => {
         /* Premium menu heading pill — sits above stacked options */
         .fs-menu-heading {
           position: relative;
-          background: linear-gradient(135deg, hsla(258,85%,98%,0.85), hsla(271,80%,95%,0.78) 50%, hsla(220,85%,97%,0.85));
-          border: 1.5px solid hsla(258,70%,75%,0.6);
+          background: linear-gradient(135deg, hsl(var(--card) / 0.96), hsl(var(--popover) / 0.92));
+          border: 1px solid hsl(var(--border));
           backdrop-filter: blur(44px) saturate(220%);
           -webkit-backdrop-filter: blur(44px) saturate(220%);
           box-shadow:

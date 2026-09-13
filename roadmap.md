@@ -20,4 +20,4 @@
 - [x] Keep the current theme/layout unchanged; deepen and brighten only its existing colors and improve clarity. Do not show another preview for this request.
 
 ## Reference palette and typography
-- [ ] Match the public storefront to the supplied Web Sol Studio dark violet/magenta palette and typography; remove pale low-contrast product surfaces and verify desktop/mobile.
+- [x] Match the public storefront to the supplied Web Sol Studio dark violet/magenta palette and typography; remove pale low-contrast product surfaces and verify desktop/mobile.
