@@ -9,7 +9,7 @@ import { organizationSchema, websiteSchema, localBusinessSchema, siteNavigationS
 
 // Below-fold sections — lazy loaded after hero renders
 const FlashSale    = lazy(() => import('@/components/store/FlashSale'));
-const WhyChooseUs  = lazy(() => import('@/components/store/WhyChooseUs'));
+const ReferenceHomepageSections = lazy(() => import('@/components/store/ReferenceHomepageSections'));
 const Testimonials = lazy(() => import('@/components/store/Testimonials'));
 const Footer       = lazy(() => import('@/components/store/Footer'));
 const PopupBanner  = lazy(() => import('@/components/store/PopupBanner'));
@@ -66,7 +66,7 @@ const Index = () => {
 
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="storefront-shell min-h-screen bg-background text-foreground">
       <SEOHead
         title="Shahed IT – Trusted Digital IT Partner in Bangladesh"
         description="Web development, website maintenance, graphics design, Facebook services, digital marketing and IT business solutions in Bangladesh from Shahed IT, Rajshahi."
@@ -110,7 +110,7 @@ const Index = () => {
             </div>
             <div className="cv-block">
               <Suspense fallback={<SectionSkeleton />}>
-                <WhyChooseUs />
+                <ReferenceHomepageSections />
               </Suspense>
             </div>
             <div className="cv-block">

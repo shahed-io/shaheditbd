@@ -73,9 +73,10 @@ const HeroBanner = () => {
           <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-hero-muted sm:text-[10px]">Professional IT Agency — Bangladesh</span>
         </div>
 
-        <h2 id="hero-heading" className="mt-8 max-w-3xl text-5xl font-extrabold leading-[1.04] text-hero-foreground sm:text-6xl lg:text-[3.75rem]">
+        <h2 id="hero-heading" className="mt-8 max-w-[420px] text-5xl font-extrabold leading-[1.04] text-hero-foreground sm:text-6xl lg:text-[3.75rem]">
           Build Your
-          <span className="mt-1 block bg-hero-title bg-clip-text text-transparent">Digital Empire</span>
+          <span className="mt-1 block bg-hero-title bg-clip-text text-transparent">Digital</span>
+          <span className="block bg-hero-title bg-clip-text text-transparent">Empire</span>
         </h2>
 
         <p className="mt-6 max-w-xl text-sm leading-7 text-hero-muted sm:text-base">

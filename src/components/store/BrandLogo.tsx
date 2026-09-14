@@ -55,9 +55,9 @@ const BrandLogo = ({ size = 'md', className = '' }: BrandLogoProps) => {
         <div className={`${textSize} font-black flex items-baseline`}
           style={{ fontFamily: 'Sora, sans-serif', letterSpacing: '-0.025em' }}>
 
-          {/* "Shahed" — warm orange-amber */}
+          {/* Reference-site wordmark treatment */}
           <span style={{
-            background: 'linear-gradient(135deg, hsl(25,100%,58%) 0%, hsl(38,100%,52%) 100%)',
+            background: 'linear-gradient(135deg, hsl(0,0%,100%) 0%, hsl(258,90%,88%) 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
@@ -65,9 +65,9 @@ const BrandLogo = ({ size = 'md', className = '' }: BrandLogoProps) => {
             Shahed
           </span>
 
-          {/* "IT" — indigo-blue */}
+          {/* "IT" — violet accent */}
           <span className="ml-[0.3em]" style={{
-            background: 'linear-gradient(135deg, hsl(210,90%,52%) 0%, hsl(243,80%,55%) 100%)',
+            background: 'linear-gradient(135deg, hsl(270,96%,72%) 0%, hsl(320,94%,62%) 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
@@ -79,16 +79,16 @@ const BrandLogo = ({ size = 'md', className = '' }: BrandLogoProps) => {
         {/* Sub tagline */}
         <div className="flex items-center gap-1.5 mt-[5px]">
           <div className="h-[1.5px] w-5 rounded-full"
-            style={{ background: 'linear-gradient(90deg, hsl(20,100%,58%), transparent)' }} />
+            style={{ background: 'linear-gradient(90deg, hsl(270,96%,72%), transparent)' }} />
           <span className={`${subSize} font-semibold tracking-[0.14em] uppercase`}
             style={{
               fontFamily: 'Fira Code, monospace',
-              color: 'hsl(220,15%,52%)',
+              color: 'hsl(255,20%,74%)',
             }}>
             shahedit.com
           </span>
           <div className="h-[1.5px] w-5 rounded-full"
-            style={{ background: 'linear-gradient(90deg, transparent, hsl(222,90%,60%))' }} />
+            style={{ background: 'linear-gradient(90deg, transparent, hsl(320,94%,62%))' }} />
         </div>
       </div>
     </div>

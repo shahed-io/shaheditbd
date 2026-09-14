@@ -28,6 +28,7 @@ import dbidLogo from '@/assets/dbid-logo.png';
 import brandIconAsset from '@/assets/dbid-d-logo.png.asset.json';
 const brandIcon = brandIconAsset.url;
 import certifiedBadge from '@/assets/certified-badge.png.asset.json';
+import { getProductArtwork } from '@/lib/productArtwork';
 
 import { useAuth } from '@/hooks/useAuth';
 
@@ -291,7 +292,7 @@ const ProductDetail = () => {
 
 
   const images = [
-    product.image_url || PLACEHOLDER,
+    product.image_url || getProductArtwork(product.name, product.categories?.name || 'Digital Product'),
     ...(product.images || []).filter(img => img !== product.image_url),
   ].filter(Boolean);
   if (images.length === 0) images.push(PLACEHOLDER);

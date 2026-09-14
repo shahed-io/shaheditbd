@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { Flame, Timer, ArrowRight, ShoppingCart, Zap, TrendingDown, MessageCircle } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 import { useQuery } from '@tanstack/react-query';
+import { getProductArtwork } from '@/lib/productArtwork';
 
 interface FlashProduct {
   id: string;
@@ -251,7 +252,7 @@ const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) 
       {/* Image */}
       <div className="relative aspect-square overflow-hidden bg-muted">
         <img
-          src={product.image_url || 'https://placehold.co/300x300/1a1f2e/f97316?text=Sale'}
+          src={product.image_url || getProductArtwork(product.name, 'Flash Sale')}
           alt={product.name}
           className="w-full h-full object-cover transition-transform duration-500"
           style={{ transform: hovered ? 'scale(1.06)' : 'scale(1)' }}

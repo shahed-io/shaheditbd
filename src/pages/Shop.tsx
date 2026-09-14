@@ -10,6 +10,7 @@ import { Search, X, ShoppingCart, MessageCircle } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 import { useCurrency } from '@/hooks/useCurrency';
 import { useHideOrphans } from '@/hooks/useHideOrphans';
+import { getProductArtwork } from '@/lib/productArtwork';
 
 
 interface Product {
@@ -91,10 +92,7 @@ const ShopProductCard = ({ product }: { product: Product }) => {
       onClick={() => navigate(`/product/${product.slug}`)}>
       {/* Image */}
       <div className="relative aspect-square overflow-hidden bg-muted">
-        {product.image_url
-          ? <img src={product.image_url} alt={`${product.name} — Buy Online in Bangladesh at Shahed IT`} title={product.name} loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-          : <div className="w-full h-full flex items-center justify-center text-4xl" style={{ background: 'hsla(258,78%,55%,0.06)' }}>🛒</div>
-        }
+        <img src={product.image_url || getProductArtwork(product.name, 'Digital Product')} alt={`${product.name} — Buy Online in Bangladesh at Shahed IT`} title={product.name} loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
         {outOfStock && (
           <>
             <div className="absolute inset-0 pointer-events-none"
@@ -137,7 +135,7 @@ const ShopProductCard = ({ product }: { product: Product }) => {
             <button
               onClick={e => {
                 e.stopPropagation();
-                addToCart({ id: product.id, name: product.name, price: product.price, category: '', image: product.image_url || '' });
+                addToCart({ id: product.id, name: product.name, price: product.price, category: '', image: product.image_url || getProductArtwork(product.name, 'Digital Product') });
               }}
               aria-label={`Add ${product.name} to cart`}
               className="w-9 h-9 rounded-xl flex items-center justify-center text-accent-foreground transition-all hover:scale-110 flex-shrink-0"

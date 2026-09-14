@@ -6,6 +6,7 @@ import ProductCard from './ProductCard';
 import { Product } from '@/data/products';
 import { ArrowRight, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
+import { getProductArtwork } from '@/lib/productArtwork';
 
 
 const mapProduct = (p: any): Product => ({
@@ -18,7 +19,7 @@ const mapProduct = (p: any): Product => ({
   discount:      p.discount_percent || undefined,
   rating:        4.8,
   reviews:       p.total_sales || Math.floor(Math.random() * 300) + 50,
-  image:         p.image_url || 'https://placehold.co/300x300/f8f9ff/6366f1?text=Product',
+  image:         p.image_url || getProductArtwork(p.name, p.category?.name || 'Digital Product'),
   isBestseller:  p.is_featured,
   isNew:         new Date(p.created_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
   customFields:  Array.isArray(p.custom_fields) ? p.custom_fields : [],

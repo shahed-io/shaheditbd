@@ -7,7 +7,6 @@ import "@fontsource/hind-siliguri/400.css";
 import "@fontsource/hind-siliguri/600.css";
 import "@fontsource/hind-siliguri/700.css";
 import React from "react";
-import { ScraperShield } from "./components/ScraperShield";
 import { HelmetProvider } from "react-helmet-async";
 
 // Global error boundary to prevent blank screens
@@ -138,9 +137,7 @@ if (typeof window !== 'undefined') {
 createRoot(document.getElementById("root")!).render(
   <RootErrorBoundary>
     <HelmetProvider>
-      <ScraperShield>
-        <App />
-      </ScraperShield>
+      <App />
     </HelmetProvider>
   </RootErrorBoundary>
 );

@@ -37,6 +37,8 @@ const DEFAULTS: CpSettings = {
   cp_mobile_longpress: false,
 };
 
+const COPY_PROTECTION_ENABLED = false;
+
 /**
  * ScraperShield — mounts once at app root.
  * Admin panel routes (/ceo/*) and admin users always bypass deterrents.
@@ -51,6 +53,7 @@ export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
 
   // Load all toggles from site_settings.
   useEffect(() => {
+    if (!COPY_PROTECTION_ENABLED) return;
     let cancelled = false;
     (async () => {
       try {
@@ -98,6 +101,7 @@ export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   useEffect(() => {
+    if (!COPY_PROTECTION_ENABLED) return;
     if (!cp) return;
     // Master switch off → no deterrents, no scraper block.
     if (!cp.copy_protection_enabled) {
@@ -140,6 +144,8 @@ export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
       return cleanup;
     }
   }, [isAdmin, pathname, cp]);
+
+  if (!COPY_PROTECTION_ENABLED) return <>{children}</>;
 
   if (blocked) {
     return (

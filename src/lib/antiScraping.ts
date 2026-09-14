@@ -141,6 +141,17 @@ export function evaluateClientProtection(): ProtectionDecision {
   if (typeof navigator === 'undefined') {
     return { classification: 'human', isAutomation: false, shouldBlock: false };
   }
+
+  // Never block local development or preview sessions. Browser tooling can
+  // expose automation-like user-agent signals while running on loopback.
+  if (typeof window !== 'undefined' &&
+    (window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1' ||
+      window.location.hostname === '[::1]' ||
+      window.location.hostname === '::1')) {
+    return { classification: 'human', isAutomation: false, shouldBlock: false };
+  }
+
   const classification = classifyUserAgent(navigator.userAgent);
   const isAutomation = isAutomatedBrowser();
   const shouldBlock = classification === 'blocked' || (classification === 'human' && isAutomation);

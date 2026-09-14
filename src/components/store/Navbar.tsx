@@ -310,7 +310,7 @@ const Navbar = () => {
 
       {/* ── Top Announcement Bar — Obsidian Glass ── */}
       <div
-        className="w-full transition-all duration-300 px-2 sm:px-3"
+        className="hidden w-full transition-all duration-300 px-2 sm:px-3"
         style={{
           maxHeight: scrolled ? '0px' : '56px',
           opacity: scrolled ? 0 : 1,
